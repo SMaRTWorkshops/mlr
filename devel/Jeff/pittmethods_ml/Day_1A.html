@@ -249,14 +249,152 @@ class: inverse, center, middle
 # Conceptual Introduction
 ---
 ## What is machine learning?
+Machine learning (ML) is a &lt;span style="color:darkred;"&gt;branch of computer science&lt;/span&gt;
+
+The goal of ML is to &lt;span style="color:darkred;"&gt;develop algorithms&lt;/span&gt; that &lt;span style="color:darkred;"&gt;learn from data&lt;/span&gt;
+
+ML algorithms learn by finding &lt;span style="color:darkred;"&gt;connections and patterns&lt;/span&gt; in the data
+
+--
+
+&lt;p style="padding-top:20px;"&gt;ML is a large discipline with many subfields that we won't touch upon&lt;/p&gt;
+
+Many forms of ML are more applicable to &lt;span style="color:darkred;"&gt;engineers&lt;/span&gt; than to scientists
+
+But some forms of ML make great additions to your scientific toolkit
+
+--
+
+&lt;p style="padding-top:20px;"&gt;ML has similar goals to classical statistics but different values and norms&lt;/p&gt;
+
+Because they developed separately, talking across statistics and ML can be hard
+
+But there is interdisciplinary work trying to merge ML and classical statistics
+
 ---
 ## Types of Modeling
+.pull-left[
+#### Inference
+Draw &lt;span style="color:darkred;"&gt;conclusions&lt;/span&gt; about the data
+
+Higher need for model &lt;span style="color:darkred;"&gt;interpretability&lt;/span&gt;
+
+Emphasis on statistical &lt;span style="color:darkred;"&gt;significance&lt;/span&gt;
+
+&lt;br /&gt;
+
+- *Is self-control associated with truancy?*
+
+- *Which dosages of a drug are safe?*
+
+- *Which personality traits predict the amount of positive emotion shown?*
+]
+--
+.pull-right[
+#### Prediction
+Make &lt;span style="color:darkred;"&gt;predictions&lt;/span&gt; on new data
+
+Higher need for model &lt;span style="color:darkred;"&gt;flexibility&lt;/span&gt;
+
+Emphasis on prediction &lt;span style="color:darkred;"&gt;accuracy&lt;/span&gt;
+
+&lt;br /&gt;
+
+- *How likely is this child to become truant?*
+
+- *What dosage is this patient likely to tolerate?*
+
+- *How much positive emotion is this person expressing in this image/video/tweet?*
+]
 ---
 ## A Tale of Two Traditions
+.pull-left[
+#### Classical Statistics
+Tend to emphasize inference
+
+Tend to value model interpretability
+
+Tend to use top-down assumptions
+
+&lt;br /&gt;
+
+- *Generalized linear modeling*
+
+- *Linear mixed effects modeling*
+
+- *Structural equation modeling*
+]
+--
+.pull-right[
+#### Machine Learning
+Tends to emphasize &lt;span style="color:darkred;"&gt;prediction&lt;/span&gt;
+
+Tends to value model &lt;span style="color:darkred;"&gt;flexibility&lt;/span&gt;
+
+Tends to use &lt;span style="color:darkred;"&gt;bottom-up&lt;/span&gt; patterns
+
+&lt;br /&gt;
+
+- *Support vector machines*
+
+- *Decision trees and random forests*
+
+- *Artificial neural networks*
+]
 ---
 ## Types of Variable
+.pull-left[
+#### Labels / Outcomes
+Labels are the variables that we &lt;span style="color:darkred;"&gt;want to predict&lt;/span&gt; 
+
+Labels likely *won't be available* in novel data&lt;br /&gt;
+(e.g., difficult to collect or haven't happened yet)
+
+In other fields, labels might be called: outcome, dependent, endogenous, or `\(y\)` variables
+
+&lt;img src="label_icons.png" width="100%" /&gt;
+
+]
+--
+.pull-right[
+#### Features / Predictors
+Features are the variables that &lt;span style="color:darkred;"&gt;help predict the labels&lt;/span&gt;
+
+Features likely *will be available* in novel data&lt;br /&gt;
+(e.g., easier to collect or have already happened)
+
+In other fields, features might be called: predictor, independent, exogenous, or `\(x\)` variables
+
+&lt;img src="feature_icons.png" width="100%" /&gt;
+
+]
+
 ---
 ## Types of Learning
+.pull-left[
+#### Supervised Learning
+Algorithm is given &lt;span style="color:darkred;"&gt;features and labels&lt;/span&gt;&lt;br /&gt; and tries to "map" between them
+
+Can we &lt;span style="color:darkred;"&gt;predict the labels&lt;/span&gt; from the&lt;br /&gt;values that the features take on?
+
+This is what this workshop focuses on
+
+&lt;img src="supervised_example.png" width="100%" /&gt;
+
+]
+--
+.pull-right[
+#### Unsupervised Learning
+Algorithm is given &lt;span style="color:darkred;"&gt;features only&lt;/span&gt;&lt;br /&gt;and looks for patterns within them
+
+Can we find subgroups/clusters or latent dimensions/embeddings in the data?
+
+This is sometimes called "data mining"
+
+&lt;img src="unsupervised_example.png" width="100%" /&gt;
+
+]
+
 ---
 ## Modes of Supervised Learning
 ---
@@ -306,7 +444,7 @@ class: inverse, center, middle
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_60d4fb0d" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60d509dc" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
@@ -317,7 +455,7 @@ class: inverse, center, middle
 "highlightStyle": "github",
 "highlightLines": true,
 "ratio": "16:9",
-"countIncrementalSlides": true
+"countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
