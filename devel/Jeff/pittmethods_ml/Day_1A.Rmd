@@ -285,6 +285,9 @@ countdown(
   left = "33%",
   bottom = "15%",
   color_background = "white",
-  color_text = "black"
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
 )
 ```

@@ -28,11 +28,11 @@
   color: black;
 }
 .countdown.running {
-  border-color: #3C9A5F;
-  background-color: #43AC6A;
+  border-color: #E5E5E5;
+  background-color: white;
 }
 .countdown.running .countdown-digits {
-  color: #102B1A;
+  color: black;
 }
 .countdown.finished {
   border-color: #D83A20;
