@@ -1,0 +1,225 @@
+---
+title: '<span style="font-size:48pt;">Applied Machine Learning in R</span>'
+subtitle: '.big[&#128104;&#8205;&#128187; &#129302; &#128105;&#8205;&#127979;] ' 
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Lecture 1-A &emsp; &emsp; July 19, 2021'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b"
+)
+```
+
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+class: inverse, center, middle
+# Workshop Overview
+---
+## Instructor Profiles
+
+.pull-left[
+#### Jeffrey Girard
+Assistant Professor<br />Department of Psychology<br />University of Kansas
+
+**Research Areas**
+- Affective Science
+- Clinical Psychology
+- Computer Science
+
+**Machine Learning**
+- Recognition of Facial Expressions
+- Prediction of Emotional States
+- Prediction of Mental Health Status
+]
+
+.pull-right[
+.center[
+```{r, echo=FALSE, out.width=300, out.height=300}
+include_graphics("jg_headshot.jpeg")
+```
+
+[www.jmgirard.com](https://www.jmgirard.com)<br />[jmgirard@ku.edu](mailto:jmgirard@ku.edu)<br /> [@jeffreymgirard](https://twitter.com/jeffreymgirard)
+]
+]
+---
+## Instructor Profiles
+
+.pull-left[
+#### Shirley Wang
+Doctoral Candidate<br />Department of Psychology<br />Harvard University
+
+**Research Areas**
+- Area 1
+- Area 2
+- Area 3
+
+**Machine Learning**
+- Example 1
+- Example 2
+- Example 3
+]
+
+.pull-right[
+.center[
+```{r, echo=FALSE, out.width=300, out.height=300}
+include_graphics("sw_headshot.jpeg")
+```
+
+[shirleywang.rbind.io](https://shirleywang.rbind.io/)<br />[shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)<br /> [@ShirleyBWang](https://twitter.com/ShirleyBWang)
+]
+]
+---
+## Goals and Timeline
+.pull-left[
+#### Workshop Goals
+Build a foundation of concepts and skills
+
+Describe every step from start to finish
+
+Emphasize the practical and applied aspects
+
+Provide intuitions rather than lots of theory
+
+Dive deeper into a smaller number of algorithms
+
+Highlight the algorithms "best" for this audience
+
+Communicate the pros and cons of different choices
+]
+
+--
+
+.pull-right[
+```{r, echo=FALSE}
+timeline <- tribble(
+  ~Day, ~Topic, ~Lead,
+  "1-A", "Conceptual introductions", "JG",
+  "1-B", "Logistics and data exploration", "SW",
+  "2-A", "Feature engineering", "JG",
+  "2-B", "Regularized regression", "SW",
+  "3-A", "Cross-validation and tuning", "JG",
+  "3-B", "Decision trees", "SW",
+  "4-A", "Random forests", "JG",
+  "4-B", "Practical issues", "SW",
+  "5-A", "Challenges and future directions", "Both",
+  "5-B", "Hackathon and consultation", "Both"
+)
+kable(timeline, format = "html") %>% kable_styling()
+```
+]
+---
+## Format and Materials
+.pull-left[
+Each workshop day will have two parts (A and B)
+
+Each part will have some *lecture* and *live coding*
+
+Each part will have some hands-on activities
+
+We will take a short break after the first part
+
+The non-lead instructor can help during lecture
+]
+--
+.pull-right[
+Course materials are posted on both Github and OSF
+
+- [github.com/ShirleyBWang/pittmethods_ml](https://github.com/ShirleyBWang/pittmethods_ml)
+
+- [osf.io/3qhc8](https://osf.io/3qhc8)
+
+You can download slides, code, and data from either
+
+Materials are covered by a "CC-By Attribution" license
+]
+---
+## Etiquette and Responsibilities
+.pull-left[
+Behave professionally in chat, audio, and video
+
+Stay on topic in chat to minimize distractions
+
+Post questions in chat or "Raise Hand" in Zoom
+
+Mute yourself when in main room unless talking
+
+Clarifications and general questions are welcome
+
+Save idiosyncratic questions for consultations
+
+Be patient and respectful with yourself and others
+]
+--
+.pull-right[
+**You are free to:**
+
+Turn your camera on or off as you prefer
+
+Arrive late and depart early if needed or desired
+
+Ask for help with workshop content and technology
+
+Share your ideas and opinions respectfully
+
+Use workshop materials according to the license
+
+Contact the instructors during/after the workshop
+]
+---
+class: inverse, center, middle
+# Small Group Icebreakers
+---
+## Icebreakers
+We will randomly assign everyone to one of two breakout rooms
+
+Each breakout room will be led by one of the instructors
+
+Each person will have *up to one minute* to introduce themselves
+
+In addition to sharing your name, please answer these questions:
+
+1. Where are you joining us from?
+2. What field(s) do you work in?
+3. What is one of your research interests?
+4. What is one of your personal interests?
+
+The instructor will go first and call on attendees to go next
+
+If you would prefer not to share, please indicate that in chat
+---
+class: inverse, center, middle
+# Conceptual Introduction
+---
+class: inverse, center, middle
+# Small Group Discussion
+---
+class: inverse, center, middle
+# Thanks!

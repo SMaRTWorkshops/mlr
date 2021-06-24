@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Applied Machine Learning in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pittsburgh Summer Methodology Series" />
+    <script src="Day_1A_files/header-attrs/header-attrs.js"></script>
+    <script src="Day_1A_files/kePrint/kePrint.js"></script>
+    <link href="Day_1A_files/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <span style="font-size:48pt;">Applied Machine Learning in R</span>
+## .big[👨‍💻 🤖 👩‍🏫]
+### Pittsburgh Summer Methodology Series
+### Lecture 1-A     July 19, 2021
+
+---
+
+
+
+
+
+
+
+
+class: inverse, center, middle
+# Workshop Overview
+---
+## Instructor Profiles
+
+.pull-left[
+#### Jeffrey Girard
+Assistant Professor&lt;br /&gt;Department of Psychology&lt;br /&gt;University of Kansas
+
+**Research Areas**
+- Affective Science
+- Clinical Psychology
+- Computer Science
+
+**Machine Learning**
+- Recognition of Facial Expressions
+- Prediction of Emotional States
+- Prediction of Mental Health Status
+]
+
+.pull-right[
+.center[
+&lt;img src="jg_headshot.jpeg" width="300" height="300" /&gt;
+
+[www.jmgirard.com](https://www.jmgirard.com)&lt;br /&gt;[jmgirard@ku.edu](mailto:jmgirard@ku.edu)&lt;br /&gt; [@jeffreymgirard](https://twitter.com/jeffreymgirard)
+]
+]
+---
+## Instructor Profiles
+
+.pull-left[
+#### Shirley Wang
+Doctoral Candidate&lt;br /&gt;Department of Psychology&lt;br /&gt;Harvard University
+
+**Research Areas**
+- Area 1
+- Area 2
+- Area 3
+
+**Machine Learning**
+- Example 1
+- Example 2
+- Example 3
+]
+
+.pull-right[
+.center[
+&lt;img src="sw_headshot.jpeg" width="300" height="300" /&gt;
+
+[shirleywang.rbind.io](https://shirleywang.rbind.io/)&lt;br /&gt;[shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)&lt;br /&gt; [@ShirleyBWang](https://twitter.com/ShirleyBWang)
+]
+]
+---
+## Goals and Timeline
+.pull-left[
+#### Workshop Goals
+Build a foundation of concepts and skills
+
+Describe every step from start to finish
+
+Emphasize the practical and applied aspects
+
+Provide intuitions rather than lots of theory
+
+Dive deeper into a smaller number of algorithms
+
+Highlight the algorithms "best" for this audience
+
+Communicate the pros and cons of different choices
+]
+
+--
+
+.pull-right[
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Day &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Topic &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Lead &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 1-A &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Conceptual introductions &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; JG &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 1-B &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Logistics and data exploration &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; SW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 2-A &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feature engineering &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; JG &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 2-B &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Regularized regression &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; SW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 3-A &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Cross-validation and tuning &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; JG &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 3-B &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Decision trees &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; SW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 4-A &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Random forests &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; JG &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 4-B &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Practical issues &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; SW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 5-A &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Challenges and future directions &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Both &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 5-B &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Hackathon and consultation &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Both &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+---
+## Format and Materials
+.pull-left[
+Each workshop day will have two parts (A and B)
+
+Each part will have some *lecture* and *live coding*
+
+Each part will have some hands-on activities
+
+We will take a short break after the first part
+
+The non-lead instructor can help during lecture
+]
+--
+.pull-right[
+Course materials are posted on both Github and OSF
+
+- [github.com/ShirleyBWang/pittmethods_ml](https://github.com/ShirleyBWang/pittmethods_ml)
+
+- [osf.io/3qhc8](https://osf.io/3qhc8)
+
+You can download slides, code, and data from either
+
+Materials are covered by a "CC-By Attribution" license
+]
+---
+## Etiquette and Responsibilities
+.pull-left[
+Behave professionally in chat, audio, and video
+
+Stay on topic in chat to minimize distractions
+
+Post questions in chat or "Raise Hand" in Zoom
+
+Mute yourself when in main room unless talking
+
+Clarifications and general questions are welcome
+
+Save idiosyncratic questions for consultations
+
+Be patient and respectful with yourself and others
+]
+--
+.pull-right[
+**You are free to:**
+
+Turn your camera on or off as you prefer
+
+Arrive late and depart early if needed or desired
+
+Ask for help with workshop content and technology
+
+Share your ideas and opinions respectfully
+
+Use workshop materials according to the license
+
+Contact the instructors during/after the workshop
+]
+---
+class: inverse, center, middle
+# Small Group Icebreakers
+---
+## Icebreakers
+We will randomly assign everyone to one of two breakout rooms
+
+Each breakout room will be led by one of the instructors
+
+Each person will have *up to one minute* to introduce themselves
+
+In addition to sharing your name, please answer these questions:
+
+1. Where are you joining us from?
+2. What field(s) do you work in?
+3. What is one of your research interests?
+4. What is one of your personal interests?
+
+The instructor will go first and call on attendees to go next
+
+If you would prefer not to share, please indicate that in chat
+---
+class: inverse, center, middle
+# Conceptual Introduction
+---
+class: inverse, center, middle
+# Small Group Discussion
+---
+class: inverse, center, middle
+# Thanks!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current% / %total%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
