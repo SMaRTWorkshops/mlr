@@ -38,6 +38,7 @@ style_mono_light(
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(countdown)
 ```
 
 class: inverse, center, middle
@@ -218,8 +219,72 @@ If you would prefer not to share, please indicate that in chat
 class: inverse, center, middle
 # Conceptual Introduction
 ---
+## What is machine learning?
+---
+## Types of Modeling
+---
+## A Tale of Two Traditions
+---
+## Types of Variable
+---
+## Types of Learning
+---
+## Modes of Supervised Learning
+---
+## Knowledge check
+---
+class: inverse, center, middle
+# Modeling Workflow
+---
+## Typical Workflow
+---
+## Exploratory Analysis
+---
+## Feature Engineering
+---
+## Model Development
+---
+## Model Tuning
+---
+## Model Evaluation
+---
+## Knowledge check
+---
+class: inverse, center, middle
+# Flexibility and Overfitting
+---
+## Modeling Flexibility
+---
+## A Technical Definition of Overfitting
+---
+## A Lay Definition of Overfitting
+---
+## An Example of Overfitting
+---
+## Knowledge check
+---
+class: inverse, center, middle
+# Addressing Overfitting
+---
+## Hold Out Set Validation
+---
+## Cross-Validation
+---
+## Knowledge check
+---
 class: inverse, center, middle
 # Small Group Discussion
 ---
 class: inverse, center, middle
-# Thanks!
+# Time for a Break!
+```{r, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black"
+)
+```
