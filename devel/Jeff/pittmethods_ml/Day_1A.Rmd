@@ -504,12 +504,82 @@ class: inverse, center, middle
 # Modeling Workflow
 ---
 ## Typical Workflow
+
+<br /><br />
+
+.center[
+```{r,echo=FALSE}
+include_graphics("workflow.png")
+```
+]
 ---
 ## Exploratory Analysis
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics("explore.jpg")
+```
+]
+.right-column[
+#### Quality Control
+Examine the distributions of feature and label variables
+
+Look for errors, outliers, missing data, etc.
+
+#### Modeling Inspiration
+Identify relevant features for a label
+
+Detect highly correlated features
+
+Determine the "shape" of relationships
+]
+
 ---
 ## Feature Engineering
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics("engineer.jpg")
+```
+]
+.right-column[
+**Extract** features *(e.g., from text, images, and audio)*
+
+**Transform** features *(e.g., center, normalize, log)*
+
+**Re-encode** features *(e.g., dummy code, one hot)*
+
+**Combine** features *(e.g., ratios, means, interactions)*
+
+**Reduce** dimensionality *(e.g., PCA, EFA, GDA)*
+
+**Impute** missing values *(e.g., mean, median, PMM)*
+
+**Drop** features *(e.g., redundant, low variance)*
+
+**Select** features *(e.g., wrapper-based, filter-based)*
+]
 ---
 ## Model Development
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics("develop.jpg")
+```
+]
+.right-column[
+**What *algorithm* or framework to use?**
+- Elastic Net, Random Forest, SVM, MLP
+
+**What *engine* to use for fitting the model?**
+- Which software implementation
+
+**What *mode* should the model run in?**
+- Regression, classification, ordinal
+
+**What *formula* should the model fit?**
+- Which features and how to combine them
+]
 ---
 ## Model Tuning
 ---
