@@ -531,10 +531,93 @@ Determine the "shape" of relationships
 ]
 ---
 ## Model Tuning
+.left-column[
+&lt;br /&gt;
+&lt;img src="tune.jpg" width="100%" /&gt;
+]
+.right-column[
+**Models learn by estimating &lt;span style="color:darkred;"&gt;parameters&lt;/span&gt; from data**
+- where and how to define the margin in an SVM
+- which leaves and branches to use in a decision tree
+- what weights to use in connecting neurons in an ANN
+
+**Learning is also influenced by &lt;span style="color:darkred;"&gt;hyperparameters&lt;/span&gt;**
+- which type of kernel to use in a non-linear SVM
+- how many decision trees to include in a random forest
+- how many hidden layers to include in an ANN
+
+**Hyperparameters often control the *flexibility* of a model**
+]
+---
+## Model Tuning
+Unlike parameters, hyperparameters cannot be estimated from the data
+
+Instead, we must "tune" our hyperparameters by trying and comparing many values
+
+.pull-left[
+**Grid Search**
+
+Try all hyperparameter values in a pre-defined set (e.g., spaced evenly throughout a likely range)
+
+**Iterative Search**
+
+Sequentially discover new combinations of values based on previous results (using an algorithm)
+]
+
+.pull-right[
+&lt;img src="tuning_example.png" width="100%" /&gt;
+*The contour lines show performance is best at top-right*
+]
 ---
 ## Model Evaluation
+
+.left-column[
+&lt;img src="target.jpg" width="100%" /&gt;
+]
+
+.right-column[
+**How to quantify model performance?**
+- Compare predictions (i.e., model-predicted labels) to trusted labels
+
+**Regression Metrics**
+- Error-based (RMSE, MAE, Huber loss)
+- Correlation-based (CCC, `\(R^2\)`)
+
+**Classification Metrics**
+- Class-based (Accuracy, Sensitivity, Specificity, `\(\phi\)`, `\(F_\beta\)`, `\(J\)`)
+- Probability-based (AUC, log loss, cost)
+- Curve Analysis (ROC, P-R, Gain, Lift)
+- Multiclass (macro, micro, specialized)
+]
 ---
 ## Knowledge check
+&lt;span style="font-size:30px;"&gt;Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.&lt;/span&gt;
+
+.pull-left[
+### Question 1
+**Calculating the length of each tweet is &lt;span style="text-decoration: underline; white-space: pre;"&gt;           &lt;/span&gt;?**
+
+a) Feature Engineering
+
+b) Model Development
+
+c) Model Tuning
+
+d) Model Evaluation
+]
+
+.pull-right[
+### Question 2
+**Which performance metric would be appropriate?**
+
+a) `\(F_\beta\)` score
+
+b) ROC Curve
+
+c) Feature Variance
+
+d) Mean Absolute Error (MAE)
+]
 ---
 class: inverse, center, middle
 # Flexibility and Overfitting
@@ -563,7 +646,7 @@ class: inverse, center, middle
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_60d61612" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60d62f36" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
