@@ -581,6 +581,44 @@ include_graphics("develop.jpg")
 - Which features and how to combine them
 ]
 ---
+## Algorithm Intuition: Support Vector Machines
+.pull-left[
+```{r, echo=FALSE, out.height=400, out.width=400}
+include_graphics("svm1.png")
+```
+]
+--
+.pull-right[
+```{r, echo=FALSE, out.height=450, out.width=450}
+include_graphics("svm2.png")
+```
+]
+---
+## Algorithm Intuition: Support Vector Machines
+```{r, echo=FALSE}
+include_graphics("svm3.png")
+```
+---
+## Algorithm Intuition: Decision Trees and Random Forests
+.pull-left[
+```{r, echo=FALSE}
+include_graphics("dt.png")
+```
+]
+--
+.pull-right[
+```{r,echo=FALSE}
+include_graphics("rf.png")
+```
+]
+---
+## Algorithm Intuition: Artificial Neural Networks
+.center[
+```{r, echo=FALSE, out.height=400, out.width=724}
+include_graphics("mlp.png")
+```
+]
+---
 ## Model Tuning
 .left-column[
 <br />
@@ -671,7 +709,7 @@ a) $F_\beta$ score
 
 b) ROC Curve
 
-c) Feature Variance
+c) Number of features
 
 d) Mean Absolute Error (MAE)
 ]
