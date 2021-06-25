@@ -39,6 +39,7 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(countdown)
+library(patchwork)
 ```
 
 class: inverse, center, middle
@@ -718,6 +719,79 @@ class: inverse, center, middle
 # Flexibility and Overfitting
 ---
 ## Modeling Flexibility
+```{r, echo=FALSE}
+set.seed(2021)
+signal <- function(x) {sin(2*pi*x)}
+x_linspace <- seq(0, 1, by = 0.02)
+x_data <- runif(length(x_linspace), 0, 1)
+y_true <- signal(x_linspace)
+y_data <- signal(x_data) + rnorm(length(x_data), 0, 0.25)
+dat <- tibble(
+  x_linspace,
+  x_data,
+  y_true,
+  y_data
+)
+
+p1 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm", 
+    se = FALSE,
+    formula = y ~ x, 
+    color = "blue",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Underfit", x = "feature", y = "label") +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p2 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 17), 
+    color = "red",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Overfit", x = "feature", y = NULL) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p3 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 4), 
+    color = "purple",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Good Fit", x = "feature", y = NULL) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+(p1 | p3 | p2) + 
+  plot_annotation(
+    theme = theme(
+      plot.background = element_rect(fill = "#E9EBEE", color = NA)
+    )
+  )
+```
+
 ---
 ## A Technical Definition of Overfitting
 ---
