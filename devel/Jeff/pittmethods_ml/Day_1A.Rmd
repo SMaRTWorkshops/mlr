@@ -34,7 +34,7 @@ style_mono_light(
 )
 ```
 
-```{r, echo=FALSE, message=FALSE}
+```{r packages, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(knitr)
 library(kableExtra)
@@ -63,7 +63,7 @@ Assistant Professor<br />Department of Psychology<br />University of Kansas
 
 .pull-right[
 .center[
-```{r, echo=FALSE, out.width=300, out.height=300}
+```{r jg, echo=FALSE, out.width=300, out.height=300}
 include_graphics("jg_headshot.jpeg")
 ```
 
@@ -90,7 +90,7 @@ Doctoral Candidate<br />Department of Psychology<br />Harvard University
 
 .pull-right[
 .center[
-```{r, echo=FALSE, out.width=300, out.height=300}
+```{r sw, echo=FALSE, out.width=300, out.height=300}
 include_graphics("sw_headshot.jpeg")
 ```
 
@@ -119,7 +119,7 @@ Communicate the pros and cons of different choices
 --
 
 .pull-right[
-```{r, echo=FALSE}
+```{r timeline, echo=FALSE}
 timeline <- tribble(
   ~Day, ~Topic, ~Lead,
   "1-A", "Conceptual introductions", "JG",
@@ -245,7 +245,7 @@ But there is interdisciplinary work trying to merge ML and classical statistics
 ---
 ## Types of Modeling
 .pull-left[
-#### Inference
+### Inference
 Draw <span style="color:darkred;">conclusions</span> about the data
 
 Higher need for model <span style="color:darkred;">interpretability</span>
@@ -258,11 +258,11 @@ Emphasis on statistical <span style="color:darkred;">significance</span>
 
 - *Which dosages of a drug are safe?*
 
-- *Which personality traits predict the amount of positive emotion shown?*
+- *Which personality traits predict the<br />amount of positive emotion shown?*
 ]
 --
 .pull-right[
-#### Prediction
+### Prediction
 Make <span style="color:darkred;">predictions</span> on new data
 
 Higher need for model <span style="color:darkred;">flexibility</span>
@@ -280,7 +280,7 @@ Emphasis on prediction <span style="color:darkred;">accuracy</span>
 ---
 ## A Tale of Two Traditions
 .pull-left[
-#### Classical Statistics
+### Classical Statistics
 Tend to emphasize inference
 
 Tend to value model interpretability
@@ -297,7 +297,7 @@ Tend to use top-down assumptions
 ]
 --
 .pull-right[
-#### Machine Learning
+### Machine Learning
 Tends to emphasize <span style="color:darkred;">prediction</span>
 
 Tends to value model <span style="color:darkred;">flexibility</span>
@@ -315,30 +315,30 @@ Tends to use <span style="color:darkred;">bottom-up</span> patterns
 ---
 ## Types of Variable
 .pull-left[
-#### Labels / Outcomes
+### Labels / Outcomes
 Labels are the variables that we <span style="color:darkred;">want to predict</span> 
 
 Labels likely *won't be available* in novel data<br />
 (e.g., difficult to collect or haven't happened yet)
 
-In other fields, labels might be called: outcome, dependent, endogenous, or $y$ variables
+(outcome, dependent, endogenous, or $y$ variables)
 
-```{r,echo=FALSE}
+```{r label_icons, echo=FALSE}
 include_graphics("label_icons.png")
 ```
 
 ]
 --
 .pull-right[
-#### Features / Predictors
+### Features / Predictors
 Features are the variables that <span style="color:darkred;">help predict the labels</span>
 
 Features likely *will be available* in novel data<br />
 (e.g., easier to collect or have already happened)
 
-In other fields, features might be called: predictor, independent, exogenous, or $x$ variables
+(predictor, independent, exogenous, or $x$ variables)
 
-```{r, echo=FALSE}
+```{r feature_icons, echo=FALSE}
 include_graphics("feature_icons.png")
 ```
 
@@ -347,28 +347,24 @@ include_graphics("feature_icons.png")
 ---
 ## Types of Learning
 .pull-left[
-#### Supervised Learning
+### Supervised Learning
 Algorithm is given <span style="color:darkred;">features and labels</span><br /> and tries to "map" between them
 
 Can we <span style="color:darkred;">predict the labels</span> from the<br />values that the features take on?
 
-This is what this workshop focuses on
-
-```{r, echo=FALSE}
+```{r supervised_example, echo=FALSE}
 include_graphics("supervised_example.png")
 ```
 
 ]
 --
 .pull-right[
-#### Unsupervised Learning
+### Unsupervised Learning
 Algorithm is given <span style="color:darkred;">features only</span><br />and looks for patterns within them
 
 Can we find subgroups/clusters or latent dimensions/embeddings in the data?
 
-This is sometimes called "data mining"
-
-```{r, echo=FALSE}
+```{r unsupervised_example, echo=FALSE}
 include_graphics("unsupervised_example.png")
 ```
 
@@ -376,8 +372,133 @@ include_graphics("unsupervised_example.png")
 
 ---
 ## Modes of Supervised Learning
+.pull-left[
+### Regression
+Predict continuous, numerical values
+
+```{r regression_diagram, echo=FALSE}
+include_graphics("regression_diagram.png")
+```
+
+- *How much will a customer spend?*
+- *What GPA will a student achieve?*
+- *How long will a patient be hospitalized?*
+]
+--
+.pull-right[
+### Classification
+Predict discrete, categorical values
+
+```{r classification_diagram, echo=FALSE}
+include_graphics("classification_diagram.png")
+```
+
+- *Is this email spam or non-spam?*
+- *Which candidate will this user vote for?*
+- *Is this patient's glucose low, normal, or high?*
+]
+---
+## Modes of Supervised Learning
+.pull-left[
+### Regression
+```{r regression_example, echo=FALSE, fig.height=3, fig.width=4}
+set.seed(2021)
+signal <- function(x) {sin(2*pi*x)}
+x_linspace <- seq(0, 1, by = 0.02)
+x_data <- runif(length(x_linspace), 0, 1)
+y_true <- signal(x_linspace)
+y_data <- signal(x_data) + rnorm(length(x_data), 0, 0.25)
+dat <- tibble(
+  x_linspace,
+  x_data,
+  y_true,
+  y_data
+)
+ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 4), 
+    color = "purple",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(x = "feature", y = "label") +
+  theme_xaringan(text_font_size = 16) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+]
+--
+.pull-right[
+### Classification
+```{r classification_example, echo=FALSE, fig.height=3, fig.width=4}
+set.seed(1)
+class1 <- data.frame(
+  class = rep("1", 150),
+  x = c(rnorm(25, 0, 1), rnorm(50, 0, 1), rnorm(50, 5, 2), rnorm(25, 8, 1)),
+  y = c(rnorm(25, 0, 2), rnorm(50, -5, 2), rnorm(50, 1, 1), rnorm(25, -5, 2))
+)
+class2 <- data.frame(
+  class = rep("2", 100),
+  x = rnorm(100, 4, 1),
+  y = rnorm(100, -5, 1)
+)
+dat <- bind_rows(class1, class2)
+
+ggplot(dat, aes(x = x, y = y)) + 
+  geom_point(aes(fill = class, shape = class), size = 2.5, alpha = .75) +
+  ggalt::geom_encircle(
+    data = filter(dat, class == "2"), 
+    size = 4, 
+    color = "purple"
+  ) +
+  scale_fill_manual(values = c("#d8b365", "#5ab4ac")) +
+  scale_shape_manual(values = c(21, 22)) +
+  labs(x = "feature 1", y = "feature 2", fill = "label", shape = "label") +
+  theme_xaringan(text_font_size = 16) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white"),
+    legend.position = "none"
+  )
+```
+
+]
 ---
 ## Knowledge check
+<span style="font-size:30px;">Ann has developed an ML system that looks at a patient's physiological signals and tries to determine whether they are having a micro-seizure.</span>
+
+.pull-left[
+### Question 1
+**The features are <span style="text-decoration: underline; white-space: pre;">           </span> and the labels are <span style="text-decoration: underline; white-space: pre;">           </span>?**
+
+a) physiological signals; physiological signals
+
+b) physiological signals; micro-seizure (yes/no)
+
+c) micro-seizure (yes/no); physiological signals
+
+d) micro-seizure (yes/no); micro-seizure (yes/no)
+
+]
+
+.pull-right[
+### Question 2
+**Which type of machine learning is this?**
+
+a) Supervised regression
+
+b) Supervised classification
+
+c) Unsupervised regression
+
+d) Unsupervised classification
+]
 ---
 class: inverse, center, middle
 # Modeling Workflow
