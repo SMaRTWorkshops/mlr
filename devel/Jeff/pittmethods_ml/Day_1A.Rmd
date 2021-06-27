@@ -7,6 +7,7 @@ output:
   xaringan::moon_reader:
     css: xaringan-themer.css
     nature:
+      beforeInit: "macros.js"
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
       highlightLines: true
@@ -221,7 +222,7 @@ class: inverse, center, middle
 # Conceptual Introduction
 ---
 ## What is machine learning?
-Machine learning (ML) is a <span style="color:darkred;">branch of computer science</span>
+Machine learning (ML) is a ![:emphasize](branch of computer science)
 
 The goal of ML is to <span style="color:darkred;">develop algorithms</span> that <span style="color:darkred;">learn from data</span>
 
