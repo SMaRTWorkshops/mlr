@@ -7,4 +7,10 @@ Day,Part,Description,Minutes
 1,A,Addressing Overfitting,15
 1,A,Small group activity,25
 1,X,Break,10
-1,B,Total (break down),115
+1,B,Packages (caret + tidymodels),15
+1,B,EDA: Data distributions/Descriptives,15
+1,B,"EDA: Errors, outliers, missing data",15
+1,B,EDA: Correlations,15
+1,B,EDA: Linearity vs nonlinearity,15
+1,B,Standardizing & Normalizing,15
+1,B,Small group activity,25

@@ -1,0 +1,120 @@
+---
+title: '<span style="font-size:48pt;">Logistics & Data Exploration</span>'
+subtitle: '&#x1F4CB; &#x1F6E0; &#x1F4CA;' 
+author: 'Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series'
+date: 'Lecture 1-B &emsp; &emsp; July 19, 2021'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b"
+)
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Packages
+---
+## caret
+
+The `caret` (**C**lassification **A**nd **RE**gression **T**raining) package includes functions for:
+- data visualization
+- data pre-processing
+- feature selection
+- data splitting
+- model training & testing
+- variable importance estimation
+
+--
+
+<p style="padding-top:20px;"> There are many packages for building machine learning models, which often have different syntax.
+
+`caret` <span style="color:darkred;">streamlines and standardizes</span> the process for creating predictive models.
+
+It includes 50+ machine learning models.
+
+It has historically been the <span style="color:darkred;">most popular package</span> for machine learning in R, with many resources, solutions, and answers to questions available online.
+
+---
+## tidymodels
+
+The `tidymodels` meta-package is a collection of many packages for machine learning, including: 
+- `rsample` for data splitting and resampling
+- `recipes` for pre-processing
+- `parsnip` for trying out many models
+- `workflows` to streamline the pre-processing, modeling, and post-processing
+- `tune` to optimize model hyperparameters
+- `yardstick` for model performance metrics
+- `broom` for converting information to user-friendly formats
+- `dials` for creating and managing tuning parameters
+
+--
+
+<p style="padding-top:20px;"> Both `tidymodels` and `caret` are written by the same author (Max Kuhn). 
+
+While `caret` has been around for a long time, `tidymodels` is much newer and built with <span style="color:darkred;">`tidyverse`</span> principles.
+
+---
+## Packages
+
+We will demonstrate use of both modeling frameworks (`caret` and `tidyverse`) throughout the course.
+
+You are free to use whichever framework you prefer during the small group and individual activities. 
+
+--
+
+<p style="padding-top:20px;">Please make sure you have both packages installed: 
+
+`install.packages("caret")`
+
+`install.packages("tidymodels")`
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+
+---
+## Why exploratory data analysis?
+
+Provide insight into your dataset
+
+Determine whether your data are appropriate for the task
+
+Detect data anamolies, outliers, and missing data
+
+Explore nonlinearities in data
+
+Help inform feature selection
+
+
+

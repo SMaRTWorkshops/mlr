@@ -79,14 +79,14 @@ include_graphics("jg_headshot.jpeg")
 Doctoral Candidate<br />Department of Psychology<br />Harvard University
 
 **Research Areas**
-- Area 1
-- Area 2
-- Area 3
+- Clinical Psychology
+- Computational Psychiatry
+- Mathematical Modeling
 
 **Machine Learning**
-- Example 1
-- Example 2
-- Example 3
+- Prediction of suicide risk
+- Prediction of longitudinal illness course
+- Idiographic prediction
 ]
 
 .pull-right[
@@ -110,11 +110,13 @@ Emphasize the practical and applied aspects
 
 Provide intuitions rather than lots of theory
 
-Dive deeper into a smaller number of algorithms
+Deep dive into a small number of algorithms
 
 Highlight the algorithms "best" for this audience
 
 Communicate the pros and cons of different choices
+
+Become a responsible practitioner of machine learning
 ]
 
 --
@@ -165,15 +167,15 @@ Materials are covered by a "CC-By Attribution" license
 ---
 ## Etiquette and Responsibilities
 .pull-left[
-Behave professionally in chat, audio, and video
-
-Stay on topic in chat to minimize distractions
+Be respectful in chat, audio, and video
 
 Post questions in chat or "Raise Hand" in Zoom
 
 Mute yourself when in main room unless talking
 
 Clarifications and general questions are welcome
+
+Ask for help if or when feeling lost
 
 Save idiosyncratic questions for consultations
 
