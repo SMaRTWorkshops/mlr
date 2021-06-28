@@ -7,6 +7,7 @@ output:
   xaringan::moon_reader:
     css: xaringan-themer.css
     nature:
+      beforeInit: "macros.js"
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
       highlightLines: true
@@ -223,17 +224,17 @@ class: inverse, center, middle
 # Conceptual Introduction
 ---
 ## What is machine learning?
-Machine learning (ML) is a <span style="color:darkred;">branch of computer science</span>
+Machine learning (ML) is a ![:emphasize](branch of computer science)
 
-The goal of ML is to <span style="color:darkred;">develop algorithms</span> that <span style="color:darkred;">learn from data</span>
+The goal of ML is to ![:emphasize](develop algorithms) that ![:emphasize](learn from data)
 
-ML algorithms learn by finding <span style="color:darkred;">connections and patterns</span> in the data
+ML algorithms learn by finding ![:emphasize](connections and patterns) in the data
 
 --
 
 <p style="padding-top:20px;">ML is a large discipline with many subfields that we won't touch upon</p>
 
-Many forms of ML are more applicable to <span style="color:darkred;">engineers</span> than to scientists
+Many forms of ML are more applicable to ![:emphasize](engineers) than to scientists
 
 But some forms of ML make great additions to your scientific toolkit
 
@@ -249,11 +250,11 @@ But there is interdisciplinary work trying to merge ML and classical statistics
 ## Types of Modeling
 .pull-left[
 ### Inference
-Draw <span style="color:darkred;">conclusions</span> about the data
+Draw ![:emphasize](conclusions) about the data
 
-Higher need for model <span style="color:darkred;">interpretability</span>
+Higher need for model ![:emphasize](interpretability)
 
-Emphasis on statistical <span style="color:darkred;">significance</span>
+Emphasis on statistical ![:emphasize](significance)
 
 <br />
 
@@ -266,11 +267,11 @@ Emphasis on statistical <span style="color:darkred;">significance</span>
 --
 .pull-right[
 ### Prediction
-Make <span style="color:darkred;">predictions</span> on new data
+Make ![:emphasize](predictions) on new data
 
-Higher need for model <span style="color:darkred;">flexibility</span>
+Higher need for model ![:emphasize](flexibility)
 
-Emphasis on prediction <span style="color:darkred;">accuracy</span>
+Emphasis on prediction ![:emphasize](accuracy)
 
 <br />
 
@@ -284,11 +285,11 @@ Emphasis on prediction <span style="color:darkred;">accuracy</span>
 ## A Tale of Two Traditions
 .pull-left[
 ### Classical Statistics
-Tend to emphasize inference
+Tend to emphasize ![:emphasize](inference)
 
-Tend to value model interpretability
+Tend to value model ![:emphasize](interpretability)
 
-Tend to use top-down assumptions
+Tend to use ![:emphasize](top-down) assumptions
 
 <br />
 
@@ -301,11 +302,11 @@ Tend to use top-down assumptions
 --
 .pull-right[
 ### Machine Learning
-Tends to emphasize <span style="color:darkred;">prediction</span>
+Tends to emphasize ![:emphasize](prediction)
 
-Tends to value model <span style="color:darkred;">flexibility</span>
+Tends to value model ![:emphasize](flexibility)
 
-Tends to use <span style="color:darkred;">bottom-up</span> patterns
+Tends to use ![:emphasize](bottom-up) patterns
 
 <br />
 
@@ -319,7 +320,7 @@ Tends to use <span style="color:darkred;">bottom-up</span> patterns
 ## Types of Variable
 .pull-left[
 ### Labels / Outcomes
-Labels are the variables that we <span style="color:darkred;">want to predict</span> 
+Labels are variables that we ![:emphasize](want to predict)
 
 Labels likely *won't be available* in novel data<br />
 (e.g., difficult to collect or haven't happened yet)
@@ -334,7 +335,7 @@ include_graphics("label_icons.png")
 --
 .pull-right[
 ### Features / Predictors
-Features are the variables that <span style="color:darkred;">help predict the labels</span>
+Features are variables that ![:emphasize](help predict the labels)
 
 Features likely *will be available* in novel data<br />
 (e.g., easier to collect or have already happened)
@@ -351,9 +352,9 @@ include_graphics("feature_icons.png")
 ## Types of Learning
 .pull-left[
 ### Supervised Learning
-Algorithm is given <span style="color:darkred;">features and labels</span><br /> and tries to "map" between them
+Algorithm is given ![:emphasize](features and labels)<br /> and tries to "map" between them
 
-Can we <span style="color:darkred;">predict the labels</span> from the<br />values that the features take on?
+Can we ![:emphasize](predict the labels) from the<br />values that the features take on?
 
 ```{r supervised_example, echo=FALSE}
 include_graphics("supervised_example.png")
@@ -363,7 +364,7 @@ include_graphics("supervised_example.png")
 --
 .pull-right[
 ### Unsupervised Learning
-Algorithm is given <span style="color:darkred;">features only</span><br />and looks for patterns within them
+Algorithm is given ![:emphasize](features only)<br />and looks for patterns within them
 
 Can we find subgroups/clusters or latent dimensions/embeddings in the data?
 
