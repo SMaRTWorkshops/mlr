@@ -233,7 +233,7 @@ Be **patient** with yourself and others
 ]
 ---
 class: inverse, center, middle
-# Small Group Icebreakers
+# Icebreakers
 ---
 class: onecol
 ## Icebreakers
@@ -266,12 +266,11 @@ When algorithms learn from (i.e., are **trained on**) data, they create **models
 
 &lt;p style="padding-top:20px;"&gt;This workshop is all about applying ML algorithms to create ![:emphasize](predictive models)&lt;/p&gt;
 
-The goal will be to **predict unknown values** of important variables **in new data**&lt;sup&gt;2&lt;/sup&gt;
+The goal will be to **predict unknown values** of important variables **in new data**
 
 .footnote[
 [1] ML models are commonly used for prediction, data mining, and data generation.
-
-[2] This goal differs a bit from that of the inferential modeling you are probably used to.]
+]
 
 
 ---
@@ -327,13 +326,16 @@ When labels have categorical values, predicting them is called ![:emphasize](cla
 
 .footnote[*Unsupervised learning* (AKA data mining) has no explicit labels and just looks for patterns within the features.]
 ---
+class: onecol
+## Modes of Predictive Modeling
+
 .pull-left[
-## Regression
+.center[**Regression**]
 &lt;img src="Day_1A_files/figure-html/regression_example-1.png" width="100%" /&gt;
 ]
 --
 .pull-right[
-## Classification
+.center[**Classification**]
 &lt;img src="Day_1A_files/figure-html/classification_example-1.png" width="100%" /&gt;
 
 ]
@@ -343,7 +345,7 @@ When labels have categorical values, predicting them is called ![:emphasize](cla
 
 .pull-left[
 ### Question 1
-**The features are &lt;span style="text-decoration: underline; white-space: pre;"&gt;           &lt;/span&gt; and the labels are &lt;span style="text-decoration: underline; white-space: pre;"&gt;           &lt;/span&gt;?**
+**The features are &lt;span style="text-decoration: underline; white-space: pre;"&gt;           &lt;/span&gt; and the labels are &lt;span style="text-decoration: underline; white-space: pre;"&gt;           &lt;/span&gt;.**
 
 a) physiological signals; physiological signals
 
@@ -472,7 +474,7 @@ class: onecol
 &lt;span style="font-size:30px;"&gt;Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.&lt;/span&gt;
 
 .pull-left[
-### Question 1
+### Question 3
 **Calculating the length of each tweet is &lt;span style="text-decoration: underline; white-space: pre;"&gt;           &lt;/span&gt;?**
 
 a) Feature Engineering
@@ -485,7 +487,7 @@ d) Model Evaluation
 ]
 
 .pull-right[
-### Question 2
+### Question 4
 **When should problems with the data be found?**
 
 a) Model Evaluation
@@ -534,9 +536,9 @@ However, with this great power and flexibility comes the looming **danger of ove
 
 Thus, much of ML research is about finding ways to **detect** and **counteract** overfitting
 
-A key approach is to use two sets of data:
+For detection, we need two sets of data:
 
-![:emphasize](Training set): used to learn patterns
+![:emphasize](Training set): used to learn relationships
 
 ![:emphasize](Testing set): used to evaluate performance
 ]
@@ -549,27 +551,29 @@ A key approach is to use two sets of data:
 ---
 layout: true
 ## An Example of Overfitting
+
 ---
+
 &lt;img src="Day_1A_files/figure-html/overex1-1.png" width="100%" /&gt;
 ---
 .pull-left[
-.center[**Low Complexity Model**]
+.center[**Model A (Low Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex2-1.png" width="100%" /&gt;
 ]
 .pull-right[
-.center[**High Complexity Model**]
+.center[**Model B (High Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex3-1.png" width="100%" /&gt;
 ]
 ---
 count: false
 .pull-left[
-.center[**Low Complexity Model**]
+.center[**Model A (Low Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex4-1.png" width="100%" /&gt;
 Total error on training data = 31.2 (![:emphasize](High Bias))
 ]
 
 .pull-right[
-.center[**High Complexity Model**]
+.center[**Model B (High Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex5-1.png" width="100%" /&gt;
 Total error on training data = 0.0 (![:emphasize](Low Bias))
 ]
@@ -578,20 +582,24 @@ Total error on training data = 0.0 (![:emphasize](Low Bias))
 
 ---
 .pull-left[
+.center[**Model A (Low Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex7-1.png" width="100%" /&gt;
 ]
 
 .pull-right[
+.center[**Model B (High Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex8-1.png" width="100%" /&gt;
 ]
 ---
 count: false
 .pull-left[
+.center[**Model A (Low Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex9-1.png" width="100%" /&gt;
 Total error on testing set = 17.4 (![:emphasize](Low Variance))
 ]
 
 .pull-right[
+.center[**Model B (High Complexity)**]
 &lt;img src="Day_1A_files/figure-html/overex10-1.png" width="100%" /&gt;
 Total error on testing set = 41.6 (![:emphasize](High Variance))
 ]
@@ -607,20 +615,22 @@ In ML, ![:emphasize](variance) is a lack of predictive accuracy in new data (the
 
 &lt;p style="padding-top:25px;"&gt;An ideal predictive model would have both low bias and low variance&lt;/p&gt;
 
-However, there is often an inherent &lt;b&gt;trade-off between bias and variance&lt;/b&gt;
+However, there is often an inherent &lt;b&gt;trade-off between bias and variance&lt;/b&gt;&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[[1] To increase our testing set performance, we often need to worsen our performance in the training set.]
 
 --
 
-&lt;p style="padding-top:25px;"&gt;It is often necessary to willingly take on bias &lt;b&gt;in order to lower variance&lt;/b&gt;&lt;/p&gt;
+&lt;p style="padding-top:25px;"&gt;We want to find the model that is &lt;b&gt;as simple as possible&lt;/b&gt; but &lt;b&gt;no simpler&lt;/b&gt;&lt;/p&gt;
 
-We want to find the model that is **as simple as possible** but **no simpler**
+
 
 ---
 ## A Graphical Explanation of Overfitting
 &lt;img src="overfitting.png" width="100%" /&gt;
 
 ---
-## A Memetic Explanation of Overfitting
+## A Meme-based Explanation of Overfitting
 &lt;img src="overfitting_lay.png" width="100%" /&gt;
 
 ---
@@ -628,7 +638,7 @@ We want to find the model that is **as simple as possible** but **no simpler**
 &lt;span style="font-size:30px;"&gt;Sam used all emails in his inbox to create an ML model to classify emails as "work-related" or "personal." Its accuracy on these emails was 98%.&lt;/span&gt;
 
 .pull-left[
-### Question 1
+### Question 5
 **Is Sam done with this ML project?**
 
 a) Yes, he should sell this model right now!
@@ -641,7 +651,7 @@ d) No, his model needs to capture more noise
 ]
 
 .pull-right[
-### Question 2
+### Question 6
 **Which problems has Sam already addressed?**
 
 a) Overfitting
@@ -660,19 +670,21 @@ class: onecol
 ## Cross-Validation
 There are some clever algorithmic tricks to prevent overfitting
 
-The main approach, however, is to use ![:emphasize](cross-validation)
+- For example, we can penalize the model for adding complexity
+
+The main approach, however, is to use ![:emphasize](cross-validation):
 
 --
 
-&lt;p style="padding-top:20px;"&gt;The &lt;b&gt;data is split&lt;/b&gt; into two (or more) independent subsets&lt;/p&gt;
+- Multiple **fully independent** sets of data are created (by subsetting or resampling)
 
-Data for training and testing the algorithm are kept **fully independent**
+- Some sets are used for training (and tuning) and other sets are used for testing
 
---
+- **Model evaluation is always done on data that were not used to train the model**
 
-&lt;p style="padding-top:20px;"&gt;Performance is &lt;b&gt;more important in the testing set&lt;/b&gt; than in the training set&lt;/p&gt;
+- This way, if performance looks good, we can worry less about variance/overfitting&lt;sup&gt;1&lt;/sup&gt;
 
-This process **may be repeated** multiple times with different data splits
+.footnote[[1] Although we always need to worry somewhat about whether the original data was itself representative.]
 ---
 # Holdout Cross-Validation
 &lt;img src="holdout.png" width="100%" /&gt;
@@ -694,29 +706,23 @@ count: false
 ---
 class: onecol
 ## Advanced Cross-Validation
-Cross-validation helps **mitigate overfitting** and estimate **out-of-sample** performance
-
-There are many different cross-validation strategies, but **10-fold CV** is a great default
-
---
-
-&lt;p style="padding-top:20px;"&gt;In practice, cross-validation is often &lt;b&gt;nested&lt;/b&gt; such that&lt;/p&gt;
+Cross-validation can also be **nested** to let the model tune on unseen data:
 
  - An outer loop (applied to the original data) is used for *model evaluation*
 
  - An inner loop (applied to the training set) is used for *model tuning*
 
---
-
-&lt;p style="padding-top:20px;"&gt;Cross-validation can also be **stratified** to keep the splits relatively similar&lt;/p&gt;
+Cross-validation can also be **stratified** to keep the sets relatively similar
 
 Cross-validation can also be **repeated** to avoid problems with any single split
+
+.footnote[A great default procedure is nested, stratified, and 3x repeated 10-fold cross-validation.]
 ---
 ## Knowledge check
 &lt;span style="font-size:30px;"&gt;Bogdan collects data from 1000 patients. He assigns patients 1 to 800&lt;br /&gt;to be in his training set and patients 700 to 1000 to be in his testing set.&lt;/span&gt;
 
 .pull-left[
-### Question 1
+### Question 7
 **What major mistake did Bogdan make?**
 
 a) He used a testing set instead of a holdout set
@@ -729,7 +735,7 @@ d) He did not use k-fold cross-validation
 ]
 
 .pull-right[
-### Question 2
+### Question 8
 **Which step should not be done in the training set?**
 
 a) Exploratory Analysis
@@ -763,7 +769,7 @@ We will jump between rooms to join discussions and answer questions
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_60db6d7a" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60db8d76" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>

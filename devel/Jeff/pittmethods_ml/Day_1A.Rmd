@@ -209,7 +209,7 @@ Be **patient** with yourself and others
 ]
 ---
 class: inverse, center, middle
-# Small Group Icebreakers
+# Icebreakers
 ---
 class: onecol
 ## Icebreakers
@@ -242,12 +242,11 @@ When algorithms learn from (i.e., are **trained on**) data, they create **models
 
 <p style="padding-top:20px;">This workshop is all about applying ML algorithms to create ![:emphasize](predictive models)</p>
 
-The goal will be to **predict unknown values** of important variables **in new data**<sup>2</sup>
+The goal will be to **predict unknown values** of important variables **in new data**
 
 .footnote[
 [1] ML models are commonly used for prediction, data mining, and data generation.
-
-[2] This goal differs a bit from that of the inferential modeling you are probably used to.]
+]
 
 
 ---
@@ -311,8 +310,11 @@ include_graphics("classification_diagram.png")
 
 .footnote[*Unsupervised learning* (AKA data mining) has no explicit labels and just looks for patterns within the features.]
 ---
+class: onecol
+## Modes of Predictive Modeling
+
 .pull-left[
-## Regression
+.center[**Regression**]
 ```{r regression_example, echo=FALSE, fig.height=3, fig.width=4}
 set.seed(2021)
 signal <- function(x) {sin(2*pi*x)}
@@ -350,7 +352,7 @@ ggplot(dat) +
 ]
 --
 .pull-right[
-## Classification
+.center[**Classification**]
 ```{r classification_example, echo=FALSE, fig.height=3, fig.width=4}
 set.seed(2021)
 x_data <- rnorm(50, 100, 15)
@@ -384,7 +386,7 @@ ggplot(dat) +
 
 .pull-left[
 ### Question 1
-**The features are <span style="text-decoration: underline; white-space: pre;">           </span> and the labels are <span style="text-decoration: underline; white-space: pre;">           </span>?**
+**The features are <span style="text-decoration: underline; white-space: pre;">           </span> and the labels are <span style="text-decoration: underline; white-space: pre;">           </span>.**
 
 a) physiological signals; physiological signals
 
@@ -525,7 +527,7 @@ include_graphics("target.jpg")
 <span style="font-size:30px;">Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.</span>
 
 .pull-left[
-### Question 1
+### Question 3
 **Calculating the length of each tweet is <span style="text-decoration: underline; white-space: pre;">           </span>?**
 
 a) Feature Engineering
@@ -538,7 +540,7 @@ d) Model Evaluation
 ]
 
 .pull-right[
-### Question 2
+### Question 4
 **When should problems with the data be found?**
 
 a) Model Evaluation
@@ -658,9 +660,9 @@ However, with this great power and flexibility comes the looming **danger of ove
 
 Thus, much of ML research is about finding ways to **detect** and **counteract** overfitting
 
-A key approach is to use two sets of data:
+For detection, we need two sets of data:
 
-![:emphasize](Training set): used to learn patterns
+![:emphasize](Training set): used to learn relationships
 
 ![:emphasize](Testing set): used to evaluate performance
 ]
@@ -675,7 +677,9 @@ include_graphics("kryptonite.png")
 ---
 layout: true
 ## An Example of Overfitting
+
 ---
+
 ```{r overex1, echo=FALSE}
 set.seed(2021)
 training <- data.frame(
@@ -704,7 +708,7 @@ ggplot(training, aes(x, y)) +
 ```
 ---
 .pull-left[
-.center[**Low Complexity Model**]
+.center[**Model A (Low Complexity)**]
 ```{r overex2, echo=FALSE, fig.width=4, fig.height = 3}
 ggplot(training, aes(x, y)) + 
   geom_point(size = 6, color = "#d95f02") +
@@ -716,7 +720,7 @@ ggplot(training, aes(x, y)) +
 ```
 ]
 .pull-right[
-.center[**High Complexity Model**]
+.center[**Model B (High Complexity)**]
 ```{r overex3, echo=FALSE, fig.width=4, fig.height = 3}
 ggplot(training, aes(x, y)) + 
   geom_point(size = 6, color = "#d95f02") +
@@ -729,7 +733,7 @@ ggplot(training, aes(x, y)) +
 ---
 count: false
 .pull-left[
-.center[**Low Complexity Model**]
+.center[**Model A (Low Complexity)**]
 ```{r overex4, echo=FALSE, fig.width=4, fig.height = 3}
 ggplot(training, aes(x, y)) + 
   geom_point(size = 6, color = "#d95f02") +
@@ -743,7 +747,7 @@ Total error on training data = `r sum(abs(lm(y~x, training)$residuals))` (![:emp
 ]
 
 .pull-right[
-.center[**High Complexity Model**]
+.center[**Model B (High Complexity)**]
 ```{r overex5, echo=FALSE, fig.width=4, fig.height = 3}
 ggplot(training, aes(x, y)) + 
   geom_point(size = 6, color = "#d95f02") +
@@ -769,6 +773,7 @@ ggplot(mapping = aes(x, y)) +
 
 ---
 .pull-left[
+.center[**Model A (Low Complexity)**]
 ```{r overex7, echo=FALSE, fig.width=4, fig.height=3}
 ggplot(mapping = aes(x, y)) +
   geom_point(
@@ -791,6 +796,7 @@ ggplot(mapping = aes(x, y)) +
 ]
 
 .pull-right[
+.center[**Model B (High Complexity)**]
 ```{r overex8, echo=FALSE, fig.width=4, fig.height=3}
 ggplot(mapping = aes(x, y)) +
   geom_point(
@@ -815,6 +821,7 @@ ggplot(mapping = aes(x, y)) +
 ---
 count: false
 .pull-left[
+.center[**Model A (Low Complexity)**]
 ```{r overex9, echo=FALSE, fig.width=4, fig.height=3}
 ggplot(mapping = aes(x, y)) +
   geom_point(
@@ -838,6 +845,7 @@ Total error on testing set = `r sum(abs(testing$y - predict(lm(y~x, training), n
 ]
 
 .pull-right[
+.center[**Model B (High Complexity)**]
 ```{r overex10, echo=FALSE, fig.width=4, fig.height=3}
 ggplot(mapping = aes(x, y)) +
   geom_point(
@@ -872,13 +880,15 @@ In ML, ![:emphasize](variance) is a lack of predictive accuracy in new data (the
 
 <p style="padding-top:25px;">An ideal predictive model would have both low bias and low variance</p>
 
-However, there is often an inherent <b>trade-off between bias and variance</b>
+However, there is often an inherent <b>trade-off between bias and variance</b><sup>1</sup>
+
+.footnote[[1] To increase our testing set performance, we often need to worsen our performance in the training set.]
 
 --
 
-<p style="padding-top:25px;">It is often necessary to willingly take on bias <b>in order to lower variance</b></p>
+<p style="padding-top:25px;">We want to find the model that is <b>as simple as possible</b> but <b>no simpler</b></p>
 
-We want to find the model that is **as simple as possible** but **no simpler**
+
 
 ---
 ## A Graphical Explanation of Overfitting
@@ -887,7 +897,7 @@ include_graphics("overfitting.png")
 ```
 
 ---
-## A Memetic Explanation of Overfitting
+## A Meme-based Explanation of Overfitting
 ```{r overmeme, echo=FALSE}
 include_graphics("overfitting_lay.png")
 ```
@@ -897,7 +907,7 @@ include_graphics("overfitting_lay.png")
 <span style="font-size:30px;">Sam used all emails in his inbox to create an ML model to classify emails as "work-related" or "personal." Its accuracy on these emails was 98%.</span>
 
 .pull-left[
-### Question 1
+### Question 5
 **Is Sam done with this ML project?**
 
 a) Yes, he should sell this model right now!
@@ -910,7 +920,7 @@ d) No, his model needs to capture more noise
 ]
 
 .pull-right[
-### Question 2
+### Question 6
 **Which problems has Sam already addressed?**
 
 a) Overfitting
@@ -929,19 +939,21 @@ class: onecol
 ## Cross-Validation
 There are some clever algorithmic tricks to prevent overfitting
 
-The main approach, however, is to use ![:emphasize](cross-validation)
+- For example, we can penalize the model for adding complexity
+
+The main approach, however, is to use ![:emphasize](cross-validation):
 
 --
 
-<p style="padding-top:20px;">The <b>data is split</b> into two (or more) independent subsets</p>
+- Multiple **fully independent** sets of data are created (by subsetting or resampling)
 
-Data for training and testing the algorithm are kept **fully independent**
+- Some sets are used for training (and tuning) and other sets are used for testing
 
---
+- **Model evaluation is always done on data that were not used to train the model**
 
-<p style="padding-top:20px;">Performance is <b>more important in the testing set</b> than in the training set</p>
+- This way, if performance looks good, we can worry less about variance/overfitting<sup>1</sup>
 
-This process **may be repeated** multiple times with different data splits
+.footnote[[1] Although we always need to worry somewhat about whether the original data was itself representative.]
 ---
 # Holdout Cross-Validation
 ```{r, echo=FALSE}
@@ -971,29 +983,23 @@ include_graphics("kfold2.png")
 ---
 class: onecol
 ## Advanced Cross-Validation
-Cross-validation helps **mitigate overfitting** and estimate **out-of-sample** performance
-
-There are many different cross-validation strategies, but **10-fold CV** is a great default
-
---
-
-<p style="padding-top:20px;">In practice, cross-validation is often <b>nested</b> such that</p>
+Cross-validation can also be **nested** to let the model tune on unseen data:
 
  - An outer loop (applied to the original data) is used for *model evaluation*
 
  - An inner loop (applied to the training set) is used for *model tuning*
 
---
-
-<p style="padding-top:20px;">Cross-validation can also be **stratified** to keep the splits relatively similar</p>
+Cross-validation can also be **stratified** to keep the sets relatively similar
 
 Cross-validation can also be **repeated** to avoid problems with any single split
+
+.footnote[A great default procedure is nested, stratified, and 3x repeated 10-fold cross-validation.]
 ---
 ## Knowledge check
 <span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
 
 .pull-left[
-### Question 1
+### Question 7
 **What major mistake did Bogdan make?**
 
 a) He used a testing set instead of a holdout set
@@ -1006,7 +1012,7 @@ d) He did not use k-fold cross-validation
 ]
 
 .pull-right[
-### Question 2
+### Question 8
 **Which step should not be done in the training set?**
 
 a) Exploratory Analysis
