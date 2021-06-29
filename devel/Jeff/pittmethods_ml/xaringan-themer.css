@@ -105,7 +105,7 @@ h1, h2, h3 {
 .remark-slide-number {
   color: #23395b;
   opacity: 1;
-  font-size: 0.9em;
+  font-size: 18px;
 }
 strong { color: var(--text-bold-color); }
 a, a > code {
@@ -114,9 +114,10 @@ a, a > code {
 }
 .footnote {
   position: absolute;
+  color: gray;
   bottom: 60px;
   padding-right: 4em;
-  font-size: 0.9em;
+  font-size: 20px;
 }
 .remark-code-line-highlighted {
   background-color: var(--code-highlight-color);

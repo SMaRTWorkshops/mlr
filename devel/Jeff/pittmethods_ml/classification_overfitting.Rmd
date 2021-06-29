@@ -1,0 +1,191 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidymodels)
+data(ames)
+ames <- mutate(ames, Sale_Price = log10(Sale_Price))
+
+set.seed(123)
+ames_split <- initial_split(ames, prop = 0.80, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test  <-  testing(ames_split)
+
+ames_rec <- 
+  recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + 
+           Latitude + Longitude, data = ames_train) %>%
+  step_log(Gr_Liv_Area, base = 10) %>% 
+  step_other(Neighborhood, threshold = 0.01) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_") ) %>% 
+  step_ns(Latitude, Longitude, deg_free = 20)
+
+lm_model <- linear_reg() %>% set_engine("lm")
+
+lm_wflow <- 
+  workflow() %>% 
+  add_model(lm_model) %>% 
+  add_recipe(ames_rec)
+
+# cached in RData/lm_fit.RData
+# lm_fit <- fit(lm_wflow, ames_train)
+
+rf_model <- 
+  rand_forest(trees = 1000) %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression")
+
+rf_wflow <- 
+  workflow() %>% 
+  add_formula(
+    Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + 
+      Latitude + Longitude) %>% 
+  add_model(rf_model) 
+
+set.seed(55)
+ames_folds <- vfold_cv(ames_train, v = 10)
+```
+
+```{r}
+knitr::opts_chunk$set(fig.path = "figures/")
+library(tidymodels)
+library(patchwork)
+library(ggforce)
+
+tidymodels_prefer()
+
+## -----------------------------------------------------------------------------
+
+# source("ames_snippets.R")
+
+## -----------------------------------------------------------------------------
+
+data(two_class_dat)
+
+set.seed(2021)
+split <- initial_split(two_class_dat)
+
+training_set <- training(split)
+testing_set  <-  testing(split)
+
+data_grid <- crossing(A = seq(0.4, 4, length = 200), B = seq(.14, 3.9, length = 200))
+
+## -----------------------------------------------------------------------------
+
+# load("RData/search_examples.RData")
+```
+
+```{r}
+tr_data <- 
+  ggplot(training_set, aes(x = A, y = B, shape = Class, fill = Class)) + 
+  geom_point(alpha = .5, size = 2.5) + 
+  labs(title = "Training Set", x = "feature 1", y = "feature 2", fill = "label", shape = "label") +
+  scale_fill_manual(values = c("#d8b365", "#5ab4ac")) +
+  scale_shape_manual(values = c(21, 22)) +
+  coord_equal(xlim = c(0, 4), ylim = c(0, 4)) +
+  theme_classic(base_size = 20)
+
+te_data <- 
+  ggplot(testing_set, aes(x = A, y = B, shape = Class, fill = Class)) + 
+  geom_point(alpha = .5, size = 2.5) + 
+    scale_fill_manual(values = c("#d8b365", "#5ab4ac")) +
+  scale_shape_manual(values = c(21, 22)) +
+  labs(title = "Test Set", x = "feature 1", y = "feature 2", fill = "label", shape = "label") +
+  coord_equal(xlim = c(0, 4), ylim = c(0, 4)) +
+  theme_classic(base_size = 20)
+
+(tr_data | te_data) + plot_layout(guides = "collect")
+
+ggsave("classes_data.png", width = 12.33, height = 5, units = "in")
+```
+
+```{r}
+two_class_rec <-
+ recipe(Class ~ ., data = two_class_dat) %>% 
+ step_normalize(all_numeric_predictors()) 
+
+mlp_mod <- 
+ mlp(hidden_units = tune(), epochs = 1000) %>% 
+ set_engine("nnet") %>%
+ set_mode("classification")
+
+mlp_wflow <- 
+ workflow() %>% 
+ add_recipe(two_class_rec) %>% 
+ add_model(mlp_mod)
+
+mlp_res <-
+ tibble(
+  hidden_units = 1:20,
+  train = NA_real_,
+  test = NA_real_,
+  model = vector(mode = "list", length = 20)
+ )
+
+for(i in 1:nrow(mlp_res)) {
+  set.seed(30)
+ tmp_mod <-
+  mlp_wflow %>% finalize_workflow(mlp_res %>% slice(i) %>% select(hidden_units)) %>%
+  fit(training_set)
+ mlp_res$train[i] <-
+  roc_auc_vec(training_set$Class, predict(tmp_mod, training_set, type = "prob")$.pred_Class1)
+ mlp_res$test[i]  <-
+  roc_auc_vec(testing_set$Class, predict(tmp_mod, testing_set, type = "prob")$.pred_Class1)
+ mlp_res$model[[i]] <- tmp_mod
+}
+```
+
+```{r}
+te_plot <- 
+  mlp_res %>% 
+  slice(c(1, 5, 15)) %>% 
+  mutate(
+    probs = map(model, ~ bind_cols(data_grid, predict(.x, data_grid, type = "prob")))
+  ) %>% 
+  dplyr::select(hidden_units, probs) %>% 
+  unnest(cols = c(probs)) %>% 
+  mutate(
+    label = paste(format(hidden_units), "units"),
+    label = ifelse(label == " 1 units", " 1 unit", label)
+  ) %>% 
+  ggplot(aes(x = A, y = B)) + 
+  geom_point(data = testing_set, aes(fill = Class, shape = Class), alpha = .5, size = 2.5, show.legend = FALSE) + 
+  geom_contour(aes( z = .pred_Class1), breaks = 0.5, col = "black", size = 1) + 
+  facet_wrap(~ label, nrow = 1) + 
+  scale_fill_manual(values = c("#d8b365", "#5ab4ac")) +
+  scale_shape_manual(values = c(21, 22)) +
+  coord_equal() + 
+  ggtitle("Test Set") + 
+  labs(x = "feature 1", y = "feature 2") +
+  theme_classic(base_size = 20)
+te_plot
+ggsave("test_set.png", width = 12.33, height = 5, units = "in")
+
+tr_plot <- 
+  mlp_res %>% 
+  slice(c(1, 5, 15)) %>% 
+  mutate(
+    probs = map(model, ~ bind_cols(data_grid, predict(.x, data_grid, type = "prob")))
+  ) %>% 
+  dplyr::select(hidden_units, probs) %>% 
+  unnest(cols = c(probs)) %>% 
+  mutate(
+    label = paste(format(hidden_units), "units"),
+    label = ifelse(label == " 1 units", " 1 unit", label)
+  ) %>% 
+  ggplot(aes(x = A, y = B)) + 
+  geom_point(data = training_set,  aes(fill = Class, shape = Class), alpha = .5, size = 2.5, show.legend = FALSE) + 
+  geom_contour(aes( z = .pred_Class1), breaks = 0.5, col = "black", size = 1) + 
+  facet_wrap(~ label, nrow = 1) + 
+  scale_fill_manual(values = c("#d8b365", "#5ab4ac")) +
+  scale_shape_manual(values = c(21, 22)) +
+  coord_equal() + 
+  ggtitle("Training Set") + 
+  labs(x = "feature 1", y = "feature 2") +
+  theme_classic(base_size = 20)
+tr_plot
+ggsave("train_set.png", width = 12.33, height = 5, units = "in")
+```
+

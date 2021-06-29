@@ -31,7 +31,10 @@ knitr::opts_chunk$set(
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
 library(xaringanthemer)
 style_mono_light(
-  base_color = "#23395b"
+  base_color = "#23395b",
+  footnote_font_size = "20px",
+  footnote_color = "gray",
+  text_slide_number_font_size = "18px"
 )
 ```
 
@@ -45,12 +48,22 @@ library(patchwork)
 
 class: inverse, center, middle
 # Workshop Overview
+
+<style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+</style>
 ---
-## Instructor Profiles
+class: twocol
+## Jeffrey Girard
 
 .pull-left[
-#### Jeffrey Girard
-Assistant Professor<br />Department of Psychology<br />University of Kansas
+Assistant Professor<br />
+University of Kansas
 
 **Research Areas**
 - Affective Science
@@ -69,15 +82,17 @@ Assistant Professor<br />Department of Psychology<br />University of Kansas
 include_graphics("jg_headshot.jpeg")
 ```
 
-[www.jmgirard.com](https://www.jmgirard.com)<br />[jmgirard@ku.edu](mailto:jmgirard@ku.edu)<br /> [@jeffreymgirard](https://twitter.com/jeffreymgirard)
+[www.jmgirard.com](https://www.jmgirard.com)<br /> [jmgirard@ku.edu](mailto:jmgirard@ku.edu)<br /> [@jeffreymgirard](https://twitter.com/jeffreymgirard)
 ]
 ]
 ---
-## Instructor Profiles
+class: twocol
+
+##Shirley Wang
 
 .pull-left[
-#### Shirley Wang
-Doctoral Candidate<br />Department of Psychology<br />Harvard University
+Doctoral Candidate<br />
+Harvard University
 
 **Research Areas**
 - Area 1
@@ -96,26 +111,27 @@ Doctoral Candidate<br />Department of Psychology<br />Harvard University
 include_graphics("sw_headshot.jpeg")
 ```
 
-[shirleywang.rbind.io](https://shirleywang.rbind.io/)<br />[shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)<br /> [@ShirleyBWang](https://twitter.com/ShirleyBWang)
+[shirleywang.rbind.io](https://shirleywang.rbind.io/)<br /> [shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)<br /> [@ShirleyBWang](https://twitter.com/ShirleyBWang)
 ]
 ]
 ---
+class: twocol
+
 ## Goals and Timeline
 .pull-left[
-#### Workshop Goals
-Build a foundation of concepts and skills
+**Build a foundation** of concepts and skills
 
-Describe every step from start to finish
+**Describe every step** from start to finish
 
-Emphasize the practical and applied aspects
+Emphasize **practical and applied** aspects
 
 Provide intuitions rather than lots of theory
 
-Dive deeper into a smaller number of algorithms
+Dive deeper into a few algorithms
 
-Highlight the algorithms "best" for this audience
+Highlight algorithms good for beginners
 
-Communicate the pros and cons of different choices
+Communicate the pros and cons of choices
 ]
 
 --
@@ -130,84 +146,78 @@ timeline <- tribble(
   "2-B", "Regularized regression", "SW",
   "3-A", "Cross-validation and tuning", "JG",
   "3-B", "Decision trees", "SW",
-  "4-A", "Random forests", "JG",
+  "4-A", "Random forests","JG",
   "4-B", "Practical issues", "SW",
-  "5-A", "Challenges and future directions", "Both",
+  "5-A", "Challenges and next steps", "Both",
   "5-B", "Hackathon and consultation", "Both"
 )
-kable(timeline, format = "html") %>% kable_styling()
+kable(timeline, format = "html") %>% kable_styling(font_size = 20)
 ```
 ]
 ---
+class: twocol
 ## Format and Materials
 .pull-left[
-Each workshop day will have two parts (A and B)
+Each workshop day will have **two parts**
 
-Each part will have some *lecture* and *live coding*
+Most parts will have **lecture** and **live coding**
 
-Each part will have some hands-on activities
+Most parts will have hands-on **activities**
 
-We will take a short break after the first part
-
-The non-lead instructor can help during lecture
+We will take a **~10m break** after the first part
 ]
 --
 .pull-right[
-Course materials are posted on both Github and OSF
+Course materials are on Github and OSF
 
 - [github.com/ShirleyBWang/pittmethods_ml](https://github.com/ShirleyBWang/pittmethods_ml)
 
 - [osf.io/3qhc8](https://osf.io/3qhc8)
 
-You can download slides, code, and data from either
-
-Materials are covered by a "CC-By Attribution" license
+You can download and re-use the materials according to our "CC-By Attribution" license
 ]
+
+.footnote[A few inspirations for this workshop include [Applied Predictive Modeling](http://appliedpredictivemodeling.com/), [Tidy Modeling with R](https://www.tmwr.org/), and [StatQuest](https://statquest.org/).]
 ---
+class: twocol
 ## Etiquette and Responsibilities
 .pull-left[
-Behave professionally in chat, audio, and video
+**Behave professionally** at all times
 
-Stay on topic in chat to minimize distractions
+Stay on topic and **minimize distractions**
 
-Post questions in chat or "Raise Hand" in Zoom
+**Stay muted** unless talking to minimize noise
 
-Mute yourself when in main room unless talking
+Ask **questions** in chat or use "Raise Hand"
 
-Clarifications and general questions are welcome
+Be **respectful** to everyone in the workshop
 
-Save idiosyncratic questions for consultations
-
-Be patient and respectful with yourself and others
+Be **patient** with yourself and others
 ]
 --
 .pull-right[
-**You are free to:**
+![:emphasize](You have the right to:)
 
-Turn your camera on or off as you prefer
-
-Arrive late and depart early if needed or desired
-
-Ask for help with workshop content and technology
-
-Share your ideas and opinions respectfully
-
-Use workshop materials according to the license
-
-Contact the instructors during/after the workshop
+- Be **treated with respect** at all times
+- Turn your **camera on or off**
+- **Arrive and depart** whenever needed
+- **Ask for help** with workshop content
+- **Share your opinions** respectfully
+- **Reuse materials** according to the license
+- Receive **reasonable accommodations**
+- **Contact the instructors** by email
 ]
 ---
 class: inverse, center, middle
 # Small Group Icebreakers
 ---
+class: onecol
 ## Icebreakers
 We will randomly assign everyone to one of two breakout rooms
 
-Each breakout room will be led by one of the instructors
-
 Each person will have *up to one minute* to introduce themselves
 
-In addition to sharing your name, please answer these questions:
+In addition to **sharing your name**, please answer these questions:
 
 1. Where are you joining us from?
 2. What field(s) do you work in?
@@ -221,109 +231,35 @@ If you would prefer not to share, please indicate that in chat
 class: inverse, center, middle
 # Conceptual Introduction
 ---
+class: onecol
 ## What is machine learning?
-Machine learning (ML) is a ![:emphasize](branch of computer science)
 
-The goal of ML is to ![:emphasize](develop algorithms) that ![:emphasize](learn from data)
+The field of machine learning (ML) is a **branch of computer science**
 
-ML algorithms learn by finding ![:emphasize](connections and patterns) in the data
+ML researchers **develop algorithms** with the capacity to ![:emphasize](learn from data)
 
---
+When algorithms learn from (i.e., are **trained on**) data, they create **models**<sup>1</sup>
 
-<p style="padding-top:20px;">ML is a large discipline with many subfields that we won't touch upon</p>
+<p style="padding-top:20px;">This workshop is all about applying ML algorithms to create ![:emphasize](predictive models)</p>
 
-Many forms of ML are more applicable to ![:emphasize](engineers) than to scientists
+The goal will be to **predict unknown values** of important variables **in new data**<sup>2</sup>
 
-But some forms of ML make great additions to your scientific toolkit
+.footnote[
+[1] ML models are commonly used for prediction, data mining, and data generation.
 
---
+[2] This goal differs a bit from that of the inferential modeling you are probably used to.]
 
-<p style="padding-top:20px;">ML has similar goals to classical statistics but different values and norms</p>
-
-Because they developed separately, talking across statistics and ML can be hard
-
-But there is interdisciplinary work trying to merge ML and classical statistics
 
 ---
-## Types of Modeling
+class: twocol
+
 .pull-left[
-### Inference
-Draw ![:emphasize](conclusions) about the data
+## Labels / Outcomes
+Labels are variables we ![:emphasize](want to predict)<br />the values of (because they are unknown)
 
-Higher need for model ![:emphasize](interpretability)
+Labels tend to be expensive or difficult to measure in new data (though are known in some existing data that we can learn from)
 
-Emphasis on statistical ![:emphasize](significance)
-
-<br />
-
-- *Is self-control associated with truancy?*
-
-- *Which dosages of a drug are safe?*
-
-- *Which personality traits predict the<br />amount of positive emotion shown?*
-]
---
-.pull-right[
-### Prediction
-Make ![:emphasize](predictions) on new data
-
-Higher need for model ![:emphasize](flexibility)
-
-Emphasis on prediction ![:emphasize](accuracy)
-
-<br />
-
-- *How likely is this child to become truant?*
-
-- *What dosage is this patient likely to tolerate?*
-
-- *How much positive emotion is this person expressing in this image/video/tweet?*
-]
----
-## A Tale of Two Traditions
-.pull-left[
-### Classical Statistics
-Tend to emphasize ![:emphasize](inference)
-
-Tend to value model ![:emphasize](interpretability)
-
-Tend to use ![:emphasize](top-down) assumptions
-
-<br />
-
-- *Generalized linear modeling*
-
-- *Linear mixed effects modeling*
-
-- *Structural equation modeling*
-]
---
-.pull-right[
-### Machine Learning
-Tends to emphasize ![:emphasize](prediction)
-
-Tends to value model ![:emphasize](flexibility)
-
-Tends to use ![:emphasize](bottom-up) patterns
-
-<br />
-
-- *Support vector machines*
-
-- *Decision trees and random forests*
-
-- *Artificial neural networks*
-]
----
-## Types of Variable
-.pull-left[
-### Labels / Outcomes
-Labels are variables that we ![:emphasize](want to predict)
-
-Labels likely *won't be available* in novel data<br />
-(e.g., difficult to collect or haven't happened yet)
-
-(outcome, dependent, endogenous, or $y$ variables)
+AKA outcome, dependent, or $y$ variables
 
 ```{r label_icons, echo=FALSE}
 include_graphics("label_icons.png")
@@ -332,13 +268,12 @@ include_graphics("label_icons.png")
 ]
 --
 .pull-right[
-### Features / Predictors
-Features are variables that ![:emphasize](help predict the labels)
+## Features / Predictors
+Features are variables we ![:emphasize](use to predict)<br />the unknown values of the label variables
 
-Features likely *will be available* in novel data<br />
-(e.g., easier to collect or have already happened)
+Features tend to be relatively cheaper and easier to measure in new data than labels (and are also known in some existing data)
 
-(predictor, independent, exogenous, or $x$ variables)
+AKA predictor, independent, or $x$ variables
 
 ```{r feature_icons, echo=FALSE}
 include_graphics("feature_icons.png")
@@ -347,36 +282,11 @@ include_graphics("feature_icons.png")
 ]
 
 ---
-## Types of Learning
+class: twocol
+
+## Modes of Predictive Modeling
 .pull-left[
-### Supervised Learning
-Algorithm is given ![:emphasize](features and labels)<br /> and tries to "map" between them
-
-Can we ![:emphasize](predict the labels) from the<br />values that the features take on?
-
-```{r supervised_example, echo=FALSE}
-include_graphics("supervised_example.png")
-```
-
-]
---
-.pull-right[
-### Unsupervised Learning
-Algorithm is given ![:emphasize](features only)<br />and looks for patterns within them
-
-Can we find subgroups/clusters or latent dimensions/embeddings in the data?
-
-```{r unsupervised_example, echo=FALSE}
-include_graphics("unsupervised_example.png")
-```
-
-]
-
----
-## Modes of Supervised Learning
-.pull-left[
-### Regression
-Predict continuous, numerical values
+When labels have continuous values, predicting them is called ![:emphasize](regression)
 
 ```{r regression_diagram, echo=FALSE}
 include_graphics("regression_diagram.png")
@@ -388,21 +298,21 @@ include_graphics("regression_diagram.png")
 ]
 --
 .pull-right[
-### Classification
-Predict discrete, categorical values
+When labels have categorical values, predicting them is called ![:emphasize](classification)
 
 ```{r classification_diagram, echo=FALSE}
 include_graphics("classification_diagram.png")
 ```
 
-- *Is this email spam or non-spam?*
-- *Which candidate will this user vote for?*
-- *Is this patient's glucose low, normal, or high?*
+- *Is an email spam or non-spam?*
+- *Which candidate will a user vote for?*
+- *Is a patient's glucose low, normal, or high?*
 ]
+
+.footnote[*Unsupervised learning* (AKA data mining) has no explicit labels and just looks for patterns within the features.]
 ---
-## Modes of Supervised Learning
 .pull-left[
-### Regression
+## Regression
 ```{r regression_example, echo=FALSE, fig.height=3, fig.width=4}
 set.seed(2021)
 signal <- function(x) {sin(2*pi*x)}
@@ -417,7 +327,10 @@ dat <- tibble(
   y_data
 )
 ggplot(dat) + 
-  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  geom_point(
+    aes(x = x_data, y = y_data), 
+    shape = 21, size = 3, fill = "black", alpha = 1/3
+  ) + 
   stat_smooth(
     aes(x = x_data, y = y_data), 
     method = "lm",
@@ -428,7 +341,7 @@ ggplot(dat) +
   ) +
   coord_cartesian(xlim = c(0, 1)) +
   labs(x = "feature", y = "label") +
-  theme_xaringan(text_font_size = 16) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
   theme(
     panel.grid.minor = element_blank(), 
     panel.background = element_rect(fill = "white")
@@ -437,36 +350,30 @@ ggplot(dat) +
 ]
 --
 .pull-right[
-### Classification
+## Classification
 ```{r classification_example, echo=FALSE, fig.height=3, fig.width=4}
-set.seed(1)
-class1 <- data.frame(
-  class = rep("1", 150),
-  x = c(rnorm(25, 0, 1), rnorm(50, 0, 1), rnorm(50, 5, 2), rnorm(25, 8, 1)),
-  y = c(rnorm(25, 0, 2), rnorm(50, -5, 2), rnorm(50, 1, 1), rnorm(25, -5, 2))
-)
-class2 <- data.frame(
-  class = rep("2", 100),
-  x = rnorm(100, 4, 1),
-  y = rnorm(100, -5, 1)
-)
-dat <- bind_rows(class1, class2)
-
-ggplot(dat, aes(x = x, y = y)) + 
-  geom_point(aes(fill = class, shape = class), size = 2.5, alpha = .75) +
-  ggalt::geom_encircle(
-    data = filter(dat, class == "2"), 
-    size = 4, 
-    color = "purple"
+set.seed(2021)
+x_data <- rnorm(50, 100, 15)
+y_data <- as.integer(x_data + rnorm(50, 0, 10) > 85)
+dat <- tibble(x_data, y_data)
+ggplot(dat) + 
+  geom_point(
+    aes(x = x_data, y = y_data), 
+    shape = 21, size = 3, fill = "black", alpha = 1/3
   ) +
-  scale_fill_manual(values = c("#d8b365", "#5ab4ac")) +
-  scale_shape_manual(values = c(21, 22)) +
-  labs(x = "feature 1", y = "feature 2", fill = "label", shape = "label") +
-  theme_xaringan(text_font_size = 16) +
+  stat_smooth(
+    aes(x = x_data, y = y_data),
+    method = "glm",
+    se = FALSE,
+    method.args = list(family=binomial),
+    color = "purple",
+    size = 1.5
+  ) + 
+  labs(x = "feature", y = "label") +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
   theme(
     panel.grid.minor = element_blank(), 
-    panel.background = element_rect(fill = "white"),
-    legend.position = "none"
+    panel.background = element_rect(fill = "white")
   )
 ```
 
@@ -491,81 +398,479 @@ d) micro-seizure (yes/no); micro-seizure (yes/no)
 
 .pull-right[
 ### Question 2
-**Which type of machine learning is this?**
+**Which "mode" of predictive modeling is this?**
 
-a) Supervised regression
+a) Regression
 
-b) Supervised classification
+b) Classification
 
-c) Unsupervised regression
+c) Unsupervised learning
 
-d) Unsupervised classification
+d) All of the above
 ]
 ---
 class: inverse, center, middle
-# Modeling Workflow
+# Signal and Noise
 ---
-## Typical Workflow
+class: onecol
+
+## A Delicate Balance
+
+Any data we collect will contain a mixture of **signal** and **noise**
+
+- The "signal" represents informative patterns that generalize to new data
+- The "noise" represents distracting patterns specific to the original data
+
+We want to capture as much signal and as little noise as possible
+
+--
+
+<p style="padding-top:30px;">More complex models will allow us to capture <b>more signal</b> but also <b>more noise</b></p>
+
+![:emphasize](Overfitting): If our model is too complex, we will capture unwanted noise
+
+![:emphasize](Underfitting): If our model is too simple, we will miss important signal
+
+---
+
+## Model Complexity
+```{r complexity, echo=FALSE}
+set.seed(2021)
+signal <- function(x) {sin(2*pi*x)}
+x_linspace <- seq(0, 1, by = 0.02)
+x_data <- runif(length(x_linspace), 0, 1)
+y_true <- signal(x_linspace)
+y_data <- signal(x_data) + rnorm(length(x_data), 0, 0.25)
+dat <- tibble(
+  x_linspace,
+  x_data,
+  y_true,
+  y_data
+)
+
+p1 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm", 
+    se = FALSE,
+    formula = y ~ x, 
+    color = "blue",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Underfitting", x = "feature", y = "label") +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p2 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 4), 
+    color = "purple",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Good Fit", x = "feature", y = NULL) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p3 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 17), 
+    color = "red",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Overfitting", x = "feature", y = NULL) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+(p1 | p2 | p3) + 
+  plot_annotation(
+    theme = theme(
+      plot.background = element_rect(fill = "#E9EBEE", color = NA)
+    )
+  )
+```
+
+---
+class: twocol
+## A Super Metaphor
+.pull-left[
+What makes machine learning so amazing is its **ability to learn complex patterns**
+
+However, with this great power and flexibility comes the looming **danger of overfitting**
+
+Thus, much of ML research is about finding ways to **detect** and **counteract** overfitting
+
+A key approach is to use two sets of data:
+
+![:emphasize](Training set): used to learn patterns
+
+![:emphasize](Testing set): used to evaluate performance
+]
+
+.pull-right[
+.center[
+```{r kryptonite, echo=FALSE, out.width="67%"}
+include_graphics("kryptonite.png")
+```
+]
+]
+---
+layout: true
+
+## An Example of Overfitting
+
+---
+
+```{r overex1, echo=FALSE}
+set.seed(2021)
+training <- data.frame(
+  x = c(1:5) * 20,
+  y = c(21, 20, 28, 24, 30) * 3
+)
+testing <- data.frame(
+  x = c(1.5, 2, 3, 4.5) * 20,
+  y = c(22, 24, 22, 27) * 3
+)
+alldata <- bind_rows(training, testing, .id = "dataset") %>%
+  mutate(dataset = factor(dataset, labels = c("training", "testing")))
+
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+
+---
+count: false
+
+.pull-left[
+.center[**Low Complexity Model**]
+```{r overex2, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  geom_smooth(method = "lm", size = 1.5, color = "black",
+              se = FALSE, formula = y~x, linetype = "dashed") +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+
+.pull-right[
+.center[**High Complexity Model**]
+```{r overex3, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  ggalt::geom_xspline(color = "black", size = 1.5, spline_shape = -1, linetype = "dashed") + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+---
+count: false
+
+.pull-left[
+.center[**Low Complexity Model**]
+```{r overex4, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  geom_smooth(method = "lm", size = 1.5, color = "black",
+              se = FALSE, formula = y~x, linetype = "dashed") +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on training data = `r sum(abs(lm(y~x, training)$residuals))` (![:emphasize](High Bias))
+]
+
+.pull-right[
+.center[**High Complexity Model**]
+```{r overex5, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  ggalt::geom_xspline(color = "black", size = 1.5, spline_shape = -1, linetype = "dashed") + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on training data = 0.0 (![:emphasize](Low Bias))
+]
+---
+count: false
+```{r overex6, echo=FALSE}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = alldata, 
+    aes(shape = dataset, color = dataset), 
+    size = 6
+  ) +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+
+---
+count: false
+.pull-left[
+```{r overex7, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  geom_smooth(
+    data = training,
+    method = "lm",
+    color = "black",
+    size = 1.5,
+    linetype = "dashed"
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+
+.pull-right[
+```{r overex8, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  ggalt::geom_xspline(
+    data = training,
+    spline_shape = -1,
+    color = "black",
+    size = 1.5,
+    linetype = "dashed",
+    aes(outfit = fity <<-..y.., outfit = fitx <<-..x..)
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+---
+count: false
+.pull-left[
+```{r overex9, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  geom_smooth(
+    data = training,
+    method = "lm",
+    color = "black",
+    size = 1.5,
+    linetype = "dashed"
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on testing set = `r sum(abs(testing$y - predict(lm(y~x, training), newdata = testing)))` (![:emphasize](Low Variance))
+]
+
+.pull-right[
+```{r overex10, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  ggalt::geom_xspline(
+    data = training,
+    spline_shape = -1,
+    color = "black",
+    size = 1.5,
+    linetype = "dashed",
+    aes(outfit = fity <<-..y.., outfit = fitx <<-..x..)
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on testing set = `r round(sum(abs(testing$y - fity[c(39, 56, 110, 180)])), 1)` (![:emphasize](High Variance))
+]
+---
+layout: false
+class: onecol
+## Conclusions from Example
+In ML, ![:emphasize](bias) is a lack of predictive accuracy in the original data (the "training set")
+
+In ML, ![:emphasize](variance) is a lack of predictive accuracy in new data (the "testing set")
+
+--
+
+<p style="padding-top:25px;">An ideal predictive model would have both low bias and low variance</p>
+
+However, there is often an inherent <b>trade-off between bias and variance</b>
+
+--
+
+<p style="padding-top:25px;">It is often necessary to willingly take on bias <b>in order to lower variance</b></p>
+
+We want to find the model that is **as simple as possible** but **no simpler**
+
+---
+## A Graphical Explanation of Overfitting
+```{r overgraph, echo=FALSE}
+include_graphics("overfitting.png")
+```
+
+---
+## A Memetic Explanation of Overfitting
+```{r overmeme, echo=FALSE}
+include_graphics("overfitting_lay.png")
+```
+
+---
+## Knowledge check
+<span style="font-size:30px;">Sam used all emails in his inbox to create an ML model to classify emails as "work-related" or "personal." Its accuracy on these emails was 98%.</span>
+
+.pull-left[
+### Question 1
+**Is Sam done with this ML project?**
+
+a) Yes, he should sell this model right now!
+
+b) No, he needs to create a training set
+
+c) No, he needs to test the model on new data
+
+d) No, his model needs to capture more noise
+]
+
+.pull-right[
+### Question 2
+**Which problems has Sam already addressed?**
+
+a) Overfitting
+
+b) Underfitting
+
+c) Variance
+
+d) All of the above
+]
+---
+class: inverse, center, middle
+# Counteracting Overfitting
+---
+class: onecol
+## Cross-Validation
+There are some clever algorithmic tricks to prevent overfitting
+
+The main approach, however, is called cross-validation
+
+The training data is split into two (or more) independent subsets
+
+One 
+
+---
+## Typical ML Workflow
 
 <br /><br />
 
 .center[
-```{r,echo=FALSE}
+```{r workflow, echo=FALSE}
 include_graphics("workflow.png")
 ```
 ]
 ---
+## Hold Out Set Validation
+---
+## Cross-Validation
+---
+## Knowledge check
+
+---
+class: inverse, center, middle
+# Modeling Workflow
+---
+
+---
+class: onecol
 ## Exploratory Analysis
 .left-column[
 <br />
-```{r, echo=FALSE}
+```{r explore, echo=FALSE}
 include_graphics("explore.jpg")
 ```
 ]
 .right-column[
-#### Quality Control
-Examine the distributions of feature and label variables
+**Quality Control**
+- Examine the distributions of feature and label variables
+- Look for errors, outliers, missing data, etc.
 
-Look for errors, outliers, missing data, etc.
-
-#### Modeling Inspiration
-Identify relevant features for a label
-
-Detect highly correlated features
-
-Determine the "shape" of relationships
+**Modeling Inspiration**
+- Identify relevant features for a label
+- Detect highly correlated features
+- Determine the "shape" of relationships
 ]
 
 ---
+class: onecol
 ## Feature Engineering
 .left-column[
 <br />
-```{r, echo=FALSE}
+```{r engineer, echo=FALSE}
 include_graphics("engineer.jpg")
 ```
 ]
 .right-column[
-**Extract** features *(e.g., from text, images, and audio)*
-
-**Transform** features *(e.g., center, normalize, log)*
-
-**Re-encode** features *(e.g., dummy code, one hot)*
-
-**Combine** features *(e.g., ratios, means, interactions)*
-
-**Reduce** dimensionality *(e.g., PCA, EFA, GDA)*
-
-**Impute** missing values *(e.g., mean, median, PMM)*
-
-**Drop** features *(e.g., redundant, low variance)*
-
-**Select** features *(e.g., wrapper-based, filter-based)*
+**Prepare the features for analysis**
+- *Extract* features <!--*(e.g., from text, images, and audio)*-->
+- *Transform* features <!--*(e.g., center, normalize, log)*-->
+- *Re-encode* features <!--*(e.g., dummy code, one hot)*-->
+- *Combine* features <!--*(e.g., ratios, means, interactions)*-->
+- *Reduce* dimensionality <!--*(e.g., PCA, EFA, GDA)*-->
+- *Impute* missing values <!--*(e.g., mean, median, PMM)*-->
+- *Drop* features <!--*(e.g., redundant, low variance)*-->
+- *Select* features <!--*(e.g., wrapper-based, filter-based)*-->
 ]
 ---
 ## Model Development
 .left-column[
 <br />
-```{r, echo=FALSE}
+```{r develop, echo=FALSE}
 include_graphics("develop.jpg")
 ```
 ]
@@ -583,48 +888,11 @@ include_graphics("develop.jpg")
 - Which features and how to combine them
 ]
 ---
-## Algorithm Intuition: Support Vector Machines
-.pull-left[
-```{r, echo=FALSE, out.height=400, out.width=400}
-include_graphics("svm1.png")
-```
-]
---
-.pull-right[
-```{r, echo=FALSE, out.height=450, out.width=450}
-include_graphics("svm2.png")
-```
-]
----
-## Algorithm Intuition: Support Vector Machines
-```{r, echo=FALSE}
-include_graphics("svm3.png")
-```
----
-## Algorithm Intuition: Decision Trees and Random Forests
-.pull-left[
-```{r, echo=FALSE}
-include_graphics("dt.png")
-```
-]
---
-.pull-right[
-```{r,echo=FALSE}
-include_graphics("rf.png")
-```
-]
----
-## Algorithm Intuition: Artificial Neural Networks
-.center[
-```{r, echo=FALSE, out.height=400, out.width=724}
-include_graphics("mlp.png")
-```
-]
----
+
 ## Model Tuning
 .left-column[
 <br />
-```{r, echo=FALSE}
+```{r tune, echo=FALSE}
 include_graphics("tune.jpg")
 ```
 ]
@@ -717,106 +985,11 @@ d) Mean Absolute Error (MAE)
 ]
 ---
 class: inverse, center, middle
-# Flexibility and Overfitting
----
-## Modeling Flexibility
-```{r, echo=FALSE}
-set.seed(2021)
-signal <- function(x) {sin(2*pi*x)}
-x_linspace <- seq(0, 1, by = 0.02)
-x_data <- runif(length(x_linspace), 0, 1)
-y_true <- signal(x_linspace)
-y_data <- signal(x_data) + rnorm(length(x_data), 0, 0.25)
-dat <- tibble(
-  x_linspace,
-  x_data,
-  y_true,
-  y_data
-)
-
-p1 <- 
-  ggplot(dat) + 
-  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
-  stat_smooth(
-    aes(x = x_data, y = y_data), 
-    method = "lm", 
-    se = FALSE,
-    formula = y ~ x, 
-    color = "blue",
-    size = 1.5
-  ) +
-  coord_cartesian(xlim = c(0, 1)) +
-  labs(title = "Underfit", x = "feature", y = "label") +
-  theme_xaringan(text_font_size = 14, title_font_size = 18) +
-  theme(panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-p2 <- 
-  ggplot(dat) + 
-  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
-  stat_smooth(
-    aes(x = x_data, y = y_data), 
-    method = "lm",
-    se = FALSE,
-    formula = y ~ poly(x, 17), 
-    color = "red",
-    size = 1.5
-  ) +
-  coord_cartesian(xlim = c(0, 1)) +
-  labs(title = "Overfit", x = "feature", y = NULL) +
-  theme_xaringan(text_font_size = 14, title_font_size = 18) +
-  theme(panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-p3 <- 
-  ggplot(dat) + 
-  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
-  stat_smooth(
-    aes(x = x_data, y = y_data), 
-    method = "lm",
-    se = FALSE,
-    formula = y ~ poly(x, 4), 
-    color = "purple",
-    size = 1.5
-  ) +
-  coord_cartesian(xlim = c(0, 1)) +
-  labs(title = "Good Fit", x = "feature", y = NULL) +
-  theme_xaringan(text_font_size = 14, title_font_size = 18) +
-  theme(panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-(p1 | p3 | p2) + 
-  plot_annotation(
-    theme = theme(
-      plot.background = element_rect(fill = "#E9EBEE", color = NA)
-    )
-  )
-```
-
----
-## A Technical Definition of Overfitting
----
-## A Lay Definition of Overfitting
----
-## An Example of Overfitting
----
-## Knowledge check
----
-class: inverse, center, middle
-# Addressing Overfitting
----
-## Hold Out Set Validation
----
-## Cross-Validation
----
-## Knowledge check
----
-class: inverse, center, middle
 # Small Group Discussion
 ---
 class: inverse, center, middle
 # Time for a Break!
-```{r, echo=FALSE}
+```{r countdown, echo=FALSE}
 countdown(
   minutes = 10, 
   seconds = 0, 
