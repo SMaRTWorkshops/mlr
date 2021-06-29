@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Logistics &amp; Data Exploration</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Applied Machine Learning in R  Pittsburgh Summer Methodology Series" />
+    <script src="Day_1B_files/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <span style="font-size:48pt;">Logistics &amp; Data Exploration</span>
+## 📋 🛠 📊
+### Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series
+### Lecture 1-B     July 19, 2021
+
+---
+
+
+
+
+
+
+
+
+class: inverse, center, middle
+# Packages
+---
+## caret
+
+The `caret` (**C**lassification **A**nd **RE**gression **T**raining) package includes functions for:
+- data visualization
+- data pre-processing
+- feature selection
+- data splitting
+- model training &amp; testing
+- variable importance estimation
+
+--
+
+&lt;p style="padding-top:20px;"&gt; There are many packages for building machine learning models, which often have different syntax.
+
+`caret` ![:emphasize](streamlines and standardizes) the process for creating predictive models.
+
+It includes 50+ machine learning models.
+
+It has historically been the &gt;most popular package for machine learning in R, with many resources, solutions, and answers to questions available online.
+
+---
+## tidymodels
+
+The `tidymodels` meta-package is a collection of many packages for machine learning, including: 
+- `rsample` for data splitting and resampling
+- `recipes` for pre-processing
+- `parsnip` for trying out many models
+- `workflows` to streamline the pre-processing, modeling, and post-processing
+- `tune` to optimize model hyperparameters
+- `yardstick` for model performance metrics
+- `broom` for converting information to user-friendly formats
+- `dials` for creating and managing tuning parameters
+
+--
+
+&lt;p style="padding-top:20px;"&gt; Both `tidymodels` and `caret` are written by the same author (Max Kuhn). 
+
+While `caret` has been around for a long time, `tidymodels` is much newer.
+
+Unlike `caret`, `tidymodels` is built using ![:emphasize](`tidyverse`) principles.
+
+---
+## Packages
+
+We will demonstrate use of both modeling frameworks (`caret` and `tidyverse`) throughout the course.
+
+You are free to use whichever framework you prefer during the small group and individual activities. 
+
+--
+
+&lt;p style="padding-top:20px;"&gt;Please make sure you have both packages installed: 
+
+`install.packages("caret")`
+
+`install.packages("tidymodels")`
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+
+---
+## Typical Workflow
+&lt;br /&gt;
+&lt;img src="workflow_eda.png" width="100%" /&gt;
+
+---
+## Exploratory Data Analysis
+.left-column[
+&lt;/br&gt;
+&lt;img src="explore.jpg" width="100%" /&gt;
+]
+
+.right-column[
+
+**Goals**
+- Develop an understanding of your data
+- Make informed model building decisions (e.g., feature selection)
+
+**Questions**
+- What type of variation occurs in my variables?
+- Are there any anomalies, errors, or outliers?
+- How much missing data do I have?
+- What type of covariation occurs between my variables?
+- Are there any nonlinearities in my data?
+- Are my data appropriate for the task? 
+]
+
+--
+.pull-right[
+&lt;div style= "font-size:38pt; text-align:center;"&gt; ![:emphasize](WAIT! &lt;/br&gt; training data *only*)
+]
+
+---
+class: inverse, center, middle
+# Simple Holdout Set
+
+---
+##Simple Train/Test Split
+
+&lt;img src="eda_split.png" width="100%" /&gt;
+
+---
+##Simple Train/Test Split: `caret`
+
+Use the `caret::createDataPartition()` function to create balanced training and testing splits based on the outcome variable. Random sampling occurs within each factor level to ![:emphasize](maintain class distribution) in the datasets. 
+
+Specify the proportion of data you want in the training split (e.g., `p = 0.8`) for an 80%/20% data split.
+
+Remember to set a seed so your results are ![:emphasize](reproducible)!
+
+--
+
+
+```r
+library(caret)
+set.seed(2021)
+trainIndex_caret &lt;- createDataPartition(iris$Species, p = .8,
+                                        list = FALSE, 
+                                        times = 1)
+```
+
+---
+##Simple Train/Test Split: `caret`
+
+Use the `createDataPartition` row indices to split your data into single train and test sets.
+
+
+```r
+irisTrain_caret &lt;- iris[trainIndex_caret, ]
+irisTest_caret &lt;- iris[-trainIndex_caret, ]
+```
+
+--
+
+Now 80% of the data is designated for model training and can be used for exploratory data analysis. 20% of the data is ![:emphasize](held out and should not be explored) before testing the model, to avoid overly optimistic results. 
+
+
+```r
+dim(irisTrain_caret)
+```
+
+```
+## [1] 120   5
+```
+
+```r
+dim(irisTest_caret)
+```
+
+```
+## [1] 30  5
+```
+
+---
+##Simple Train/Test Split: `tidymodels`
+
+Use the `rsample::initial_split()` function to create training and testing splits. Use the `strata` argument to ![:emphasize](maintain class distribution) in training/test sets (as is automatically done in `caret::createDataPartition`).
+
+Specify the proportion of data you want in the training split (e.g., `prop = 0.8`) for an 80%/20% data split.
+
+Remember to set a seed so your results are reproducible!
+
+--
+
+
+```r
+library(tidymodels)
+set.seed(2021)
+irisSplit_tidy &lt;- initial_split(iris, 
+                                prop = 0.8, 
+                                strata = Species)
+```
+
+---
+##Simple Train/Test Split: `tidymodels`
+
+After `initial_split()`, use the `rsample::training()` and `rsample::testing()` functions to create and return the actual data subsets.
+
+
+```r
+irisTrain_tidy &lt;- training(irisSplit_tidy)
+irisTest_tidy &lt;- testing(irisSplit_tidy)
+```
+
+--
+
+As before, we see that 80% of the data are in `irisTrain_tidy` and 20% of the data are in `irisTest_tidy`. 
+
+
+```r
+dim(irisTrain_tidy)
+```
+
+```
+## [1] 120   5
+```
+
+```r
+dim(irisTest_tidy)
+```
+
+```
+## [1] 30  5
+```
+
+---
+##Simple Train/Test Split: Live Coding
+
+Follow along at [INSERT LINK].&lt;/br&gt;
+
+&lt;img src="datasplit.png" width="800" height="380" /&gt;
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+## On the training data!
+
+---
+##What type of variation occurs in my variables?
+
+
+---
+##Are there data anomalies, errors, or outliers?
+
+
+---
+##How much missing data do I have?
+
+
+---
+##What type of covariation occurs between my variables?
+
+
+---
+##Are there nonlinearities?
+
+
+---
+##Are my data appropriate for the task? 
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script src="cols_macro.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current% / %total%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
