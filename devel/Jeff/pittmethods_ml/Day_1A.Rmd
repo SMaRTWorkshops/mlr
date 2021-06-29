@@ -703,7 +703,6 @@ ggplot(training, aes(x, y)) +
   config
 ```
 ---
-count: false
 .pull-left[
 .center[**Low Complexity Model**]
 ```{r overex2, echo=FALSE, fig.width=4, fig.height = 3}
@@ -756,7 +755,6 @@ ggplot(training, aes(x, y)) +
 Total error on training data = 0.0 (![:emphasize](Low Bias))
 ]
 ---
-count: false
 ```{r overex6, echo=FALSE}
 ggplot(mapping = aes(x, y)) +
   geom_point(
@@ -770,7 +768,6 @@ ggplot(mapping = aes(x, y)) +
 ```
 
 ---
-count: false
 .pull-left[
 ```{r overex7, echo=FALSE, fig.width=4, fig.height=3}
 ggplot(mapping = aes(x, y)) +
