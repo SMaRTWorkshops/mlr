@@ -410,6 +410,147 @@ d) All of the above
 ]
 ---
 class: inverse, center, middle
+# Modeling Workflow
+---
+## Typical ML Workflow
+
+<br /><br />
+
+.center[
+```{r workflow, echo=FALSE}
+include_graphics("workflow.png")
+```
+]
+---
+class: onecol
+## Exploratory Analysis
+.left-column[
+<br />
+```{r explore, echo=FALSE}
+include_graphics("explore.jpg")
+```
+]
+.right-column[
+**Verify the quality of your variables**
+- Examine the distributions of feature and label variables
+- Look for errors, outliers, missing data, etc.
+
+**Gain inspiration for your model**
+- Identify relevant features for a label
+- Detect highly correlated features
+- Determine the "shape" of relationships
+]
+
+---
+class: onecol
+## Feature Engineering
+.left-column[
+<br />
+```{r engineer, echo=FALSE}
+include_graphics("engineer.jpg")
+```
+]
+.right-column[
+**Prepare the features for analysis**
+- *Extract* features
+- *Transform* features
+- *Re-encode* features
+- *Combine* features
+- *Reduce* feature dimensionality
+- *Impute* missing feature values
+- *Select* and drop features
+]
+---
+class: onecol
+## Model Development
+.left-column[
+<br />
+```{r develop, echo=FALSE}
+include_graphics("develop.jpg")
+```
+]
+.right-column[
+**Choose algorithms, software, and architecture**
+- Elastic Net and/or Random Forest
+- `caret` or `tidymodels`, `elasticnet` or `glmnet`
+- Regression or classification
+
+**Train the model by estimating parameters**
+- Learn the nature of the feature-label relationships
+- For instance, estimate the intercept and slopes
+]
+---
+class: onecol
+## Model Tuning
+.left-column[
+<br />
+```{r tune, echo=FALSE}
+include_graphics("tune.jpg")
+```
+]
+.right-column[
+**Determine complex the model can become**
+- How many features to include in the model
+- How complex the shape of relationships can be
+- How many features can interact together
+- How much to penalize adding more complexity
+
+**Make other decisions in a data-driven manner**
+- Which of three algorithms should be preferred
+- Which optimization method should be used
+]
+---
+class: onecol
+## Model Evaluation
+
+.left-column[
+```{r target, echo=FALSE}
+include_graphics("target.jpg")
+```
+]
+
+.right-column[
+
+**Decide how to quantify predictive performance**
+- In regression, performance is based on the errors/residuals
+- In classification, performance is based on the confusion matrix
+
+**Determine how successful your predictive model was**
+- Compare predictions (i.e., predicted labels) to trusted labels
+- Compare the performance of one model to another model
+
+]
+---
+## Knowledge check
+<span style="font-size:30px;">Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.</span>
+
+.pull-left[
+### Question 1
+**Calculating the length of each tweet is <span style="text-decoration: underline; white-space: pre;">           </span>?**
+
+a) Feature Engineering
+
+b) Model Development
+
+c) Model Tuning
+
+d) Model Evaluation
+]
+
+.pull-right[
+### Question 2
+**When should problems with the data be found?**
+
+a) Model Evaluation
+
+b) Model Tuning
+
+c) Model Development
+
+d) Exploratory Analysis
+]
+---
+class: inverse, center, middle
 # Signal and Noise
 ---
 class: onecol
@@ -533,11 +674,8 @@ include_graphics("kryptonite.png")
 ]
 ---
 layout: true
-
 ## An Example of Overfitting
-
 ---
-
 ```{r overex1, echo=FALSE}
 set.seed(2021)
 training <- data.frame(
@@ -564,10 +702,8 @@ ggplot(training, aes(x, y)) +
   labs(x = "Study Time", y = "Test Score") +
   config
 ```
-
 ---
 count: false
-
 .pull-left[
 .center[**Low Complexity Model**]
 ```{r overex2, echo=FALSE, fig.width=4, fig.height = 3}
@@ -580,7 +716,6 @@ ggplot(training, aes(x, y)) +
   config
 ```
 ]
-
 .pull-right[
 .center[**High Complexity Model**]
 ```{r overex3, echo=FALSE, fig.width=4, fig.height = 3}
@@ -594,7 +729,6 @@ ggplot(training, aes(x, y)) +
 ]
 ---
 count: false
-
 .pull-left[
 .center[**Low Complexity Model**]
 ```{r overex4, echo=FALSE, fig.width=4, fig.height = 3}
@@ -792,200 +926,120 @@ d) All of the above
 ]
 ---
 class: inverse, center, middle
-# Counteracting Overfitting
+# Countering Overfitting
 ---
 class: onecol
 ## Cross-Validation
 There are some clever algorithmic tricks to prevent overfitting
 
-The main approach, however, is called cross-validation
+The main approach, however, is to use ![:emphasize](cross-validation)
 
-The training data is split into two (or more) independent subsets
+--
 
-One 
+<p style="padding-top:20px;">The <b>data is split</b> into two (or more) independent subsets</p>
+
+Data for training and testing the algorithm are kept **fully independent**
+
+--
+
+<p style="padding-top:20px;">Performance is <b>more important in the testing set</b> than in the training set</p>
+
+This process **may be repeated** multiple times with different data splits
+---
+# Holdout Cross-Validation
+```{r, echo=FALSE}
+include_graphics("holdout.png")
+```
 
 ---
-## Typical ML Workflow
+# Holdout Cross-Validation
+```{r, echo=FALSE}
+include_graphics("holdout2.png")
+```
 
-<br /><br />
+---
+# k-fold Cross-Validation
+```{r, echo=FALSE}
+include_graphics("kfold1.png")
+```
 
+---
+count: false
+# k-fold Cross-Validation
 .center[
-```{r workflow, echo=FALSE}
-include_graphics("workflow.png")
+```{r, echo=FALSE, out.width="70%"}
+include_graphics("kfold2.png")
 ```
 ]
----
-## Hold Out Set Validation
----
-## Cross-Validation
----
-## Knowledge check
-
----
-class: inverse, center, middle
-# Modeling Workflow
----
-
 ---
 class: onecol
-## Exploratory Analysis
-.left-column[
-<br />
-```{r explore, echo=FALSE}
-include_graphics("explore.jpg")
-```
-]
-.right-column[
-**Quality Control**
-- Examine the distributions of feature and label variables
-- Look for errors, outliers, missing data, etc.
+## Advanced Cross-Validation
+Cross-validation helps **mitigate overfitting** and estimate **out-of-sample** performance
 
-**Modeling Inspiration**
-- Identify relevant features for a label
-- Detect highly correlated features
-- Determine the "shape" of relationships
-]
+There are many different cross-validation strategies, but **10-fold CV** is a great default
 
----
-class: onecol
-## Feature Engineering
-.left-column[
-<br />
-```{r engineer, echo=FALSE}
-include_graphics("engineer.jpg")
-```
-]
-.right-column[
-**Prepare the features for analysis**
-- *Extract* features <!--*(e.g., from text, images, and audio)*-->
-- *Transform* features <!--*(e.g., center, normalize, log)*-->
-- *Re-encode* features <!--*(e.g., dummy code, one hot)*-->
-- *Combine* features <!--*(e.g., ratios, means, interactions)*-->
-- *Reduce* dimensionality <!--*(e.g., PCA, EFA, GDA)*-->
-- *Impute* missing values <!--*(e.g., mean, median, PMM)*-->
-- *Drop* features <!--*(e.g., redundant, low variance)*-->
-- *Select* features <!--*(e.g., wrapper-based, filter-based)*-->
-]
----
-## Model Development
-.left-column[
-<br />
-```{r develop, echo=FALSE}
-include_graphics("develop.jpg")
-```
-]
-.right-column[
-**What *algorithm* or framework to use?**
-- Elastic Net, Random Forest, SVM, MLP
+--
 
-**What *engine* to use for fitting the model?**
-- Which software implementation
+<p style="padding-top:20px;">In practice, cross-validation is often <b>nested</b> such that</p>
 
-**What *mode* should the model run in?**
-- Regression, classification, ordinal
+ - An outer loop (applied to the original data) is used for *model evaluation*
 
-**What *formula* should the model fit?**
-- Which features and how to combine them
-]
----
+ - An inner loop (applied to the training set) is used for *model tuning*
 
-## Model Tuning
-.left-column[
-<br />
-```{r tune, echo=FALSE}
-include_graphics("tune.jpg")
-```
-]
-.right-column[
-**Models learn by estimating <span style="color:darkred;">parameters</span> from data**
-- where and how to define the margin in an SVM
-- which leaves and branches to use in a decision tree
-- what weights to use in connecting neurons in an ANN
+--
 
-**Learning is also influenced by <span style="color:darkred;">hyperparameters</span>**
-- which type of kernel to use in a non-linear SVM
-- how many decision trees to include in a random forest
-- how many hidden layers to include in an ANN
+<p style="padding-top:20px;">Cross-validation can also be **stratified** to keep the splits relatively similar</p>
 
-**Hyperparameters often control the *flexibility* of a model**
-]
----
-## Model Tuning
-Unlike parameters, hyperparameters cannot be estimated from the data
-
-Instead, we must "tune" our hyperparameters by trying and comparing many values
-
-.pull-left[
-**Grid Search**
-
-Try all hyperparameter values in a pre-defined set (e.g., spaced evenly throughout a likely range)
-
-**Iterative Search**
-
-Sequentially discover new combinations of values based on previous results (using an algorithm)
-]
-
-.pull-right[
-```{r,echo=FALSE}
-include_graphics("tuning_example.png")
-```
-*The contour lines show performance is best at top-right*
-]
----
-## Model Evaluation
-
-.left-column[
-```{r target, echo=FALSE}
-include_graphics("target.jpg")
-```
-]
-
-.right-column[
-**How to quantify model performance?**
-- Compare predictions (i.e., model-predicted labels) to trusted labels
-
-**Regression Metrics**
-- Error-based (RMSE, MAE, Huber loss)
-- Correlation-based (CCC, $R^2$)
-
-**Classification Metrics**
-- Class-based (Accuracy, Sensitivity, Specificity, $\phi$, $F_\beta$, $J$)
-- Probability-based (AUC, log loss, cost)
-- Curve Analysis (ROC, P-R, Gain, Lift)
-- Multiclass (macro, micro, specialized)
-]
+Cross-validation can also be **repeated** to avoid problems with any single split
 ---
 ## Knowledge check
-<span style="font-size:30px;">Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.</span>
+<span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
 
 .pull-left[
 ### Question 1
-**Calculating the length of each tweet is <span style="text-decoration: underline; white-space: pre;">           </span>?**
+**What major mistake did Bogdan make?**
 
-a) Feature Engineering
+a) He used a testing set instead of a holdout set
 
-b) Model Development
+b) Some patients are in both training and testing
 
-c) Model Tuning
+c) The two subsets of data have different sizes
 
-d) Model Evaluation
+d) He did not use k-fold cross-validation 
 ]
 
 .pull-right[
 ### Question 2
-**Which performance metric would be appropriate?**
+**Which step should not be done in the training set?**
 
-a) $F_\beta$ score
+a) Exploratory Analysis
 
-b) ROC Curve
+b) Feature Engineering
 
-c) Number of features
+c) Model Development
 
-d) Mean Absolute Error (MAE)
+d) Model Evaluation
 ]
+
 ---
 class: inverse, center, middle
 # Small Group Discussion
+---
+class: onecol
+# Small Group Discussion
+
+We will randomly assign you to a small breakout room
+
+We will jump between rooms to join discussions and answer questions
+
+**Introduce yourselves again and discuss the following topics**
+
+ 1. What types of labels and features would you like to work with?
+
+ 2. What problems might predictive modeling help your field solve?
+
+ 3. Do you have any questions or comments about the material so far?
+
 ---
 class: inverse, center, middle
 # Time for a Break!
