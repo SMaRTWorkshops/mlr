@@ -42,11 +42,11 @@ The `caret` (**C**lassification **A**nd **RE**gression **T**raining) package inc
 
 &lt;p style="padding-top:20px;"&gt; There are many packages for building machine learning models, which often have different syntax.
 
-`caret` &lt;span style="color:darkred;"&gt;streamlines and standardizes&lt;/span&gt; the process for creating predictive models.
+`caret` ![:emphasize](streamlines and standardizes) the process for creating predictive models.
 
 It includes 50+ machine learning models.
 
-It has historically been the &lt;span style="color:darkred;"&gt;most popular package&lt;/span&gt; for machine learning in R, with many resources, solutions, and answers to questions available online.
+It has historically been the &gt;most popular package for machine learning in R, with many resources, solutions, and answers to questions available online.
 
 ---
 ## tidymodels
@@ -65,7 +65,9 @@ The `tidymodels` meta-package is a collection of many packages for machine learn
 
 &lt;p style="padding-top:20px;"&gt; Both `tidymodels` and `caret` are written by the same author (Max Kuhn). 
 
-While `caret` has been around for a long time, `tidymodels` is much newer and built with &lt;span style="color:darkred;"&gt;`tidyverse`&lt;/span&gt; principles.
+While `caret` has been around for a long time, `tidymodels` is much newer.
+
+Unlike `caret`, `tidymodels` is built using ![:emphasize](`tidyverse`) principles.
 
 ---
 ## Packages
@@ -87,23 +89,189 @@ class: inverse, center, middle
 # Exploratory Data Analysis
 
 ---
-## Why exploratory data analysis?
+## Typical Workflow
+&lt;br /&gt;
+&lt;img src="workflow_eda.png" width="100%" /&gt;
 
-Provide insight into your dataset
+---
+## Exploratory Data Analysis
+.left-column[
+&lt;/br&gt;
+&lt;img src="explore.jpg" width="100%" /&gt;
+]
 
-Determine whether your data are appropriate for the task
+.right-column[
 
-Detect data anamolies, outliers, and missing data
+**Goals**
+- Develop an understanding of your data
+- Make informed model building decisions (e.g., feature selection)
 
-Explore nonlinearities in data
+**Questions**
+- What type of variation occurs in my variables?
+- Are there any anomalies, errors, or outliers?
+- How much missing data do I have?
+- What type of covariation occurs between my variables?
+- Are there any nonlinearities in my data?
+- Are my data appropriate for the task? 
+]
 
-Help inform feature selection
+--
+.pull-right[
+&lt;div style= "font-size:38pt; text-align:center;"&gt; ![:emphasize](WAIT! &lt;/br&gt; training data *only*)
+]
+
+---
+class: inverse, center, middle
+# Simple Holdout Set
+
+---
+##Simple Train/Test Split
+
+&lt;img src="eda_split.png" width="100%" /&gt;
+
+---
+##Simple Train/Test Split: `caret`
+
+Use the `caret::createDataPartition()` function to create balanced training and testing splits based on the outcome variable. Random sampling occurs within each factor level to ![:emphasize](maintain class distribution) in the datasets. 
+
+Specify the proportion of data you want in the training split (e.g., `p = 0.8`) for an 80%/20% data split.
+
+Remember to set a seed so your results are ![:emphasize](reproducible)!
+
+--
 
 
+```r
+library(caret)
+set.seed(2021)
+trainIndex_caret &lt;- createDataPartition(iris$Species, p = .8,
+                                        list = FALSE, 
+                                        times = 1)
+```
 
+---
+##Simple Train/Test Split: `caret`
+
+Use the `createDataPartition` row indices to split your data into single train and test sets.
+
+
+```r
+irisTrain_caret &lt;- iris[trainIndex_caret, ]
+irisTest_caret &lt;- iris[-trainIndex_caret, ]
+```
+
+--
+
+Now 80% of the data is designated for model training and can be used for exploratory data analysis. 20% of the data is ![:emphasize](held out and should not be explored) before testing the model, to avoid overly optimistic results. 
+
+
+```r
+dim(irisTrain_caret)
+```
+
+```
+## [1] 120   5
+```
+
+```r
+dim(irisTest_caret)
+```
+
+```
+## [1] 30  5
+```
+
+---
+##Simple Train/Test Split: `tidymodels`
+
+Use the `rsample::initial_split()` function to create training and testing splits. Use the `strata` argument to ![:emphasize](maintain class distribution) in training/test sets (as is automatically done in `caret::createDataPartition`).
+
+Specify the proportion of data you want in the training split (e.g., `prop = 0.8`) for an 80%/20% data split.
+
+Remember to set a seed so your results are reproducible!
+
+--
+
+
+```r
+library(tidymodels)
+set.seed(2021)
+irisSplit_tidy &lt;- initial_split(iris, 
+                                prop = 0.8, 
+                                strata = Species)
+```
+
+---
+##Simple Train/Test Split: `tidymodels`
+
+After `initial_split()`, use the `rsample::training()` and `rsample::testing()` functions to create and return the actual data subsets.
+
+
+```r
+irisTrain_tidy &lt;- training(irisSplit_tidy)
+irisTest_tidy &lt;- testing(irisSplit_tidy)
+```
+
+--
+
+As before, we see that 80% of the data are in `irisTrain_tidy` and 20% of the data are in `irisTest_tidy`. 
+
+
+```r
+dim(irisTrain_tidy)
+```
+
+```
+## [1] 120   5
+```
+
+```r
+dim(irisTest_tidy)
+```
+
+```
+## [1] 30  5
+```
+
+---
+##Simple Train/Test Split: Live Coding
+
+Follow along at [INSERT LINK].&lt;/br&gt;
+
+&lt;img src="datasplit.png" width="800" height="380" /&gt;
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+## On the training data!
+
+---
+##What type of variation occurs in my variables?
+
+
+---
+##Are there data anomalies, errors, or outliers?
+
+
+---
+##How much missing data do I have?
+
+
+---
+##What type of covariation occurs between my variables?
+
+
+---
+##Are there nonlinearities?
+
+
+---
+##Are my data appropriate for the task? 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script src="cols_macro.js"></script>
 <script>var slideshow = remark.create({
 "slideNumberFormat": "%current% / %total%",
 "highlightStyle": "github",
