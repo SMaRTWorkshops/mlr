@@ -15,3 +15,11 @@ Day,Part,Description,Minutes
 1,B,EDA: Linearity vs nonlinearity,15
 1,B,Standardizing & Normalizing,15
 1,B,Small group activity,25
+2,A,Feature Engineering Overview,15
+2,A,Feature Transformations,15
+2,A,Dimensionality Reduction,15
+2,A,Dealing with Missing Data,15
+2,A,Adding and Removing Features,15
+2,A,Techniques to Avoid,15
+2,A,Small group activity,25
+2,X,Break,10

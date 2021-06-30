@@ -47,7 +47,7 @@ library(patchwork)
 ```
 
 class: inverse, center, middle
-# Part 1
+# Overview
 
 <style type="text/css">
 .onecol {
@@ -77,8 +77,93 @@ include_graphics("../Day_1A/engineer.jpg")
 - *Select* and drop features
 ]
 ---
+class: onecol
+
+## Motivation
+
+**Features** are descriptions of the data points that help to predict the labels
+
+- We may need to extract features from "raw" or "low-level" data (e.g., images)
+- We may need to address issues with missing data and feature distributions
+
+There are many potential ways to **encode** or "represent" the features
+
+- e.g., adding, dropping, transforming, and combining features<sup>1</sup>
+- Feature encoding can have a big ![:emphasize](impact on predictive performance)<sup>2</sup>
+- The optimal encoding depends on both the **algorithm** and the **relationships**
+
+.footnote[
+[1] Some algorithms can learn their own, complex feature representations<br />
+[2] Some algorithms are more sensitive to feature encoding than others
+]
+
+---
+
+## Potential Issues
+
+- Outliers
+- Missing Data
+- Non-normal distributions (e.g., skew)
+
+- Redundant Features
+- Uninformative Features
+- 
+
+---
+class: onecol
+## Encoding Examples
+.left-column[
+<br />
+
+```{r, echo=FALSE}
+include_graphics("july.jpg")
+```
+
+]
+.right-column[
+**When an event or observation occurred**
+
+- The numeric year *(2021)*
+- The numeric month *(7)*
+- The numeric day of the month *(20)*
+- The numeric day of the year *(201)*
+- Days since a reference *(diagnosis +2)*
+- The day of the week *(Tuesday)*
+- The season of the year *(Summer)*
+- The type of day *(weekday)* 
+- The presence of a holiday *(FALSE)*
+
+]
+
+---
+## Roadmap
+
+- Univariate Transformations
+- Multivariate Transformations
+- Dealing with Missing Values
+- Removing and Adding Features
+- Binning Features (Avoid)
+- Computing Features
+
+Centering and scaling
+Reducing skewness (log, box-cox)
+Resolve outliers ()
+Reduce dimensionality (PCA)
+Missing and censored data (imputation)
+Removing features (near-zero variance, multicollinearity)
+Adding features (dummy coding and one-hot encoding)
+
+`caret::preProcess()`
+`caret::nearZeroVar()`
+`caret::findCorrelation()`
+`caret::dummyVars()`
+
+---
 class: inverse, center, middle
-# Part 2
+# Feature Transformations
+
+---
+
 ---
 class: inverse, center, middle
 # Part 3
