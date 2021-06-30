@@ -127,7 +127,19 @@ class: inverse, center, middle
 ---
 ##Simple Train/Test Split
 
-&lt;img src="eda_split.png" width="100%" /&gt;
+&lt;img src="datasplit_simple.png" width="100%" /&gt;
+
+---
+##Data Splitting
+
+An important note on terminology beyond simple train/test data splits: 
+
+- Training: The data subsample used to explore the data and fit the model.
+- Validation: Used for model evaluation while tuning hyperparameters; often implicitly split via cross-validation.
+- Test: Entirely held-out from model training/tuning; used to provide a unbiased evaluation of the final model. 
+
+&lt;img src="datasplit_val.png" width="70%" height="70%" /&gt;
+
 
 ---
 ##Simple Train/Test Split: `caret`
@@ -238,7 +250,7 @@ dim(irisTest_tidy)
 
 Follow along at [INSERT LINK].&lt;/br&gt;
 
-&lt;img src="datasplit.png" width="800" height="380" /&gt;
+&lt;img src="live_coding.png" width="800" height="380" /&gt;
 
 ---
 class: inverse, center, middle
@@ -248,15 +260,204 @@ class: inverse, center, middle
 ---
 ##What type of variation occurs in my variables?
 
+The `dfsummary()` function from `summarytools` is useful for quickly identifying trends and anomalies at a glance. 
+
+--
+
+<div class="container st-container">
+<table class="table table-striped table-bordered st-table st-table-striped st-table-bordered st-multiline ">
+  <thead>
+    <tr>
+      <th align="center" class="st-protect-top-border"><strong>No</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Variable</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Stats / Values</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Freqs (% of Valid)</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Graph</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Missing</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">1</td>
+      <td align="left">Sepal.Length
+[numeric]</td>
+      <td align="left">Mean (sd) : 5.8 (0.8)
+min < med < max:
+4.4 < 5.8 < 7.7
+IQR (CV) : 1.3 (0.1)</td>
+      <td align="left" style="vertical-align:middle">32 distinct values</td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBh4BBxDm7xkJAAABdUlEQVR42u3dUUrDMACAYSu7o3fQ8+gdPKW+xjHIvlnNOv7vbQxG+kMCDWm3fT1FPK8ewNEUDBUMncYP2+rRDN6vWFzf/mnA41BON//Kn3uZfP+5ZFRNSVQwtGRKXrM+3atFa9hsfVq1Qs01JVHBUMFQwVDBUMFQwVDBUMFQwRDfGh35PnAPN9xLzvep7nMnax9NSVQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwdMcPmM7NT0Pu/8zuoYOtOOnYlEQFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwVDP04gPt4LIXe6ouHg59mRzeP+McBlv3/B5fkVNyVRwVDBUMFQwVDBUMFQwVDBUMFQwVDBUMFQwdA2bhh9PNx+2D5eh/2wrUamKYkKhgqGvgEtRBk8jxEe2QAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNi0zMFQwMTowNzoxNiswMDowMEXCpf0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDYtMzBUMDE6MDc6MTYrMDA6MDA0nx1BAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+      <td align="center">0
+(0.0%)</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td align="left">Sepal.Width
+[numeric]</td>
+      <td align="left">Mean (sd) : 3 (0.4)
+min < med < max:
+2 < 3 < 4.4
+IQR (CV) : 0.5 (0.1)</td>
+      <td align="left" style="vertical-align:middle">22 distinct values</td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuCAQAAABxABKuAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBh4BBxDm7xkJAAABZUlEQVR42u3cwW2DQBBA0RC5x/SQ1JP04CqTK458+SPkFeK9mw8G+0sLh2HZft8o3lf/gLMRLBIsuu0/bMODfI8vhF/TU77U/u/dxkd58DH61n11iQFLMhIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiwSLBIsEiw6aGo0NRvQrRzOLQ42Gc+tHc5ZkpFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFg0cNOkPmb5q7j39aZ67xpbsqSjASLBIsEixbvl5yZ3s2P2Jh6ymAr7+WWZCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYJFgkWCRYdMq55NT4ca7dAPhSwY4YAFuSkWDRtl/WPx7ZfOpzdw3bNGosyUiwSLDoD4DnFRR+9Y1pAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA2LTMwVDAxOjA3OjE2KzAwOjAwRcKl/QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNi0zMFQwMTowNzoxNiswMDowMDSfHUEAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+      <td align="center">0
+(0.0%)</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td align="left">Species
+[factor]</td>
+      <td align="left">1. setosa
+2. versicolor
+3. virginica</td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAD8AAABOCAQAAAA9KAYwAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBh4BBxDm7xkJAAAAhUlEQVRo3u3XsQ2AQAiFYTDu6A7uozvclNoZNLlCkgMj/+to7iu44qGHZGZK1Yvzsx32kI+waocXWYbj7TbV3j08PDw8PDz8//lH2Wq+V9xR2y7V/cybWJHdX9liDj56Pjw8PDw8PDx8TOj5ianNc2YkBh4eHh4eHh5+cL50ZsSn9u6T+ROGZxDMVaGYpgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNi0zMFQwMTowNzoxNiswMDowMEXCpf0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDYtMzBUMDE6MDc6MTYrMDA6MDA0nx1BAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+      <td align="center">0
+(0.0%)</td>
+    </tr>
+  </tbody>
+</table>
+<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.9 (<a href='https://www.r-project.org/'>R</a> version 4.1.0)<br/>2021-06-29</p>
+</div>
+
+---
+##What type of variation occurs in my variables?
+
+Overlaying distributions together on the same plot can also be helpful.
+
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
 
 ---
 ##Are there data anomalies, errors, or outliers?
 
+Check data distributions and summary statistics for:
+- Extreme values
+- Nonsensical values
+- Inconsistencies 
+- You may need to adjust plot margins or axes!
+
+.pull-left[
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-13-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-14-1.png" width="100%" /&gt;
+]
 
 ---
-##How much missing data do I have?
+##Missing Data
+
+Quick review of missing data mechanisms:
+
+**Missing completely at random (MCAR)**
+- No systematic pattern of missing data; the probability of an observation being missing does not depend on any observed or missing values. 
+- E.g., If a weighing scale sometimes runs out of batter, missing data on weight is only due to bad luck and not any measured or missing data.
+
+**Missing at random (MAR)** 
+- Systematic relationship between missing values and the *observed* data, but *not* the missing data.
+- E.g., If people with eating disorders are more likely to decline being weighed, missing data on weight is systematically related to eating disorder diagnosis.
+
+**Missing not at random (MNAR)**
+- Systematic relationship between missing values and those values themselves. 
+- E.g., If people with higher weights are more likely to decline being weighed, missing data on weight is systematically related to *weight itself*.
+
+---
+##Missing Data
 
 
+
+The `VIM` and `mice` packages are helpful for visualizing and imputing missing data. 
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+--
+
+.pull-left[
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-16-1.png" width="100%" /&gt;
+]
+
+--
+
+.pull-right[
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-17-1.png" width="100%" /&gt;
+]
+
+--
+
+Two helpful questions to guide missing data visualization:
+- Which variables have missing observations (and how many)?
+- Does missing data in one variable depend on other variables?
+
+---
+##Which variables have missing observations? How many?
+
+We can inspect the prevalence of missing data using aggregation plots in `VIM` with the `aggr()` function.
+
+
+
+
+
+```r
+aggr(biopics, numbers = TRUE, prop = c(TRUE, FALSE))
+```
+
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-19-1.png" width="70%" height="70%" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+---
+##Does missing data in one variable depend on others?
+
+We also want to know if missing data systematically vary by other observed data. If the other data are numeric we use a *spinogram*; if categorical we can use a *spineplot*. The `spineMiss()` function generates both plots.
+
+
+```r
+spineMiss(biopics[, c("sub_race", "earnings")])
+```
+
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-20-1.png" width="70%" height="70%" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+---
+##Does missing data in one variable depend on others?
+
+Let's flip the two variables to ask: does the percentage of missing data in `sub_race` differ by `earnings`?
+
+```r
+spineMiss(biopics[, c("earnings", "sub_race")])
+```
+
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-21-1.png" width="70%" height="70%" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+---
+##Does missing data in one variable depend on others?
+
+*Mosiac plots* generalize spineplots and spinograms (which only plot two variables at a time) to multiple variables.
+
+
+
+
+
+```r
+mosaicMiss(biopics[, c("sub_sex", "US_movie", "earnings")], highlight = 3, 
+           plotvars = 1:2, miss.labels = FALSE)
+```
+
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-23-1.png" width="70%" height="70%" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
 ---
 ##What type of covariation occurs between my variables?
 
