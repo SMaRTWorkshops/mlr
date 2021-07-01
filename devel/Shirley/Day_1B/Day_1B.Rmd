@@ -49,6 +49,9 @@ library(mice)
 library(VIM)
 library(caret)
 library(gridExtra)
+library(psych)
+library(psychTools)
+library(ggcorrplot)
 ```
 
 class: inverse, center, middle
@@ -270,15 +273,18 @@ dim(irisTest)
 ---
 ##Why EDA on training data only?
 
-The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into your data in order to make informed modeling decisions). 
+The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into  data to make informed modeling decisions). 
 
 We split our data into training and testing subsets to evaluate the accuracy of our model in predicting *unseen* data. 
 
-This gives us a sense for how our model might perform in the future on new datasets.
+This gives us a sense for how our model might perform in the **future** on new datasets.
 
-If modeling decisions are made based on data in the test set, we ![:emphasize](risk artificially inflating model performance) estimates in the test set. 
+--
 
-Thus, **when possible, it is ideal** to perform exploratory data analysis only on your training data only.
+</br> 
+If modeling decisions are made based on data patterns we observe in the test set, we ![:emphasize](risk artificially inflating model performance) estimates in the test set. 
+
+**When possible, it is ideal** to perform exploratory data analysis only on your training data only.
 
 But note that doesn't mean we can't check the test data for coding errors or data anamolies!
 
@@ -316,7 +322,7 @@ d) Neither
 ---
 class: inverse, center, middle
 # Exploratory Data Analysis
-## data distributions and error detection
+## Data Distributions and Error Detection
 
 ---
 ##What type of variation occurs in my variables?
@@ -455,14 +461,14 @@ Two helpful questions to guide missing data visualization:
 ---
 ##Which variables have missing observations? How many?
 
-We can inspect the prevalence of missing data using aggregation plots in `VIM` with the `aggr()` function.
+**Aggregation plots** are useful for inspecting the prevalence of missing data. 
 
 ```{r, echo = FALSE}
 load("biopics.RData")
 ```
 
 
-```{r, out.height = "70%", out.width = "70%"}
+```{r, echo = FALSE, out.height = "85%", out.width = "85%"}
 aggr(biopics, numbers = TRUE, prop = c(TRUE, FALSE), col = c("bisque2","darkcyan"))
 ```
 
@@ -473,9 +479,9 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ---
 ##Does missing data in one variable depend on others?
 
-We also want to know if missing data systematically vary by other observed data. If the other data are numeric we use a *spinogram*; if categorical we can use a *spineplot*. The `spineMiss()` function generates both plots.
+We also want to know if missing data systematically vary by other observed data. If the other data are numeric we use a **spinogram**; if categorical we can use a **spineplot**.
 
-```{r, message=FALSE, warning=FALSE, results = 'hide', out.height="70%", out.width="70%"}
+```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="80%", out.width="80%"}
 spineMiss(biopics[, c("sub_race", "earnings")], col = c("bisque2","darkcyan"))
 ```
 
@@ -487,7 +493,8 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ##Does missing data in one variable depend on others?
 
 Let's flip the two variables to ask: does the percentage of missing data in `sub_race` differ by `earnings`?
-```{r, message=FALSE, warning=FALSE, results = 'hide', out.height="70%", out.width="70%"}
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="80%", out.width="80%"}
 spineMiss(biopics[, c("earnings", "sub_race")], col = c("bisque2","darkcyan"))
 ```
 
@@ -498,14 +505,14 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ---
 ##Does missing data in one variable depend on others?
 
-*Mosiac plots* generalize spineplots and spinograms (which only plot two variables at a time) to multiple variables.
+**Mosiac plots** generalize spineplots and spinograms (which only plot two variables at a time) to multiple variables.
 
 ```{r, echo = FALSE}
 biopics <- biopics %>% mutate(US_movie = ifelse(grepl("US", country), TRUE, FALSE))
 ```
 
 
-```{r, message=FALSE, warning=FALSE, results = 'hide', out.height="70%", out.width="70%"}
+```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="85%", out.width="85%"}
 mosaicMiss(biopics[, c("sub_sex", "US_movie", "earnings")], highlight = 3, 
            plotvars = 1:2, miss.labels = FALSE, col = c("bisque2","darkcyan"))
 ```
@@ -517,12 +524,15 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ---
 ##Do missing data patterns differ across the dataset? 
 
-Parallel coordinate plots allow us to look at patterns of misingness across the entire dataset.
+**Parallel coordinate plots** allow us to look at patterns of missingness across the entire dataset.
 
-```{r, message=FALSE, warning=FALSE, results = 'hide', out.height="90%", out.width="90%"}
+```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="85%", out.width="85%"}
 parcoordMiss(biopics, highlight = 'earnings', alpha = 0.6, col = c("bisque2","darkcyan"))
 ```
 
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
 ---
 class: inverse, center, middle
 # Exploratory Data Analysis
@@ -531,7 +541,33 @@ class: inverse, center, middle
 ---
 ##What type of covariation occurs between my variables?
 
-Note to self: correlation matrices
+**Correlation matrices** provide quick information about bivariate correlations among features. 
+
+TODO: can't figure out how to remove white surrounding background
+```{r, echo = FALSE}
+data(msq)
+cormat <- cor(msq[, c(2, 4, 5, 15, 19, 20, 30, 43, 49, 55, 67)], use = 'pairwise.complete.obs')
+pmat <- cor_pmat(bfi)
+ggcorrplot(cormat) + 
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "transparent", color = NA))
+
+```
+
+---
+##What type of covariation occurs between my variables?
+
+TODO: Another correlation matrix, with numbers
+
+---
+##What type of covariation occurs between my variables?
+
+TODO: Another correlation matrix, with hierarchical clustering
+
+---
+##What type of covariation occurs between my variables?
+
+TODO: Scatterplot matrix
 
 ---
 class: inverse, center, middle
@@ -550,5 +586,15 @@ class: inverse, center, middle
 
 ---
 ##Are my data appropriate for the task? 
+
+TODO
+
+---
+##Knowledge Check
+
+TODO
+
+---
+##Small Group Activity
 
 TODO

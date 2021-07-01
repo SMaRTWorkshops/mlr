@@ -1,0 +1,189 @@
+---
+title: '<span style="font-size:48pt;">Feature Engineering</span>'
+subtitle: '.big[👷 🗄️ 🛠️] ' 
+author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
+date: 'Lecture 2-A &emsp; &emsp; July 20, 2021'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      beforeInit: "macros.js"
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b",
+  footnote_font_size = "20px",
+  footnote_color = "gray",
+  text_slide_number_font_size = "18px"
+)
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+<style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+</style>
+---
+class: onecol
+## Feature Engineering
+.left-column[
+<br />
+```{r engineer, echo=FALSE}
+include_graphics("../Day_1A/engineer.jpg")
+```
+]
+.right-column[
+**Prepare the features for analysis**
+- *Extract* features
+- *Transform* features
+- *Re-encode* features
+- *Combine* features
+- *Reduce* feature dimensionality
+- *Impute* missing feature values
+- *Select* and drop features
+]
+---
+class: onecol
+
+## Motivation
+
+**Features** are descriptions of the data points that help to predict the labels
+
+- We may need to extract features from "raw" or "low-level" data (e.g., images)
+- We may need to address issues with missing data and feature distributions
+
+There are many potential ways to **encode** or "represent" the features
+
+- e.g., adding, dropping, transforming, and combining features<sup>1</sup>
+- Feature encoding can have a big ![:emphasize](impact on predictive performance)<sup>2</sup>
+- The optimal encoding depends on both the **algorithm** and the **relationships**
+
+.footnote[
+[1] Some algorithms can learn their own, complex feature representations<br />
+[2] Some algorithms are more sensitive to feature encoding than others
+]
+
+---
+
+## Potential Issues
+
+- Outliers
+- Missing Data
+- Non-normal distributions (e.g., skew)
+
+- Redundant Features
+- Uninformative Features
+- 
+
+---
+class: onecol
+## Encoding Examples
+.left-column[
+<br />
+
+```{r, echo=FALSE}
+include_graphics("july.jpg")
+```
+
+]
+.right-column[
+**When an event or observation occurred**
+
+- The numeric year *(2021)*
+- The numeric month *(7)*
+- The numeric day of the month *(20)*
+- The numeric day of the year *(201)*
+- Days since a reference *(diagnosis +2)*
+- The day of the week *(Tuesday)*
+- The season of the year *(Summer)*
+- The type of day *(weekday)* 
+- The presence of a holiday *(FALSE)*
+
+]
+
+---
+## Roadmap
+
+- Univariate Transformations
+- Multivariate Transformations
+- Dealing with Missing Values
+- Removing and Adding Features
+- Binning Features (Avoid)
+- Computing Features
+
+Centering and scaling
+Reducing skewness (log, box-cox)
+Resolve outliers ()
+Reduce dimensionality (PCA)
+Missing and censored data (imputation)
+Removing features (near-zero variance, multicollinearity)
+Adding features (dummy coding and one-hot encoding)
+
+`caret::preProcess()`
+`caret::nearZeroVar()`
+`caret::findCorrelation()`
+`caret::dummyVars()`
+
+---
+class: inverse, center, middle
+# Feature Transformations
+
+---
+
+---
+class: inverse, center, middle
+# Part 3
+---
+class: inverse, center, middle
+# Part 4
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```

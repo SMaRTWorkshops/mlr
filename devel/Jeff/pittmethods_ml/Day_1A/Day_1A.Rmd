@@ -491,7 +491,7 @@ include_graphics("tune.jpg")
 ```
 ]
 .right-column[
-**Determine complex the model can become**
+**Determine how complex the model can become**
 - How many features to include in the model
 - How complex the shape of relationships can be
 - How many features can interact together
