@@ -1,25 +1,25 @@
-Day,Part,Description,Minutes
-1,A,Workshop Overview,15
-1,A,Group Icebreakers,15
-1,A,Conceptual Introduction,15
-1,A,Modeling Workflow,15
-1,A,Flexibility and Overfitting,15
-1,A,Addressing Overfitting,15
-1,A,Small group activity,25
-1,X,Break,10
-1,B,Packages (caret + tidymodels),10
-1,B,EDA: intro,5
-1,B,Simple data split,15
-1,B,"EDA: Errors, outliers, missing data",15
-1,B,EDA: Correlations,15
-1,B,EDA: Linearity vs nonlinearity,15
-1,B,Small group activity,25
-1,B,Small group activity,25
-2,A,Feature Engineering Overview,15
-2,A,Feature Transformations,15
-2,A,Dimensionality Reduction,15
-2,A,Dealing with Missing Data,15
-2,A,Adding and Removing Features,15
-2,A,Techniques to Avoid,15
-2,A,Small group activity,25
-2,X,Break,10
+Day,Part,Title,Description,Minutes
+1,A,Introductions,Workshop Overview,15
+1,A,Introductions,Group Icebreakers,15
+1,A,Introductions,Conceptual Introduction,15
+1,A,Introductions,Modeling Workflow,15
+1,A,Introductions,Flexibility and Overfitting,15
+1,A,Introductions,Addressing Overfitting,15
+1,A,Introductions,Small group activity,25
+1,X,,Break,10
+1,B,Logistics and Data Exploration,Packages (caret + tidymodels),10
+1,B,Logistics and Data Exploration,EDA: intro,5
+1,B,Logistics and Data Exploration,Simple data split,15
+1,B,Logistics and Data Exploration,"EDA: Errors, outliers, missing data",15
+1,B,Logistics and Data Exploration,EDA: Correlations,15
+1,B,Logistics and Data Exploration,EDA: Linearity vs nonlinearity,15
+1,B,Logistics and Data Exploration,Small group activity,25
+1,B,Logistics and Data Exploration,Small group activity,25
+2,A,Feature Engineering,Feature Engineering Overview,15
+2,A,Feature Engineering,Adding Features,15
+2,A,Feature Engineering,Transforming Features,15
+2,A,Feature Engineering,Reducing Features,15
+2,A,Feature Engineering,Advanced Topics,15
+2,A,Feature Engineering,Live Coding,15
+2,A,Feature Engineering,Small group activity,25
+2,X,,Break,10
