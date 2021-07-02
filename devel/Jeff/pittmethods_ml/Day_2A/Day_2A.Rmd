@@ -242,6 +242,9 @@ class: inverse, center, middle
 
 ---
 class: inverse, center, middle
+# Live Coding
+---
+class: inverse, center, middle
 # Time for a Break!
 ```{r countdown, echo=FALSE}
 countdown(
