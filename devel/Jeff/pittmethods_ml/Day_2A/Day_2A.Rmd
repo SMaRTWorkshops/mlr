@@ -44,6 +44,7 @@ library(knitr)
 library(kableExtra)
 library(countdown)
 library(patchwork)
+library(caret)
 ```
 
 class: inverse, center, middle
@@ -86,6 +87,8 @@ class: onecol
 - We may need to extract features from "raw" or "low-level" data (e.g., images)
 - We may need to address issues with missing data and feature distributions
 
+--
+
 There are many potential ways to **encode** or "represent" the features
 
 - e.g., adding, dropping, transforming, and combining features<sup>1</sup>
@@ -98,20 +101,8 @@ There are many potential ways to **encode** or "represent" the features
 ]
 
 ---
-
-## Potential Issues
-
-- Outliers
-- Missing Data
-- Non-normal distributions (e.g., skew)
-
-- Redundant Features
-- Uninformative Features
-- 
-
----
 class: onecol
-## Encoding Examples
+## Examples of Feature Encodings
 .left-column[
 <br />
 
@@ -134,6 +125,27 @@ include_graphics("july.jpg")
 - The presence of a holiday *(FALSE)*
 
 ]
+---
+class: onecol
+## Issues to Navigate in Feature Engineering
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics("cones.jpg")
+```
+]
+.right-column[
+- Features with **non-normal** distributions
+- Features with vastly **different scales**
+- Features with extreme **outliers**
+- Features with **missing** or censored values
+- Features that are **correlated** with one another
+- Features that are **redundant** with one another
+- Features that have zero or **near-zero variance**
+- Features that are **uninformative** for a task
+- Features with **uncertainty** or unreliability
+]
+---
 
 ---
 class: onecol
@@ -165,17 +177,139 @@ class: onecol
 class: inverse, center, middle
 # Adding Features
 ---
+class: onecol
 ## Calculated Features
+
+Some variables will need to be calculated from existing values and variables
+
+- You may choose to score an instrument from item-level data
+- You may choose to encode a feature as the ratio of two values
+- You may choose to calculate sums, means, counts, proportions, etc.
+
+We will provide some example code in `base` R and `tidyverse` formats
+
+But to learn more about data wrangling in R, we recommend the following
+
+- <i>[R for Data Science: Visualize, Model, Transform, Tidy, and Import Data](https://r4ds.had.co.nz/)</i><br />by Wickham and Grolemund (book for purchase or online for free)
 
 ---
 ## Calculated Features in R
+```{r}
+# Read in and partition the data
+set.seed(2021)
+trainIndex <- caret::createDataPartition(iris$Species, p = 0.8, list = FALSE, times = 1)
+irisTrain <- iris[trainIndex, ]
+
+# Add calculated features using base R
+irisTrain$Avg.Length <- (irisTrain$Sepal.Length + irisTrain$Petal.Length) / 2
+irisTrain$Width.Ratio <- irisTrain$Sepal.Width / irisTrain$Petal.Width
+```
+
+```{r, echo=FALSE}
+knitr::kable(irisTrain) %>% 
+  kableExtra::scroll_box(height = "250px")
+```
 
 ---
+
+## Calculated Features in R
+
+```{r}
+# Add calculated features using tidyverse
+library(tidyverse)
+irisTrain <- irisTrain %>% 
+  mutate(
+    Avg.Length = (Sepal.Length + Petal.Length) / 2,
+    Width.Ratio = Sepal.Width / Petal.Width
+  )
+```
+
+```{r, echo=FALSE}
+knitr::kable(irisTrain) %>% 
+  kableExtra::scroll_box(height = "250px")
+```
+
+---
+class: onecol
 ## Categorical Features
 
----
-## Categorical Features in R
+Categorical features can be re-encoded into multiple binary (0 or 1) features
 
+Imagine a categorical variable ** `age` ** that is either *Child* or *Adolescent* or *Adult*
+
+--
+
+.pull-left[
+.center[![:emphasize](Dummy Coding)]
+
+Group | age1 | age2
+:-----|:----:|:----:
+Child | 0  | 0
+Adolescent | 1 | 0
+Adult | 0 | 1
+
+<p style="text-align:center;font-size:20px;">Efficient and avoids redundancy<br />Good for GLM-based methods</p>
+]
+
+.pull-right[
+.center[![:emphasize](One-Hot Encoding)]
+
+Group | age1 | age2 | age3
+:-----|:----:|:----:|:----:
+Child | 1  | 0  | 0
+Adolescent | 0 | 1 | 0
+Adult | 0 | 0 | 1
+
+<p style="text-align:center;font-size:20px;">Simple and easy to interpret<br />Good for tree-based methods</p>
+]
+
+
+---
+class: onecol
+## Categorical Features in R
+If you save a categorical variable as a factor in R, it will dummy code it by default
+
+But we can also explicitly dummy code it using `caret::dummyVars()`
+
+```{r}
+data(etitanic, package = "earth")
+```
+
+```{r,echo=FALSE}
+knitr::kable(etitanic) %>% kableExtra::scroll_box(height="275px")
+```
+
+---
+class: onecol
+## Categorical Features in R
+```{r, eval=FALSE}
+# Dummy Coding
+dummy <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = TRUE) #<<
+predict(dummy, newdata = etitanic)
+```
+
+```{r,echo=FALSE}
+dummy <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = TRUE)
+predict(dummy, newdata = etitanic) %>% 
+  knitr::kable() %>% 
+  kableExtra::scroll_box(height="300px")
+```
+
+---
+class: onecol
+## Categorical Features in R
+```{r, eval=FALSE}
+# One-Hot Encoding
+onehot <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = FALSE) #<<
+predict(onehot, newdata = etitanic)
+```
+
+```{r,echo=FALSE}
+onehot <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = FALSE)
+predict(onehot, newdata = etitanic) %>% 
+  knitr::kable() %>% 
+  kableExtra::scroll_box(height="300px")
+```
 ---
 ## Interaction Terms
 
