@@ -24,8 +24,10 @@ knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE, 
   warning = FALSE,
-  hiline = TRUE
+  hiline = TRUE,
+  par(bg = "#E9ECEF")
 )
+knitr::opts_knit$set(global.par = TRUE)
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -57,6 +59,35 @@ library(corrplot)
 library(AppliedPredictiveModeling)
 ```
 
+class: inverse, center, middle
+# Overview
+
+---
+##Lecture Topics
+.left-column[
+</br>
+```{r, echo=FALSE, out.height = "200%"}
+include_graphics('agenda.png')
+```
+]
+
+.right-column[
+**Packages**
+- `caret` - primary package for this course
+- `tidymodels`
+
+**Simple Data Split**
+- Training and testing datasets
+- Data splitting in `caret`
+
+**Exploratory Data Analysis**
+- Data distributions
+- Missing data
+- Feature correlations 
+- Linearity and nonlinearity
+]
+
+---
 class: inverse, center, middle
 # Packages
 
@@ -208,7 +239,7 @@ include_graphics("explore.jpg")
 
 --
 .pull-right[
-<div style= "font-size:38pt; text-align:center;"> ![:emphasize](WAIT! </br> ideally on training data *only*)
+<div style= "font-size:28pt; text-align:center;"> ![:emphasize](WAIT! </br> ideally on training data *only*)
 ]
 
 ---
@@ -328,31 +359,54 @@ class: inverse, center, middle
 ## Data Distributions and Error Detection
 
 ---
-##What type of variation occurs in my variables?
+##Data distributions and error detection
+
+Typically, the first step in exploratory data analysis is to explore data distributions.
+
+This provides insight into:
+
+- Whether features are normally distributed
+- Concerning or extreme skewness 
+- Potential data anomalies or errors 
+- Data outliers 
+- Features with low variance
+- Imbalanced data (categorical variables)
+
+Methods:
+- Summary statistics
+- Histograms
+- Bar charts
+
+---
+##Data distributions and error detection in R
 
 The `dfsummary()` function from `summarytools` is useful for quickly identifying trends and anomalies at a glance. 
 
 --
 
-```{r, echo = FALSE}
-print(dfSummary(irisTrain[, c(1, 2, 5)], plain.ascii = FALSE, valid.col = FALSE, headings = FALSE), method = 'render')
+```{r}
+print(dfSummary(irisTrain, valid.col = FALSE, headings = FALSE, style = 'grid', 
+                plain.ascii = FALSE, graph.magnif = 0.85, tmp.img.dir = "/tmp"),
+      max.tbl.height = 300, method = 'render')
 ```
 
 ---
-##What type of variation occurs in my variables?
+##Data distributions and error detection in R
 
 Overlaying distributions on the same plot can also be helpful. We can use the `featurePlot()` function in `caret`.
 
-```{r, echo = FALSE, fig.showtext = TRUE, out.width="80%"}
+--
+
+```{r, echo = FALSE}
 par(bg = "#E9ECEF")
 transparentTheme(trans = .9)
-featurePlot(x = iris[, 1:4],
-            y = iris$Species,
-            plot = 'density',
-            scales = list(x = list(relation = "free"), y = list(relation = "free")),
-            adjust = 1.5,
-            pch = "|",
-            auto.key = list(columns = 3))
+```
+
+
+```{r, fig.align='center', out.width="60%"}
+featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density', 
+            scales = list(x = list(relation = "free"), y = list(relation = "free")), 
+            adjust = 1.5, pch = "|", auto.key = list(columns = 3))
 ```
 
 .footnote[
@@ -471,7 +525,7 @@ Two helpful questions to guide missing data visualization:
 - Does missing data in one variable depend on other variables?
 
 ---
-##Which variables have missing observations? How many?
+##Missing data visualization in R
 
 **Aggregation plots** are useful for inspecting the prevalence of missing data. 
 
@@ -480,7 +534,7 @@ load("biopics.RData")
 ```
 
 
-```{r, echo = FALSE, out.height = "85%", out.width = "85%"}
+```{r,  out.height = "75%", out.width = "75%", fig.align='center'}
 aggr(biopics, numbers = TRUE, prop = c(TRUE, FALSE), col = c("bisque2","darkcyan"))
 ```
 
@@ -489,11 +543,11 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ]
 
 ---
-##Does missing data in one variable depend on others?
+##Missing data visualization in R
 
 We also want to know if missing data systematically vary by other observed data. If the other data are numeric we use a **spinogram**; if categorical we can use a **spineplot**.
 
-```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="80%", out.width="80%"}
+```{r, message=FALSE, warning=FALSE, results = 'hide', out.height = "70%", out.width = "70%", fig.align='center'}
 spineMiss(biopics[, c("sub_race", "earnings")], col = c("bisque2","darkcyan"))
 ```
 
@@ -502,11 +556,11 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ]
 
 ---
-##Does missing data in one variable depend on others?
+##Missing data visualization in R
 
 Let's flip the two variables to ask: does the percentage of missing data in `sub_race` differ by `earnings`?
 
-```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="80%", out.width="80%"}
+```{r, message=FALSE, warning=FALSE, results = 'hide', out.height = "75%", out.width = "75%", fig.align='center'}
 spineMiss(biopics[, c("earnings", "sub_race")], col = c("bisque2","darkcyan"))
 ```
 
@@ -515,7 +569,7 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ]
 
 ---
-##Does missing data in one variable depend on others?
+##Missing data visualization in R
 
 **Mosiac plots** generalize spineplots and spinograms (which only plot two variables at a time) to multiple variables.
 
@@ -524,7 +578,7 @@ biopics <- biopics %>% mutate(US_movie = ifelse(grepl("US", country), TRUE, FALS
 ```
 
 
-```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="85%", out.width="85%"}
+```{r, message=FALSE, warning=FALSE, results = 'hide', out.height = "70%", out.width = "70%", fig.align='center'}
 mosaicMiss(biopics[, c("sub_sex", "US_movie", "earnings")], highlight = 3, 
            plotvars = 1:2, miss.labels = FALSE, col = c("bisque2","darkcyan"))
 ```
@@ -534,11 +588,11 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ]
 
 ---
-##Do missing data patterns differ across the dataset? 
+##Missing data visualization in R
 
 **Parallel coordinate plots** allow us to look at patterns of missingness across the entire dataset.
 
-```{r, echo = FALSE, message=FALSE, warning=FALSE, results = 'hide', out.height="85%", out.width="85%"}
+```{r, message=FALSE, warning=FALSE, results = 'hide', out.height = "75%", out.width = "75%", fig.align='center'}
 parcoordMiss(biopics, highlight = 'earnings', alpha = 0.6, col = c("bisque2","darkcyan"))
 ```
 
@@ -551,56 +605,54 @@ class: inverse, center, middle
 ## Feature Covariation and Correlations
 
 ---
-##What type of covariation occurs between my variables?
+##Feature covariation and correlations
 
-**Correlation matrices** provide quick information about bivariate correlations among features. 
+In addition to asking what type of variation occurs *within* features, we should also explore the covariation that occurs *between* features (as well as covariation between features and outcome variables).
 
-```{r, echo = FALSE}
+This provides insight into: 
+- Highly correlated features (multicollinearity)
+- Potential clusters of features that could be reduced into a single feature
+- Features with strong relationships to the outcome (feature selection)
+
+Methods:
+- Correlation matrices
+- Correlation matrices with clustering
+- Scatterplot matrices
+
+---
+##Feature covariation and correlations in R
+
+```{r}
 data(msq)
-cormat <- cor(msq[, c(2, 4, 5, 15, 19, 20, 30, 43, 49, 55, 67)], use = 'pairwise.complete.obs')
-pmat <- cor_pmat(bfi)
-#ggcorrplot(cormat) + 
-#  theme_xaringan(text_font_size = 14, title_font_size = 18) +
-#  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "transparent", color = NA))
-
-#ggcorr(msq[, c(2, 4, 5, 15, 19, 20, 30, 43, 49, 55, 67)], hjust = 0.75)
-par(bg = "#E9ECEF")
+cormat <- cor(subset(msq, select = c("afraid", "angry", "anxious", "cheerful", "delighted", "depressed", "frustrated", "jittery", "proud", "scared", "unhappy")), use = 'pairwise.complete.obs')
 corrplot(cormat, tl.col = '#23395b', type = 'lower', tl.cex = 0.8)
 ```
 
 ---
-##What type of covariation occurs between my variables?
+##Feature covariation and correlations in R
 
-**Correlation matrices** provide quick information about bivariate correlations among features. 
-
-```{r, echo = FALSE}
-par(bg = "#E9ECEF")
-corrplot(cormat, tl.col = '#23395b', type = 'lower', method = 'number', tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
+```{r}
+# Correlation matrix with numbers
+corrplot(cormat, type = 'lower', method = 'number', 
+         tl.col = '#23395b', tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
 ```
 
 ---
-##What type of covariation occurs between my variables?
+##Feature covariation and correlations in R
 
-**Correlation matrices** provide quick information about bivariate correlations among features. 
-
-```{r, echo = FALSE}
-par(bg = "#E9ECEF")
-corrplot(cormat, tl.col = '#23395b', order = 'hclust', addrect = 3, tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
+```{r}
+# Correlation matrix with hierarchical clustering
+corrplot(cormat, tl.col = '#23395b', order = 'hclust', addrect = 3, 
+         tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
 ```
 
 ---
-##What type of covariation occurs between my variables?
+##Feature covariation and correlations in R
 
-**Scatterplot matrices** also provide visualizations of bivariate relationships among variables.
-
-```{r, echo = FALSE, out.width="80%"}
-pairs.panels(iris[, 1:4],
-             method = 'pearson', 
-             density = TRUE,
-             ellipses = FALSE,
-             lm = TRUE,
-             cex.cor = 0.8,
-             cex.labels = 0.9)
+```{r, fig.align='center'}
+# Scatterplot matrix
+pairs.panels(irisTrain[, 1:4], method = 'pearson', density = TRUE, ellipses = FALSE, 
+             lm = TRUE, cex.cor = 0.8, cex.labels = 0.9)
 ```
 
 ---
@@ -609,36 +661,7 @@ class: inverse, center, middle
 ## Linearity and Nonlinearity
 
 ---
-##Are there nonlinearities?
-
-We can use the `featurePlot()` function in `caret` to look for nonlinearities between features and outcomes.
-
-```{r, echo = FALSE, results = FALSE}
-data(affect)
-affect <- rename(affect, neuroticism = neur, positiveAffect = PA1)
-```
-
-```{r, echo = FALSE, out.width = "80%"}
-theme1 <- trellis.par.get()
-theme1$plot.symbol$col = rgb(.2, .2, .2, .4)
-theme1$plot.symbol$pch = 16
-theme1$plot.line$col = rgb(1, 0, 0, .7)
-theme1$plot.line$lwd <- 2
-trellis.par.set(theme1)
-
-featurePlot(x = affect[, c(4, 8, 12, 20)],
-            y = affect$NA1,
-            plot = "scatter",
-            type = c("p", "smooth"),
-            labels = c("Feature", "Negative Affect", "test"))
-```
-
-.footnote[
-see more at https://topepo.github.io/caret/visualizations.html
-]
-
----
-##Are there nonlinearities?
+##Linearity and nonlinearity 
 
 Nonlinearity between features and outcome variables are important to pay attention to, because these data patterns inform algorithm selection. 
 
@@ -668,6 +691,26 @@ for (i in 1:1000){
 plot(feature, outcome, cex.lab = 2)
 ```
 ]
+---
+##Linearity and nonlinearity in R
+
+We can use the `featurePlot()` function in `caret` to look for nonlinearities between features and outcomes.
+
+```{r, echo = FALSE, results = FALSE}
+data(affect)
+affect <- rename(affect, neuroticism = neur, positiveAffect = PA1)
+theme1 <- trellis.par.get()
+theme1$plot.symbol$col = rgb(.2, .2, .2, .4)
+theme1$plot.symbol$pch = 16
+theme1$plot.line$col = rgb(1, 0, 0, .7)
+theme1$plot.line$lwd <- 2
+trellis.par.set(theme1)
+```
+
+```{r, out.width = "80%", fig.align='center'}
+featurePlot(x = affect[, c(4, 8, 12, 20)], y = affect$NA1, plot = "scatter",
+            type = c("p", "smooth"), labels = c("Feature", "Negative Affect"))
+```
 
 ---
 class: inverse, center, middle
