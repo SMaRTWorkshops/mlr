@@ -277,6 +277,31 @@ class: inverse, center, middle
 
 Elastic net regression is a generalization of the lasso model, which combines both `\(L1\)` and `\(L2\)` penalty terms:
 
+`$$SSE_{EN} = \sum\limits_{i = 1}^n(y_i - \hat{y_i})^2 + \lambda_1 \sum\limits_{j = 1}^P \beta_j^2 + \lambda_2 \sum\limits_{j = 1}^P \lvert \beta_j \rvert$$`
+
+where
+- `\(n\)`: number of observations 
+- `\(y_1\)`: `\(i\)`th observed response
+- `\(\hat{y_i}\)`: `\(i\)`th predicted response
+- `\(P\)`: number of parameters 
+- `\(\beta_j\)`: the `\(j\)`th parameter 
+
+---
+## Elastic Net
+.left-column[
+&lt;br /&gt;
+&lt;img src="elasticnet.png" width="100%" /&gt;
+]
+.right-column[
+The elastic net model allows for effective ridge-like regularization with lasso-like feature selection.
+
+In `caret`, we now tune two hyperparameters: `\(\lambda\)` and `\(\alpha\)`.
+
+As with ridge and lasso, `\(\lambda\)` controls the degree of regularization. 
+
+The new `\(\alpha\)` hyperparameter is called the elastic net mixing parameter, and ranges from [0, 1]. At `\(\alpha = 0\)` ridge is performed and at `\(\alpha = 1\)` lasso is performed.  
+]
+
 ---
 ## Elastic Net Regression in R
 
