@@ -1,0 +1,63 @@
+---
+title: '<span style="font-size:48pt;">Decision Trees</span>'
+subtitle: '.big[🤔 🌴 🍂️ ]'
+author: 'Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series'
+date: 'Lecture 3-B &emsp; &emsp; July 21, 2021'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      beforeInit: ["macros.js", "cols_macro.js"]
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  par(bg = "#E9ECEF")
+)
+knitr::opts_knit$set(global.par = TRUE)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b",
+  footnote_font_size = "20px",
+  footnote_color = "gray",
+  text_slide_number_font_size = "18px"
+)
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+library(summarytools)
+library(mice)
+library(VIM)
+library(caret)
+library(gridExtra)
+library(psych)
+library(psychTools)
+library(ggcorrplot)
+library(GGally)
+library(corrplot)
+library(AppliedPredictiveModeling)
+```
+
+class: inverse, center, middle
+# Overview

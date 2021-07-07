@@ -57,6 +57,8 @@ library(ggcorrplot)
 library(GGally)
 library(corrplot)
 library(AppliedPredictiveModeling)
+library(MASS)
+library(gdata)
 ```
 
 class: inverse, center, middle
@@ -168,6 +170,9 @@ where
 - $y_1$: $i$th observed response
 - $\hat{y_i}$: $i$th predicted response
 
+<br/>
+--
+
 However, any dataset is influenced by both the underlying data-generating mechanisms *and* ![:emphasize](sampling error), which by definition is not shared with other samples drawn from the same population. 
 
 ---
@@ -190,6 +195,7 @@ While OLS regression is readily interpretable and easy to compute, there are sev
 - Cannot handle datasets with ![:emphasize](more predictors than observations) 
 - May not adequately capture ![:emphasize](nonlinear) relationships<sup>1<sup>
 
+<br/>
 Regularization addresses many (but not all) of these problems.
 
 .footnote[
@@ -199,7 +205,6 @@ Regularization addresses many (but not all) of these problems.
 ---
 class: inverse, center, middle
 # Regularization
-### (a.k.a. penalization or shrinkage)
 
 ---
 ##Why regularize?
@@ -210,14 +215,15 @@ include_graphics("overfit_graph.png")
 ```
 ]
 .right-column[
-**Reducing Overfitting**
-- OLS regression models overfit the data and inflate parameter estimates
-- Regularized regression adds an additional ![:emphasize](penalty term) to the error function 
-- This constrains parameter estimates.
-- Regularization penalizes model complexity.
-- Regularization also increases predictive accuracy in future datasets
-- Compared to OLS regression models, regularized regression models have a ![:emphasize](higher bias) but ![:emphasize](lower variance).
-- We sacrifice some accuracy in the training set for higher accuracy in the test set. 
+**Reduce Overfitting**
+
+OLS regression models overfit the data and inflate parameter estimates.
+
+Regularized regression adds an additional ![:emphasize](penalty term) to the error function, which constrains parameter estimates and penalizes model complexity.
+
+Compared to OLS regression models, regularized regression models have a ![:emphasize](higher bias) but ![:emphasize](lower variance).
+
+In essense, we make our model less sensitive to the data in the training set in order to achieve higher accuracy in the test set. 
 ]
 
 ---
@@ -230,11 +236,14 @@ include_graphics("feature_selection.png")
 ]
 .right-column[
 **Feature Selection**
-- We are often interested in finding a subset of 'good' predictors.
-- However, there are are many problems<sup>1</sup> with the traditional approach of stepwise regression models.
-- Regularization shrinks parameter estimates towards zero.
-- Some parameters are ![:emphasize](actually set to zero) in lasso regression models.
-- Thus, lasso simultaneously reduces overfitting and performs feature selection.
+
+We are often interested in finding a subset of 'good' predictors.
+
+However, there are are many problems<sup>1</sup> with the traditional approach of stepwise regression models.
+
+One benefit of regularization is that it shrinks parameter estimates towards zero. In some cases, such as lasso regression, some parameters are ![:emphasize](actually set to zero).
+
+Thus, regularization models can simultaneously reduce overfitting and perform feature selection.
 ]
 
 .footnote[
@@ -251,6 +260,8 @@ class: inverse, center, middle
 Recall the SSE error function for OLS regression: 
 
 $$SSE = \sum\limits_{i = 1}^n(y_i - \hat{y_i})^2$$
+
+--
 
 Ridge regression adds a penalty term to this function known as the $L_2$ penalty: 
 
@@ -271,11 +282,11 @@ include_graphics("ridge.png")
 ```
 ]
 .right-column[
-Whereas our goal in OLS regression was to minimize the difference between the observed and predicted data, ridge regression has an additional goal of ![:emphasize](minimizing the squared value of all parameter estimates).
+Whereas OLS regression minimizes the difference between the observed and predicted data, ridge regression has an additional goal of ![:emphasize](minimizing) $\color{darkred}\lambda$ ![:emphasize](* the squared value of all parameter estimates).
 
-Thus, parameter estimates are only able to become large if there is a proportional reduction in $SSE_{L2}$. 
+Thus, parameter estimates in ridge regression are only able to become large if there is a proportional reduction in $SSE_{L2}$. 
 
-The $\lambda$ parameter is a ![:emphasize](hyperparameter) controlling the degree of regularization.
+The $\lambda$ parameter is a ![:emphasize](hyperparameter) controlling the degree of regularization that ranges from [0, inf].
 
 At higher values of $\lambda$, parameters will be shrunk closer to zero.
 
@@ -285,10 +296,129 @@ We can find the 'best' value of $\lambda$ through cross-validation hyperparamete
 ---
 ## Ridge Regression in R
 
-Notes to self:
+```{r, echo = FALSE, results = 'hide'}
+# simulate some data with: 
+# one continuous outcome variable + one binary outcome variable
+# five predictors that are correlated with one another
+# five predictors that are uncorrelated with one another
+# eight variables that are not predictive
+# one predictor that has cutoffs - fine before a certain point
 
-Step 1: preprocessing (need to standardize variables)
+set.seed(2021)
+emptyCorMat <- diag(x = 1, nrow= 20, ncol=20, names = TRUE)
+emptyCorMat[1,2] <- .8
 
+correlated_relationship <- rnorm(n = 25, mean = .6, sd = .2)
+correlated_relationship[correlated_relationship > 1] <- .67
+emptyCorMat[3:7, 3:7] <- correlated_relationship
+
+uncorrelated_relationship <- rnorm(n = 50, mean = 0, sd = .1)
+uncorrelated_relationship[uncorrelated_relationship > 1] <- .2
+emptyCorMat[3:12, 8:12] <- uncorrelated_relationship
+emptyCorMat
+
+no_relationship <- rnorm(n = 8*20, mean = 0, sd = .1)
+emptyCorMat[,13:20] <- no_relationship
+
+firstRowCor <- rnorm(n = 10, mean = .5, sd = .2)
+firstRowCor[firstRowCor>1] <- .82
+emptyCorMat[1,3:12] <- firstRowCor
+
+secondRowCor <- rnorm(n = 10, mean = .5, sd = .2)
+secondRowCor[secondRowCor>1] <- .76
+emptyCorMat[2,3:12] <- secondRowCor
+
+lowerTriangle(emptyCorMat) = upperTriangle(emptyCorMat, byrow=TRUE)
+
+diag(emptyCorMat) <- 1
+
+stddev <- abs(rnorm(20,mean = 1, sd = 1))
+covMat <- stddev %*% t(stddev) * emptyCorMat
+covMat
+
+mu <- rnorm(20,mean = 4, sd = 1)
+nn <- corpcor::make.positive.definite(covMat, tol=1e-3)
+dat1 <- mvrnorm(n = 500, mu = mu, Sigma = nn, empirical = FALSE)
+
+# nonlinearities -- for decision trees later
+indices <- dat1[,20] < mean(dat1[,20])
+indices_length <- length(dat1[indices, 1])
+newNumbersToAdd <- rnorm(n=indices_length, mean =3, sd = .3)
+dat1[indices, 1] <- dat1[indices, 1] + newNumbersToAdd
+dat1[indices, 2] <- dat1[indices, 2] + (newNumbersToAdd * rnorm(n = indices_length, mean = 1, sd = .3))
+
+dat1[,2] <- dplyr::case_when(
+  dat1[,2] <= mean(dat1[,2])~ 0,
+  TRUE ~ 1) 
+dat1 <- ifelse(dat1 < 0, 0, dat1)
+
+EDsim <- as.data.frame(dat1)
+varnames <- c("ED_severity", "ED_diagnosis", 
+              "emo_reg", "depression", "impulsivity", "self_crit", "anxiety",
+              "race", "age", "SES", "prior_treatment", "perfectionism",
+              "day_temperature", "rainfall", "num_siblings", "num_cellphones", "time_news", "time_tv", "num_pets",
+              "duration_illness")
+names(EDsim) <- varnames
+EDsim <- EDsim %>% mutate(race = as.factor(floor(race)), age = age + 14, SES = as.factor(floor(SES)), 
+                 num_siblings = floor(num_siblings), num_cellphones = floor(num_cellphones), num_pets = floor(num_pets))
+```
+Step 0: Split into a training (including cross-validation) and held-out test set. 
+
+```{r, out.width="50%"}
+# use caret for simple data split
+library(caret)
+set.seed(2021)
+trainIndex <- createDataPartition(EDsim$ED_severity, p = 0.8, list = FALSE, times = 1)
+EDsim_train <- EDsim[trainIndex, ]
+EDsim_test <- EDsim[-trainIndex, ]
+```
+
+--
+
+```{r}
+# check data splitting
+dim(EDsim_train)
+dim(EDsim_test)
+```
+
+---
+## Ridge Regression in R 
+
+Step 1: Exploratory Data Analysis 
+
+```{r, echo = FALSE}
+print(dfSummary(EDsim_train, valid.col = FALSE, headings = FALSE, style = 'grid', 
+                plain.ascii = FALSE, graph.magnif = 0.85, tmp.img.dir = "/tmp"),
+      max.tbl.height = 300, method = 'render')
+```
+
+---
+## Ridge Regression in R 
+
+Step 1: Exploratory Data Analysis
+```{r, echo = FALSE}
+cormat <- cor(EDsim[, sapply(EDsim_train, is.numeric)])
+par(bg = "#E9ECEF")
+corrplot(cormat, tl.col = '#23395b', type = 'lower', tl.cex = 0.8, mar = c(0, 0, 0, 10))
+```
+
+---
+## Ridge Regression in R
+
+Step 2: Feature Engineering<sup>1</sup>
+
+```{r}
+preproc <- preProcess(EDsim_train[, -c(1, 2)], method = c("center", "scale"))
+preproc
+EDsim_train_tf <- predict(preproc, newdata = EDsim_train[, -c(1, 2)])
+```
+
+.footnote[
+[1] note that `caret::train` will automatically create dummy variables for factors
+]
+
+---
+## Ridge Regression in R 
 Step 2: traincontrol
 
 Step 3: set tuning grid (optional)
@@ -349,7 +479,7 @@ class: inverse, center, middle
 ---
 ## Elastic Net Regression
 
-Elastic net regression is a generalization of the lasso model, which combines both $L1$ and $L2$ penalty terms:
+Elastic net regression is a generalization of the lasso model, which combines both $L1$ (lasso) and $L2$ (ridge) penalty terms together in the error function:
 
 $$SSE_{EN} = \sum\limits_{i = 1}^n(y_i - \hat{y_i})^2 + \lambda_1 \sum\limits_{j = 1}^P \beta_j^2 + \lambda_2 \sum\limits_{j = 1}^P \lvert \beta_j \rvert$$
 
@@ -375,7 +505,11 @@ In `caret`, we now tune two hyperparameters: $\lambda$ and $\alpha$.
 
 As with ridge and lasso, $\lambda$ controls the degree of regularization. 
 
-The new $\alpha$ hyperparameter is called the elastic net mixing parameter, and ranges from [0, 1]. At $\alpha = 0$ ridge is performed and at $\alpha = 1$ lasso is performed.  
+The new $\alpha$ hyperparameter is called the ![:emphasize](elastic net mixing parameter), and ranges from [0, 1]. 
+
+At $\alpha = 0$ ridge is performed and at $\alpha = 1$ lasso is performed.  
+
+Elastic net is particularly good at handling correlated predictors. 
 ]
 
 ---
