@@ -282,6 +282,7 @@ knitr::kable(etitanic) %>% kableExtra::scroll_box(height="275px")
 ---
 class: onecol
 ## Categorical Features in R
+
 ```{r, eval=FALSE}
 # Dummy Coding
 dummy <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = TRUE) #<<
@@ -310,6 +311,7 @@ predict(onehot, newdata = etitanic) %>%
   knitr::kable() %>% 
   kableExtra::scroll_box(height="300px")
 ```
+
 ---
 ## Interaction Terms
 
@@ -345,10 +347,75 @@ Definition of scaling
 class: inverse, center, middle
 # Reducing Features
 ---
-## Near-Zero Variance
+class: onecol
+## Zero and Near-Zero Variance Predictors
+![:emphasize](Zero variance predictors) take on only a single value in the sample
+
+- These predictors are **uninformative** and may lead to **modeling problems**
+
+![:emphasize](Near-zero variance predictors) take on only a few unique values with low frequencies
+
+- These predictors can easily become zero-variance predictors during resampling
+
+<p style="padding-top:25px;">For many algorithms, we want to <b>detect</b> and <b>remove</b> both types of predictors</p>
+
+For algorithms with built-in feature selection, this should happen automatically
 
 ---
-## Nero-Zero Variance in R
+## Zero and Nero-Zero Variance Predictors in R
+
+```{r}
+# Simulate some predictors with acceptable, near-zero, and zero variance
+set.seed(2021)
+example <- tibble::tibble(
+  x1 = rbinom(100, 1, prob = 0.50),
+  x2 = rbinom(100, 1, prob = 0.99),
+  w1 = rbinom(100, 5, prob = 0.20),
+  w2 = rbinom(100, 5, prob = 0.00)
+)
+# Preview the simulated predictor variables
+glimpse(example)
+```
+
+---
+## Zero and Nero-Zero Variance Predictors in R
+
+```{r}
+# Detect the column numbers of variables with near-zero variance
+nzv <- caret::nearZeroVar(example)
+nzv
+```
+
+--
+
+```{r}
+# Show the metrics used for detection
+caret::nearZeroVar(example, saveMetrics = TRUE)
+```
+
+--
+
+```{r}
+# Drop the zero and near-zero variance predictors
+example2 <- example[, -nzv]
+```
+
+---
+## Zero and Nero-Zero Variance Predictors in R
+
+```{r}
+# Drop zero variance predictors using preProcess
+preProcess(example, method = "zv")
+```
+
+--
+
+```{r}
+# Drop near-zero variance predictors using preProcess
+preProcess(example, method = "nzv")
+```
+
+.footnote[[1] Note that preProcess() will ignore non-numeric variables, so dummy code categorical variables first.]
 
 ---
 ## Multicollinearity
@@ -374,12 +441,32 @@ class: inverse, center, middle
 ---
 ## Feature Selection
 
+
+---
+class: onecol
+## Recommendations
+
+Algorithm | Preprocessing Steps
+:-------- | :------------------
+Regularized Regression | `dummy`, `nzv`, `impute`, `decorrelate`, (`transform`)
+Decision Tree | (`decorrelate`)
+Random Forest | (`nzv`), (`impute`), (`decorrelate`)
+
+For these algorithms, normalization is only really necessary for interpretation
+
+However, other algorithms (e.g., MLP and SVM) may require normalization
+
+To learn more about feature engineering, see [1] and the [recipes](https://recipes.tidymodels.org/) package
+
+.footnote[[1] Kuhn & Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.]
+
 ---
 class: inverse, center, middle
 # Live Coding
 ---
 class: inverse, center, middle
 # Time for a Break!
+
 ```{r countdown, echo=FALSE}
 countdown(
   minutes = 10, 
