@@ -5,7 +5,7 @@ author: 'Applied Machine Learning in R </br> Pittsburgh Summer Methodology Serie
 date: 'Lecture 2-B &emsp; &emsp; July 20, 2021'
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: [xaringan-themer.css, extras.css]
     nature:
       beforeInit: ["macros.js", "cols_macro.js"]
       slideNumberFormat: "%current% / %total%"
@@ -40,6 +40,20 @@ style_mono_light(
 )
 ```
 
+```{r, include=FALSE}
+options(width = 60)
+local({
+  hook_output <- knitr::knit_hooks$get('output')
+  knitr::knit_hooks$set(output = function(x, options) {
+    if (!is.null(options$max.height)) options$attr.output <- c(
+      options$attr.output,
+      sprintf('style="max-height: %s;"', options$max.height)
+    )
+    hook_output(x, options)
+  })
+})
+```
+
 ```{r packages, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(knitr)
@@ -59,6 +73,8 @@ library(corrplot)
 library(AppliedPredictiveModeling)
 library(MASS)
 library(gdata)
+library(elasticnet)
+library(glmnet)
 ```
 
 class: inverse, center, middle
@@ -359,10 +375,9 @@ varnames <- c("ED_severity", "ED_diagnosis",
               "day_temperature", "rainfall", "num_siblings", "num_cellphones", "time_news", "time_tv", "num_pets",
               "duration_illness")
 names(EDsim) <- varnames
-EDsim <- EDsim %>% mutate(race = as.factor(floor(race)), age = age + 14, SES = as.factor(floor(SES)), 
-                 num_siblings = floor(num_siblings), num_cellphones = floor(num_cellphones), num_pets = floor(num_pets))
+EDsim <- EDsim %>% mutate(ED_diagnosis = as.factor(ED_diagnosis), race = as.factor(floor(race)), age = age + 14, SES = as.factor(floor(SES)), num_siblings = floor(num_siblings), num_cellphones = floor(num_cellphones), num_pets = floor(num_pets))
 ```
-Step 0: Split into a training (including cross-validation) and held-out test set. 
+**Step 0: Split into a training (including cross-validation) and held-out test set.**
 
 ```{r, out.width="50%"}
 # use caret for simple data split
@@ -384,7 +399,7 @@ dim(EDsim_test)
 ---
 ## Ridge Regression in R 
 
-Step 1: Exploratory Data Analysis 
+**Step 1: Exploratory Data Analysis** 
 
 ```{r, echo = FALSE}
 print(dfSummary(EDsim_train, valid.col = FALSE, headings = FALSE, style = 'grid', 
@@ -395,9 +410,9 @@ print(dfSummary(EDsim_train, valid.col = FALSE, headings = FALSE, style = 'grid'
 ---
 ## Ridge Regression in R 
 
-Step 1: Exploratory Data Analysis
+**Step 1: Exploratory Data Analysis**
 ```{r, echo = FALSE}
-cormat <- cor(EDsim[, sapply(EDsim_train, is.numeric)])
+cormat <- cor(EDsim_train[, sapply(EDsim_train, is.numeric)])
 par(bg = "#E9ECEF")
 corrplot(cormat, tl.col = '#23395b', type = 'lower', tl.cex = 0.8, mar = c(0, 0, 0, 10))
 ```
@@ -405,12 +420,27 @@ corrplot(cormat, tl.col = '#23395b', type = 'lower', tl.cex = 0.8, mar = c(0, 0,
 ---
 ## Ridge Regression in R
 
-Step 2: Feature Engineering<sup>1</sup>
+**Step 2: Feature Engineering**<sup>1</sup>
 
 ```{r}
 preproc <- preProcess(EDsim_train[, -c(1, 2)], method = c("center", "scale"))
 preproc
-EDsim_train_tf <- predict(preproc, newdata = EDsim_train[, -c(1, 2)])
+EDsim_train_tf <- predict(preproc, newdata = EDsim_train)
+```
+
+.footnote[
+[1] note that `caret::train` will automatically create dummy variables for factors
+]
+
+---
+## Ridge Regression in R
+
+**Step 2: Feature Engineering**<sup>1</sup>
+
+```{r, echo = FALSE}
+print(dfSummary(EDsim_train_tf, valid.col = FALSE, headings = FALSE, style = 'grid', 
+                plain.ascii = FALSE, graph.magnif = 0.85, tmp.img.dir = "/tmp"),
+      max.tbl.height = 300, method = 'render')
 ```
 
 .footnote[
@@ -419,15 +449,154 @@ EDsim_train_tf <- predict(preproc, newdata = EDsim_train[, -c(1, 2)])
 
 ---
 ## Ridge Regression in R 
-Step 2: traincontrol
 
-Step 3: set tuning grid (optional)
+**Step 3: Set model training and tuning methods in `caret::traincontrol()`**
 
-Step 4: train
+```{r}
+EDsim_control <- trainControl(method = 'repeatedCV',
+                              number = 10,
+                              repeats = 3, 
+                              classProbs = FALSE,
+                              summaryFunction = defaultSummary)
+```
 
-Step 5: predict
+<br/>
+This sets our up training procedure with the following specifications: 
 
-Step 6: variable importance
+- 10-fold cross-validation, repeated 3 times
+- Other commonly used options include `method = 'cv'` for a single (non-repeated) cross-validation and `method = 'boot'` for bootstrapping
+- For classification, set `classProbs = TRUE` and `summaryFunction = twoClassSummary` or `summaryFunction = prSummary`
+
+---
+## Ridge Regression in R
+
+Note that the cross-validation process involves choosing random indices for data splitting. To ensure reproducibility, you can set seeds to use for resampling in the model training process:
+
+```{r}
+set.seed(2021)
+seeds <- vector(mode = "list", length = 30) # length = n data splits
+for(i in 1:30) seeds[[i]] <- sample.int(1000, 21)
+seeds[[31]] <- sample.int(1000, 1) # for the last model 
+```
+
+--
+
+This `seeds` object can be included in the `trainControl` function to obtain the same resampling seeds each time the code is run for fully reproducible results. 
+
+```{r}
+EDsim_control <- trainControl(method = 'repeatedCV',
+                              number = 10,
+                              repeats = 3,
+                              classProbs = FALSE,
+                              summaryFunction = defaultSummary,
+                              seeds = seeds)
+```
+
+---
+## Ridge Regression in R 
+
+**Step 4: Set a tuning grid** (optional)
+
+There are several ways to set a tuning grid in `caret`. 
+
+The first option is to do nothing, as `caret` will automatically create a tuning grid if one is not specified. By default, `caret::train()` creates a tuning grid of size $3^P$, where $P$is the number of tuning parameters. 
+
+--
+
+The second option is to specify the length of the tuning grid in the `caret::train()` function: 
+
+```{r, eval = FALSE}
+train(Y ~ X, method = 'glmnet', tuneLength = 10)
+```
+
+--
+
+The third option is to specify the grid yourself to call in `caret::train()`:
+
+```{r}
+ridgegrid <- expand.grid(alpha = 0, lambda = seq(0, 1, 0.01))
+```
+
+This option is useful for training ridge regression models within the `glmnet` method in `caret`, which allows for nice data visualizations. However, `caret` will automatically create a grid of both $\alpha$ and $\lambda$ values for `method = 'glmnet'`, but we can avoid that by setting the tuning grid ourselves. 
+
+---
+## Ridge Regression in R
+
+**Step 5: Train your model using `caret::train()`**
+
+```{r}
+set.seed(2021)
+ridgefit <- train(ED_severity ~ ., data = EDsim_train_tf[, -2],
+                  method = 'glmnet',
+                  tuneGrid = ridgegrid,
+                  trControl = EDsim_control)
+```
+
+--
+
+.scroll-output[
+```{r}
+ridgefit
+```
+]
+
+---
+## Ridge Regression in R
+
+```{r}
+ggplot(ridgefit) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
+```
+
+---
+## Ridge Regression in R
+
+```{r}
+library(coefplot)
+coefpath(ridgefit$finalModel)
+```
+
+---
+## Ridge Regression in R
+
+```{r}
+ggplot(varImp(ridgefit)) +
+  theme_xaringan(text_font_size = 10, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
+```
+
+---
+## Ridge Regression in R
+
+**Step 6: Predict on held-out test set**
+
+First we need to standardize the training data:
+
+```{r}
+preproc_test <- preProcess(EDsim_test[, -c(1, 2)], method = c("center", "scale"))
+preproc_test
+EDsim_test_tf <- predict(preproc_test, newdata = EDsim_test)
+```
+
+---
+## Ridge Regression in R
+
+**Step 6: Predict on held-out test set**
+
+```{r}
+ridgepred_test <- predict(ridgefit, EDsim_test_tf)
+postResample(pred = ridgepred_test, obs = EDsim_test_tf$ED_severity)
+```
+
+--
+
+Let's compare this to the performance metrics on our training set: 
+
+```{r}
+ridgepred_train <- predict(ridgefit, EDsim_train_tf)
+postResample(pred = ridgepred_train, obs = EDsim_train_tf$ED_severity)
+```
 
 ---
 class: inverse, center, middle
@@ -467,10 +636,6 @@ Ridge and lasso also differ in their handling of **multicollinearity.**
 
 Whereas ridge tends to shrink coefficients of correlated predictors towards each other, lasso tends to **pick one and ignore the rest**. 
 ]
-
----
-## Lasso Regression in R
-
 
 ---
 class: inverse, center, middle
@@ -513,8 +678,17 @@ Elastic net is particularly good at handling correlated predictors.
 ]
 
 ---
-## Elastic Net Regression in R
+class: inverse, center, middle
+# Live Coding
 
+---
+## Live Coding
+
+notes to self: 
+
+do regular regression, ridge, lasso, elastic net, and compare the models 
+
+also show categorical
 
 ---
 ## Group Activity
