@@ -48,31 +48,31 @@ class: onecol
 &lt;img src="engineer.jpg" width="100%" /&gt;
 ]
 .right-column[
-**Prepare the features for analysis**
-- *Extract* features
-- *Transform* features
-- *Re-encode* features
-- *Combine* features
-- *Reduce* feature dimensionality
-- *Impute* missing feature values
-- *Select* and drop features
+**Prepare the predictors for analysis**
+- *Extract* predictors
+- *Transform* predictors
+- *Re-encode* predictors
+- *Combine* predictors
+- *Reduce* predictor dimensionality
+- *Impute* missing predictor values
+- *Select* and drop predictors
 ]
 ---
 class: onecol
 
 ## Motivation
 
-**Features** are descriptions of the data points that help to predict the labels
+**Features** are descriptions of the data points that help to predict the outcomes
 
 - We may need to extract features from "raw" or "low-level" data (e.g., images)
 - We may need to address issues with missing data and feature distributions
 
 --
 
-There are many potential ways to **encode** or "represent" the features
+There are many potential ways to **encode** or "represent" the features/predictors
 
-- e.g., adding, dropping, transforming, and combining features&lt;sup&gt;1&lt;/sup&gt;
-- Feature encoding can have a big ![:emphasize](impact on predictive performance)&lt;sup&gt;2&lt;/sup&gt;
+- e.g., adding, dropping, transforming, and combining predictors&lt;sup&gt;1&lt;/sup&gt;
+- predictor encoding can have a big ![:emphasize](impact on predictive performance)&lt;sup&gt;2&lt;/sup&gt;
 - The optimal encoding depends on both the **algorithm** and the **relationships**
 
 .footnote[
@@ -82,7 +82,7 @@ There are many potential ways to **encode** or "represent" the features
 
 ---
 class: onecol
-## Examples of Feature Encodings
+## Examples of predictor Encodings
 .left-column[
 &lt;br /&gt;
 
@@ -105,21 +105,21 @@ class: onecol
 ]
 ---
 class: onecol
-## Issues to Navigate in Feature Engineering
+## Issues to Navigate in predictor Engineering
 .left-column[
 &lt;br /&gt;
 &lt;img src="cones.jpg" width="100%" /&gt;
 ]
 .right-column[
-- Features with **non-normal** distributions
-- Features with vastly **different scales**
-- Features with extreme **outliers**
-- Features with **missing** or censored values
-- Features that are **correlated** with one another
-- Features that are **redundant** with one another
-- Features that have zero or **near-zero variance**
-- Features that are **uninformative** for a task
-- Features with **uncertainty** or unreliability
+- predictors with **non-normal** distributions
+- predictors with vastly **different scales**
+- predictors with extreme **outliers**
+- predictors with **missing** or censored values
+- predictors that are **correlated** with one another
+- predictors that are **redundant** with one another
+- predictors that have zero or **near-zero variance**
+- predictors that are **uninformative** for a task
+- predictors with **uncertainty** or unreliability
 ]
 
 ---
@@ -127,25 +127,25 @@ class: onecol
 ## Lecture Topics
 
 .pull-left[
-- **Adding Features**
-  - Calculated Features
-  - Categorical Features
+- **Adding predictors**
+  - Calculated predictors
+  - Categorical predictors
   - Interaction Terms
-- **Transforming Features**
+- **Transforming predictors**
   - Centering and Scaling
   - Resolving Skewness
   - Addressing Outliers
 ]
 .pull-right[
 
-- **Reducing Features**
+- **Reducing predictors**
   - Nero-Zero Variance
   - Multicollinearity
   - Dimensionality Reduction
 - **Advanced Topics**
-  - Feature Extraction
+  - predictor Extraction
   - Dealing with Missing Values
-  - Feature Selection
+  - predictor Selection
 ]
 
 ---
@@ -172,15 +172,15 @@ glimpse(etitanic)
 
 ---
 class: inverse, center, middle
-# Adding Features
+# Adding predictors
 ---
 class: onecol
-## Calculated Features
+## Calculated predictors
 
 Some variables will need to be calculated from existing values and variables
 
 - You may choose to score an instrument from item-level data
-- You may choose to encode a feature as the ratio of two values
+- You may choose to encode a predictor as the ratio of two values
 - You may choose to calculate sums, means, counts, proportions, etc.
 
 We will provide some example code in `base` R and `tidyverse` formats
@@ -190,7 +190,7 @@ But to learn more about data wrangling in R, we recommend the following
 - &lt;i&gt;[R for Data Science: Visualize, Model, Transform, Tidy, and Import Data](https://r4ds.had.co.nz/)&lt;/i&gt;&lt;br /&gt;by Wickham and Grolemund (book for purchase or online for free)
 
 ---
-## Calculated Features in R
+## Calculated predictors in R
 
 ```r
 # Read in and partition the data
@@ -198,7 +198,7 @@ set.seed(2021)
 trainIndex &lt;- caret::createDataPartition(iris$Species, p = 0.8, list = FALSE, times = 1)
 irisTrain &lt;- iris[trainIndex, ]
 
-# Add calculated features using base R
+# Add calculated predictors using base R
 irisTrain$Avg.Length &lt;- (irisTrain$Sepal.Length + irisTrain$Petal.Length) / 2
 irisTrain$Width.Ratio &lt;- irisTrain$Sepal.Width / irisTrain$Petal.Width
 ```
@@ -1422,11 +1422,11 @@ irisTrain$Width.Ratio &lt;- irisTrain$Sepal.Width / irisTrain$Petal.Width
 
 ---
 
-## Calculated Features in R
+## Calculated predictors in R
 
 
 ```r
-# Add calculated features using tidyverse
+# Add calculated predictors using tidyverse
 library(tidyverse)
 irisTrain &lt;- irisTrain %&gt;% 
   mutate(
@@ -2654,7 +2654,7 @@ irisTrain &lt;- irisTrain %&gt;%
 
 ---
 class: onecol
-## Recipes for Feature Engineering
+## Recipes for predictor Engineering
 
 .left-column[
 &lt;br /&gt;
@@ -2663,7 +2663,7 @@ class: onecol
 ]
 
 .right-column[
-All of the feature engineering steps can be done "by hand" in R
+All of the predictor engineering steps can be done "by hand" in R
 
 The `caret` package provides some basic convenience tools
 
@@ -2676,7 +2676,7 @@ We will be learning the &lt;b&gt;`recipes`&lt;/b&gt; package from `tidymodels`
 ]
 
 ---
-## Recipes for Feature Engineering
+## Recipes for predictor Engineering
 
 
 ```r
@@ -2711,7 +2711,7 @@ titanic_recipe %&gt;% print()
 
 
 ---
-## Recipes for Feature Engineering
+## Recipes for predictor Engineering
 
 
 ```r
@@ -2770,13 +2770,13 @@ titanic_recipe %&gt;% summary()
 
 --
 
-&lt;p style="padding-top:25px;"&gt;Now we are ready to add some preprocessing (i.e., feature engineering) steps to the recipe!&lt;/p&gt;
+&lt;p style="padding-top:25px;"&gt;Now we are ready to add some preprocessing (i.e., predictor engineering) steps to the recipe!&lt;/p&gt;
 
 ---
 class: onecol
-## Categorical Features
+## Categorical predictors
 
-Categorical features can be re-encoded into multiple binary (0 or 1) features
+Categorical predictors can be re-encoded into multiple binary (0 or 1) predictors
 
 In `etitanic`, the categorical variable &lt;b&gt;`sex`&lt;/b&gt; takes on the value *male* or *female*
 
@@ -2786,9 +2786,9 @@ In `etitanic`, the categorical variable &lt;b&gt;`sex`&lt;/b&gt; takes on the va
 .center[![:emphasize](Dummy Coding)]
 
 sex | sex_male
-:-----|:----:
+:---|:-------:
 female | 0  
-male | 1 
+male   | 1 
 
 &lt;p style="text-align:center;font-size:20px;"&gt;Efficient and avoids redundancy&lt;br /&gt;Good for GLM-based methods&lt;/p&gt;
 ]
@@ -2799,16 +2799,16 @@ male | 1
 .center[![:emphasize](One-Hot Encoding)]
 
 sex | sex_female | sex_male
-:-----|:----:|:----:
+:---|:----------:|:-------:
 female | 1  | 0 
-male | 0 | 1
+male   | 0  | 1
 
 &lt;p style="text-align:center;font-size:20px;"&gt;Simple and easy to interpret&lt;br /&gt;Good for tree-based methods&lt;/p&gt;
 ]
 
 
 ---
-## Categorical Features in R
+## Categorical predictors in R
 
 
 ```r
@@ -2831,7 +2831,7 @@ dc_recipe &lt;-
 .footnote[[1] As a shortcut, we could also have used `step_dummy(all_nominal_predictors())`.]
 
 ---
-## Categorical Features in R
+## Categorical predictors in R
 
 
 ```r
@@ -2861,7 +2861,7 @@ glimpse(dc_test)
 ```
 
 ---
-## Categorical Features in R
+## Categorical predictors in R
 
 
 ```r
@@ -2882,14 +2882,73 @@ oh_recipe &lt;-
 .footnote[[1] Note that step_dummy() is used for both dummy coding and one-hot encoding (with different arguments).]
 
 ---
+class: onecol
 ## Interaction Terms
+
+Interaction terms allow the meaning of one predictor to depend on other predictors
+
+In this way, interaction terms allow predictor "effects" to be **contingent** or **conditional**
+
+e.g., perhaps having parents or children on board the Titanic helps you predict survival... but the effects differs depending on whether the passenger is a man or a woman
+
+--
+
+&lt;p style="padding-top:25px;"&gt;Interaction terms are literally &lt;b&gt;products&lt;/b&gt; (i.e., multiplications) of two or more predictors&lt;/p&gt;
+
+In order to include categorical variables in interaction terms, dummy code them first
+
+`$$survived \sim parch + sex\_dummy + parch \times sex\_dummy$$`
 
 ---
 ## Interaction Terms in R
 
+
+```r
+# Add interaction term between parch and the sex_male dummy code
+it_recipe &lt;- 
+  etitanic %&gt;% 
+  recipe(survived ~ .) %&gt;% 
+  step_dummy(pclass, sex) %&gt;% 
+* step_interact(~ parch:sex_male) %&gt;%
+  prep(training = etitanic_train, log_changes = TRUE)
+```
+
+```
+## step_dummy (dummy_0rcmk): 
+##  new (3): pclass_X2nd, pclass_X3rd, sex_male
+##  removed (2): pclass, sex
+## 
+## step_interact (interact_4e7V0): 
+##  new (1): parch_x_sex_male
+```
+
+.footnote[[1] step_interact() requires you to use tilde (`~`) and the colon operator (`:`) to specify interaction terms.&lt;br /&gt;[2] We also need to anticipate what the name of the dummy code variable will be and include that.&lt;br /&gt;[3] We could include higher-order interactions by adding more colons and predictors (e.g., `x1:x2:x3`).]
+
+---
+## Interaction Terms in R
+
+
+```r
+# Bake the recipe and preview the updated training set
+bake(it_recipe, new_data = etitanic_train) %&gt;% glimpse()
+```
+
+```
+## Rows: 837
+## Columns: 8
+## $ age              &lt;dbl&gt; 29.0000, 0.9167, 2.0000, 30.0000, 25.0000, 39.0000, 5~
+## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 1, 0, 2, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1,~
+## $ parch            &lt;int&gt; 0, 2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0,~
+## $ survived         &lt;int&gt; 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1,~
+## $ pclass_X2nd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
+## $ pclass_X3rd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
+## $ sex_male         &lt;dbl&gt; 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0,~
+## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0,~
+```
+
 ---
 class: inverse, center, middle
-# Transforming Features
+# Transforming predictors
 ---
 class: onecol
 ## Centering and Scaling
@@ -2914,7 +2973,7 @@ Definition of scaling
 
 ---
 class: inverse, center, middle
-# Reducing Features
+# Reducing predictors
 ---
 class: onecol
 ## Zero and Near-Zero Variance Predictors
@@ -2932,7 +2991,7 @@ class: onecol
 
 &lt;p style="padding-top:25px;"&gt;For many algorithms, we want to &lt;b&gt;detect&lt;/b&gt; and &lt;b&gt;remove&lt;/b&gt; both types of predictors&lt;/p&gt;
 
-(This may not be necessary for algorithms with built-in *feature selection*)
+(This may not be necessary for algorithms with built-in *predictor selection*)
 
 ---
 ## Zero and Nero-Zero Variance Predictors in R
@@ -2985,7 +3044,7 @@ zv_recipe &lt;-
 ```
 
 ```
-## step_zv (zv_4e7V0): 
+## step_zv (zv_9wiIO): 
 ##  removed (1): species
 ```
 
@@ -3002,7 +3061,7 @@ nzv_recipe &lt;-
 ```
 
 ```
-## step_nzv (nzv_0rcmk): 
+## step_nzv (nzv_EbUMM): 
 ##  removed (2): species, over70
 ```
 
@@ -3027,7 +3086,7 @@ Predictors that are ![:emphasize](linear combinations) of other predictors are s
 
 &lt;p style="padding-top:25px;"&gt;For many algorithms, we want to &lt;b&gt;detect&lt;/b&gt; and &lt;b&gt;remove&lt;/b&gt; redundant predictors&lt;/p&gt;
 
-(This may not be necessary for algorithms with *regularization* or *feature selection*)
+(This may not be necessary for algorithms with *regularization* or *predictor selection*)
 
 ---
 class: onecol
@@ -3059,7 +3118,7 @@ glimpse(mc_train)
 ## $ age      &lt;dbl&gt; 29.0000, 0.9167, 2.0000, 30.0000, 25.0000, 39.0000, 53.0000, ~
 ## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 1, 0, 2, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0~
 ## $ parch    &lt;int&gt; 0, 2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0~
-## $ wisdom   &lt;dbl&gt; 108.27627, 99.82994, 101.35368, 107.02776, 106.66981, 109.591~
+## $ wisdom   &lt;dbl&gt; 109.0266, 101.0891, 100.3414, 107.3354, 105.2118, 110.3183, 1~
 ## $ family   &lt;int&gt; 0, 3, 3, 3, 3, 0, 2, 0, 1, 1, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0~
 ```
 
@@ -3097,7 +3156,7 @@ hc_recipe &lt;-
 ```
 
 ```
-## step_corr (corr_HY98a): 
+## step_corr (corr_BBE3R): 
 ##  removed (1): age
 ```
 
@@ -3119,7 +3178,7 @@ lc_recipe &lt;-
 ```
 
 ```
-## step_lincomb (lincomb_bM5wd): 
+## step_lincomb (lincomb_xnCI8): 
 ##  removed (1): family
 ```
 
@@ -3133,13 +3192,13 @@ lc_recipe &lt;-
 class: inverse, center, middle
 # Advanced Topics
 ---
-## Feature Extraction
+## predictor Extraction
 
 ---
 ## Dealing with Missing Values
 
 ---
-## Feature Selection
+## predictor Selection
 
 
 ---
@@ -3156,9 +3215,9 @@ For these algorithms, normalization is only really necessary for interpretation
 
 However, other algorithms (e.g., MLP and SVM) may require normalization
 
-To learn more about feature engineering, see [1] and the [recipes](https://recipes.tidymodels.org/) package
+To learn more about predictor engineering, see [1] and the [recipes](https://recipes.tidymodels.org/) package
 
-.footnote[[1] Kuhn &amp; Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.]
+.footnote[[1] Kuhn &amp; Johnson (2020). *predictor Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.]
 
 ---
 class: inverse, center, middle
@@ -3167,7 +3226,7 @@ class: inverse, center, middle
 class: inverse, center, middle
 # Time for a Break!
 
-<div class="countdown" id="timer_60e8c1ec" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60e8caa9" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
