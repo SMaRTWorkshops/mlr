@@ -64,7 +64,7 @@ class: onecol
 .left-column[
 <br />
 ```{r engineer, echo=FALSE}
-include_graphics("../Day_1A/engineer.jpg")
+include_graphics("engineer.jpg")
 ```
 ]
 .right-column[
