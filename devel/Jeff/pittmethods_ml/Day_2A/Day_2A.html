@@ -33124,13 +33124,17 @@ class: onecol
 
 - These predictors are **uninformative** and may lead to **modeling problems**
 
+--
+
 ![:emphasize](Near-zero variance predictors) take on only a few unique values with low frequencies
 
 - These predictors can easily become zero-variance predictors during resampling
 
+--
+
 &lt;p style="padding-top:25px;"&gt;For many algorithms, we want to &lt;b&gt;detect&lt;/b&gt; and &lt;b&gt;remove&lt;/b&gt; both types of predictors&lt;/p&gt;
 
-For algorithms with built-in feature selection, this should happen automatically
+(This may not be necessary for algorithms with built-in *feature selection*)
 
 ---
 ## Zero and Nero-Zero Variance Predictors in R
@@ -33138,13 +33142,18 @@ For algorithms with built-in feature selection, this should happen automatically
 
 ```r
 # Simulate some predictors with acceptable, near-zero, and zero variance
-set.seed(2021)
-example &lt;- tibble::tibble(
-  x1 = rbinom(100, 1, prob = 0.50),
-  x2 = rbinom(100, 1, prob = 0.99),
-  w1 = rbinom(100, 5, prob = 0.20),
-  w2 = rbinom(100, 5, prob = 0.00)
+example &lt;- data.frame(
+  x1 = rbinom(100, 1, prob = 0.50), # mix of 0s and 1s
+  x2 = rbinom(100, 1, prob = 0.99), # nearly all 1s
+  w1 = rbinom(100, 5, prob = 0.20), # mix of 0s, 1s, 2s, and 3s
+  w2 = rbinom(100, 5, prob = 0.00)  # all 0s
 )
+```
+
+--
+
+
+```r
 # Preview the simulated predictor variables
 glimpse(example)
 ```
@@ -33152,20 +33161,20 @@ glimpse(example)
 ```
 ## Rows: 100
 ## Columns: 4
-## $ x1 &lt;int&gt; 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0~
+## $ x1 &lt;int&gt; 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0~
 ## $ x2 &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1~
-## $ w1 &lt;int&gt; 1, 0, 1, 2, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1, 2, 1~
+## $ w1 &lt;int&gt; 2, 2, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 0, 0, 1, 1~
 ## $ w2 &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0~
 ```
 
 ---
+class: onecol
 ## Zero and Nero-Zero Variance Predictors in R
 
 
 ```r
 # Detect the column numbers of variables with near-zero variance
-nzv &lt;- caret::nearZeroVar(example)
-nzv
+nzv &lt;- caret::nearZeroVar(example) %&gt;% print()
 ```
 
 ```
@@ -33182,9 +33191,9 @@ caret::nearZeroVar(example, saveMetrics = TRUE)
 
 ```
 ##    freqRatio percentUnique zeroVar   nzv
-## x1  1.380952             2   FALSE FALSE
-## x2 99.000000             2   FALSE  TRUE
-## w1  1.454545             4   FALSE FALSE
+## x1  1.222222             2   FALSE FALSE
+## x2 49.000000             2   FALSE  TRUE
+## w1  1.689655             4   FALSE FALSE
 ## w2  0.000000             1    TRUE  TRUE
 ```
 
@@ -33232,11 +33241,143 @@ preProcess(example, method = "nzv")
 .footnote[[1] Note that preProcess() will ignore non-numeric variables, so dummy code categorical variables first.]
 
 ---
+class: onecol
 ## Multicollinearity
 
+![:emphasize](Highly correlated predictors) can lead to problems for some algorithms/procedures
+
+- The model has to randomly choose between the predictors, leading to **instability**
+- Model predictions may be fine, but model **interpretation** will often be obfuscated
+- The cutoff for "problematically high" correlations varies (e.g., 0.5 to 0.9 or higher)
+
+--
+
+Predictors that are ![:emphasize](linear combinations) of other predictors are similarly problematic
+
+- Occurs if a predictor variable can be predicted from the other predictor variables
+- This is why dummy coding is preferred to one-hot encoding for some algorithms
+
+--
+
+&lt;p style="padding-top:25px;"&gt;For many algorithms, we want to &lt;b&gt;detect&lt;/b&gt; and &lt;b&gt;remove&lt;/b&gt; redundant predictors&lt;/p&gt;
+
+(This may not be necessary for algorithms with *regularization* or *feature selection*)
+
 ---
+class: onecol
 ## Multicollinearity in R
 
+```r
+# Simulate some predictors with high correlations and linear dependency
+example &lt;- tibble::tibble(
+  x1 = rnorm(n = 100, mean = 0, sd = 1),
+  x2 = rnorm(n = 100, mean = 0, sd = 1),
+  x3 = runif(n = 100, min = -3, max = 3),
+  hicorr = x1 + rnorm(n = 100, mean = 10, sd = 0.3), # high correlation with x1
+  lincom = (x1 + x2) / 2                             # linear combo of x1 and x2
+)
+```
+
+--
+
+
+```r
+# Preview the simulated predictor variables
+glimpse(example)
+```
+
+```
+## Rows: 100
+## Columns: 5
+## $ x1     &lt;dbl&gt; -1.98570884, 0.81436587, 1.09825139, -1.44069404, 1.21523765, -~
+## $ x2     &lt;dbl&gt; -1.36653671, -1.11604804, 0.16247234, 1.51164945, -0.34908145, ~
+## $ x3     &lt;dbl&gt; -2.19830197, 1.63984566, 0.17066024, -2.95104635, 0.50192924, -~
+## $ hicorr &lt;dbl&gt; 8.311999, 10.810169, 10.572753, 8.818286, 11.470312, 9.735332, ~
+## $ lincom &lt;dbl&gt; -1.67612277, -0.15084109, 0.63036187, 0.03547771, 0.43307810, -~
+```
+
+---
+class: onecol
+## Multicollinearity in R
+
+```r
+# Estimate correlation matrix
+cor(example) %&gt;% round(2)
+```
+
+```
+##           x1    x2    x3 hicorr lincom
+## x1      1.00  0.07 -0.03   0.95   0.71
+## x2      0.07  1.00 -0.01   0.06   0.75
+## x3     -0.03 -0.01  1.00  -0.03  -0.03
+## hicorr  0.95  0.06 -0.03   1.00   0.68
+## lincom  0.71  0.75 -0.03   0.68   1.00
+```
+
+--
+
+
+```r
+# Detect the column numbers of variables with high correlations to drop
+fc &lt;- caret::findCorrelation(cor(example), cutoff = 0.9) %&gt;% print()
+```
+
+```
+## [1] 1
+```
+
+--
+
+
+```r
+# Drop predictor variables with high correlations
+example2 &lt;- example[, -fc]
+```
+
+---
+class: onecol
+## Multicollinearity in R
+
+
+```r
+caret::preProcess(example, method = "corr")
+```
+
+```
+## Created from 100 samples and 1 variables
+## 
+## Pre-processing:
+##   - ignored (0)
+##   - removed (1)
+```
+
+---
+class: onecol
+## Multicollinearity in R
+
+
+```r
+# Detect linear combinations of predictors
+flc &lt;- caret::findLinearCombos(example) %&gt;% print()
+```
+
+```
+## $linearCombos
+## $linearCombos[[1]]
+## [1] 5 1 2
+## 
+## 
+## $remove
+## [1] 5
+```
+
+
+```r
+# Drop the problematic predictor variables
+example2 &lt;- example[, -flc$remove]
+```
+
+.footnote[Sadly, there is no preProcess() method for findLinearCombos(), but the &lt;a href="https://recipes.tidymodels.org/"&gt;recipes&lt;/a&gt; package does have an equivalent.]
 ---
 ## Dimensionality Reduction
 
@@ -33281,7 +33422,7 @@ class: inverse, center, middle
 class: inverse, center, middle
 # Time for a Break!
 
-<div class="countdown" id="timer_60e77f36" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60e87177" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>

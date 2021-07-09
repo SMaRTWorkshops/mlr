@@ -353,37 +353,45 @@ class: onecol
 
 - These predictors are **uninformative** and may lead to **modeling problems**
 
+--
+
 ![:emphasize](Near-zero variance predictors) take on only a few unique values with low frequencies
 
 - These predictors can easily become zero-variance predictors during resampling
 
+--
+
 <p style="padding-top:25px;">For many algorithms, we want to <b>detect</b> and <b>remove</b> both types of predictors</p>
 
-For algorithms with built-in feature selection, this should happen automatically
+(This may not be necessary for algorithms with built-in *feature selection*)
 
 ---
 ## Zero and Nero-Zero Variance Predictors in R
 
 ```{r}
 # Simulate some predictors with acceptable, near-zero, and zero variance
-set.seed(2021)
-example <- tibble::tibble(
-  x1 = rbinom(100, 1, prob = 0.50),
-  x2 = rbinom(100, 1, prob = 0.99),
-  w1 = rbinom(100, 5, prob = 0.20),
-  w2 = rbinom(100, 5, prob = 0.00)
+example <- data.frame(
+  x1 = rbinom(100, 1, prob = 0.50), # mix of 0s and 1s
+  x2 = rbinom(100, 1, prob = 0.99), # nearly all 1s
+  w1 = rbinom(100, 5, prob = 0.20), # mix of 0s, 1s, 2s, and 3s
+  w2 = rbinom(100, 5, prob = 0.00)  # all 0s
 )
+```
+
+--
+
+```{r}
 # Preview the simulated predictor variables
 glimpse(example)
 ```
 
 ---
+class: onecol
 ## Zero and Nero-Zero Variance Predictors in R
 
 ```{r}
 # Detect the column numbers of variables with near-zero variance
-nzv <- caret::nearZeroVar(example)
-nzv
+nzv <- caret::nearZeroVar(example) %>% print()
 ```
 
 --
@@ -418,11 +426,94 @@ preProcess(example, method = "nzv")
 .footnote[[1] Note that preProcess() will ignore non-numeric variables, so dummy code categorical variables first.]
 
 ---
+class: onecol
 ## Multicollinearity
 
+![:emphasize](Highly correlated predictors) can lead to problems for some algorithms/procedures
+
+- The model has to randomly choose between the predictors, leading to **instability**
+- Model predictions may be fine, but model **interpretation** will often be obfuscated
+- The cutoff for "problematically high" correlations varies (e.g., 0.5 to 0.9 or higher)
+
+--
+
+Predictors that are ![:emphasize](linear combinations) of other predictors are similarly problematic
+
+- Occurs if a predictor variable can be predicted from the other predictor variables
+- This is why dummy coding is preferred to one-hot encoding for some algorithms
+
+--
+
+<p style="padding-top:25px;">For many algorithms, we want to <b>detect</b> and <b>remove</b> redundant predictors</p>
+
+(This may not be necessary for algorithms with *regularization* or *feature selection*)
+
 ---
+class: onecol
+## Multicollinearity in R
+```{r}
+# Simulate some predictors with high correlations and linear dependency
+example <- tibble::tibble(
+  x1 = rnorm(n = 100, mean = 0, sd = 1),
+  x2 = rnorm(n = 100, mean = 0, sd = 1),
+  x3 = runif(n = 100, min = -3, max = 3),
+  hicorr = x1 + rnorm(n = 100, mean = 10, sd = 0.3), # high correlation with x1
+  lincom = (x1 + x2) / 2                             # linear combo of x1 and x2
+)
+```
+
+--
+
+```{r}
+# Preview the simulated predictor variables
+glimpse(example)
+```
+
+---
+class: onecol
+## Multicollinearity in R
+```{r}
+# Estimate correlation matrix
+cor(example) %>% round(2)
+```
+
+--
+
+```{r}
+# Detect the column numbers of variables with high correlations to drop
+fc <- caret::findCorrelation(cor(example), cutoff = 0.9) %>% print()
+```
+
+--
+
+```{r}
+# Drop predictor variables with high correlations
+example2 <- example[, -fc]
+```
+
+---
+class: onecol
 ## Multicollinearity in R
 
+```{r}
+caret::preProcess(example, method = "corr")
+```
+
+---
+class: onecol
+## Multicollinearity in R
+
+```{r}
+# Detect linear combinations of predictors
+flc <- caret::findLinearCombos(example) %>% print()
+```
+
+```{r}
+# Drop the problematic predictor variables
+example2 <- example[, -flc$remove]
+```
+
+.footnote[Sadly, there is no preProcess() method for findLinearCombos(), but the <a href="https://recipes.tidymodels.org/">recipes</a> package does have an equivalent.]
 ---
 ## Dimensionality Reduction
 
