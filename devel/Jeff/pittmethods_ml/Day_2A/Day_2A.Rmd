@@ -45,6 +45,7 @@ library(kableExtra)
 library(countdown)
 library(patchwork)
 library(caret)
+library(recipes)
 ```
 
 class: inverse, center, middle
@@ -145,7 +146,6 @@ include_graphics("cones.jpg")
 - Features that are **uninformative** for a task
 - Features with **uncertainty** or unreliability
 ]
----
 
 ---
 class: onecol
@@ -172,6 +172,16 @@ class: onecol
   - Dealing with Missing Values
   - Feature Selection
 ]
+
+---
+
+## Example Dataset
+
+```{r}
+# Load and preview the etitanic dataset from the earth package
+data(etitanic, package = "earth")
+glimpse(etitanic)
+```
 
 ---
 class: inverse, center, middle
@@ -231,86 +241,147 @@ knitr::kable(irisTrain) %>%
 
 ---
 class: onecol
+## Recipes for Feature Engineering
+
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics("chef.jpg")
+```
+
+]
+
+.right-column[
+All of the feature engineering steps can be done "by hand" in R
+
+The `caret` package provides some basic convenience tools
+
+We will be learning the <b>`recipes`</b> package from `tidymodels`
+
+1. Initiate a recipe by declaring data and roles using `recipe()`
+1. Add one or more preprocessing steps using `step_*()`
+1. Prepare/estimate the preprocessing steps using `prep()`
+1. Apply these steps to the training and testing data with `bake()`
+]
+
+---
+## Recipes for Feature Engineering
+
+```{r}
+# First, let's split the data into a training and testing set
+index <- caret::createDataPartition(y = etitanic$survived, list = FALSE, p = 0.8)
+etitanic_train <- etitanic[index, ]
+etitanic_test <- etitanic[-index, ]
+```
+
+```{r}
+# Initiate a recipe for predicting survived from all other variables
+titanic_recipe <- recipe(etitanic, formula = survived ~ .)
+
+# We could also be explicit with: formula = survived ~ pclass + sex + age + sibsp + parch
+```
+
+```{r}
+titanic_recipe %>% print()
+```
+
+
+---
+## Recipes for Feature Engineering
+
+```{r, eval=FALSE}
+# summary() provides a bit more information than print()
+titanic_recipe %>% summary()
+```
+
+```{r,echo=FALSE}
+titanic_recipe %>% summary() %>% kable()
+```
+
+--
+
+<p style="padding-top:25px;">Now we are ready to add some preprocessing (i.e., feature engineering) steps to the recipe!</p>
+
+---
+class: onecol
 ## Categorical Features
 
 Categorical features can be re-encoded into multiple binary (0 or 1) features
 
-Imagine a categorical variable ** `age` ** that is either *Child* or *Adolescent* or *Adult*
+In `etitanic`, the categorical variable <b>`sex`</b> takes on the value *male* or *female*
 
 --
 
 .pull-left[
 .center[![:emphasize](Dummy Coding)]
 
-Group | age1 | age2
-:-----|:----:|:----:
-Child | 0  | 0
-Adolescent | 1 | 0
-Adult | 0 | 1
+sex | sex_male
+:-----|:----:
+female | 0  
+male | 1 
 
 <p style="text-align:center;font-size:20px;">Efficient and avoids redundancy<br />Good for GLM-based methods</p>
 ]
 
+--
+
 .pull-right[
 .center[![:emphasize](One-Hot Encoding)]
 
-Group | age1 | age2 | age3
-:-----|:----:|:----:|:----:
-Child | 1  | 0  | 0
-Adolescent | 0 | 1 | 0
-Adult | 0 | 0 | 1
+sex | sex_female | sex_male
+:-----|:----:|:----:
+female | 1  | 0 
+male | 0 | 1
 
 <p style="text-align:center;font-size:20px;">Simple and easy to interpret<br />Good for tree-based methods</p>
 ]
 
 
 ---
-class: onecol
 ## Categorical Features in R
-If you save a categorical variable as a factor in R, it will dummy code it by default
-
-But we can also explicitly dummy code it using `caret::dummyVars()`
 
 ```{r}
-data(etitanic, package = "earth")
+# Add a step to the recipe to create dummy codes for pclass and sex
+dc_recipe <- 
+  etitanic %>%
+  recipe(survived ~ .) %>% 
+  step_dummy(pclass, sex) %>% #<<
+  prep(training = etitanic_train, log_changes = TRUE)
 ```
 
-```{r,echo=FALSE}
-knitr::kable(etitanic) %>% kableExtra::scroll_box(height="275px")
+--
+
+.footnote[[1] As a shortcut, we could also have used `step_dummy(all_nominal_predictors())`.]
+
+---
+## Categorical Features in R
+
+```{r}
+# If this were the only step we wanted to do, we could prep and bake the recipe
+dc_train <- bake(dc_recipe, new_data = etitanic_train)
+dc_test <- bake(dc_recipe, new_data = etitanic_test)
+```
+
+--
+
+```{r}
+# Let's see if it worked
+glimpse(dc_test)
 ```
 
 ---
-class: onecol
 ## Categorical Features in R
 
-```{r, eval=FALSE}
-# Dummy Coding
-dummy <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = TRUE) #<<
-predict(dummy, newdata = etitanic)
+```{r}
+# It is easy to modify this recipe for one-hot encoding
+oh_recipe <- 
+  etitanic %>% 
+  recipe(survived ~ .) %>% 
+  step_dummy(pclass, sex, one_hot = TRUE) %>% #<<
+  prep(training = etitanic_train, log_changes = TRUE)
 ```
 
-```{r,echo=FALSE}
-dummy <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = TRUE)
-predict(dummy, newdata = etitanic) %>% 
-  knitr::kable() %>% 
-  kableExtra::scroll_box(height="300px")
-```
-
----
-class: onecol
-## Categorical Features in R
-```{r, eval=FALSE}
-# One-Hot Encoding
-onehot <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = FALSE) #<<
-predict(onehot, newdata = etitanic)
-```
-
-```{r,echo=FALSE}
-onehot <- caret::dummyVars(survived ~ ., data = etitanic, fullRank = FALSE)
-predict(onehot, newdata = etitanic) %>% 
-  knitr::kable() %>% 
-  kableExtra::scroll_box(height="300px")
-```
+.footnote[[1] Note that step_dummy() is used for both dummy coding and one-hot encoding (with different arguments).]
 
 ---
 ## Interaction Terms
@@ -369,20 +440,17 @@ class: onecol
 ## Zero and Nero-Zero Variance Predictors in R
 
 ```{r}
-# Simulate some predictors with acceptable, near-zero, and zero variance
-example <- data.frame(
-  x1 = rbinom(100, 1, prob = 0.50), # mix of 0s and 1s
-  x2 = rbinom(100, 1, prob = 0.99), # nearly all 1s
-  w1 = rbinom(100, 5, prob = 0.20), # mix of 0s, 1s, 2s, and 3s
-  w2 = rbinom(100, 5, prob = 0.00)  # all 0s
-)
+# Add some predictors with zero and near-zero variance
+nzv_etitanic <- etitanic %>% mutate(species = "homo sapiens", over70 = age > 70)
+nzv_train <- nzv_etitanic[index, ]
+mean(nzv_train$over70)
 ```
 
 --
 
 ```{r}
 # Preview the simulated predictor variables
-glimpse(example)
+glimpse(nzv_etitanic)
 ```
 
 ---
@@ -390,40 +458,24 @@ class: onecol
 ## Zero and Nero-Zero Variance Predictors in R
 
 ```{r}
-# Detect the column numbers of variables with near-zero variance
-nzv <- caret::nearZeroVar(example) %>% print()
+# Detect and remove zero-variance predictors
+zv_recipe <- 
+  nzv_etitanic %>% 
+  recipe(survived ~ .) %>% 
+  step_zv(all_predictors()) %>% #<<
+  prep(training = nzv_train, log_changes = TRUE)
 ```
 
 --
 
 ```{r}
-# Show the metrics used for detection
-caret::nearZeroVar(example, saveMetrics = TRUE)
+# Detect and remove zero-variance AND near-zero-variance predictors
+nzv_recipe <- 
+  nzv_etitanic %>% 
+  recipe(survived ~ .) %>% 
+  step_nzv(all_predictors()) %>% #<<
+  prep(training = nzv_train, log_changes = TRUE)
 ```
-
---
-
-```{r}
-# Drop the zero and near-zero variance predictors
-example2 <- example[, -nzv]
-```
-
----
-## Zero and Nero-Zero Variance Predictors in R
-
-```{r}
-# Drop zero variance predictors using preProcess
-preProcess(example, method = "zv")
-```
-
---
-
-```{r}
-# Drop near-zero variance predictors using preProcess
-preProcess(example, method = "nzv")
-```
-
-.footnote[[1] Note that preProcess() will ignore non-numeric variables, so dummy code categorical variables first.]
 
 ---
 class: onecol
@@ -451,44 +503,20 @@ Predictors that are ![:emphasize](linear combinations) of other predictors are s
 ---
 class: onecol
 ## Multicollinearity in R
+
 ```{r}
-# Simulate some predictors with high correlations and linear dependency
-example <- tibble::tibble(
-  x1 = rnorm(n = 100, mean = 0, sd = 1),
-  x2 = rnorm(n = 100, mean = 0, sd = 1),
-  x3 = runif(n = 100, min = -3, max = 3),
-  hicorr = x1 + rnorm(n = 100, mean = 10, sd = 0.3), # high correlation with x1
-  lincom = (x1 + x2) / 2                             # linear combo of x1 and x2
+# Add some predictors with high correlations and linear dependency
+mc_etitanic <- etitanic %>% mutate(
+  wisdom = 100 + 0.25 * age + rnorm(nrow(.)), # highly correlated with age
+  family = sibsp + parch                    # linear combo of sibsp and parch
 )
+mc_train <- mc_etitanic[index, ]
 ```
 
 --
 
 ```{r}
-# Preview the simulated predictor variables
-glimpse(example)
-```
-
----
-class: onecol
-## Multicollinearity in R
-```{r}
-# Estimate correlation matrix
-cor(example) %>% round(2)
-```
-
---
-
-```{r}
-# Detect the column numbers of variables with high correlations to drop
-fc <- caret::findCorrelation(cor(example), cutoff = 0.9) %>% print()
-```
-
---
-
-```{r}
-# Drop predictor variables with high correlations
-example2 <- example[, -fc]
+glimpse(mc_train)
 ```
 
 ---
@@ -496,7 +524,8 @@ class: onecol
 ## Multicollinearity in R
 
 ```{r}
-caret::preProcess(example, method = "corr")
+# Estimate correlation matrix for the numeric predictors
+mc_train %>% select(where(is.numeric), -survived) %>% cor() %>% round(digits = 2)
 ```
 
 ---
@@ -504,16 +533,30 @@ class: onecol
 ## Multicollinearity in R
 
 ```{r}
-# Detect linear combinations of predictors
-flc <- caret::findLinearCombos(example) %>% print()
+# Detect and remove predictors that are highly correlated with another predictor
+hc_recipe <- 
+  mc_etitanic %>% 
+  recipe(survived ~ .) %>% 
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>% #<<
+  prep(training = mc_train, log_changes = TRUE)
 ```
+
+--
+
+.footnote[[1] If we want to consider correlations with categorical variables, we can add step_dummy() to the pipeline.<br />[2] We could have also lowered the threshold to 0.8 in order to drop the `family` variable here.]
+---
+class: onecol
+## Multicollinearity in R
 
 ```{r}
-# Drop the problematic predictor variables
-example2 <- example[, -flc$remove]
+# Detect and remove predictors that are linear combinations of other predictors
+lc_recipe <- 
+  mc_etitanic %>% 
+  recipe(survived ~ .) %>% 
+  step_lincomb(all_numeric_predictors()) %>%  #<<
+  prep(training = mc_train, log_changes = TRUE)
 ```
 
-.footnote[Sadly, there is no preProcess() method for findLinearCombos(), but the <a href="https://recipes.tidymodels.org/">recipes</a> package does have an equivalent.]
 ---
 ## Dimensionality Reduction
 
