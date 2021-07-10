@@ -19,6 +19,7 @@ output:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(
   fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
   out.width = "100%",
   cache = FALSE,
   echo = TRUE,
@@ -103,7 +104,7 @@ There are many potential ways to **encode** or "represent" the features/predicto
 
 ---
 class: onecol
-## Examples of predictor Encodings
+## Examples of Feature Encodings
 .left-column[
 <br />
 
@@ -128,7 +129,8 @@ include_graphics("july.jpg")
 ]
 ---
 class: onecol
-## Issues to Navigate in predictor Engineering
+## Issues to Navigate in Feature Engineering
+
 .left-column[
 <br />
 ```{r, echo=FALSE}
@@ -148,100 +150,9 @@ include_graphics("cones.jpg")
 ]
 
 ---
+
 class: onecol
-## Lecture Topics
-
-.pull-left[
-- **Adding predictors**
-  - Calculated predictors
-  - Categorical predictors
-  - Interaction Terms
-- **Transforming predictors**
-  - Centering and Scaling
-  - Resolving Skewness
-  - Addressing Outliers
-]
-.pull-right[
-
-- **Reducing predictors**
-  - Nero-Zero Variance
-  - Multicollinearity
-  - Dimensionality Reduction
-- **Advanced Topics**
-  - predictor Extraction
-  - Dealing with Missing Values
-  - predictor Selection
-]
-
----
-
-## Example Dataset
-
-```{r}
-# Load and preview the etitanic dataset from the earth package
-data(etitanic, package = "earth")
-glimpse(etitanic)
-```
-
----
-class: inverse, center, middle
-# Adding predictors
----
-class: onecol
-## Calculated predictors
-
-Some variables will need to be calculated from existing values and variables
-
-- You may choose to score an instrument from item-level data
-- You may choose to encode a predictor as the ratio of two values
-- You may choose to calculate sums, means, counts, proportions, etc.
-
-We will provide some example code in `base` R and `tidyverse` formats
-
-But to learn more about data wrangling in R, we recommend the following
-
-- <i>[R for Data Science: Visualize, Model, Transform, Tidy, and Import Data](https://r4ds.had.co.nz/)</i><br />by Wickham and Grolemund (book for purchase or online for free)
-
----
-## Calculated predictors in R
-```{r}
-# Read in and partition the data
-set.seed(2021)
-trainIndex <- caret::createDataPartition(iris$Species, p = 0.8, list = FALSE, times = 1)
-irisTrain <- iris[trainIndex, ]
-
-# Add calculated predictors using base R
-irisTrain$Avg.Length <- (irisTrain$Sepal.Length + irisTrain$Petal.Length) / 2
-irisTrain$Width.Ratio <- irisTrain$Sepal.Width / irisTrain$Petal.Width
-```
-
-```{r, echo=FALSE}
-knitr::kable(irisTrain) %>% 
-  kableExtra::scroll_box(height = "250px")
-```
-
----
-
-## Calculated predictors in R
-
-```{r}
-# Add calculated predictors using tidyverse
-library(tidyverse)
-irisTrain <- irisTrain %>% 
-  mutate(
-    Avg.Length = (Sepal.Length + Petal.Length) / 2,
-    Width.Ratio = Sepal.Width / Petal.Width
-  )
-```
-
-```{r, echo=FALSE}
-knitr::kable(irisTrain) %>% 
-  kableExtra::scroll_box(height = "250px")
-```
-
----
-class: onecol
-## Recipes for predictor Engineering
+## Recipes for Feature Engineering
 
 .left-column[
 <br />
@@ -265,20 +176,45 @@ We will be learning the <b>`recipes`</b> package from `tidymodels`
 ]
 
 ---
-## Recipes for predictor Engineering
+## Example Dataset: `titanic`
+
+```{r}
+# Import and preview the full titanic dataset
+titanic <- read.csv("titanic.csv")
+glimpse(titanic)
+```
+
+.pull-left[
+- `pclass`: *Passenger class*
+- `survived`: *Did passenger survive?*
+- `sex`: *Passenger sex*
+- `age`: *Passenger age (years)*
+]
+
+.pull-right[
+- `sibsp`: *Siblings/spouses Aboard (\#)*
+- `parch`: *Parents/children Aboard (\#)*
+- `fare`: *Cost of passenger fare ($)*
+- `embarked`: *Port of embarkation*
+]
+
+---
+## Recipes for Feature Engineering
 
 ```{r}
 # First, let's split the data into a training and testing set
-index <- caret::createDataPartition(y = etitanic$survived, list = FALSE, p = 0.8)
-etitanic_train <- etitanic[index, ]
-etitanic_test <- etitanic[-index, ]
+index <- caret::createDataPartition(y = titanic$survived, list = FALSE, p = 0.8)
+titanic_train <- titanic[index, ]
+titanic_test <- titanic[-index, ]
 ```
+
+--
 
 ```{r}
 # Initiate a recipe for predicting survived from all other variables
-titanic_recipe <- recipe(etitanic, formula = survived ~ .)
+titanic_recipe <- recipe(titanic, formula = survived ~ .)
 
-# We could also be explicit with: formula = survived ~ pclass + sex + age + sibsp + parch
+# We could also be explicit with: formula = survived ~ pclass + sex + age + sibsp + parch + fare + embarked
 ```
 
 ```{r}
@@ -287,7 +223,7 @@ titanic_recipe %>% print()
 
 
 ---
-## Recipes for predictor Engineering
+## Recipes for Feature Engineering
 
 ```{r, eval=FALSE}
 # summary() provides a bit more information than print()
@@ -300,7 +236,98 @@ titanic_recipe %>% summary() %>% kable()
 
 --
 
-<p style="padding-top:25px;">Now we are ready to add some preprocessing (i.e., predictor engineering) steps to the recipe!</p>
+<p style="padding-top:25px;">Now we are ready to add some preprocessing (i.e., feature engineering) steps to the recipe!</p>
+
+---
+class: onecol
+## Common Steps
+
+.pull-left[
+- **Adding predictors**
+  - Calculated predictors
+  - Categorical predictors
+  - Interaction Terms
+- **Transforming predictors**
+  - Centering and Scaling
+  - Resolving Skewness
+  - Addressing Outliers
+]
+.pull-right[
+
+- **Reducing predictors**
+  - Nero-Zero Variance
+  - Multicollinearity
+  - Dimensionality Reduction
+- **Advanced Steps**
+  - Feature Extraction
+  - Dealing with Missing Values
+  - Feature Selection
+]
+
+---
+class: inverse, center, middle
+# Adding predictors
+---
+class: onecol
+## Calculated predictors
+
+Some variables will need to be calculated from existing values and variables
+
+- You may choose to score an instrument from item-level data
+- You may choose to encode a predictor as the ratio of two values
+- You may choose to calculate sums, means, counts, proportions, etc.
+
+--
+
+<p style="padding-top:25px;">We will show you some basic steps for calculating variables within {recipes}</p>
+
+For more advanced/complex data wrangling, we recommend you read
+
+- <i>[R for Data Science: Visualize, Model, Transform, Tidy, and Import Data](https://r4ds.had.co.nz/)</i><br />by Wickham and Grolemund (book for purchase or online for free)
+
+---
+## Calculated predictors
+
+```{r}
+# Add a step to the recipe to calculate new predictors from existing predictors
+cp_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_mutate( #<<
+    numfamily = sibsp + parch, #<<
+    over70 = age > 70 #<<
+  ) %>% #<<
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+---
+## Calculated predictors
+
+```{r, eval=FALSE}
+# We can ask for a summary of cp_recipe to see what happened
+cp_recipe %>% summary()
+```
+
+```{r, echo=FALSE}
+cp_recipe %>% summary() %>% kable()
+```
+
+---
+## Calculated predictors
+
+```{r}
+# If this is the only step in our recipe, we can bake() the recipe
+# This will allow us to generate updated training and testing sets
+cp_train <- bake(cp_recipe, new_data = titanic_train)
+cp_test <- bake(cp_recipe, new_data = titanic_test)
+```
+
+--
+
+```{r}
+# Let's see if it worked
+glimpse(cp_test)
+```
 
 ---
 class: onecol
@@ -308,7 +335,7 @@ class: onecol
 
 Categorical predictors can be re-encoded into multiple binary (0 or 1) predictors
 
-In `etitanic`, the categorical variable <b>`sex`</b> takes on the value *male* or *female*
+In `titanic`, the categorical variable <b>`sex`</b> takes on the value *male* or *female*
 
 --
 
@@ -341,12 +368,12 @@ male   | 0  | 1
 ## Categorical predictors in R
 
 ```{r}
-# Add a step to the recipe to create dummy codes for pclass and sex
+# Add a step to the recipe to create dummy codes for pclass, sex, and embarked
 dc_recipe <- 
-  etitanic %>%
+  titanic %>%
   recipe(survived ~ .) %>% 
-  step_dummy(pclass, sex) %>% #<<
-  prep(training = etitanic_train, log_changes = TRUE)
+  step_dummy(pclass, sex, embarked) %>% #<<
+  prep(training = titanic_train, log_changes = TRUE)
 ```
 
 --
@@ -357,28 +384,12 @@ dc_recipe <-
 ## Categorical predictors in R
 
 ```{r}
-# If this were the only step we wanted to do, we could prep and bake the recipe
-dc_train <- bake(dc_recipe, new_data = etitanic_train)
-dc_test <- bake(dc_recipe, new_data = etitanic_test)
-```
-
---
-
-```{r}
-# Let's see if it worked
-glimpse(dc_test)
-```
-
----
-## Categorical predictors in R
-
-```{r}
 # It is easy to modify this recipe for one-hot encoding
 oh_recipe <- 
-  etitanic %>% 
+  titanic %>% 
   recipe(survived ~ .) %>% 
-  step_dummy(pclass, sex, one_hot = TRUE) %>% #<<
-  prep(training = etitanic_train, log_changes = TRUE)
+  step_dummy(pclass, sex, embarked, one_hot = TRUE) %>% #<<
+  prep(training = titanic_train, log_changes = TRUE)
 ```
 
 .footnote[[1] Note that step_dummy() is used for both dummy coding and one-hot encoding (with different arguments).]
@@ -407,11 +418,11 @@ $$survived \sim parch + sex\_dummy + parch \times sex\_dummy$$
 ```{r}
 # Add interaction term between parch and the sex_male dummy code
 it_recipe <- 
-  etitanic %>% 
+  titanic %>% 
   recipe(survived ~ .) %>% 
   step_dummy(pclass, sex) %>% 
   step_interact(~ parch:sex_male) %>% #<<
-  prep(training = etitanic_train, log_changes = TRUE)
+  prep(training = titanic_train, log_changes = TRUE)
 ```
 
 .footnote[[1] step_interact() requires you to use tilde (`~`) and the colon operator (`:`) to specify interaction terms.<br />[2] We also need to anticipate what the name of the dummy code variable will be and include that.<br />[3] We could include higher-order interactions by adding more colons and predictors (e.g., `x1:x2:x3`).]
@@ -421,7 +432,7 @@ it_recipe <-
 
 ```{r}
 # Bake the recipe and preview the updated training set
-bake(it_recipe, new_data = etitanic_train) %>% glimpse()
+bake(it_recipe, new_data = titanic_train) %>% glimpse()
 ```
 
 ---
@@ -455,13 +466,13 @@ Predictors with vastly different means and SDs can cause problems for some algor
 ## Centering Visualized
 
 ```{r centering, echo=FALSE}
-x <- etitanic$age
-p1 <- ggplot(tibble(x), aes(x)) + geom_density() +
+x <- titanic$age
+p1 <- ggplot(tibble(x), aes(x)) + geom_density(na.rm = TRUE) +
   annotate(
     "label", 
-    x = mean(x), 
+    x = mean(x, na.rm = TRUE), 
     y = 0.005, 
-    label = glue::glue("M={round(mean(x), 1)}, SD={round(sd(x), 1)}"),
+    label = glue::glue("M={round(mean(x, na.rm = TRUE), 1)}, SD={round(sd(x, na.rm = TRUE), 1)}"),
     size = 5
     ) +
   labs(x = "age", y = "density") +
@@ -470,13 +481,13 @@ p1 <- ggplot(tibble(x), aes(x)) + geom_density() +
     panel.grid.minor = element_blank(), 
     panel.background = element_rect(fill = "white")
   )
-x_c <- x - mean(x)
-p2 <- ggplot(tibble(x_c), aes(x_c)) + geom_density() + 
+x_c <- x - mean(x, na.rm = TRUE)
+p2 <- ggplot(tibble(x_c), aes(x_c)) + geom_density(na.rm = TRUE) + 
   annotate(
     "label", 
-    x = mean(x_c), 
+    x = mean(x_c, na.rm = TRUE), 
     y = 0.005, 
-    label = glue::glue("M={round(mean(x_c), 1)}, SD={round(sd(x_c), 1)}"),
+    label = glue::glue("M={round(mean(x_c, na.rm = TRUE), 1)}, SD={round(sd(x_c, na.rm = TRUE), 1)}"),
     size = 5
     ) +
   labs(x = "age_centered", y = NULL) +
@@ -494,13 +505,13 @@ p1 | p2
 ## Scaling Visualized
 
 ```{r scaling, echo=FALSE}
-x_s <- x / sd(x)
-p3 <- ggplot(tibble(x_s), aes(x_s)) + geom_density() + 
+x_s <- x / sd(x, na.rm = TRUE)
+p3 <- ggplot(tibble(x_s), aes(x_s)) + geom_density(na.rm = TRUE) + 
   annotate(
     "label", 
-    x = mean(x_s), 
+    x = mean(x_s, na.rm = TRUE), 
     y = 0.075, 
-    label = glue::glue("M={round(mean(x_s), 1)}, SD={round(sd(x_s), 1)}"),
+    label = glue::glue("M={round(mean(x_s, na.rm = TRUE), 1)}, SD={round(sd(x_s, na.rm = TRUE), 1)}"),
     size = 5
     ) +
   labs(x = "age_scaled", y = NULL) +
@@ -518,13 +529,13 @@ p1 | p3
 ## Normalizing Visualized
 
 ```{r normalizing, echo=FALSE}
-x_n <- (x - mean(x)) / sd(x)
-p4 <- ggplot(tibble(x_n), aes(x_n)) + geom_density() + 
+x_n <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+p4 <- ggplot(tibble(x_n), aes(x_n)) + geom_density(na.rm = TRUE) + 
   annotate(
     "label", 
-    x = mean(x_n), 
+    x = mean(x_n, na.rm = TRUE), 
     y = 0.075, 
-    label = glue::glue("M={round(mean(x_n), 1)}, SD={round(sd(x_n), 1)}"),
+    label = glue::glue("M={round(mean(x_n, na.rm = TRUE), 1)}, SD={round(sd(x_n, na.rm = TRUE), 1)}"),
     size = 5
     ) +
   labs(x = "age_normalized", y = NULL) +
@@ -544,17 +555,17 @@ p1 | p4
 ```{r}
 # Normalize the age variable using the training set mean and SD
 norm_recipe <- 
-  etitanic %>% 
+  titanic %>% 
   recipe(survived ~ .) %>% 
   step_normalize(age) %>% #<<  
-  prep(training = etitanic_train, log_changes = TRUE)
+  prep(training = titanic_train, log_changes = TRUE)
 ```
 
 --
 
 ```{r}
 # Because of prep(), bake() uses the training set mean and SD to normalize the testing data²
-norm_test <- bake(norm_recipe, new_data = etitanic_test)
+norm_test <- bake(norm_recipe, new_data = titanic_test)
 ```
 
 
@@ -601,41 +612,26 @@ class: onecol
 ## Zero and Nero-Zero Variance Predictors in R
 
 ```{r}
-# Add some predictors with zero and near-zero variance
-nzv_etitanic <- etitanic %>% mutate(species = "homo sapiens", over70 = age > 70)
-nzv_train <- nzv_etitanic[index, ]
-mean(nzv_train$over70)
-```
-
---
-
-```{r}
-# Preview the simulated predictor variables
-glimpse(nzv_etitanic)
+# Calculate predictors then detect and remove zero-variance predictors
+zv_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_mutate(species = "homo sapiens", under20 = age < 20, over70 = age > 70) %>% 
+  step_zv(all_predictors()) %>% #<<
+  prep(training = titanic_train, log_changes = TRUE)
 ```
 
 ---
-class: onecol
 ## Zero and Nero-Zero Variance Predictors in R
 
 ```{r}
-# Detect and remove zero-variance predictors
-zv_recipe <- 
-  nzv_etitanic %>% 
-  recipe(survived ~ .) %>% 
-  step_zv(all_predictors()) %>% #<<
-  prep(training = nzv_train, log_changes = TRUE)
-```
-
---
-
-```{r}
-# Detect and remove zero-variance AND near-zero-variance predictors
+# Calculate predictors then detect and remove near-zero-variance predictors
 nzv_recipe <- 
-  nzv_etitanic %>% 
+  titanic %>% 
   recipe(survived ~ .) %>% 
+  step_mutate(species = "homo sapiens", under20 = age < 20, over70 = age > 70) %>% 
   step_nzv(all_predictors()) %>% #<<
-  prep(training = nzv_train, log_changes = TRUE)
+  prep(training = titanic_train, log_changes = TRUE)
 ```
 
 ---
@@ -667,11 +663,11 @@ class: onecol
 
 ```{r}
 # Add some predictors with high correlations and linear dependency
-mc_etitanic <- etitanic %>% mutate(
+mc_titanic <- titanic %>% mutate(
   wisdom = 100 + 0.25 * age + rnorm(nrow(.)), # highly correlated with age
   family = sibsp + parch                    # linear combo of sibsp and parch
 )
-mc_train <- mc_etitanic[index, ]
+mc_train <- mc_titanic[index, ]
 ```
 
 --
@@ -696,7 +692,7 @@ class: onecol
 ```{r}
 # Detect and remove predictors that are highly correlated with another predictor
 hc_recipe <- 
-  mc_etitanic %>% 
+  mc_titanic %>% 
   recipe(survived ~ .) %>% 
   step_corr(all_numeric_predictors(), threshold = 0.9) %>% #<<
   prep(training = mc_train, log_changes = TRUE)
@@ -712,8 +708,9 @@ class: onecol
 ```{r}
 # Detect and remove predictors that are linear combinations of other predictors
 lc_recipe <- 
-  mc_etitanic %>% 
+  mc_titanic %>% 
   recipe(survived ~ .) %>% 
+  step_impute_knn(all_predictors()) %>% 
   step_lincomb(all_numeric_predictors()) %>%  #<<
   prep(training = mc_train, log_changes = TRUE)
 ```
@@ -743,17 +740,17 @@ class: onecol
 
 Algorithm | Preprocessing Steps
 :-------- | :------------------
-Regularized Regression | `dummy`, `nzv`, `impute`, `decorrelate`, (`transform`)
+Regularized Regression&emsp; | `dummy`, `nzv`, `impute`, `corr`,  `lincomb`, (`transform`)&emsp;
 Decision Tree | (`decorrelate`)
-Random Forest | (`nzv`), (`impute`), (`decorrelate`)
+Random Forest | (`nzv`), (`impute`), (`corr`)
 
 For these algorithms, normalization is only really necessary for interpretation
 
 However, other algorithms (e.g., MLP and SVM) may require normalization
 
-To learn more about predictor engineering, see [1] and the [recipes](https://recipes.tidymodels.org/) package
+To learn more about feature engineering, see [1]
 
-.footnote[[1] Kuhn & Johnson (2020). *predictor Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.]
+.footnote[[1] Kuhn & Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.]
 
 ---
 class: inverse, center, middle
