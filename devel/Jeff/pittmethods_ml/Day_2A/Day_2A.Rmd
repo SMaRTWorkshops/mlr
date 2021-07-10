@@ -179,8 +179,8 @@ We will be learning the <b>`recipes`</b> package from `tidymodels`
 ## Example Dataset: `titanic`
 
 ```{r}
-# Import and preview the full titanic dataset
-titanic <- read.csv("titanic.csv")
+# Import and preview the titanic dataset with no missing values
+titanic <- read.csv("titanic_complete.csv")
 glimpse(titanic)
 ```
 
@@ -248,8 +248,8 @@ class: onecol
   - Interaction Terms
 - **Transforming predictors**
   - Centering and Scaling
-  - Resolving Skewness
-  - Addressing Outliers
+  - Addressing Non-normality
+  - Adding Non-linearity
 ]
 .pull-right[
 
@@ -575,17 +575,19 @@ norm_test <- bake(norm_recipe, new_data = titanic_test)
 
 ---
 class: onecol
-## Resolving Skewness
+## Addressing Non-normality
 
-A skewed distribution is one that is not symmetric (i.e., it has a "heavy tail")
+A ![:emphasize](skewed) distribution is one that is not symmetric (i.e., it has a "heavy tail")
 
-```{r skew, echo=FALSE}
+A ![:emphasize](bounded) distribution is one that cannot go beyond certain boundary values
+
+```{r skew, echo=FALSE, out.width='90%'}
 n <- 1e5
 skew_ex <- tibble(
   x = c(
-    rbeta(n, 1.7, 10), 
-    rbeta(n, 12, 12),
-    rbeta(n, 10, 1.7)
+    rbeta(n, 1, 8), 
+    rbeta(n, 9, 9),
+    rbeta(n, 8, 1)
   ),
   type = factor(
     rep(c("Positively Skewed", "Symmetrical", "Negatively Skewed"), each = n),
@@ -609,67 +611,23 @@ ggplot(skew_ex, aes(x = x, fill = type, linetype = type)) +
 
 ---
 class: onecol
-## Resolving Skewness
+## Addressing Non-normality
+Specific transformations (e.g., log, inverse, logit) can help address specific issues
 
-The ![:emphasize](log), **square root**, or **inverse** transformations can help with skew
-
-```{r logfare, echo=FALSE}
-p1 <- 
-ggplot(titanic, aes(x = fare)) + 
-  geom_density(size = 1.25, alpha = 0.4, color = "grey40", fill = "#91bfdb") + 
-  theme_xaringan(text_font_size = 16, title_font_size = 18) +
-  theme(
-    legend.position = "bottom",
-    panel.grid.minor = element_blank(), 
-    panel.background = element_rect(fill = "white")
-  )
-
-p2 <- 
-  ggplot(titanic, aes(x = log(fare + 1))) + 
-  geom_density(size = 1.25, alpha = 0.4, color = "grey40", fill = "#91bfdb") + 
-  theme_xaringan(text_font_size = 16, title_font_size = 18) +
-  theme(
-    legend.position = "bottom",
-    panel.grid.minor = element_blank(), 
-    panel.background = element_rect(fill = "white")
-  )
-p1 | p2
-```
-
----
-## Resolving Skewness in R
-
-```{r}
-# There are steps for all of these transformations (and more)
-log_recipe <- 
-  titanic %>% 
-  recipe(survived ~ .) %>% 
-  step_log(fare, offset = 1) %>% #<<  
-  prep(training = titanic_train, log_changes = TRUE)
-```
-
-.footnote[[1] Note that, with `offset`, we are adding 1 to each value before taking the log because the log of 0 is undefined.<br />[2] There are similar functions for the other transformations, e.g., `step_sqrt()` and `step_inverse()`.]
-
----
-class: onecol
-## Resolving Skewness
 The Box-Cox and Yeo-Johnson approaches employ **families of transformations**
 
-Box-Cox cannot be applied to negative or zero values, but Yeo-Johnson can
+Box-Cox cannot be applied to negative or zero values, but ![:emphasize](Yeo-Johnson) can
 
-$$x_{(bc)}^\star=\begin{cases}
-(x^\lambda-1)/\lambda & \text{if } \lambda\ne0 \\
-\log(x) & \text{if  }\lambda=0
-\end{cases}$$
+<br />
 
 $$x_{(yj)}^\star=\begin{cases}((x+1)^\lambda-1)/\lambda & \text{if } \lambda\ne0, x\ge0 \\
-log(x+1) & \text{if } \lambda=0, x\ge0 \\
+\log(x+1) & \text{if } \lambda=0, x\ge0 \\
 -[(-x+1)^{2-\lambda}-1)]/(2-\lambda) & \text{if } \lambda\ne2, x<0 \\
 -\log(-x+1) & \text{if } \lambda=2, x<0
 \end{cases}$$
 
 ---
-## Resolving Skewness in R
+## Addressing Non-normality in R
 
 ```{r}
 # Add step to apply the Yeo-Johnson transformation to fare
@@ -680,32 +638,88 @@ yj_recipe <-
   prep(training = titanic_train, log_changes = TRUE)
 ```
 
+.footnote[[1] If you would like to use specific transformations, use: `step_log()`, `step_inverse()`, `step_sqrt()`, etc.<br />[2] As with normalizing, use `prep` to estimate λ from training set and use it when you `bake` the testing set.]
+
 ---
 class: onecol
-## Resolving Skewness in R
+## Addressing Non-normality in R
 
 Bake the recipe using the training data and then plot the transformed variable
 
 ```{r yjfare, echo = FALSE}
 yj_train <- bake(yj_recipe, new_data = titanic_train)
-p3 <- 
-  ggplot(yj_train, aes(x = fare)) + 
-  geom_density(size = 1.25, alpha = 0.4, color = "grey40", fill = "#91bfdb") + 
-  labs(x = "fare_yeojohnson", y = NULL) +
+p1 <- 
+  ggplot(titanic_train, aes(x = fare)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40", 
+               fill = "#91bfdb", na.rm = TRUE) + 
+  labs(x = "fare", y = "density") +
   theme_xaringan(text_font_size = 16, title_font_size = 18) +
   theme(
-    legend.position = "bottom",
     panel.grid.minor = element_blank(), 
     panel.background = element_rect(fill = "white")
   )
-p1 | p3
+p2 <- 
+  ggplot(yj_train, aes(x = fare)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40", 
+               fill = "#91bfdb", na.rm = TRUE) + 
+  labs(x = "fare_yeojohnson", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p2
 ```
 
 ---
-## Addressing Outliers
+class: onecol
+## Adding Nonlinearity
+
+Many relationships between features and labels are non-linear in nature
+- *e.g., perhaps survival was lowest for young adults and higher for children and elders*
+
+<p style="padding-top:25px;">Successful prediction will require us to <b>model that nonlinearity</b> in such cases</p>
+
+--
+
+<p style="padding-top:25px;">Many algorithms can capture nonlinearity easily but others need our help</p>
+
+- For these algorithms, we can provide help through feature engineering
+
+- This typically means adding ![:emphasize](nonlinear expansions) of existing predictors<sup>1</sup>
+
+.footnote[[1] If you are familiar with polynomial (e.g., quadratic or cubic) regression, you already have relevant experience!]
 
 ---
-## Addressing Outliers in R
+## Adding Nonlinearity in R
+
+```{r}
+# Add step to add orthogonal polynomial basis functions
+nl_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_poly(age, degree = 2) %>% #<<  
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+.footnote[[1] Note that, by specifying `degree = 2`, we are creating a quadratic expansion; more flexibility can be added.<br />[2] Additional nonlinear expansions are also available: `step_ns()`, `step_bs()`, and `step_hyperbolic()`.]
+
+---
+class: onecol
+## Adding Nonlinearity in R
+
+Bake the recipe and plot the polynomial terms against one another (with vertical jitter).
+
+```{r poly, echo=FALSE}
+nl_train <- bake(nl_recipe, new_data = titanic_train)
+ggplot(nl_train, aes(x = age_poly_1, y = age_poly_2)) + 
+  geom_jitter(size = 3, alpha = 0.25, width = 0, height = 0.01) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
 
 ---
 class: inverse, center, middle
