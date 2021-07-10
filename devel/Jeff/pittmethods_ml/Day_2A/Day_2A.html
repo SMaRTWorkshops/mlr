@@ -157,21 +157,20 @@ glimpse(titanic)
 
 ```
 ## Rows: 1,309
-## Columns: 8
-## $ pclass   &lt;chr&gt; "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
+## Columns: 7
 ## $ survived &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FAL~
+## $ pclass   &lt;chr&gt; "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
 ## $ sex      &lt;chr&gt; "female", "male", "female", "male", "female", "male", "female~
 ## $ age      &lt;dbl&gt; 29.0000, 0.9167, NA, 30.0000, 25.0000, 48.0000, 63.0000, 39.0~
 ## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1~
 ## $ parch    &lt;int&gt; 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1~
 ## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 151.5500, 26.5500, 77~
-## $ embarked &lt;chr&gt; "Southampton", "Southampton", "Southampton", "Southampton", "~
 ```
 
 .pull-left[
-- `pclass`: *Passenger class*
-- `survived`: *Did passenger survive?*
-- `sex`: *Passenger sex*
+- `survived`: *Did passenger survive? {FALSE, TRUE}*
+- `pclass`: *Passenger class {1st, 2nd, 3rd}*
+- `sex`: *Passenger sex {female, male}*
 - `age`: *Passenger age (years)*
 ]
 
@@ -179,7 +178,6 @@ glimpse(titanic)
 - `sibsp`: *Siblings/spouses Aboard (\#)*
 - `parch`: *Parents/children Aboard (\#)*
 - `fare`: *Cost of passenger fare ($)*
-- `embarked`: *Port of embarkation*
 ]
 
 ---
@@ -200,7 +198,7 @@ titanic_test &lt;- titanic[-index, ]
 # Initiate a recipe for predicting survived from all other variables
 titanic_recipe &lt;- recipe(titanic, formula = survived ~ .)
 
-# We could also be explicit with: formula = survived ~ pclass + sex + age + sibsp + parch + fare + embarked
+# We could also be explicit with: formula = survived ~ pclass + sex + age + sibsp + parch + fare
 ```
 
 
@@ -215,7 +213,7 @@ titanic_recipe %&gt;% print()
 ## 
 ##       role #variables
 ##    outcome          1
-##  predictor          7
+##  predictor          6
 ```
 
 
@@ -271,12 +269,6 @@ titanic_recipe %&gt;% summary()
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; fare &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; numeric &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; predictor &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; original &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; embarked &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; nominal &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; predictor &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; original &lt;/td&gt;
   &lt;/tr&gt;
@@ -357,7 +349,7 @@ cp_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_pEouV): 
+## step_mutate (mutate_riZTF): 
 ##  new (2): numfamily, over70
 ```
 
@@ -417,12 +409,6 @@ cp_recipe %&gt;% summary()
    &lt;td style="text-align:left;"&gt; original &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; embarked &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; nominal &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; predictor &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; original &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; survived &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; logical &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; outcome &lt;/td&gt;
@@ -464,17 +450,16 @@ glimpse(cp_test)
 
 ```
 ## Rows: 261
-## Columns: 10
+## Columns: 9
 ## $ pclass    &lt;fct&gt; 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, ~
-## $ sex       &lt;fct&gt; female, male, male, male, female, male, female, male, male, ~
-## $ age       &lt;dbl&gt; 63, 39, 25, 42, 22, 36, 30, NA, 47, 39, 55, 64, 51, 31, 23, ~
-## $ sibsp     &lt;int&gt; 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 1, 0, 0, 0, 3, 3, 0, ~
-## $ parch     &lt;int&gt; 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 2, 2, 0, ~
-## $ fare      &lt;dbl&gt; 77.9583, NA, 91.0792, 26.5500, 55.0000, 512.3292, 86.5000, N~
-## $ embarked  &lt;fct&gt; Southampton, Southampton, Cherbourg, Southampton, Southampto~
-## $ survived  &lt;lgl&gt; TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TR~
-## $ numfamily &lt;int&gt; 1, 0, 1, 0, 1, 1, 0, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 5, 5, 0, ~
-## $ over70    &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, NA, FALSE, ~
+## $ sex       &lt;fct&gt; female, male, male, female, male, female, female, female, ma~
+## $ age       &lt;dbl&gt; NA, 24, 28, 30, 42, 45, 59, 41, NA, 36, 27, 27, 53, NA, 27, ~
+## $ sibsp     &lt;int&gt; 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, ~
+## $ parch     &lt;int&gt; 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 2, 1, 0, 0, 1, 0, 1, ~
+## $ fare      &lt;dbl&gt; 151.5500, 247.5208, 26.5500, 164.8667, 26.5500, 262.3750, 51~
+## $ survived  &lt;lgl&gt; FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, TR~
+## $ numfamily &lt;int&gt; 3, 1, 0, 0, 0, 0, 2, 0, 0, 1, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, ~
+## $ over70    &lt;lgl&gt; NA, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, NA, FAL~
 ```
 
 ---
@@ -517,18 +502,18 @@ male   | 0  | 1
 
 
 ```r
-# Add a step to the recipe to create dummy codes for pclass, sex, and embarked
+# Add a step to the recipe to create dummy codes for pclass and sex
 dc_recipe &lt;- 
   titanic %&gt;%
   recipe(survived ~ .) %&gt;% 
-* step_dummy(pclass, sex, embarked) %&gt;%
+* step_dummy(pclass, sex) %&gt;%
   prep(training = titanic_train, log_changes = TRUE)
 ```
 
 ```
-## step_dummy (dummy_2exuH): 
-##  new (5): pclass_X2nd, pclass_X3rd, sex_male, ...
-##  removed (3): pclass, sex, embarked
+## step_dummy (dummy_B6NKx): 
+##  new (3): pclass_X2nd, pclass_X3rd, sex_male
+##  removed (2): pclass, sex
 ```
 
 --
@@ -544,14 +529,14 @@ dc_recipe &lt;-
 oh_recipe &lt;- 
   titanic %&gt;% 
   recipe(survived ~ .) %&gt;% 
-* step_dummy(pclass, sex, embarked, one_hot = TRUE) %&gt;%
+* step_dummy(pclass, sex, one_hot = TRUE) %&gt;%
   prep(training = titanic_train, log_changes = TRUE)
 ```
 
 ```
-## step_dummy (dummy_bQilX): 
-##  new (8): pclass_X1st, pclass_X2nd, pclass_X3rd, sex_female, sex_male, ...
-##  removed (3): pclass, sex, embarked
+## step_dummy (dummy_aZdaK): 
+##  new (5): pclass_X1st, pclass_X2nd, pclass_X3rd, sex_female, sex_male
+##  removed (2): pclass, sex
 ```
 
 .footnote[[1] Note that step_dummy() is used for both dummy coding and one-hot encoding (with different arguments).]
@@ -589,11 +574,11 @@ it_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_jCTgV): 
+## step_dummy (dummy_neSIa): 
 ##  new (3): pclass_X2nd, pclass_X3rd, sex_male
 ##  removed (2): pclass, sex
 ## 
-## step_interact (interact_WB5qk): 
+## step_interact (interact_qfANW): 
 ##  new (1): parch_x_sex_male
 ```
 
@@ -610,17 +595,16 @@ bake(it_recipe, new_data = titanic_train) %&gt;% glimpse()
 
 ```
 ## Rows: 1,048
-## Columns: 10
-## $ age              &lt;dbl&gt; 29.0000, 0.9167, NA, 30.0000, 25.0000, 48.0000, 53.00~
-## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,~
-## $ parch            &lt;int&gt; 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,~
-## $ fare             &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 151.5500, 26.~
-## $ embarked         &lt;fct&gt; Southampton, Southampton, Southampton, Southampton, S~
-## $ survived         &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, F~
+## Columns: 9
+## $ age              &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, ~
+## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,~
+## $ parch            &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,~
+## $ fare             &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9~
+## $ survived         &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FA~
 ## $ pclass_X2nd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
 ## $ pclass_X3rd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
-## $ sex_male         &lt;dbl&gt; 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1,~
-## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,~
+## $ sex_male         &lt;dbl&gt; 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1,~
+## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
 ```
 
 ---
@@ -685,7 +669,7 @@ norm_recipe &lt;-
 ```
 
 ```
-## step_normalize (normalize_VmTuJ): same number of columns
+## step_normalize (normalize_xomyF): same number of columns
 ```
 
 --
@@ -751,10 +735,10 @@ zv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_JRyPZ): 
+## step_mutate (mutate_ktx8I): 
 ##  new (3): species, under20, over70
 ## 
-## step_zv (zv_cPbmC): 
+## step_zv (zv_tpHqA): 
 ##  removed (1): species
 ```
 
@@ -773,10 +757,10 @@ nzv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_f9Pow): 
+## step_mutate (mutate_bDLGK): 
 ##  new (3): species, under20, over70
 ## 
-## step_nzv (nzv_BbHw8): 
+## step_nzv (nzv_HkVgo): 
 ##  removed (2): species, over70
 ```
 
@@ -826,17 +810,16 @@ glimpse(mc_train)
 
 ```
 ## Rows: 1,048
-## Columns: 10
+## Columns: 9
+## $ survived &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FAL~
 ## $ pclass   &lt;chr&gt; "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
-## $ survived &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TR~
-## $ sex      &lt;chr&gt; "female", "male", "female", "male", "female", "male", "female~
-## $ age      &lt;dbl&gt; 29.0000, 0.9167, NA, 30.0000, 25.0000, 48.0000, 53.0000, 71.0~
-## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0~
-## $ parch    &lt;int&gt; 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0~
-## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 151.5500, 26.5500, 51~
-## $ embarked &lt;chr&gt; "Southampton", "Southampton", "Southampton", "Southampton", "~
-## $ wisdom   &lt;dbl&gt; 104.1660, 99.6082, NA, 106.7358, 106.8009, 111.5884, 112.9914~
-## $ family   &lt;int&gt; 0, 3, 3, 3, 3, 0, 2, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 2, 2, 0~
+## $ sex      &lt;chr&gt; "female", "male", "male", "female", "male", "female", "male",~
+## $ age      &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, 39.0000,~
+## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0~
+## $ parch    &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0~
+## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9583, NA,~
+## $ wisdom   &lt;dbl&gt; 106.9711, 99.4014, 107.5079, 107.4135, 113.3851, 116.1291, 11~
+## $ family   &lt;int&gt; 0, 3, 3, 3, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 2, 2, 0~
 ```
 
 ---
@@ -852,11 +835,11 @@ mc_train %&gt;% select(where(is.numeric), -survived) %&gt;% cor() %&gt;% round(d
 ```
 ##        age sibsp parch fare wisdom family
 ## age      1    NA    NA   NA     NA     NA
-## sibsp   NA  1.00  0.39   NA     NA   0.87
-## parch   NA  0.39  1.00   NA     NA   0.79
+## sibsp   NA  1.00  0.38   NA     NA   0.85
+## parch   NA  0.38  1.00   NA     NA   0.81
 ## fare    NA    NA    NA    1     NA     NA
 ## wisdom  NA    NA    NA   NA      1     NA
-## family  NA  0.87  0.79   NA     NA   1.00
+## family  NA  0.85  0.81   NA     NA   1.00
 ```
 
 ---
@@ -874,8 +857,8 @@ hc_recipe &lt;-
 ```
 
 ```
-## step_corr (corr_exq9V): 
-##  removed (1): wisdom
+## step_corr (corr_DBGrN): 
+##  removed (1): age
 ```
 
 --
@@ -897,9 +880,9 @@ lc_recipe &lt;-
 ```
 
 ```
-## step_impute_knn (impute_knn_O7b6U): same number of columns
+## step_impute_knn (impute_knn_6pTHI): same number of columns
 ## 
-## step_lincomb (lincomb_1HFBD): 
+## step_lincomb (lincomb_pqxdL): 
 ##  removed (1): family
 ```
 
@@ -947,7 +930,7 @@ class: inverse, center, middle
 class: inverse, center, middle
 # Time for a Break!
 
-<div class="countdown" id="timer_60e9f5f8" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60e9f65e" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>

@@ -185,9 +185,9 @@ glimpse(titanic)
 ```
 
 .pull-left[
-- `pclass`: *Passenger class*
-- `survived`: *Did passenger survive?*
-- `sex`: *Passenger sex*
+- `survived`: *Did passenger survive? {FALSE, TRUE}*
+- `pclass`: *Passenger class {1st, 2nd, 3rd}*
+- `sex`: *Passenger sex {female, male}*
 - `age`: *Passenger age (years)*
 ]
 
@@ -195,7 +195,6 @@ glimpse(titanic)
 - `sibsp`: *Siblings/spouses Aboard (\#)*
 - `parch`: *Parents/children Aboard (\#)*
 - `fare`: *Cost of passenger fare ($)*
-- `embarked`: *Port of embarkation*
 ]
 
 ---
@@ -214,7 +213,7 @@ titanic_test <- titanic[-index, ]
 # Initiate a recipe for predicting survived from all other variables
 titanic_recipe <- recipe(titanic, formula = survived ~ .)
 
-# We could also be explicit with: formula = survived ~ pclass + sex + age + sibsp + parch + fare + embarked
+# We could also be explicit with: formula = survived ~ pclass + sex + age + sibsp + parch + fare
 ```
 
 ```{r}
@@ -368,11 +367,11 @@ male   | 0  | 1
 ## Categorical predictors in R
 
 ```{r}
-# Add a step to the recipe to create dummy codes for pclass, sex, and embarked
+# Add a step to the recipe to create dummy codes for pclass and sex
 dc_recipe <- 
   titanic %>%
   recipe(survived ~ .) %>% 
-  step_dummy(pclass, sex, embarked) %>% #<<
+  step_dummy(pclass, sex) %>% #<<
   prep(training = titanic_train, log_changes = TRUE)
 ```
 
@@ -388,7 +387,7 @@ dc_recipe <-
 oh_recipe <- 
   titanic %>% 
   recipe(survived ~ .) %>% 
-  step_dummy(pclass, sex, embarked, one_hot = TRUE) %>% #<<
+  step_dummy(pclass, sex, one_hot = TRUE) %>% #<<
   prep(training = titanic_train, log_changes = TRUE)
 ```
 
