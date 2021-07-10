@@ -429,13 +429,139 @@ class: inverse, center, middle
 # Transforming predictors
 ---
 class: onecol
-## Centering and Scaling
+## Normalizing
 
-Definition of centering
+Predictors with vastly different means and SDs can cause problems for some algorithms
 
-Definition of scaling
+--
+
+![:emphasize](Centering) a predictor involves changing its mean to $0.0$
+
+- This is accomplished by subtracting the mean from every observation 
+
+--
+
+![:emphasize](Scaling) a predictor involves changing its standard deviation (and variance) to $1.0$
+
+- This is accomplished by dividing each observation by the standard deviation
+
+--
+
+![:emphasize](Normalizing) a predictor involves centering it and then scaling it
+
+- This is also sometimes called "standardizing" or $z$-scoring the predictor
+
 ---
-## Centering and Scaling in R
+## Centering Visualized
+
+```{r centering, echo=FALSE}
+x <- etitanic$age
+p1 <- ggplot(tibble(x), aes(x)) + geom_density() +
+  annotate(
+    "label", 
+    x = mean(x), 
+    y = 0.005, 
+    label = glue::glue("M={round(mean(x), 1)}, SD={round(sd(x), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age", y = "density") +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+x_c <- x - mean(x)
+p2 <- ggplot(tibble(x_c), aes(x_c)) + geom_density() + 
+  annotate(
+    "label", 
+    x = mean(x_c), 
+    y = 0.005, 
+    label = glue::glue("M={round(mean(x_c), 1)}, SD={round(sd(x_c), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age_centered", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p2
+```
+
+.footnote[The mean is now 0 but the shape and SD of the distribution are unchanged (i.e., it has been shifted left).]
+
+---
+## Scaling Visualized
+
+```{r scaling, echo=FALSE}
+x_s <- x / sd(x)
+p3 <- ggplot(tibble(x_s), aes(x_s)) + geom_density() + 
+  annotate(
+    "label", 
+    x = mean(x_s), 
+    y = 0.075, 
+    label = glue::glue("M={round(mean(x_s), 1)}, SD={round(sd(x_s), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age_scaled", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p3
+```
+
+.footnote[The SD is now 1 and the mean is lower, but the shape of the distribution is unchanged.]
+
+---
+## Normalizing Visualized
+
+```{r normalizing, echo=FALSE}
+x_n <- (x - mean(x)) / sd(x)
+p4 <- ggplot(tibble(x_n), aes(x_n)) + geom_density() + 
+  annotate(
+    "label", 
+    x = mean(x_n), 
+    y = 0.075, 
+    label = glue::glue("M={round(mean(x_n), 1)}, SD={round(sd(x_n), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age_normalized", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p4
+```
+
+.footnote[The mean is now 0 and the SD is now 1, but the shape of the distribution is unchanged.]
+
+---
+## Normalizing in R
+
+```{r}
+# Normalize the age variable using the training set mean and SD
+norm_recipe <- 
+  etitanic %>% 
+  recipe(survived ~ .) %>% 
+  step_normalize(age) %>% #<<  
+  prep(training = etitanic_train, log_changes = TRUE)
+```
+
+--
+
+```{r}
+# Because of prep(), bake() uses the training set mean and SD to normalize the testing data²
+norm_test <- bake(norm_recipe, new_data = etitanic_test)
+```
+
+
+.footnote[
+[1] We could also have used `step_center()` and/or `step_scale()` instead of `step_normalize()`.<br />
+[2] This is important to accurately estimating out-of-sample performance on truly novel data.
+]
 
 ---
 ## Resolving Skewness
@@ -602,13 +728,13 @@ lc_recipe <-
 class: inverse, center, middle
 # Advanced Topics
 ---
-## predictor Extraction
+## Feature Extraction
 
 ---
 ## Dealing with Missing Values
 
 ---
-## predictor Selection
+## Feature Selection
 
 
 ---

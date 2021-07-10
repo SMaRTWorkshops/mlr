@@ -2951,13 +2951,79 @@ class: inverse, center, middle
 # Transforming predictors
 ---
 class: onecol
-## Centering and Scaling
+## Normalizing
 
-Definition of centering
+Predictors with vastly different means and SDs can cause problems for some algorithms
 
-Definition of scaling
+--
+
+![:emphasize](Centering) a predictor involves changing its mean to `\(0.0\)`
+
+- This is accomplished by subtracting the mean from every observation 
+
+--
+
+![:emphasize](Scaling) a predictor involves changing its standard deviation (and variance) to `\(1.0\)`
+
+- This is accomplished by dividing each observation by the standard deviation
+
+--
+
+![:emphasize](Normalizing) a predictor involves centering it and then scaling it
+
+- This is also sometimes called "standardizing" or `\(z\)`-scoring the predictor
+
 ---
-## Centering and Scaling in R
+## Centering Visualized
+
+&lt;img src="Day_2A_files/figure-html/centering-1.png" width="100%" /&gt;
+
+.footnote[The mean is now 0 but the shape and SD of the distribution are unchanged (i.e., it has been shifted left).]
+
+---
+## Scaling Visualized
+
+&lt;img src="Day_2A_files/figure-html/scaling-1.png" width="100%" /&gt;
+
+.footnote[The SD is now 1 and the mean is lower, but the shape of the distribution is unchanged.]
+
+---
+## Normalizing Visualized
+
+&lt;img src="Day_2A_files/figure-html/normalizing-1.png" width="100%" /&gt;
+
+.footnote[The mean is now 0 and the SD is now 1, but the shape of the distribution is unchanged.]
+
+---
+## Normalizing in R
+
+
+```r
+# Normalize the age variable using the training set mean and SD
+norm_recipe &lt;- 
+  etitanic %&gt;% 
+  recipe(survived ~ .) %&gt;% 
+* step_normalize(age) %&gt;%
+  prep(training = etitanic_train, log_changes = TRUE)
+```
+
+```
+## step_normalize (normalize_9wiIO): same number of columns
+```
+
+--
+
+
+```r
+# Because of prep(), bake() uses the training set mean and SD to normalize the testing data²
+norm_test &lt;- bake(norm_recipe, new_data = etitanic_test)
+```
+
+
+.footnote[
+[1] We could also have used `step_center()` and/or `step_scale()` instead of `step_normalize()`.&lt;br /&gt;
+[2] This is important to accurately estimating out-of-sample performance on truly novel data.
+]
 
 ---
 ## Resolving Skewness
@@ -3044,7 +3110,7 @@ zv_recipe &lt;-
 ```
 
 ```
-## step_zv (zv_9wiIO): 
+## step_zv (zv_EbUMM): 
 ##  removed (1): species
 ```
 
@@ -3061,7 +3127,7 @@ nzv_recipe &lt;-
 ```
 
 ```
-## step_nzv (nzv_EbUMM): 
+## step_nzv (nzv_rcz8E): 
 ##  removed (2): species, over70
 ```
 
@@ -3118,7 +3184,7 @@ glimpse(mc_train)
 ## $ age      &lt;dbl&gt; 29.0000, 0.9167, 2.0000, 30.0000, 25.0000, 39.0000, 53.0000, ~
 ## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 1, 0, 2, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0~
 ## $ parch    &lt;int&gt; 0, 2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0~
-## $ wisdom   &lt;dbl&gt; 109.0266, 101.0891, 100.3414, 107.3354, 105.2118, 110.3183, 1~
+## $ wisdom   &lt;dbl&gt; 107.5205, 100.6615, 100.6328, 107.4573, 107.1935, 112.2407, 1~
 ## $ family   &lt;int&gt; 0, 3, 3, 3, 3, 0, 2, 0, 1, 1, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0~
 ```
 
@@ -3135,10 +3201,10 @@ mc_train %&gt;% select(where(is.numeric), -survived) %&gt;% cor() %&gt;% round(d
 ```
 ##          age sibsp parch wisdom family
 ## age     1.00 -0.24 -0.12   0.96  -0.22
-## sibsp  -0.24  1.00  0.35  -0.24   0.83
-## parch  -0.12  0.35  1.00  -0.12   0.81
-## wisdom  0.96 -0.24 -0.12   1.00  -0.22
-## family -0.22  0.83  0.81  -0.22   1.00
+## sibsp  -0.24  1.00  0.35  -0.25   0.83
+## parch  -0.12  0.35  1.00  -0.13   0.81
+## wisdom  0.96 -0.25 -0.13   1.00  -0.23
+## family -0.22  0.83  0.81  -0.23   1.00
 ```
 
 ---
@@ -3156,8 +3222,8 @@ hc_recipe &lt;-
 ```
 
 ```
-## step_corr (corr_BBE3R): 
-##  removed (1): age
+## step_corr (corr_xnCI8): 
+##  removed (1): wisdom
 ```
 
 --
@@ -3178,7 +3244,7 @@ lc_recipe &lt;-
 ```
 
 ```
-## step_lincomb (lincomb_xnCI8): 
+## step_lincomb (lincomb_cVezl): 
 ##  removed (1): family
 ```
 
@@ -3192,13 +3258,13 @@ lc_recipe &lt;-
 class: inverse, center, middle
 # Advanced Topics
 ---
-## predictor Extraction
+## Feature Extraction
 
 ---
 ## Dealing with Missing Values
 
 ---
-## predictor Selection
+## Feature Selection
 
 
 ---
@@ -3226,7 +3292,7 @@ class: inverse, center, middle
 class: inverse, center, middle
 # Time for a Break!
 
-<div class="countdown" id="timer_60e8caa9" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60e9dd87" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
