@@ -75,6 +75,7 @@ library(MASS)
 library(gdata)
 library(elasticnet)
 library(glmnet)
+library(pROC)
 ```
 
 class: inverse, center, middle
@@ -328,19 +329,18 @@ correlated_relationship <- rnorm(n = 25, mean = .6, sd = .2)
 correlated_relationship[correlated_relationship > 1] <- .67
 emptyCorMat[3:7, 3:7] <- correlated_relationship
 
-uncorrelated_relationship <- rnorm(n = 50, mean = 0, sd = .1)
-uncorrelated_relationship[uncorrelated_relationship > 1] <- .2
+uncorrelated_relationship <- rnorm(n = 50, mean = 0, sd = .05)
+uncorrelated_relationship[uncorrelated_relationship > 1] <- .1
 emptyCorMat[3:12, 8:12] <- uncorrelated_relationship
-emptyCorMat
 
-no_relationship <- rnorm(n = 8*20, mean = 0, sd = .1)
+no_relationship <- rnorm(n = 8*20, mean = 0, sd = .02)
 emptyCorMat[,13:20] <- no_relationship
 
-firstRowCor <- rnorm(n = 10, mean = .5, sd = .2)
+firstRowCor <- rnorm(n = 10, mean = .8, sd = .2)
 firstRowCor[firstRowCor>1] <- .82
 emptyCorMat[1,3:12] <- firstRowCor
 
-secondRowCor <- rnorm(n = 10, mean = .5, sd = .2)
+secondRowCor <- rnorm(n = 10, mean = .8, sd = .2)
 secondRowCor[secondRowCor>1] <- .76
 emptyCorMat[2,3:12] <- secondRowCor
 
@@ -348,11 +348,10 @@ lowerTriangle(emptyCorMat) = upperTriangle(emptyCorMat, byrow=TRUE)
 
 diag(emptyCorMat) <- 1
 
-stddev <- abs(rnorm(20,mean = 1, sd = 1))
+stddev <- abs(rnorm(20, mean = 1, sd = 0.5))
 covMat <- stddev %*% t(stddev) * emptyCorMat
-covMat
 
-mu <- rnorm(20,mean = 4, sd = 1)
+mu <- rnorm(20, mean = 4, sd = 1)
 nn <- corpcor::make.positive.definite(covMat, tol=1e-3)
 dat1 <- mvrnorm(n = 500, mu = mu, Sigma = nn, empirical = FALSE)
 
@@ -366,16 +365,23 @@ dat1[indices, 2] <- dat1[indices, 2] + (newNumbersToAdd * rnorm(n = indices_leng
 dat1[,2] <- dplyr::case_when(
   dat1[,2] <= mean(dat1[,2])~ 0,
   TRUE ~ 1) 
-dat1 <- ifelse(dat1 < 0, 0, dat1)
+
+for (i in 1:ncol(dat1)){
+  if (min(dat1[, i]) < 0) {
+    dat1[, 1] <- dat1[, 1] + min(dat1[, i])
+  }
+}
+
+cor(as.data.frame(dat1))
 
 EDsim <- as.data.frame(dat1)
 varnames <- c("ED_severity", "ED_diagnosis", 
               "emo_reg", "depression", "impulsivity", "self_crit", "anxiety",
               "race", "age", "SES", "prior_treatment", "perfectionism",
               "day_temperature", "rainfall", "num_siblings", "num_cellphones", "time_news", "time_tv", "num_pets",
-              "duration_illness")
+              "treatment_length")
 names(EDsim) <- varnames
-EDsim <- EDsim %>% mutate(ED_diagnosis = as.factor(ED_diagnosis), race = as.factor(floor(race)), age = age + 14, SES = as.factor(floor(SES)), num_siblings = floor(num_siblings), num_cellphones = floor(num_cellphones), num_pets = floor(num_pets))
+EDsim <- EDsim %>% mutate(ED_diagnosis = factor(ED_diagnosis, labels = c("no_ED", "ED")), race = as.factor(floor(race)), age = age + 14, SES = as.factor(floor(SES)), num_siblings = floor(num_siblings), num_cellphones = floor(num_cellphones), num_pets = floor(num_pets))
 ```
 **Step 0: Split into a training (including cross-validation) and held-out test set.**
 
@@ -453,7 +459,7 @@ print(dfSummary(EDsim_train_tf, valid.col = FALSE, headings = FALSE, style = 'gr
 **Step 3: Set model training and tuning methods in `caret::traincontrol()`**
 
 ```{r}
-EDsim_control <- trainControl(method = 'repeatedCV',
+EDsim_control <- trainControl(method = 'repeatedcv',
                               number = 10,
                               repeats = 3, 
                               classProbs = FALSE,
@@ -561,7 +567,7 @@ coefpath(ridgefit$finalModel)
 ## Ridge Regression in R
 
 ```{r}
-ggplot(varImp(ridgefit)) +
+ggplot(varImp(ridgefit, scale = FALSE)) +
   theme_xaringan(text_font_size = 10, title_font_size = 18) +
   theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
 ```
@@ -638,6 +644,147 @@ Whereas ridge tends to shrink coefficients of correlated predictors towards each
 ]
 
 ---
+## Lasso Regression in R
+
+**Split into a training (including cross-validation) and held-out test set.**
+
+This time, we'll predict a categorical outcome.
+
+```{r, out.width="50%"}
+# use caret for simple data split
+library(caret)
+set.seed(2021)
+trainIndex <- createDataPartition(EDsim$ED_diagnosis, p = 0.8, list = FALSE, times = 1)
+EDsim_train_cat <- EDsim[trainIndex, ]
+EDsim_test_cat <- EDsim[-trainIndex, ]
+```
+
+--
+
+```{r}
+# check data splitting
+dim(EDsim_train_cat)
+dim(EDsim_test_cat)
+```
+
+---
+## Lasso Regression in R
+
+**Standardize features**
+
+```{r}
+preproc_cat <- preProcess(EDsim_train_cat[, -c(1, 2)], method = c("center", "scale"))
+preproc_cat
+EDsim_train_tf_cat <- predict(preproc, newdata = EDsim_train_cat)
+```
+
+---
+## Lasso Regression in R
+
+**Set model training and tuning methods**
+
+```{r}
+## custom summary function 
+MySummary <- function(data, lev = NULL, model = NULL){
+  a1 <- twoClassSummary(data, lev, model) # for AUC, sensitivity, specificity
+  b1 <- prSummary(data, lev, model) # for PPV, AUPRC
+  out <- c(a1, b1)
+  out}
+
+EDsim_control_cat <- trainControl(method = 'repeatedcv',
+                                  number = 10,
+                                  repeats = 3,
+                                  classProbs = TRUE,
+                                  summaryFunction = MySummary,
+                                  seeds = seeds)
+```
+
+--
+
+**Set tuning grid** 
+
+```{r}
+lassogrid <- expand.grid(alpha = 1, lambda = seq(0, 1, 0.01))
+```
+
+---
+## Lasso Regression in R
+
+**Train model**
+
+```{r}
+set.seed(2021)
+lassofit <- train(ED_diagnosis ~ ., data = EDsim_train_tf_cat[, -1],
+                  method = 'glmnet',
+                  family = "binomial",
+                  tuneGrid = lassogrid,
+                  trControl = EDsim_control_cat)
+```
+
+--
+
+.scroll-output[
+```{r}
+lassofit
+```
+]
+
+---
+## Lasso Regression in R
+
+```{r}
+ggplot(lassofit) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
+```
+
+---
+## Lasso Regression in R
+
+```{r}
+coefpath(lassofit$finalModel)
+```
+
+---
+## Lasso Regression in R
+
+```{r}
+ggplot(varImp(lassofit, scale = FALSE)) +
+  theme_xaringan(text_font_size = 10, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
+```
+
+---
+## Lasso Regression in R
+
+**Standardize and predict on held-out test set**
+
+```{r}
+preproc_test_cat <- preProcess(EDsim_test_cat[, -c(1, 2)], method = c("center", "scale"))
+preproc_test_cat
+EDsim_test_tf_cat <- predict(preproc_test_cat, newdata = EDsim_test_cat)
+```
+
+---
+## Lasso Regression in R
+
+**Step 6: Predict on held-out test set**
+
+```{r}
+lassopred_test <- predict(lassofit, EDsim_test_tf_cat)
+pROC::auc(EDsim_test_tf_cat$ED_diagnosis, as.numeric(lassopred_test))
+```
+
+--
+
+Let's compare this to the performance metrics on our training set: 
+
+```{r}
+lassopred_train <- predict(lassofit, EDsim_train_tf_cat)
+pROC::auc(EDsim_train_tf_cat$ED_diagnosis, as.numeric(lassopred_train))
+```
+
+---
 class: inverse, center, middle
 # Elastic Net Regression
 
@@ -689,6 +836,8 @@ notes to self:
 do regular regression, ridge, lasso, elastic net, and compare the models 
 
 also show categorical
+
+remember to add in some knowledge checks
 
 ---
 ## Group Activity
