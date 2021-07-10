@@ -349,7 +349,7 @@ cp_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_riZTF): 
+## step_mutate (mutate_pnG1M): 
 ##  new (2): numfamily, over70
 ```
 
@@ -452,14 +452,14 @@ glimpse(cp_test)
 ## Rows: 261
 ## Columns: 9
 ## $ pclass    &lt;fct&gt; 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, ~
-## $ sex       &lt;fct&gt; female, male, male, female, male, female, female, female, ma~
-## $ age       &lt;dbl&gt; NA, 24, 28, 30, 42, 45, 59, 41, NA, 36, 27, 27, 53, NA, 27, ~
-## $ sibsp     &lt;int&gt; 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, ~
-## $ parch     &lt;int&gt; 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 2, 1, 0, 0, 1, 0, 1, ~
-## $ fare      &lt;dbl&gt; 151.5500, 247.5208, 26.5500, 164.8667, 26.5500, 262.3750, 51~
-## $ survived  &lt;lgl&gt; FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, TR~
-## $ numfamily &lt;int&gt; 3, 1, 0, 0, 0, 0, 2, 0, 0, 1, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, ~
-## $ over70    &lt;lgl&gt; NA, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, NA, FAL~
+## $ sex       &lt;fct&gt; female, male, female, male, female, female, male, male, fema~
+## $ age       &lt;dbl&gt; 25, 39, 53, 37, 30, 22, NA, 41, 41, 53, 36, 26, 22, 38, 33, ~
+## $ sibsp     &lt;int&gt; 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, ~
+## $ parch     &lt;int&gt; 2, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 1, 0, ~
+## $ fare      &lt;dbl&gt; 151.5500, NA, 51.4792, 52.5542, 164.8667, 55.0000, 26.5500, ~
+## $ survived  &lt;lgl&gt; FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRU~
+## $ numfamily &lt;int&gt; 3, 0, 2, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 3, 2, 1, 2, 0, ~
+## $ over70    &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, NA, FALSE, FALSE, ~
 ```
 
 ---
@@ -511,7 +511,7 @@ dc_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_B6NKx): 
+## step_dummy (dummy_u5bQM): 
 ##  new (3): pclass_X2nd, pclass_X3rd, sex_male
 ##  removed (2): pclass, sex
 ```
@@ -534,7 +534,7 @@ oh_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_aZdaK): 
+## step_dummy (dummy_xLzQJ): 
 ##  new (5): pclass_X1st, pclass_X2nd, pclass_X3rd, sex_female, sex_male
 ##  removed (2): pclass, sex
 ```
@@ -574,11 +574,11 @@ it_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_neSIa): 
+## step_dummy (dummy_7Rpt0): 
 ##  new (3): pclass_X2nd, pclass_X3rd, sex_male
 ##  removed (2): pclass, sex
 ## 
-## step_interact (interact_qfANW): 
+## step_interact (interact_Pf2QV): 
 ##  new (1): parch_x_sex_male
 ```
 
@@ -596,15 +596,15 @@ bake(it_recipe, new_data = titanic_train) %&gt;% glimpse()
 ```
 ## Rows: 1,048
 ## Columns: 9
-## $ age              &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, ~
-## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,~
-## $ parch            &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,~
+## $ age              &lt;dbl&gt; 29.0000, 0.9167, NA, 30.0000, 48.0000, 63.0000, 71.00~
+## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,~
+## $ parch            &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1,~
 ## $ fare             &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9~
-## $ survived         &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FA~
+## $ survived         &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, T~
 ## $ pclass_X2nd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
 ## $ pclass_X3rd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
-## $ sex_male         &lt;dbl&gt; 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1,~
-## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
+## $ sex_male         &lt;dbl&gt; 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0,~
+## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,~
 ```
 
 ---
@@ -669,7 +669,7 @@ norm_recipe &lt;-
 ```
 
 ```
-## step_normalize (normalize_xomyF): same number of columns
+## step_normalize (normalize_aPci8): same number of columns
 ```
 
 --
@@ -687,10 +687,82 @@ norm_test &lt;- bake(norm_recipe, new_data = titanic_test)
 ]
 
 ---
+class: onecol
 ## Resolving Skewness
+
+A skewed distribution is one that is not symmetric (i.e., it has a "heavy tail")
+
+&lt;img src="Day_2A_files/figure-html/skew-1.png" width="100%" /&gt;
+
+---
+class: onecol
+## Resolving Skewness
+
+The ![:emphasize](log), **square root**, or **inverse** transformations can help with skew
+
+&lt;img src="Day_2A_files/figure-html/logfare-1.png" width="100%" /&gt;
 
 ---
 ## Resolving Skewness in R
+
+
+```r
+# There are steps for all of these transformations (and more)
+log_recipe &lt;- 
+  titanic %&gt;% 
+  recipe(survived ~ .) %&gt;% 
+* step_log(fare, offset = 1) %&gt;%
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+```
+## step_log (log_dlbC5): same number of columns
+```
+
+.footnote[[1] Note that, with `offset`, we are adding 1 to each value before taking the log because the log of 0 is undefined.&lt;br /&gt;[2] There are similar functions for the other transformations, e.g., `step_sqrt()` and `step_inverse()`.]
+
+---
+class: onecol
+## Resolving Skewness
+The Box-Cox and Yeo-Johnson approaches employ **families of transformations**
+
+Box-Cox cannot be applied to negative or zero values, but Yeo-Johnson can
+
+`$$x_{(bc)}^\star=\begin{cases}
+(x^\lambda-1)/\lambda &amp; \text{if } \lambda\ne0 \\
+\log(x) &amp; \text{if  }\lambda=0
+\end{cases}$$`
+
+`$$x_{(yj)}^\star=\begin{cases}((x+1)^\lambda-1)/\lambda &amp; \text{if } \lambda\ne0, x\ge0 \\
+log(x+1) &amp; \text{if } \lambda=0, x\ge0 \\
+-[(-x+1)^{2-\lambda}-1)]/(2-\lambda) &amp; \text{if } \lambda\ne2, x&lt;0 \\
+-\log(-x+1) &amp; \text{if } \lambda=2, x&lt;0
+\end{cases}$$`
+
+---
+## Resolving Skewness in R
+
+
+```r
+# Add step to apply the Yeo-Johnson transformation to fare
+yj_recipe &lt;- 
+  titanic %&gt;% 
+  recipe(survived ~ .) %&gt;% 
+* step_YeoJohnson(fare) %&gt;%
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+```
+## step_YeoJohnson (YeoJohnson_CHkQD): same number of columns
+```
+
+---
+class: onecol
+## Resolving Skewness in R
+
+Bake the recipe using the training data and then plot the transformed variable
+
+&lt;img src="Day_2A_files/figure-html/yjfare-1.png" width="100%" /&gt;
 
 ---
 ## Addressing Outliers
@@ -735,10 +807,10 @@ zv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_ktx8I): 
+## step_mutate (mutate_ZbfX1): 
 ##  new (3): species, under20, over70
 ## 
-## step_zv (zv_tpHqA): 
+## step_zv (zv_BpXnr): 
 ##  removed (1): species
 ```
 
@@ -757,10 +829,10 @@ nzv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_bDLGK): 
+## step_mutate (mutate_0EkJC): 
 ##  new (3): species, under20, over70
 ## 
-## step_nzv (nzv_HkVgo): 
+## step_nzv (nzv_cerU5): 
 ##  removed (2): species, over70
 ```
 
@@ -811,15 +883,15 @@ glimpse(mc_train)
 ```
 ## Rows: 1,048
 ## Columns: 9
-## $ survived &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FAL~
+## $ survived &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRU~
 ## $ pclass   &lt;chr&gt; "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
-## $ sex      &lt;chr&gt; "female", "male", "male", "female", "male", "female", "male",~
-## $ age      &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, 39.0000,~
-## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0~
-## $ parch    &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0~
-## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9583, NA,~
-## $ wisdom   &lt;dbl&gt; 106.9711, 99.4014, 107.5079, 107.4135, 113.3851, 116.1291, 11~
-## $ family   &lt;int&gt; 0, 3, 3, 3, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 2, 2, 0~
+## $ sex      &lt;chr&gt; "female", "male", "female", "male", "male", "female", "male",~
+## $ age      &lt;dbl&gt; 29.0000, 0.9167, NA, 30.0000, 48.0000, 63.0000, 71.0000, 47.0~
+## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0~
+## $ parch    &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0~
+## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9583, 49.~
+## $ wisdom   &lt;dbl&gt; 107.0684, 101.2526, NA, 106.8740, 114.5713, 116.9571, 117.608~
+## $ family   &lt;int&gt; 0, 3, 3, 3, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 2, 0, 0, 0~
 ```
 
 ---
@@ -835,11 +907,11 @@ mc_train %&gt;% select(where(is.numeric), -survived) %&gt;% cor() %&gt;% round(d
 ```
 ##        age sibsp parch fare wisdom family
 ## age      1    NA    NA   NA     NA     NA
-## sibsp   NA  1.00  0.38   NA     NA   0.85
-## parch   NA  0.38  1.00   NA     NA   0.81
+## sibsp   NA  1.00  0.36   NA     NA   0.87
+## parch   NA  0.36  1.00   NA     NA   0.78
 ## fare    NA    NA    NA    1     NA     NA
 ## wisdom  NA    NA    NA   NA      1     NA
-## family  NA  0.85  0.81   NA     NA   1.00
+## family  NA  0.87  0.78   NA     NA   1.00
 ```
 
 ---
@@ -857,7 +929,7 @@ hc_recipe &lt;-
 ```
 
 ```
-## step_corr (corr_DBGrN): 
+## step_corr (corr_EKZa9): 
 ##  removed (1): age
 ```
 
@@ -880,9 +952,9 @@ lc_recipe &lt;-
 ```
 
 ```
-## step_impute_knn (impute_knn_6pTHI): same number of columns
+## step_impute_knn (impute_knn_YXAwf): same number of columns
 ## 
-## step_lincomb (lincomb_pqxdL): 
+## step_lincomb (lincomb_S2F7L): 
 ##  removed (1): family
 ```
 
@@ -930,7 +1002,7 @@ class: inverse, center, middle
 class: inverse, center, middle
 # Time for a Break!
 
-<div class="countdown" id="timer_60e9f65e" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60ea15db" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>

@@ -574,10 +574,132 @@ norm_test <- bake(norm_recipe, new_data = titanic_test)
 ]
 
 ---
+class: onecol
 ## Resolving Skewness
+
+A skewed distribution is one that is not symmetric (i.e., it has a "heavy tail")
+
+```{r skew, echo=FALSE}
+n <- 1e5
+skew_ex <- tibble(
+  x = c(
+    rbeta(n, 1.7, 10), 
+    rbeta(n, 12, 12),
+    rbeta(n, 10, 1.7)
+  ),
+  type = factor(
+    rep(c("Positively Skewed", "Symmetrical", "Negatively Skewed"), each = n),
+    levels = c("Positively Skewed", "Symmetrical", "Negatively Skewed")
+  )
+)
+
+ggplot(skew_ex, aes(x = x, fill = type, linetype = type)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40") + 
+  scale_fill_brewer(palette = "BrBG") +
+  scale_linetype_manual(values = c("solid", "dotted", "solid"), 
+                        guide = "legend") +
+  labs(x = NULL, fill = NULL, linetype = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+---
+class: onecol
+## Resolving Skewness
+
+The ![:emphasize](log), **square root**, or **inverse** transformations can help with skew
+
+```{r logfare, echo=FALSE}
+p1 <- 
+ggplot(titanic, aes(x = fare)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40", fill = "#91bfdb") + 
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+
+p2 <- 
+  ggplot(titanic, aes(x = log(fare + 1))) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40", fill = "#91bfdb") + 
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p2
+```
 
 ---
 ## Resolving Skewness in R
+
+```{r}
+# There are steps for all of these transformations (and more)
+log_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_log(fare, offset = 1) %>% #<<  
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+.footnote[[1] Note that, with `offset`, we are adding 1 to each value before taking the log because the log of 0 is undefined.<br />[2] There are similar functions for the other transformations, e.g., `step_sqrt()` and `step_inverse()`.]
+
+---
+class: onecol
+## Resolving Skewness
+The Box-Cox and Yeo-Johnson approaches employ **families of transformations**
+
+Box-Cox cannot be applied to negative or zero values, but Yeo-Johnson can
+
+$$x_{(bc)}^\star=\begin{cases}
+(x^\lambda-1)/\lambda & \text{if } \lambda\ne0 \\
+\log(x) & \text{if  }\lambda=0
+\end{cases}$$
+
+$$x_{(yj)}^\star=\begin{cases}((x+1)^\lambda-1)/\lambda & \text{if } \lambda\ne0, x\ge0 \\
+log(x+1) & \text{if } \lambda=0, x\ge0 \\
+-[(-x+1)^{2-\lambda}-1)]/(2-\lambda) & \text{if } \lambda\ne2, x<0 \\
+-\log(-x+1) & \text{if } \lambda=2, x<0
+\end{cases}$$
+
+---
+## Resolving Skewness in R
+
+```{r}
+# Add step to apply the Yeo-Johnson transformation to fare
+yj_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_YeoJohnson(fare) %>% #<<  
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+---
+class: onecol
+## Resolving Skewness in R
+
+Bake the recipe using the training data and then plot the transformed variable
+
+```{r yjfare, echo = FALSE}
+yj_train <- bake(yj_recipe, new_data = titanic_train)
+p3 <- 
+  ggplot(yj_train, aes(x = fare)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40", fill = "#91bfdb") + 
+  labs(x = "fare_yeojohnson", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p3
+```
 
 ---
 ## Addressing Outliers
