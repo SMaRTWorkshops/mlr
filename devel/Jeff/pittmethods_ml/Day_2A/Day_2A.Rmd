@@ -886,39 +886,93 @@ pca_recipe <-
 
 .footnote[
 [1] Note that PCA is most effective when there are many correlated predictors, so this is a weak use of it.<br />
-[2] Note that higher thresholds (e.g., 0.99) are often used with algorithms that can handle lots of predictors.<br />
+[2] Note that higher thresholds (e.g., 0.95) are often used with algorithms that can handle many predictors.<br />
 [3] `step_kpca_poly()` and `step_kpca_rbf()` are nonlinear, and `step_pls()` is supervised.]
 
 ---
 class: inverse, center, middle
 # Advanced Topics
 ---
+class: onecol
 ## Feature Extraction
+Feature extraction involves generating features from "raw" data
 
----
-## Dealing with Missing Values
+--
 
----
-## Feature Selection
+For raw **text** data, natural language processing techniques can be used
+- *e.g., sentiment, word frequencies, word relationships, topic modeling, syntax*
 
+--
+
+For raw **image** and video data, computer vision techniques can be used
+- *e.g., edges, corners, blobs, ridges, objects, curvature, shape, motion, color*
+
+--
+
+For raw **audio** data, acoustic signal processing techniques can be used
+- *e.g., rhythm, stress, intonation, pitch, loudness, glottal flow, spectral density*
+
+--
+
+.footnote[[1] One of the strengths of deep learning is its ability to learn its own feature representations from raw data.]
 
 ---
 class: onecol
+## Dealing with Missing Values
+
+There are several approaches to handling missing values in predictors
+
+- Some algorithms (e.g., tree-based techniques) handle missing data inherently
+- Another option is to drop predictors with any (or a lot of) missing values
+- Or we can ![:emphasize](impute) or estimate the missing values based on the other predictors
+
+--
+
+There are many techniques for imputing missing predictor values
+- Some are very simple (e.g., using the mean or median) and others more complex
+- We can also use a linear model or even machine learning to impute missing values
+- {recipes} provides functions: `step_impute_mean()`, `step_impute_knn()`, etc.
+
+.footnote[
+[1] Missing data tends to be more problematic for inferential modeling than predictive modeling.<br />
+[2] When imputing, it is a good idea to use cross-validation to capture the uncertainty in the imputations.]
+
+---
+class: onecol
+## Feature Selection
+
+Feature selection is focused on removing uninformative or redundant predictors
+- Models with fewer predictors may be more interpretable, accurate, and efficient
+
+--
+
+![:emphasize](Wrapper methods) compare models with different combinations of predictors
+- These are algorithms that search for combinations that optimize performance
+- These methods tend to perform well but can be computationally expensive
+
+--
+
+![:emphasize](Filter methods) evaluate predictors outside of the context of the predictive model<sup>1</sup>
+- Only predictors that seem informative, relevant, or unique will be retained
+- These methods don't perform as well but are computationally efficient
+
+.footnote[[1] Note that we have already learned some basic filter methods (e.g., `step_corr()` and `step_nzv()`).]
+
+---
+class: twocol
 ## Recommendations
 
-Algorithm | Preprocessing Steps
-:-------- | :------------------
-Regularized Regression&emsp; | `dummy`, `nzv`, `impute`, `corr`,  `lincomb`, (`transform`)&emsp;
-Decision Tree | (`decorrelate`)
-Random Forest | (`nzv`), (`impute`), (`corr`)
+Algorithm | Prediction | Interpretation
+:-------- | :------------------ | :----
+Linear Model | `dummy`, `nzv`, `corr`, `lincomb`, <br />(`impute_knn`,`interact`, `poly`, `pca`, `YeoJohnson`) | (`normalize`)
+Regularized<br />Linear Model | `dummy`, (`impute_knn`, `interact`, `poly`, `pca`, `YeoJohnson`) | `corr`, `lincomb`, (`normalize`)
+Decision Tree | | `corr`, `lincomb`, (`normalize`)
+Random Forest | (`nzv`) | `corr`, `lincomb`, (`normalize`)
 
-For these algorithms, normalization is only really necessary for interpretation
-
-However, other algorithms (e.g., MLP and SVM) may require normalization
-
-To learn more about feature engineering, see [1]
-
-.footnote[[1] Kuhn & Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.]
+.footnote[
+[1] `poly`, `impute_knn`, `YeoJohnson`, and `pca` are just exemplars and can be replaced by an alternative function.<br />
+[2] Kuhn & Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.<br />
+]
 
 ---
 class: inverse, center, middle

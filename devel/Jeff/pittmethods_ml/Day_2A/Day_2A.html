@@ -349,7 +349,7 @@ cp_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_rXn7y): 
+## step_mutate (mutate_UeSx0): 
 ##  new (2): numfamily, over70
 ```
 
@@ -452,14 +452,14 @@ glimpse(cp_test)
 ## Rows: 191
 ## Columns: 9
 ## $ pclass    &lt;fct&gt; 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, ~
-## $ sex       &lt;fct&gt; female, female, male, female, female, female, male, male, fe~
-## $ age       &lt;dbl&gt; 32, 29, 25, 19, 58, 45, 48, 36, 76, 46, 33, 45, 27, 31, 23, ~
-## $ sibsp     &lt;int&gt; 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 3, 1, 1, 0, 0, ~
-## $ parch     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 1, ~
-## $ fare      &lt;dbl&gt; 76.2917, 221.7792, 91.0792, 91.0792, 26.5500, 262.3750, 50.4~
-## $ survived  &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE~
-## $ numfamily &lt;int&gt; 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 5, 2, 1, 0, 1, ~
-## $ over70    &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE~
+## $ sex       &lt;fct&gt; female, female, male, female, female, female, male, male, ma~
+## $ age       &lt;dbl&gt; 26, 50, 25, 30, 59, 41, 36, 49, 27, 36, 27, 36, 24, 19, 60, ~
+## $ sibsp     &lt;int&gt; 0, 0, 0, 0, 2, 0, 1, 0, 1, 0, 1, 0, 3, 3, 1, 0, 2, 1, 0, 0, ~
+## $ parch     &lt;int&gt; 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 2, 4, 0, 0, 1, 0, 0, ~
+## $ fare      &lt;dbl&gt; 78.8500, 247.5208, 26.0000, 164.8667, 51.4792, 134.5000, 120~
+## $ survived  &lt;lgl&gt; TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE~
+## $ numfamily &lt;int&gt; 0, 1, 0, 0, 2, 0, 3, 0, 1, 0, 3, 0, 5, 5, 5, 0, 2, 2, 0, 0, ~
+## $ over70    &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~
 ```
 
 ---
@@ -511,7 +511,7 @@ dc_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_q1GbV): 
+## step_dummy (dummy_lWbJ0): 
 ##  new (3): pclass_X2nd, pclass_X3rd, sex_male
 ##  removed (2): pclass, sex
 ```
@@ -534,7 +534,7 @@ oh_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_5sMAo): 
+## step_dummy (dummy_zxfBU): 
 ##  new (5): pclass_X1st, pclass_X2nd, pclass_X3rd, sex_female, sex_male
 ##  removed (2): pclass, sex
 ```
@@ -574,11 +574,11 @@ it_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_9QcRD): 
+## step_dummy (dummy_cNMIy): 
 ##  new (3): pclass_X2nd, pclass_X3rd, sex_male
 ##  removed (2): pclass, sex
 ## 
-## step_interact (interact_SbuVE): 
+## step_interact (interact_VaMt9): 
 ##  new (1): parch_x_sex_male
 ```
 
@@ -597,14 +597,14 @@ bake(it_recipe, new_data = titanic_train) %&gt;% glimpse()
 ## Rows: 772
 ## Columns: 9
 ## $ age              &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, ~
-## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1,~
-## $ parch            &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1,~
+## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0,~
+## $ parch            &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0,~
 ## $ fare             &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9~
 ## $ survived         &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FA~
 ## $ pclass_X2nd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
 ## $ pclass_X3rd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
-## $ sex_male         &lt;dbl&gt; 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0,~
-## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0,~
+## $ sex_male         &lt;dbl&gt; 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1,~
+## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,~
 ```
 
 ---
@@ -669,7 +669,7 @@ norm_recipe &lt;-
 ```
 
 ```
-## step_normalize (normalize_mis2Z): same number of columns
+## step_normalize (normalize_hdIhN): same number of columns
 ```
 
 --
@@ -727,7 +727,7 @@ yj_recipe &lt;-
 ```
 
 ```
-## step_YeoJohnson (YeoJohnson_rxA3z): same number of columns
+## step_YeoJohnson (YeoJohnson_uo3OL): same number of columns
 ```
 
 .footnote[[1] If you would like to use specific transformations, use: `step_log()`, `step_inverse()`, `step_sqrt()`, etc.&lt;br /&gt;[2] As with normalizing, use `prep` to estimate λ from training set and use it when you `bake` the testing set.]
@@ -773,7 +773,7 @@ nl_recipe &lt;-
 ```
 
 ```
-## step_poly (poly_YXyR0): 
+## step_poly (poly_oq6OE): 
 ##  new (2): age_poly_1, age_poly_2
 ##  removed (1): age
 ```
@@ -825,10 +825,10 @@ zv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_RKJVh): 
+## step_mutate (mutate_p9mGl): 
 ##  new (3): species, under20, over70
 ## 
-## step_zv (zv_ygnwG): 
+## step_zv (zv_AHiz1): 
 ##  removed (1): species
 ```
 
@@ -847,10 +847,10 @@ nzv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_bLQdB): 
+## step_mutate (mutate_l4PCk): 
 ##  new (3): species, under20, over70
 ## 
-## step_nzv (nzv_8gOiO): 
+## step_nzv (nzv_dPDmm): 
 ##  removed (2): species, over70
 ```
 
@@ -905,11 +905,11 @@ glimpse(mc_train)
 ## $ pclass   &lt;chr&gt; "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
 ## $ sex      &lt;chr&gt; "female", "male", "male", "female", "male", "female", "female~
 ## $ age      &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, 53.0000,~
-## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0~
-## $ parch    &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0~
+## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1~
+## $ parch    &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0~
 ## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9583, 51.~
-## $ wisdom   &lt;dbl&gt; 108.8152, 100.3019, 107.9118, 106.1897, 111.5347, 114.7993, 1~
-## $ family   &lt;int&gt; 0, 3, 3, 3, 0, 1, 2, 0, 1, 1, 0, 0, 0, 1, 1, 0, 2, 2, 0, 0, 0~
+## $ wisdom   &lt;dbl&gt; 106.32773, 99.75518, 106.75054, 106.69434, 112.76105, 113.725~
+## $ family   &lt;int&gt; 0, 3, 3, 3, 0, 1, 2, 0, 1, 1, 0, 0, 1, 0, 0, 2, 2, 0, 0, 0, 1~
 ```
 
 ---
@@ -924,12 +924,12 @@ mc_train %&gt;% select(where(is.numeric), -survived) %&gt;% cor() %&gt;% round(d
 
 ```
 ##          age sibsp parch fare wisdom family
-## age     1.00 -0.07  0.02 0.20   0.96  -0.02
-## sibsp  -0.07  1.00  0.31 0.18  -0.06   0.80
-## parch   0.02  0.31  1.00 0.24   0.03   0.82
-## fare    0.20  0.18  0.24 1.00   0.21   0.26
-## wisdom  0.96 -0.06  0.03 0.21   1.00  -0.02
-## family -0.02  0.80  0.82 0.26  -0.02   1.00
+## age     1.00 -0.07  0.00 0.19   0.95  -0.04
+## sibsp  -0.07  1.00  0.30 0.17  -0.05   0.78
+## parch   0.00  0.30  1.00 0.19   0.01   0.83
+## fare    0.19  0.17  0.19 1.00   0.20   0.23
+## wisdom  0.95 -0.05  0.01 0.20   1.00  -0.02
+## family -0.04  0.78  0.83 0.23  -0.02   1.00
 ```
 
 ---
@@ -947,7 +947,7 @@ hc_recipe &lt;-
 ```
 
 ```
-## step_corr (corr_mv45P): 
+## step_corr (corr_scpfV): 
 ##  removed (1): age
 ```
 
@@ -970,9 +970,9 @@ lc_recipe &lt;-
 ```
 
 ```
-## step_impute_knn (impute_knn_fNFcH): same number of columns
+## step_impute_knn (impute_knn_SJg7P): same number of columns
 ## 
-## step_lincomb (lincomb_MtpG2): 
+## step_lincomb (lincomb_dXbxD): 
 ##  removed (1): family
 ```
 
@@ -1012,48 +1012,102 @@ pca_recipe &lt;-
 ```
 
 ```
-## step_normalize (normalize_JsWUT): same number of columns
+## step_normalize (normalize_FwQL6): same number of columns
 ## 
-## step_pca (pca_coi59): 
+## step_pca (pca_7hfVz): 
 ##  new (3): PC1, PC2, PC3
 ##  removed (4): age, sibsp, parch, fare
 ```
 
 .footnote[
 [1] Note that PCA is most effective when there are many correlated predictors, so this is a weak use of it.&lt;br /&gt;
-[2] Note that higher thresholds (e.g., 0.99) are often used with algorithms that can handle lots of predictors.&lt;br /&gt;
+[2] Note that higher thresholds (e.g., 0.95) are often used with algorithms that can handle many predictors.&lt;br /&gt;
 [3] `step_kpca_poly()` and `step_kpca_rbf()` are nonlinear, and `step_pls()` is supervised.]
 
 ---
 class: inverse, center, middle
 # Advanced Topics
 ---
+class: onecol
 ## Feature Extraction
+Feature extraction involves generating features from "raw" data
 
----
-## Dealing with Missing Values
+--
 
----
-## Feature Selection
+For raw **text** data, natural language processing techniques can be used
+- *e.g., sentiment, word frequencies, word relationships, topic modeling, syntax*
 
+--
+
+For raw **image** and video data, computer vision techniques can be used
+- *e.g., edges, corners, blobs, ridges, objects, curvature, shape, motion, color*
+
+--
+
+For raw **audio** data, acoustic signal processing techniques can be used
+- *e.g., rhythm, stress, intonation, pitch, loudness, glottal flow, spectral density*
+
+--
+
+.footnote[[1] One of the strengths of deep learning is its ability to learn its own feature representations from raw data.]
 
 ---
 class: onecol
+## Dealing with Missing Values
+
+There are several approaches to handling missing values in predictors
+
+- Some algorithms (e.g., tree-based techniques) handle missing data inherently
+- Another option is to drop predictors with any (or a lot of) missing values
+- Or we can ![:emphasize](impute) or estimate the missing values based on the other predictors
+
+--
+
+There are many techniques for imputing missing predictor values
+- Some are very simple (e.g., using the mean or median) and others more complex
+- We can also use a linear model or even machine learning to impute missing values
+- {recipes} provides functions: `step_impute_mean()`, `step_impute_knn()`, etc.
+
+.footnote[
+[1] Missing data tends to be more problematic for inferential modeling than predictive modeling.&lt;br /&gt;
+[2] When imputing, it is a good idea to use cross-validation to capture the uncertainty in the imputations.]
+
+---
+class: onecol
+## Feature Selection
+
+Feature selection is focused on removing uninformative or redundant predictors
+- Models with fewer predictors may be more interpretable, accurate, and efficient
+
+--
+
+![:emphasize](Wrapper methods) compare models with different combinations of predictors
+- These are algorithms that search for combinations that optimize performance
+- These methods tend to perform well but can be computationally expensive
+
+--
+
+![:emphasize](Filter methods) evaluate predictors outside of the context of the predictive model&lt;sup&gt;1&lt;/sup&gt;
+- Only predictors that seem informative, relevant, or unique will be retained
+- These methods don't perform as well but are computationally efficient
+
+.footnote[[1] Note that we have already learned some basic filter methods (e.g., `step_corr()` and `step_nzv()`).]
+
+---
+class: twocol
 ## Recommendations
 
-Algorithm | Preprocessing Steps
-:-------- | :------------------
-Regularized Regression&amp;emsp; | `dummy`, `nzv`, `impute`, `corr`,  `lincomb`, (`transform`)&amp;emsp;
-Decision Tree | (`decorrelate`)
-Random Forest | (`nzv`), (`impute`), (`corr`)
+Algorithm | Prediction | Interpretation
+:-------- | :------------------ | :----
+Linear Model | `dummy`, `nzv`, `corr`, `lincomb`, &lt;br /&gt;(`impute_knn`,`interact`, `poly`, `pca`, `YeoJohnson`) | (`normalize`)
+Regularized&lt;br /&gt;Linear Model | `dummy`, (`impute_knn`, `interact`, `poly`, `pca`, `YeoJohnson`) | `corr`, `lincomb`, (`normalize`)
+Decision Tree | | `corr`, `lincomb`, (`normalize`)
+Random Forest | (`nzv`) | `corr`, `lincomb`, (`normalize`)
 
-For these algorithms, normalization is only really necessary for interpretation
-
-However, other algorithms (e.g., MLP and SVM) may require normalization
-
-To learn more about feature engineering, see [1]
-
-.footnote[[1] Kuhn &amp; Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.]
+.footnote[
+[1] `poly`, `impute_knn`, `YeoJohnson`, and `pca` are just exemplars and can be replaced by an alternative function.&lt;br /&gt;
+[2] Kuhn &amp; Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.&lt;br /&gt;
+]
 
 ---
 class: inverse, center, middle
@@ -1062,7 +1116,7 @@ class: inverse, center, middle
 class: inverse, center, middle
 # Time for a Break!
 
-<div class="countdown" id="timer_60eb0daa" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60eb1df5" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
