@@ -851,10 +851,43 @@ lc_recipe <-
 ```
 
 ---
+class: onecol
 ## Dimensionality Reduction
+
+Each feature/predictor included can be considered an additional "dimension"
+
+![:emphasize](Dimensionality reduction) techniques try to find a smaller set of predictors to use
+
+- If successful, little information from the original set of predictors will be lost
+- Most techniques create new predictors as *functions of the original predictors*
+
+--
+
+**Principal Components Analysis** (PCA) is a commonly used technique
+
+- The new predictors (PCs) are *linear combinations* of the original predictors
+- The PCs are *uncorrelated* with one another, thus addressing multicollinearity
+- PCs are extracted until a target amount of variability is explained (e.g., 75%)
+
+.footnote[[1] Predictors should be normalized (i.e., centered and scaled) before PCA is used.<br />[2] PCA is unsupervised (doesn't know the labels) but there are supervised  techniques.]
 
 ---
 ## Dimensionality Reduction in R
+
+```{r}
+# Normalize the numeric predictors and then do PCA
+pca_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_normalize(all_numeric_predictors()) %>% #<<
+  step_pca(all_numeric_predictors(), threshold = 0.75) %>%  #<<
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+.footnote[
+[1] Note that PCA is most effective when there are many correlated predictors, so this is a weak use of it.<br />
+[2] Note that higher thresholds (e.g., 0.99) are often used with algorithms that can handle lots of predictors.<br />
+[3] `step_kpca_poly()` and `step_kpca_rbf()` are nonlinear, and `step_pls()` is supervised.]
 
 ---
 class: inverse, center, middle

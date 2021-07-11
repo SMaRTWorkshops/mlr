@@ -158,13 +158,13 @@ glimpse(titanic)
 ```
 ## Rows: 963
 ## Columns: 7
-## $ survived [3m[38;5;246m&lt;lgl&gt;[39m[23m TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRU~
-## $ pclass   [3m[38;5;246m&lt;chr&gt;[39m[23m "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
-## $ sex      [3m[38;5;246m&lt;chr&gt;[39m[23m "female", "male", "male", "female", "male", "female", "female~
-## $ age      [3m[38;5;246m&lt;dbl&gt;[39m[23m 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, 53.0000,~
-## $ sibsp    [3m[38;5;246m&lt;int&gt;[39m[23m 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0~
-## $ parch    [3m[38;5;246m&lt;int&gt;[39m[23m 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0~
-## $ fare     [3m[38;5;246m&lt;dbl&gt;[39m[23m 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9583, 51.~
+## $ survived &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRU~
+## $ pclass   &lt;chr&gt; "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
+## $ sex      &lt;chr&gt; "female", "male", "male", "female", "male", "female", "female~
+## $ age      &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, 53.0000,~
+## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0~
+## $ parch    &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0~
+## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9583, 51.~
 ```
 
 .pull-left[
@@ -349,7 +349,7 @@ cp_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_rbSe0): 
+## step_mutate (mutate_rXn7y): 
 ##  new (2): numfamily, over70
 ```
 
@@ -451,15 +451,15 @@ glimpse(cp_test)
 ```
 ## Rows: 191
 ## Columns: 9
-## $ pclass    [3m[38;5;246m&lt;fct&gt;[39m[23m 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, ~
-## $ sex       [3m[38;5;246m&lt;fct&gt;[39m[23m male, female, female, male, male, male, female, male, female~
-## $ age       [3m[38;5;246m&lt;dbl&gt;[39m[23m 48, 26, 32, 25, 45, 40, 30, 42, 59, 41, 42, 36, 14, 36, 27, ~
-## $ sibsp     [3m[38;5;246m&lt;int&gt;[39m[23m 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, ~
-## $ parch     [3m[38;5;246m&lt;int&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 2, 0, 2, ~
-## $ fare      [3m[38;5;246m&lt;dbl&gt;[39m[23m 26.5500, 78.8500, 76.2917, 91.0792, 35.5000, 31.0000, 164.86~
-## $ survived  [3m[38;5;246m&lt;lgl&gt;[39m[23m TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE~
-## $ numfamily [3m[38;5;246m&lt;int&gt;[39m[23m 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 1, 3, 1, 1, 1, 0, 2, 0, 3, ~
-## $ over70    [3m[38;5;246m&lt;lgl&gt;[39m[23m FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~
+## $ pclass    &lt;fct&gt; 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, 1st, ~
+## $ sex       &lt;fct&gt; female, female, male, female, female, female, male, male, fe~
+## $ age       &lt;dbl&gt; 32, 29, 25, 19, 58, 45, 48, 36, 76, 46, 33, 45, 27, 31, 23, ~
+## $ sibsp     &lt;int&gt; 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 3, 1, 1, 0, 0, ~
+## $ parch     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 1, ~
+## $ fare      &lt;dbl&gt; 76.2917, 221.7792, 91.0792, 91.0792, 26.5500, 262.3750, 50.4~
+## $ survived  &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE~
+## $ numfamily &lt;int&gt; 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 5, 2, 1, 0, 1, ~
+## $ over70    &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE~
 ```
 
 ---
@@ -511,7 +511,7 @@ dc_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_ucPNk): 
+## step_dummy (dummy_q1GbV): 
 ##  new (3): pclass_X2nd, pclass_X3rd, sex_male
 ##  removed (2): pclass, sex
 ```
@@ -534,7 +534,7 @@ oh_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_4dzws): 
+## step_dummy (dummy_5sMAo): 
 ##  new (5): pclass_X1st, pclass_X2nd, pclass_X3rd, sex_female, sex_male
 ##  removed (2): pclass, sex
 ```
@@ -574,11 +574,11 @@ it_recipe &lt;-
 ```
 
 ```
-## step_dummy (dummy_4AJeM): 
+## step_dummy (dummy_9QcRD): 
 ##  new (3): pclass_X2nd, pclass_X3rd, sex_male
 ##  removed (2): pclass, sex
 ## 
-## step_interact (interact_hXIHP): 
+## step_interact (interact_SbuVE): 
 ##  new (1): parch_x_sex_male
 ```
 
@@ -596,15 +596,15 @@ bake(it_recipe, new_data = titanic_train) %&gt;% glimpse()
 ```
 ## Rows: 772
 ## Columns: 9
-## $ age              [3m[38;5;246m&lt;dbl&gt;[39m[23m 29.0000, 0.9167, 30.0000, 25.0000, 63.0000, 53.0000, ~
-## $ sibsp            [3m[38;5;246m&lt;int&gt;[39m[23m 0, 1, 1, 1, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0,~
-## $ parch            [3m[38;5;246m&lt;int&gt;[39m[23m 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0,~
-## $ fare             [3m[38;5;246m&lt;dbl&gt;[39m[23m 211.3375, 151.5500, 151.5500, 151.5500, 77.9583, 51.4~
-## $ survived         [3m[38;5;246m&lt;lgl&gt;[39m[23m TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, T~
-## $ pclass_X2nd      [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
-## $ pclass_X3rd      [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
-## $ sex_male         [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0,~
-## $ parch_x_sex_male [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0,~
+## $ age              &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, ~
+## $ sibsp            &lt;int&gt; 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1,~
+## $ parch            &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1,~
+## $ fare             &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9~
+## $ survived         &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FA~
+## $ pclass_X2nd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
+## $ pclass_X3rd      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
+## $ sex_male         &lt;dbl&gt; 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0,~
+## $ parch_x_sex_male &lt;dbl&gt; 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0,~
 ```
 
 ---
@@ -669,7 +669,7 @@ norm_recipe &lt;-
 ```
 
 ```
-## step_normalize (normalize_yTJ1c): same number of columns
+## step_normalize (normalize_mis2Z): same number of columns
 ```
 
 --
@@ -727,7 +727,7 @@ yj_recipe &lt;-
 ```
 
 ```
-## step_YeoJohnson (YeoJohnson_9Nofk): same number of columns
+## step_YeoJohnson (YeoJohnson_rxA3z): same number of columns
 ```
 
 .footnote[[1] If you would like to use specific transformations, use: `step_log()`, `step_inverse()`, `step_sqrt()`, etc.&lt;br /&gt;[2] As with normalizing, use `prep` to estimate λ from training set and use it when you `bake` the testing set.]
@@ -773,7 +773,7 @@ nl_recipe &lt;-
 ```
 
 ```
-## step_poly (poly_ycOWL): 
+## step_poly (poly_YXyR0): 
 ##  new (2): age_poly_1, age_poly_2
 ##  removed (1): age
 ```
@@ -825,10 +825,10 @@ zv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_SLg12): 
+## step_mutate (mutate_RKJVh): 
 ##  new (3): species, under20, over70
 ## 
-## step_zv (zv_DrrNd): 
+## step_zv (zv_ygnwG): 
 ##  removed (1): species
 ```
 
@@ -847,10 +847,10 @@ nzv_recipe &lt;-
 ```
 
 ```
-## step_mutate (mutate_uX6Cy): 
+## step_mutate (mutate_bLQdB): 
 ##  new (3): species, under20, over70
 ## 
-## step_nzv (nzv_QrULN): 
+## step_nzv (nzv_8gOiO): 
 ##  removed (2): species, over70
 ```
 
@@ -901,15 +901,15 @@ glimpse(mc_train)
 ```
 ## Rows: 772
 ## Columns: 9
-## $ survived [3m[38;5;246m&lt;lgl&gt;[39m[23m TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, TRU~
-## $ pclass   [3m[38;5;246m&lt;chr&gt;[39m[23m "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
-## $ sex      [3m[38;5;246m&lt;chr&gt;[39m[23m "female", "male", "male", "female", "female", "female", "male~
-## $ age      [3m[38;5;246m&lt;dbl&gt;[39m[23m 29.0000, 0.9167, 30.0000, 25.0000, 63.0000, 53.0000, 71.0000,~
-## $ sibsp    [3m[38;5;246m&lt;int&gt;[39m[23m 0, 1, 1, 1, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1~
-## $ parch    [3m[38;5;246m&lt;int&gt;[39m[23m 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0~
-## $ fare     [3m[38;5;246m&lt;dbl&gt;[39m[23m 211.3375, 151.5500, 151.5500, 151.5500, 77.9583, 51.4792, 49.~
-## $ wisdom   [3m[38;5;246m&lt;dbl&gt;[39m[23m 106.6077, 101.7499, 108.6160, 105.3176, 114.8534, 113.9064, 1~
-## $ family   [3m[38;5;246m&lt;int&gt;[39m[23m 0, 3, 3, 3, 1, 2, 0, 1, 1, 0, 0, 1, 1, 0, 2, 2, 0, 0, 0, 0, 1~
+## $ survived &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRU~
+## $ pclass   &lt;chr&gt; "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st", "1st"~
+## $ sex      &lt;chr&gt; "female", "male", "male", "female", "male", "female", "female~
+## $ age      &lt;dbl&gt; 29.0000, 0.9167, 30.0000, 25.0000, 48.0000, 63.0000, 53.0000,~
+## $ sibsp    &lt;int&gt; 0, 1, 1, 1, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0~
+## $ parch    &lt;int&gt; 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0~
+## $ fare     &lt;dbl&gt; 211.3375, 151.5500, 151.5500, 151.5500, 26.5500, 77.9583, 51.~
+## $ wisdom   &lt;dbl&gt; 108.8152, 100.3019, 107.9118, 106.1897, 111.5347, 114.7993, 1~
+## $ family   &lt;int&gt; 0, 3, 3, 3, 0, 1, 2, 0, 1, 1, 0, 0, 0, 1, 1, 0, 2, 2, 0, 0, 0~
 ```
 
 ---
@@ -924,12 +924,12 @@ mc_train %&gt;% select(where(is.numeric), -survived) %&gt;% cor() %&gt;% round(d
 
 ```
 ##          age sibsp parch fare wisdom family
-## age     1.00 -0.10 -0.02 0.19   0.96  -0.08
-## sibsp  -0.10  1.00  0.34 0.22  -0.08   0.82
-## parch  -0.02  0.34  1.00 0.27  -0.01   0.81
-## fare    0.19  0.22  0.27 1.00   0.20   0.30
-## wisdom  0.96 -0.08 -0.01 0.20   1.00  -0.06
-## family -0.08  0.82  0.81 0.30  -0.06   1.00
+## age     1.00 -0.07  0.02 0.20   0.96  -0.02
+## sibsp  -0.07  1.00  0.31 0.18  -0.06   0.80
+## parch   0.02  0.31  1.00 0.24   0.03   0.82
+## fare    0.20  0.18  0.24 1.00   0.21   0.26
+## wisdom  0.96 -0.06  0.03 0.21   1.00  -0.02
+## family -0.02  0.80  0.82 0.26  -0.02   1.00
 ```
 
 ---
@@ -947,7 +947,7 @@ hc_recipe &lt;-
 ```
 
 ```
-## step_corr (corr_dTbCl): 
+## step_corr (corr_mv45P): 
 ##  removed (1): age
 ```
 
@@ -970,17 +970,59 @@ lc_recipe &lt;-
 ```
 
 ```
-## step_impute_knn (impute_knn_nanL9): same number of columns
+## step_impute_knn (impute_knn_fNFcH): same number of columns
 ## 
-## step_lincomb (lincomb_AY3HP): 
+## step_lincomb (lincomb_MtpG2): 
 ##  removed (1): family
 ```
 
 ---
+class: onecol
 ## Dimensionality Reduction
+
+Each feature/predictor included can be considered an additional "dimension"
+
+![:emphasize](Dimensionality reduction) techniques try to find a smaller set of predictors to use
+
+- If successful, little information from the original set of predictors will be lost
+- Most techniques create new predictors as *functions of the original predictors*
+
+--
+
+**Principal Components Analysis** (PCA) is a commonly used technique
+
+- The new predictors (PCs) are *linear combinations* of the original predictors
+- The PCs are *uncorrelated* with one another, thus addressing multicollinearity
+- PCs are extracted until a target amount of variability is explained (e.g., 75%)
+
+.footnote[[1] Predictors should be normalized (i.e., centered and scaled) before PCA is used.&lt;br /&gt;[2] PCA is unsupervised (doesn't know the labels) but there are supervised  techniques.]
 
 ---
 ## Dimensionality Reduction in R
+
+
+```r
+# Normalize the numeric predictors and then do PCA
+pca_recipe &lt;- 
+  titanic %&gt;% 
+  recipe(survived ~ .) %&gt;% 
+* step_normalize(all_numeric_predictors()) %&gt;%
+* step_pca(all_numeric_predictors(), threshold = 0.75) %&gt;%
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+```
+## step_normalize (normalize_JsWUT): same number of columns
+## 
+## step_pca (pca_coi59): 
+##  new (3): PC1, PC2, PC3
+##  removed (4): age, sibsp, parch, fare
+```
+
+.footnote[
+[1] Note that PCA is most effective when there are many correlated predictors, so this is a weak use of it.&lt;br /&gt;
+[2] Note that higher thresholds (e.g., 0.99) are often used with algorithms that can handle lots of predictors.&lt;br /&gt;
+[3] `step_kpca_poly()` and `step_kpca_rbf()` are nonlinear, and `step_pls()` is supervised.]
 
 ---
 class: inverse, center, middle
@@ -1020,7 +1062,7 @@ class: inverse, center, middle
 class: inverse, center, middle
 # Time for a Break!
 
-<div class="countdown" id="timer_60ea27d9" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_60eb0daa" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
