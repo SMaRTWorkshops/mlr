@@ -239,7 +239,7 @@ titanic_recipe %>% summary() %>% kable()
 
 ---
 class: onecol
-## Common Steps
+## Common Steps (Lecture Roadmap)
 
 .pull-left[
 - **Adding predictors**
@@ -433,6 +433,34 @@ it_recipe <-
 # Bake the recipe and preview the updated training set
 bake(it_recipe, new_data = titanic_train) %>% glimpse()
 ```
+
+---
+## Comprehension check
+.pull-left[
+### Question 1
+**What is the correct order in which to add the {recipe} functions to a pipeline?**
+
+a) recipe > prep > step(s) > bake
+
+b) recipe > step(s) > prep > bake
+
+c) prep > step > bake > recipe
+
+d) prep > recipe > step > bake
+]
+
+.pull-right[
+### Question 2
+**How many dummy codes are needed to encode a variable with five (5) categorical levels?**
+
+a) Six (6)
+
+b) Five (5)
+
+c) Four (4)
+
+d) One (1)
+]
 
 ---
 class: inverse, center, middle
@@ -722,6 +750,35 @@ ggplot(nl_train, aes(x = age_poly_1, y = age_poly_2)) +
 ```
 
 ---
+
+## Comprehension check
+.pull-left[
+### Question 3
+**I want to transform two predictors to have the same variance. Which would NOT achieve this?**
+
+a) Centering both
+
+b) Scaling both
+
+c) Normalizing both
+
+d) Dividing each by its SD
+]
+
+.pull-right[
+### Question 4
+**Which of the following issues would the Yeo-Johnson transformation NOT help with?**
+
+a) Positive skew
+
+b) Negative skew
+
+c) Outlier values
+
+d) Categorical data
+]
+
+---
 class: inverse, center, middle
 # Reducing predictors
 ---
@@ -959,24 +1016,27 @@ Feature selection is focused on removing uninformative or redundant predictors
 .footnote[[1] Note that we have already learned some basic filter methods (e.g., `step_corr()` and `step_nzv()`).]
 
 ---
-class: twocol
-## Recommendations
-
-Algorithm | Prediction | Interpretation
-:-------- | :------------------ | :----
-Linear Model | `dummy`, `nzv`, `corr`, `lincomb`, <br />(`impute_knn`,`interact`, `poly`, `pca`, `YeoJohnson`) | (`normalize`)
-Regularized<br />Linear Model | `dummy`, (`impute_knn`, `interact`, `poly`, `pca`, `YeoJohnson`) | `corr`, `lincomb`, (`normalize`)
-Decision Tree | | `corr`, `lincomb`, (`normalize`)
-Random Forest | (`nzv`) | `corr`, `lincomb`, (`normalize`)
-
-.footnote[
-[1] `poly`, `impute_knn`, `YeoJohnson`, and `pca` are just exemplars and can be replaced by an alternative function.<br />
-[2] Kuhn & Johnson (2020). *Feature Engineering and Selection: A Practical Approach for Predictive Models.* CRC Press.<br />
-]
-
----
 class: inverse, center, middle
-# Live Coding
+# Live Coding Activity
+---
+class: onecol
+# Live Coding Activity
+I will show you a new dataset and the process of feature engineering in RStudio
+
+- You can follow along in your own RStudio (easiest with 1 large or 2+ monitors)
+
+- Or you can download the `Day_2A_Activity.Rmd` and follow along
+
+- In either case, you will need to download the `airsatisfaction.csv` file
+
+.footnote[[1] All files can be accessed from the workshop website: https://osf.io/3qhc8/]
+
+--
+
+<p style="padding-top:25px;">Afterward, there will be an activity where you will modify my code to achieve goals</p>
+
+If you have questions, please post them in chat or in the workshop Slack channel
+
 ---
 class: inverse, center, middle
 # Time for a Break!

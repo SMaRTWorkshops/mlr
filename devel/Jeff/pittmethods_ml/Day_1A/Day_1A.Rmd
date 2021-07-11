@@ -381,7 +381,7 @@ ggplot(dat) +
 
 ]
 ---
-## Knowledge check
+## Comprehension check
 <span style="font-size:30px;">Ann has developed an ML system that looks at a patient's physiological signals and tries to determine whether they are having a micro-seizure.</span>
 
 .pull-left[
@@ -523,7 +523,7 @@ include_graphics("target.jpg")
 
 ]
 ---
-## Knowledge check
+## Comprehension check
 <span style="font-size:30px;">Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.</span>
 
 .pull-left[
@@ -903,7 +903,7 @@ include_graphics("overfitting_lay.png")
 ```
 
 ---
-## Knowledge check
+## Comprehension check
 <span style="font-size:30px;">Sam used all emails in his inbox to create an ML model to classify emails as "work-related" or "personal." Its accuracy on these emails was 98%.</span>
 
 .pull-left[
@@ -995,7 +995,7 @@ Cross-validation can also be **repeated** to avoid problems with any single spli
 
 .footnote[A great default procedure is nested, stratified, and 3x repeated 10-fold cross-validation.]
 ---
-## Knowledge check
+## Comprehension check
 <span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
 
 .pull-left[
