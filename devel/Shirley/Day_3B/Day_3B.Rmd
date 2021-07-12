@@ -61,3 +61,148 @@ library(AppliedPredictiveModeling)
 
 class: inverse, center, middle
 # Overview
+
+---
+## Lecture Topics
+
+.pull-left[
+**Decision Trees**
+- Model nonlinearities in data
+- Recursive partitioning to find splits
+
+**Classification Trees**
+- Gini index
+- Entropy
+
+**Regression Trees**
+- Sum of squared errors (SSE)
+
+**Preventing Overfitting**
+- Pruning
+- Stopping criteria (e.g., maximum depth)
+]
+
+.pull-right[
+```{r, echo = FALSE, out.height=450, out.width = 600}
+include_graphics("flowchart.jpg")
+```
+]
+
+---
+## Geometry of Data
+
+Thus far, we have only been modeling linear relationships with linear boundaries between classes, e.g.: 
+
+```{r, echo = FALSE}
+set.seed(1)
+x = rnorm(400)
+y = rnorm(400)
+simdat <- data.frame(x, y)
+simdat$group_lin <- ifelse(simdat$x < simdat$y, 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_lin)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+## Geometry of Data
+
+But what about other types of relationships? 
+
+```{r, echo = FALSE}
+simdat$group_circle <- ifelse(simdat$x < 1 & simdat$x > -1 & simdat$y < 1 & simdat$y > -1, 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_circle)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+## Geometry of Data
+
+But what about other types of relationships? 
+
+```{r, echo = FALSE}
+simdat$group_quadrants <- ifelse((simdat$x < -0.5 & simdat$y > 0) | (simdat$x > 0.5 & simdat$y < 0), 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_quadrants)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+## Geometry of Data
+
+Whereas these classes are very clearly separated, it's no longer easy to use a **single equation** to describe the boundaries between them. 
+
+.pull-left[
+```{r, echo = FALSE}
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_circle)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_quadrants)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+]
+
+--
+
+![:emphasize](Decision trees) allow us to build models that are capable of describing these complex decision boundaries while maintaining ease of interpretability.
+
+---
+class: inverse, center, middle
+# Decision Trees
+
+---
+## Modeling Nonlinearity
+
+
+---
+## Recursive Partioning 
+
+
+---
+class: inverse, center, middle
+# Classification Trees
+
+---
+## Classification Trees
+
+
+---
+## Classification Trees in R
+
+
+---
+class: inverse, center, middle
+# Regression Trees
+
+
+---
+## Regression Trees
+
+
+---
+## Regression Trees in R
