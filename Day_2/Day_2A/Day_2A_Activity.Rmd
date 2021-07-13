@@ -1,0 +1,109 @@
+---
+title: "Day 2A Activity (Feature Engineering)"
+output:
+  html_notebook:
+    df_print: paged
+---
+
+# Load packages
+
+```{r, message=FALSE}
+library(tidyverse)
+library(skimr)
+library(caret)
+library(recipes)
+```
+
+# Read in data from CSV file 
+Note that you either need to provide the entire path to the file (e.g., `"C:/users/jmgirard/downloads/airsatisfaction.csv"`) or use an RStudio Project and save both the RNotebook and CSV files in that project folder.
+
+```{r}
+airsat <- read_csv("airsatisfaction.csv") %>% print()
+```
+
+# Create training and testing sets
+
+```{r}
+set.seed(2021)
+index <- createDataPartition(airsat$satisfaction, p = 0.8, list = FALSE)
+airsat_train <- airsat[index, ]
+airsat_test <- airsat[-index, ]
+
+airsat_train
+airsat_test
+```
+
+# Explore the training set
+
+```{r}
+skim(airsat_train)
+```
+
+# Create and prep recipe
+
+```{r}
+airsat_recipe <- 
+  airsat %>% 
+  recipe(satisfaction ~ .) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_lincomb(all_numeric_predictors()) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_pca(all_numeric_predictors(), threshold = 0.9) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  prep(training = airsat_train, log_changes = TRUE)
+```
+
+# Bake new training set
+
+```{r}
+airsat_baked_train <- bake(airsat_recipe, new_data = airsat_train) %>% print()
+```
+
+# Bake new testing set
+
+```{r}
+airsat_baked_test <- bake(airsat_recipe, new_data = airsat_test) %>% print()
+```
+
+# Hands-on Activity
+
+Modify the code above to accomplish the following goals:
+
+1) Use 75% of the data for training and 25% of the data for testing.
+
+2) Apply the Yeo-Johnson transformation to the `flight_distance` variable (before normalizing it).
+
+3) Instead of using PCA to address multicollinearity, drop highly correlated predictors.
+
+4) Use one-hot encoding for the nominal predictors instead of dummy codes.
+
+5) Add an interaction term that conditions `seat_comfort` on `flight_distance`
+
+BONUS: Read the "Recommended preprocessing" appendix (https://www.tmwr.org/pre-proc-table.html) 
+
+FURTHER READING: 
+- https://www.tmwr.org/recipes.html (Chapter)
+- https://bookdown.org/max/FES/ (Book)
+
+## Answer key
+
+```{r}
+set.seed(2021)
+index <- createDataPartition(airsat$satisfaction, p = 0.75, list = FALSE) #1
+airsat_train <- airsat[index, ]
+airsat_test <- airsat[-index, ]
+```
+
+```{r}
+airsat_recipe <- 
+  airsat %>% 
+  recipe(satisfaction ~ .) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_lincomb(all_numeric_predictors()) %>% 
+  step_YeoJohnson(flight_distance) %>%                      #2
+  step_normalize(all_numeric_predictors()) %>% 
+  step_corr(all_numeric_predictors()) %>%                   #3 
+  step_dummy(all_nominal_predictors(), one_hot = TRUE) %>%  #4 
+  step_interact(~ seat_comfort:flight_distance) %>%         #5
+  prep(training = airsat_train, log_changes = TRUE)
+```

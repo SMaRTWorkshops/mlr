@@ -179,8 +179,8 @@ We will be learning the <b>`recipes`</b> package from `tidymodels`
 ## Example Dataset: `titanic`
 
 ```{r}
-# Import and preview the titanic dataset with no missing values
-titanic <- read.csv("titanic_complete.csv")
+# Import and preview the (custom) titanic dataset
+titanic <- read.csv("titanic.csv")
 glimpse(titanic)
 ```
 

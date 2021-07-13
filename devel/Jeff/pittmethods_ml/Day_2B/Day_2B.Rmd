@@ -1,0 +1,96 @@
+---
+title: '<span style="font-size:48pt;">Basic Predictive Modeling</span>'
+subtitle: '🧮 🔮 👨‍💻' 
+author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
+date: 'Lecture 2-B &emsp; &emsp; July 20, 2021'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      beforeInit: "macros.js"
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b",
+  footnote_font_size = "20px",
+  footnote_color = "gray",
+  text_slide_number_font_size = "18px"
+)
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+library(caret)
+library(recipes)
+```
+
+class: inverse, center, middle
+# Overview
+
+<style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+</style>
+---
+class: onecol
+## Lecture Topics
+In this lecture, we will discuss 
+
+
+---
+
+Training and Tuning
+
+
+Performance Evaluation
+-
+
+Variable importance
+
+
+---
+class: inverse, center, middle
+# Training and splitting
+---
+
+
+
+---
+class: inverse, center, middle
+# Hyperparameter tuning
+---
+class: inverse, center, middle
+# Performance evaluation
+---
+class: inverse, center, middle
+# Variable Importance
+

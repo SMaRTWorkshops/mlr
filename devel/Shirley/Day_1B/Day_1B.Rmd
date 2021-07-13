@@ -329,7 +329,7 @@ But note that doesn't mean we can't check the test data for coding errors or dat
 
 .pull-left[
 ### Question 1
-**Looking for outliers or data anamolies:**
+**Looking for outliers or data anomolies:**
 
 a) Training data only
 
