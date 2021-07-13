@@ -1,0 +1,170 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r, message=FALSE}
+library(tidyverse)
+library(caret)
+library(recipes)
+```
+
+## Using linear regression to predict Titanic fares
+
+```{r}
+# Read in data
+titanic <- read.csv("titanic.csv")
+
+# Create a training and testing set (stratified by fare)
+set.seed(2021)
+fare_index <- createDataPartition(titanic$fare, p = 0.75, list = FALSE)
+fare_train <- titanic[fare_index, ]
+fare_test <- titanic[-fare_index, ]
+```
+
+```{r}
+# Create a preprocessing recipe (no prep)
+fare_recipe <- 
+  titanic %>% 
+  recipe(fare ~ .) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_dummy(all_nominal_predictors())
+```
+
+```{r}
+set.seed(2021)
+#  Train the model using the recipe, data, and method
+fare_lm <- train(
+  fare_recipe, 
+  data = fare_train,
+  method = "lm",
+  metric = "RMSE",
+  trControl = trainControl(method = "cv", number = 10)
+)
+fare_lm$results
+```
+
+```{r}
+# Extract model predictions
+fare_pred <- predict(fare_lm, newdata = fare_test)
+glimpse(fare_pred)
+```
+
+```{r}
+# Bake test set and then calculate performance
+fare_test_baked <- 
+  fare_recipe %>% 
+  prep(training = fare_train) %>% 
+  bake(new_data = fare_test)
+
+postResample(pred = fare_pred, obs = fare_test_baked$fare)
+```
+
+```{r}
+# Plot predictions against test set labels
+fare_test %>% 
+  mutate(fare_pred = fare_pred) %>% 
+  ggplot(aes(x = fare, y = fare_pred)) + 
+  geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
+  geom_point()
+```
+
+```{r}
+# Plot predictions against test set labels in a square
+fare_test %>% 
+  mutate(fare_pred = predictions) %>% 
+  ggplot(aes(x = fare, y = fare_pred)) + 
+  geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
+  geom_point() +
+  coord_fixed(xlim = c(0, 520), ylim = c(0, 520))
+```
+
+```{r}
+# Plot the importance of each predictor (the absolute value of its t-statistic)
+lm_imp <- varImp(fare_lm, scale = FALSE) %>% print()
+plot(lm_imp)
+```
+
+## Using Logistic Regression to predict Titanic survival
+
+```{r}
+# Create a training and testing set (stratified by survived)
+set.seed(2021)
+surv_index <- createDataPartition(titanic$survived, p = 0.75, list = FALSE)
+surv_train <- titanic[surv_index, ]
+surv_test <- titanic[-surv_index, ]
+```
+
+```{r}
+# Create a preprocessing recipe (no prep)
+surv_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_dummy(all_nominal_predictors())
+```
+
+```{r}
+set.seed(2021)
+#  Train the model using the recipe, data, and method
+surv_glm <- train(
+  surv_recipe, 
+  data = surv_train,
+  method = "glm",
+  metric = "Accuracy",
+  trControl = trainControl(method = "cv", number = 10)
+)
+surv_glm$results
+```
+
+```{r}
+# Extract model predictions as classes
+surv_pred <- predict(surv_glm, newdata = surv_test)
+glimpse(surv_pred)
+```
+
+```{r}
+# Extract model predictions as probabilities
+surv_prob <- predict(surv_glm, newdata = surv_test, type = "prob")
+glimpse(surv_prob)
+```
+
+
+```{r}
+# Bake test set and then calculate performance
+surv_test_baked <- 
+  surv_recipe %>% 
+  prep(training = surv_train) %>% 
+  bake(new_data = surv_test)
+postResample(pred = surv_pred, obs = surv_test_baked$survived)
+```
+
+```{r}
+# Get detailed class-based performance scores
+confusionMatrix(data = surv_pred, reference = surv_test_baked$survived, positive = "yes")
+```
+
+```{r}
+# Use performance metrics from the yardstick package
+# https://yardstick.tidymodels.org/reference/
+
+test_data <- bind_cols(
+  surv_prob, 
+  obs = surv_test_baked$survived, 
+  pred = surv_pred
+)
+
+yardstick::mcc(test_data, truth = obs, estimate = pred)
+yardstick::roc_auc(test_data, no, truth = obs)
+```
+
+```{r}
+glm_imp <- varImp(surv_glm, scale = FALSE) %>% print()
+plot(glm_imp)
+```
+
+```{r}
+# Look at actual coefficients (not useful for every algorithm)
+surv_glm$finalModel
+```
+
