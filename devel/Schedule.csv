@@ -15,11 +15,11 @@ Day,Part,Title,Description,Minutes
 1,B,Logistics and Data Exploration,EDA: Linearity vs nonlinearity,15
 1,B,Logistics and Data Exploration,Small group activity,25
 1,B,Logistics and Data Exploration,Small group activity,25
-2,A,Feature Engineering,Feature Engineering Overview,15
-2,A,Feature Engineering,Adding Features,15
-2,A,Feature Engineering,Transforming Features,15
-2,A,Feature Engineering,Reducing Features,15
+2,A,Feature Engineering,Overview,15
+2,A,Feature Engineering,Adding Predictors,15
+2,A,Feature Engineering,Transforming Predictors,15
+2,A,Feature Engineering,Reducing Predictors,15
 2,A,Feature Engineering,Advanced Topics,15
 2,A,Feature Engineering,Live Coding,15
-2,A,Feature Engineering,Small group activity,25
+2,A,Feature Engineering,Activity,25
 2,X,,Break,10
