@@ -36,7 +36,263 @@ class: inverse, center, middle
   font-size: 24px;
 }
 &lt;/style&gt;
+---
+class: onecol
+## Lecture Plan
+&lt;p style="padding-top:15px;"&gt;We will begin with &lt;b&gt;overview slides&lt;/b&gt; and then dive into an &lt;b&gt;extended live coding&lt;/b&gt;&lt;/p&gt;
+- Training and Cross-Validation
+- Model Evaluation
+- Model Interpretation
 
+--
+
+We will start by **adapting familiar algorithms** to the predictive modeling framework
+- Linear modeling (multiple regression) will be used for *regression*
+- Generalized linear modeling (logistic regression) will be used for *classification*
+
+--
+
+We will also **foreshadow future topics** (e.g., regularized regression and tuning)
+
+---
+class: inverse, center, middle
+# Training and Cross-Validation
+---
+class: onecol
+## `caret::train()`
+
+{caret} standardizes the syntax to train over 200 different ML algorithms
+
+It also plays nicely with the {recipes} package we learned for preprocessing
+
+--
+
+&lt;p style="padding-top:20px;"&gt;The train() function will handle model &lt;b&gt;training&lt;/b&gt;, &lt;b&gt;resampling&lt;/b&gt;, and &lt;b&gt;tuning&lt;/b&gt;&lt;/p&gt;
+
+Because LM and GLM have no hyperparameters, we don't need tuning (yet!)
+
+--
+
+&lt;p style="padding-top:20px;"&gt;Today, we will &lt;b&gt;focus on training&lt;/b&gt; and just use resampling to estimate performance&lt;/p&gt;
+
+We will point to where tuning would be configured but leave that for tomorrow
+
+---
+class: onecol
+## Main Arguments to `train()`
+
+Argument&amp;emsp; | Description
+:------- | :----------
+`x` | A {recipe} object with variable roles and preprocessing steps
+`data` | A data frame to be used for training (prior to baking)
+`method` | A string indicating the algorithm to train (e.g., "lm" or "glm")&amp;emsp;
+
+--
+
+To train any of the 200+ supported algorithms, you just need to change `method`&lt;sup&gt;1&lt;/sup&gt;
+
+This makes it *super easy* to implement new algorithms and explore the world of ML!
+
+But be sure you understand an algorithm before trying to publish a paper using it
+
+.footnote[[1] Of course, you may also need to adapt the features and tuning procedures to match the new algorithm.]
+
+---
+class: onecol
+## Pseudocode for simple training
+
+
+```r
+# Create data splits
+set.seed(2021)
+index &lt;- createDataPartition(my_data$outcome, p = 0.80, list = FALSE)
+my_training_set &lt;- my_data[index, ]
+my_testing_set &lt;- my_data[-index, ]
+
+# Set up recipe
+my_recipe &lt;- 
+  my_data %&gt;% 
+  recipe(outcome ~ .) %&gt;% 
+  step_dummy(all_nominal_predictors()) %&gt;% 
+  step_nzv(all_predictors()) %&gt;% 
+  step_corr(all_predictors())
+
+# Train model from recipe
+*trained_model &lt;- train(
+* x = my_recipe,
+* data = my_training_set,
+* method = "lm"
+*) 
+```
+
+---
+class: onecol
+## Additional Arguments to `train()`
+
+Argument | Description
+:------- | :----------
+`trControl` | Controls the resampling procedure used during tuning
+`metric` | Controls which metric to optimize during tuning
+`tuneGrid` | Control which specific tuning values to compare
+`tuneLength`&amp;emsp; | Control how many tuning values to automatically compare&amp;emsp;
+
+These arguments are largely used to configure tuning (discussed tomorrow)
+
+The training set will be resampled and different tuning values will be compared
+
+The "best" tuning values will be used to train a **final model** using all the training data
+
+---
+class: onecol
+## Resampling options
+
+The `trControl` argument can be configured by `trainControl()`:
+
+Argument&amp;emsp; | Description
+:------- | :----------
+`method` | Controls the type of resampling (e.g., "cv", "repeatedcv", "boot")&amp;emsp;
+`number` | Controls the number of folds in cv and iterations in boot
+`repeats` | Controls the number of repetitions in repeatedcv
+
+"cv" will perform resampling through `\(k\)`-fold cross-validation
+
+"repeatedcv" will repeat `\(k\)`-fold cross-validation multiple times
+
+"boot" will perform resampling through bootstrapping
+
+---
+class: onecol
+## Pseudocode for training with resampling
+
+
+```r
+# Configure resampling options
+*resampling_options &lt;- trainControl(
+* method = "repeatedcv",
+* number = 10,
+* repeats = 3
+*) 
+
+# Train model from recipe
+trained_model &lt;- train(
+  x = my_recipe,
+  data = my_training_set,
+  method = "lm",
+* trControl = resampling_options
+)
+```
+
+---
+class: onecol
+## Advanced Resampling Options
+
+There are many other arguments to `trainControl()` to explore
+
+- **`selectionFunction`** can be used to prioritize less complex models*
+- **`predictionBounds`** can be used to constrain predicted values in regression
+- **`sampling`** can be used to address imbalanced labels in classification*
+- **`seeds`** can be used to make the resampling procedure reproducible
+
+.footnote[*These are both advanced topics that we plan to revisit on Day 5-A.]
+
+--
+
+There are also alternative resampling methods to explore
+- Fancier versions of bootstrapping (e.g., "boot632")
+- Algorithm-specific methods (e.g., "oob")
+- Adaptive methods that tune faster/smarter (e.g., "adaptive_cv")
+
+---
+## Comprehension check
+
+.pull-left[
+
+```r
+# Assume packages and data are loaded
+
+# Part 1
+my_recipe &lt;- 
+  my_data %&gt;% 
+  recipe(outcome ~ .) %&gt;% 
+  step_center(all_numeric_predictors()) %&gt;% 
+  step_zv(all_predictors()) %&gt;% 
+  prep(training = my_training_set)
+
+# Part 2
+trained_model &lt;- train(
+  x = my_recipe,
+  data = my_training_set,
+  method = "cv"
+)
+```
+
+]
+
+.pull-right[
+**1. What was the main mistake made in Part 1?**
+
+&amp;emsp; a) The predictors should be listed in `recipe()`
+
+&amp;emsp; b) Numeric predictors cannot be centered
+
+&amp;emsp; c) `step_zv()` only works for numeric predictors
+
+&amp;emsp; d) The recipe should not be prepped yet
+
+**2. What was the main mistake made in Part 2?**
+
+&amp;emsp; a) `data` should be `my_testing_set`
+
+&amp;emsp; b) `x` should be `my_data`
+
+&amp;emsp; c) "cv" is not a method for `train()`
+
+&amp;emsp; d) Forgot to add the `number` argument
+]
+
+---
+class: inverse, center, middle
+# Model Evaluation
+---
+
+train$results
+
+---
+
+predict()
+- object
+- newdata 
+- type
+- na.action
+
+---
+
+postResample()
+- pred
+- obs
+
+---
+
+confusionMatrix()
+
+---
+
+yardstick
+- ccc
+- huber_loss
+- mcc
+- roc_auc
+- metric_set
+
+---
+class: inverse, center, middle
+# Model Interpretation
+
+varImp()
+- object
+- scale
+
+train$finalModel
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
