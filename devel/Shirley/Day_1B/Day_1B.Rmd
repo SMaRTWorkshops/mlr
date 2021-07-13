@@ -384,8 +384,12 @@ The `dfsummary()` function from `summarytools` is useful for quickly identifying
 
 --
 
-```{r}
-print(dfSummary(irisTrain, valid.col = FALSE, headings = FALSE, style = 'grid', 
+```{r, eval= FALSE}
+print(dfSummary(irisTrain), method = 'render')
+```
+
+```{r, echo = FALSE}
+print(dfSummary(irisTrain, headings = FALSE, style = 'grid', 
                 plain.ascii = FALSE, graph.magnif = 0.85, tmp.img.dir = "/tmp"),
       max.tbl.height = 300, method = 'render')
 ```
@@ -404,6 +408,27 @@ transparentTheme(trans = .9)
 
 
 ```{r, fig.align='center', out.width="60%"}
+# basic density plot
+featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density')
+```
+
+.footnote[
+credit to https://topepo.github.io/caret/visualizations.html
+]
+
+---
+##Data distributions and error detection in R
+
+Overlaying distributions on the same plot can also be helpful. We can use the `featurePlot()` function in `caret`.
+
+```{r, echo = FALSE}
+par(bg = "#E9ECEF")
+transparentTheme(trans = .9)
+```
+
+
+```{r, fig.align='center', out.width="60%"}
+# make it prettier: free x & y axis, add legend, change plot character
 featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density', 
             scales = list(x = list(relation = "free"), y = list(relation = "free")), 
             adjust = 1.5, pch = "|", auto.key = list(columns = 3))
@@ -412,6 +437,7 @@ featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density',
 .footnote[
 credit to https://topepo.github.io/caret/visualizations.html
 ]
+
 ---
 ##Are there data anomalies, errors, or outliers?
 
@@ -698,7 +724,7 @@ We can use the `featurePlot()` function in `caret` to look for nonlinearities be
 
 ```{r, echo = FALSE, results = FALSE}
 data(affect)
-affect <- rename(affect, neuroticism = neur, positiveAffect = PA1)
+affect <- dplyr::rename(affect, neuroticism = neur, positiveAffect = PA1)
 theme1 <- trellis.par.get()
 theme1$plot.symbol$col = rgb(.2, .2, .2, .4)
 theme1$plot.symbol$pch = 16

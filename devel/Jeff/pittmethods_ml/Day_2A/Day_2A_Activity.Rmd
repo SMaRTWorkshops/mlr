@@ -3,6 +3,8 @@ title: "Day 2A Activity (Feature Engineering)"
 output:
   html_notebook:
     df_print: paged
+editor_options: 
+  chunk_output_type: inline
 ---
 
 # Load packages

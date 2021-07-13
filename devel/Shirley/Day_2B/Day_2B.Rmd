@@ -216,7 +216,7 @@ While OLS regression is readily interpretable and easy to compute, there are sev
 Regularization addresses many (but not all) of these problems.
 
 .footnote[
-[1] This remains a problem with regularized regression models.
+[1] This remains a problem with regularized regression models, but see methods for adding nonlinearity to linear models in lecture 2-A (Feature Eningeering).
 ]
 
 ---
@@ -547,7 +547,11 @@ ridgefit
 ---
 ## Ridge Regression in R
 
-```{r}
+```{r, eval = FALSE}
+ggplot(ridgefit)
+```
+
+```{r, echo = FALSE}
 ggplot(ridgefit) +
   theme_xaringan(text_font_size = 14, title_font_size = 18) +
   theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
@@ -564,7 +568,11 @@ coefpath(ridgefit$finalModel)
 ---
 ## Ridge Regression in R
 
-```{r}
+```{r, eval = FALSE}
+ggplot(varImp(ridgefit, scale = FALSE))
+```
+
+```{r, echo = FALSE}
 ggplot(varImp(ridgefit, scale = FALSE)) +
   theme_xaringan(text_font_size = 10, title_font_size = 18) +
   theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
@@ -666,7 +674,11 @@ lassofit
 ---
 ## Lasso Regression in R
 
-```{r}
+```{r, eval = FALSE}
+ggplot(lassofit) 
+```
+
+```{r, echo = FALSE}
 ggplot(lassofit) +
   theme_xaringan(text_font_size = 14, title_font_size = 18) +
   theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
@@ -682,7 +694,11 @@ coefpath(lassofit$finalModel)
 ---
 ## Lasso Regression in R
 
-```{r}
+```{r, eval = FALSE}
+ggplot(varImp(lassofit, scale = FALSE))
+```
+
+```{r, echo = FALSE}
 ggplot(varImp(lassofit, scale = FALSE)) +
   theme_xaringan(text_font_size = 10, title_font_size = 18) +
   theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))

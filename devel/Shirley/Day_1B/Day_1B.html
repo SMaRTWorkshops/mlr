@@ -346,9 +346,7 @@ The `dfsummary()` function from `summarytools` is useful for quickly identifying
 
 
 ```r
-print(dfSummary(irisTrain, valid.col = FALSE, headings = FALSE, style = 'grid', 
-                plain.ascii = FALSE, graph.magnif = 0.85, tmp.img.dir = "/tmp"),
-      max.tbl.height = 300, method = 'render')
+print(dfSummary(irisTrain), method = 'render')
 ```
 
 <div class="container st-container">
@@ -361,6 +359,7 @@ print(dfSummary(irisTrain, valid.col = FALSE, headings = FALSE, style = 'grid',
         <th align="center" class="st-protect-top-border"><strong>Stats / Values</strong></th>
         <th align="center" class="st-protect-top-border"><strong>Freqs (% of Valid)</strong></th>
         <th align="center" class="st-protect-top-border"><strong>Graph</strong></th>
+        <th align="center" class="st-protect-top-border"><strong>Valid</strong></th>
         <th align="center" class="st-protect-top-border"><strong>Missing</strong></th>
       </tr>
     </thead>
@@ -374,7 +373,9 @@ min < med < max:
 4.4 < 5.8 < 7.7
 IQR (CV) : 1.3 (0.1)</td>
         <td align="left" style="vertical-align:middle">32 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwkQLgK8Wnh7AAABSklEQVR42u3cUW7aQABF0UOVPXYP7XraPWSV7c/7QJECLUkNqPf+ISQYH3mQR2Nz+qX4cu8BPEYxIIb1cv7idJch/Ljy8/T9Hw3r/Gtfbv6UT+zrhfdeDxlBkwKHnQ3XTvx7d9ikeP/EP+a0v1yTAjGsGBDDigExrBgQw/qLy6dHvxI8iOHaEuj+C6Tba1IghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgPcZfs5S7vpH/OrcRPwHDETnmTAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMOKATGsGPBmD/MZHz/+wJjPNoHfbOU+3wPGl/4658+PpkmBGFYMiGHFgBhWDIhhxYAYVgyIYZ3OF2g/n3CFeXvfzlaYp//qyN+tSYEYVgzgNxVtGR5h23/qAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTA5VDE2OjQ2OjAyKzAwOjAwm0Or4AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0wOVQxNjo0NjowMiswMDowMOoeE1wAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwwUGxmk2SvPAAABSklEQVR42u3cUW7aQABF0UOVPXYP7XraPWSV7c/7QJECLUkNqPf+ISQYH3mQR2Nz+qX4cu8BPEYxIIb1cv7idJch/Ljy8/T9Hw3r/Gtfbv6UT+zrhfdeDxlBkwKHnQ3XTvx7d9ikeP/EP+a0v1yTAjGsGBDDigExrBgQw/qLy6dHvxI8iOHaEuj+C6Tba1IghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgPcZfs5S7vpH/OrcRPwHDETnmTAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMOKATGsGPBmD/MZHz/+wJjPNoHfbOU+3wPGl/4658+PpkmBGFYMiGHFgBhWDIhhxYAYVgyIYZ3OF2g/n3CFeXvfzlaYp//qyN+tSYEYVgzgNxVtGR5h23/qAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTEyVDIwOjI3OjI1KzAwOjAwGk8plgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xMlQyMDoyNzoyNSswMDowMGsSkSoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="center">120
+(100.0%)</td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -387,7 +388,9 @@ min < med < max:
 2 < 3 < 4.4
 IQR (CV) : 0.5 (0.1)</td>
         <td align="left" style="vertical-align:middle">22 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwkQLgK8Wnh7AAABO0lEQVR42u3cS2rcUBRF0VXBc8wckvEkc/Aok85pCEMCsrEs7L17BfXTgqvGrUc9/ii+ffQXuEcxIIb1dHzwOPniXydvLD/PfsC7dvzyT69+F/D9xHOfP/q6/1NDgRhWDIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYA3b5/Odd+l3aUMZ1Z21y7tGgrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYsCLs09nj2h9nl4cAbvvIa33raFADCsGXHw89GzXnaq9NcN1N+yGAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBhw813k2U6ucA8L3E/F8Pr/Mm0oEMN6HMfp95f6RfvH4d7w+FJX/s8aCsSwYgB/AaJNFPa2TCg7AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTA5VDE2OjQ2OjAyKzAwOjAwm0Or4AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0wOVQxNjo0NjowMiswMDowMOoeE1wAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwwUGxmk2SvPAAABO0lEQVR42u3cS2rcUBRF0VXBc8wckvEkc/Aok85pCEMCsrEs7L17BfXTgqvGrUc9/ii+ffQXuEcxIIb1dHzwOPniXydvLD/PfsC7dvzyT69+F/D9xHOfP/q6/1NDgRhWDIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYA3b5/Odd+l3aUMZ1Z21y7tGgrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYsCLs09nj2h9nl4cAbvvIa33raFADCsGXHw89GzXnaq9NcN1N+yGAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBhw813k2U6ucA8L3E/F8Pr/Mm0oEMN6HMfp95f6RfvH4d7w+FJX/s8aCsSwYgB/AaJNFPa2TCg7AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTEyVDIwOjI3OjI1KzAwOjAwGk8plgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xMlQyMDoyNzoyNSswMDowMGsSkSoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="center">120
+(100.0%)</td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -400,7 +403,9 @@ min < med < max:
 1 < 4.3 < 6.9
 IQR (CV) : 3.5 (0.5)</td>
         <td align="left" style="vertical-align:middle">39 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwkQLgK8Wnh7AAABSklEQVR42u3cQYoaURhG0WPoPWYPyXqSPfQqk8k3MIRAYSulnXtnIoh18Invr7IuvxRfzn4Dz1EMiGG9XT/4efiL4vvl7Df+8a4P9u3Pp74eeoH3s4/g7rUoEMOKATGsGBDDigExrBgQw4oBf+0pzujHE2zonoDhGTZ0LQrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGPMn06WjHxnW3jOpeiuHIsO62UV2LAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMayHDuiPXwZ8dg8+T/G4Mwv3rUWBGFYMiGHFgBhWDIhhxYAYVgyIYcWAGFYMeLHrIo91eNhzdRnpJ2S45R/fLQrEsGJADCsGxLBiQAzrxp9Pr3Na7qEM59+b5761KMDl+tN9/M7Cn6FvV1ury3915P+sRYEYVgzgNyD5F47nUYb/AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTA5VDE2OjQ2OjAyKzAwOjAwm0Or4AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0wOVQxNjo0NjowMiswMDowMOoeE1wAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwwUGxmk2SvPAAABSklEQVR42u3cQYoaURhG0WPoPWYPyXqSPfQqk8k3MIRAYSulnXtnIoh18Invr7IuvxRfzn4Dz1EMiGG9XT/4efiL4vvl7Df+8a4P9u3Pp74eeoH3s4/g7rUoEMOKATGsGBDDigExrBgQw4oBf+0pzujHE2zonoDhGTZ0LQrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGPMn06WjHxnW3jOpeiuHIsO62UV2LAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMayHDuiPXwZ8dg8+T/G4Mwv3rUWBGFYMiGHFgBhWDIhhxYAYVgyIYcWAGFYMeLHrIo91eNhzdRnpJ2S45R/fLQrEsGJADCsGxLBiQAzrxp9Pr3Na7qEM59+b5761KMDl+tN9/M7Cn6FvV1ury3915P+sRYEYVgzgNyD5F47nUYb/AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTEyVDIwOjI3OjI1KzAwOjAwGk8plgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xMlQyMDoyNzoyNSswMDowMGsSkSoAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="center">120
+(100.0%)</td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -413,7 +418,9 @@ min < med < max:
 0.1 < 1.3 < 2.5
 IQR (CV) : 1.5 (0.6)</td>
         <td align="left" style="vertical-align:middle">22 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwkQLgK8Wnh7AAABPElEQVR42u3cQY7TQBRF0RPUe2QPsB7YQ68SJm/gFmLgdJMYuHdmRYpcR6roy5Xk9kPx6dk3cI1iQAzr5Xjx/fQHxdfbsxdwf8fFvrx96fOpN3p99ko+rDYFYlgxIIYVA2JYMSCGFQN+mSL/ZN8uPKo/kOHKo3qbAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMN66HHN2c6ec91/ynVphsedcrUpEMOKATGsGBDDigEXnxvOdnLcOgxb/xTDmXHr7bDVpkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAzrnQ/oz//g+Jq9k+H+k4Fr1aZADCsGxLBiQAwrBsSwYkAMKwbEsGJADOt2fGBw/p+F/+a+HL4XefuvVv7b2hSIYcUAfgKm4xT20hudVAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0wOVQxNjo0NjowMiswMDowMJtDq+AAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMDlUMTY6NDY6MDIrMDA6MDDqHhNcAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwwUGxmk2SvPAAABPElEQVR42u3cQY7TQBRF0RPUe2QPsB7YQ68SJm/gFmLgdJMYuHdmRYpcR6roy5Xk9kPx6dk3cI1iQAzr5Xjx/fQHxdfbsxdwf8fFvrx96fOpN3p99ko+rDYFYlgxIIYVA2JYMSCGFQN+mSL/ZN8uPKo/kOHKo3qbAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMN66HHN2c6ec91/ynVphsedcrUpEMOKATGsGBDDigEXnxvOdnLcOgxb/xTDmXHr7bDVpkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAzrnQ/oz//g+Jq9k+H+k4Fr1aZADCsGxLBiQAwrBsSwYkAMKwbEsGJADOt2fGBw/p+F/+a+HL4XefuvVv7b2hSIYcUAfgKm4xT20hudVAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xMlQyMDoyNzoyNSswMDowMBpPKZYAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTJUMjA6Mjc6MjUrMDA6MDBrEpEqAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="center">120
+(100.0%)</td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -425,14 +432,16 @@ IQR (CV) : 1.5 (0.6)</td>
 2. versicolor
 3. virginica</td>
         <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAADcAAABDCAQAAACSYVUaAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwkQLgRVOd1OAAAAfUlEQVRYw+3WsQ2AMAxEURuxIzuwD+yQKaENSEQoxE5k/nVu/AoXPj3EM5OrFpyb82E3OeSqD5zI0hxLlyn27eDg4ODghuVu/y7VbXkdzR+4Vq8pJRd+dLvNpuNSjeDg4ODgenN0lYahq3wKXQUODg4ObgCuZzWyT+zbOXMnOYsQtmjbE/cAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMDlUMTY6NDY6MDQrMDA6MDD4k57aAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTA5VDE2OjQ2OjA0KzAwOjAwic4mZgAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAADcAAABDCAQAAACSYVUaAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBwwUGxo90Hp1AAAAfUlEQVRYw+3WsQ2AMAxEURuxIzuwD+yQKaENSEQoxE5k/nVu/AoXPj3EM5OrFpyb82E3OeSqD5zI0hxLlyn27eDg4ODghuVu/y7VbXkdzR+4Vq8pJRd+dLvNpuNSjeDg4ODgenN0lYahq3wKXQUODg4ObgCuZzWyT+zbOXMnOYsQtmjbE/cAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTJUMjA6Mjc6MjYrMDA6MDArpzMLAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTEyVDIwOjI3OjI2KzAwOjAwWvqLtwAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="center">120
+(100.0%)</td>
         <td align="center">0
 (0.0%)</td>
       </tr>
     </tbody>
   </table>
 </div>
-<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.9 (<a href='https://www.r-project.org/'>R</a> version 4.1.0)<br/>2021-07-09</p>
+<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.9 (<a href='https://www.r-project.org/'>R</a> version 4.1.0)<br/>2021-07-12</p>
 </div>
 
 ---
@@ -447,16 +456,38 @@ Overlaying distributions on the same plot can also be helpful. We can use the `f
 
 
 ```r
+# basic density plot
+featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density')
+```
+
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-18-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://topepo.github.io/caret/visualizations.html
+]
+
+---
+##Data distributions and error detection in R
+
+Overlaying distributions on the same plot can also be helpful. We can use the `featurePlot()` function in `caret`.
+
+
+
+
+
+```r
+# make it prettier: free x &amp; y axis, add legend, change plot character
 featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density', 
             scales = list(x = list(relation = "free"), y = list(relation = "free")), 
             adjust = 1.5, pch = "|", auto.key = list(columns = 3))
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-17-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-20-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 .footnote[
 credit to https://topepo.github.io/caret/visualizations.html
 ]
+
 ---
 ##Are there data anomalies, errors, or outliers?
 
@@ -468,11 +499,11 @@ Check data distributions and summary statistics for:
 - You may need to adjust plot margins or axes!
 
 .pull-left[
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-18-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-21-1.png" width="100%" /&gt;
 ]
 
 .pull-right[
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-19-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-22-1.png" width="100%" /&gt;
 ]
 
 ---
@@ -510,13 +541,13 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 ]
 
 .pull-left[
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-22-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-25-1.png" width="100%" /&gt;
 ]
 
 --
 
 .pull-right[
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-23-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-26-1.png" width="100%" /&gt;
 ]
 
 --
@@ -540,7 +571,7 @@ Two helpful questions to guide missing data visualization:
 aggr(biopics, numbers = TRUE, prop = c(TRUE, FALSE), col = c("bisque2","darkcyan"))
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-25-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-28-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
 
 .footnote[
 credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
@@ -556,7 +587,7 @@ We also want to know if missing data systematically vary by other observed data.
 spineMiss(biopics[, c("sub_race", "earnings")], col = c("bisque2","darkcyan"))
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-26-1.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-29-1.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
 
 .footnote[
 credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
@@ -572,7 +603,7 @@ Let's flip the two variables to ask: does the percentage of missing data in `sub
 spineMiss(biopics[, c("earnings", "sub_race")], col = c("bisque2","darkcyan"))
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-27-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-30-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
 
 .footnote[
 credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
@@ -592,7 +623,7 @@ mosaicMiss(biopics[, c("sub_sex", "US_movie", "earnings")], highlight = 3,
            plotvars = 1:2, miss.labels = FALSE, col = c("bisque2","darkcyan"))
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-29-1.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-32-1.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
 
 .footnote[
 credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
@@ -608,7 +639,7 @@ credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-packag
 parcoordMiss(biopics, highlight = 'earnings', alpha = 0.6, col = c("bisque2","darkcyan"))
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-30-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-33-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
 
 .footnote[
 credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
@@ -643,7 +674,7 @@ cormat &lt;- cor(subset(msq, select = c("afraid", "angry", "anxious", "cheerful"
 corrplot(cormat, tl.col = '#23395b', type = 'lower', tl.cex = 0.8)
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-31-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-34-1.png" width="100%" /&gt;
 
 ---
 ##Feature covariation and correlations in R
@@ -655,7 +686,7 @@ corrplot(cormat, type = 'lower', method = 'number',
          tl.col = '#23395b', tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-32-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-35-1.png" width="100%" /&gt;
 
 ---
 ##Feature covariation and correlations in R
@@ -667,7 +698,7 @@ corrplot(cormat, tl.col = '#23395b', order = 'hclust', addrect = 3,
          tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-33-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-36-1.png" width="100%" /&gt;
 
 ---
 ##Feature covariation and correlations in R
@@ -679,7 +710,7 @@ pairs.panels(irisTrain[, 1:4], method = 'pearson', density = TRUE, ellipses = FA
              lm = TRUE, cex.cor = 0.8, cex.labels = 0.9)
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-34-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-37-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: inverse, center, middle
@@ -696,11 +727,11 @@ While some algorithms (e.g., decision trees, random forests) can capture and mod
 The specific **form** of nonlinearity is also important. 
 
 .pull-left[
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-35-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-38-1.png" width="100%" /&gt;
 ]
 
 .pull-right[
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-36-1.png" width="100%" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
 ]
 ---
 ##Linearity and nonlinearity in R
@@ -715,7 +746,7 @@ featurePlot(x = affect[, c(4, 8, 12, 20)], y = affect$NA1, plot = "scatter",
             type = c("p", "smooth"), labels = c("Feature", "Negative Affect"))
 ```
 
-&lt;img src="Day_1B_files/figure-html/unnamed-chunk-38-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="Day_1B_files/figure-html/unnamed-chunk-41-1.png" width="80%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: inverse, center, middle
