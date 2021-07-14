@@ -177,11 +177,8 @@ include_graphics("appliedpredictivemodeling.png")
 ---
 ## `tidymodels`
 
-The newer `tidymodels` package is the `tidyverse` version of `caret`. Both packages were developed by the same author (Max Kuhn)!  
+The newer `tidymodels` package is the `tidyverse` version of `caret`. Both packages were developed by the same author (Max Kuhn)! `tidymodels` is a ![:emphasize](meta-package) and includes a collection of many packages:
 
---
-
-`tidymodels` is a ![:emphasize](meta-package) and includes a collection of many packages: 
 - `rsample` for data splitting and resampling
 - `recipes` for pre-processing
 - `parsnip` for trying out many models
@@ -193,7 +190,11 @@ The newer `tidymodels` package is the `tidyverse` version of `caret`. Both packa
 
 --
 
-We will be focusing on `caret` during this workshop, but please feel free to experiment with `tidymodels` as well and keep an eye out for this framework in coming years!
+We will use the older `caret` but incorporate *aspects* of the newer `tidymodels`<sup>1</sup>
+- This will give us access to some new features without overwhelming beginners
+- It will also ease the transition to `tidymodels` if you decide to go that route
+
+.footnote[[1] We will use `recipes` and `yardstick` but not `workflows`, `rsample`, `tune`, `parsnip`, or `dials.`]
 
 ---
 class: inverse, center, middle

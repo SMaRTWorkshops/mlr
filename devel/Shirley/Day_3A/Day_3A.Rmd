@@ -2,7 +2,7 @@
 title: '<span style="font-size:48pt;">Regularized Regression</span>'
 subtitle: '.big[⛰ 🤠 🕸️ ]'
 author: 'Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series'
-date: 'Lecture 2-B &emsp; &emsp; July 20, 2021'
+date: 'Lecture 3-A &emsp; &emsp; July 21, 2021'
 output:
   xaringan::moon_reader:
     css: [xaringan-themer.css, extras.css]
@@ -56,6 +56,7 @@ local({
 
 ```{r packages, echo=FALSE, message=FALSE}
 library(tidyverse)
+library(tidymodels)
 library(knitr)
 library(kableExtra)
 library(countdown)
@@ -268,6 +269,35 @@ Thus, regularization models can simultaneously reduce overfitting and perform fe
 ]
 
 ---
+## Comprehension check
+.pull-left[
+### Question 1
+**Determine if each of the following models are linear or nonlinear.**
+
+a) $y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \epsilon$
+
+b) $y = \beta_0 + \beta_1^2x_1 + \beta_2x_2 + \epsilon$
+
+c) $y = \beta_0 + \beta_1x_1^2 + \beta_2\sin(x_1x_2)+ \epsilon$
+
+d) $y = \beta_0 + e^{\beta_1x_1} + \beta_2x_2 + \epsilon$
+]
+
+.pull-right[
+### Question 2
+**Which is not a benefit of regularized compared to nonregularized models?**
+
+a) Feature selection
+
+b) Improves out-of-sample prediction
+
+c) Overcomes measurement errors
+
+d) Limits overfitting
+]
+
+
+---
 class: inverse, center, middle
 # Ridge Regression
 
@@ -309,6 +339,55 @@ At higher values of $\lambda$, parameters will be shrunk closer to zero.
 
 We can find the 'best' value of $\lambda$ through cross-validation hyperparameter tuning.
 ]
+
+---
+## Hyperparameter Tuning
+
+```{r, echo = FALSE, out.width="90%"}
+include_graphics("hyperparameter_tuning1.png")
+```
+
+---
+## Hyperparameter Tuning
+
+```{r, echo = FALSE, out.width="90%"}
+include_graphics("hyperparameter_tuning2.png")
+```
+
+---
+## Dataset 
+
+Today, we'll work with a simulated dataset examining predictors of eating disorder severity (for regression problems) and diagnosis (for classification problems)<sup>1</sup>. Simulated variables include  theoretically *related* and theoretically *unrelated* to eating disorders severity and diagnoses:
+
+.pull-left[
+- Emotion regulation
+- Depression 
+- Impulsivity
+- Self-criticism
+- Anxiety
+- Race (categorical)
+- Age
+- Family psychiatric history
+- Prior psychiatric treatment
+- Length of time being in treatment
+- Perfectionism
+]
+
+.pull-right[
+- Temperature that day
+- Average rainfall over past month
+- Number of siblings
+- Number of cellphones owned
+- Time spent reading the news
+- Time spent watching TV
+- Number of pets owned
+]
+
+
+.footnote[
+[1] Note: Slides will offer a regression example and live coding will offer a classification example.
+]
+
 
 ---
 ## Ridge Regression in R
@@ -424,31 +503,22 @@ corrplot(cormat, tl.col = '#23395b', type = 'lower', tl.cex = 0.8, mar = c(0, 0,
 ---
 ## Ridge Regression in R
 
-**Step 2: Feature Engineering**<sup>1</sup>
+**Step 2: Feature Engineering**<sup>1</sup>. 
+
+Normalizing (standardizing) features before regularization is important to ensure that the shrinkage parameter $\lambda$ affects all features equally.
+
 
 ```{r}
-preproc <- preProcess(EDsim_train[, -c(1, 2)], method = c("center", "scale"))
-preproc
-EDsim_train_tf <- predict(preproc, newdata = EDsim_train)
+EDsim_recipe <- 
+  EDsim_train %>% 
+  recipe(ED_severity ~ .) %>%
+  step_rm(ED_diagnosis) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(all_nominal_predictors()) 
 ```
 
 .footnote[
-[1] note that `caret::train` will automatically create dummy variables for factors
-]
-
----
-## Ridge Regression in R
-
-**Step 2: Feature Engineering**<sup>1</sup>
-
-```{r, echo = FALSE}
-print(dfSummary(EDsim_train_tf, valid.col = FALSE, headings = FALSE, style = 'grid', 
-                plain.ascii = FALSE, graph.magnif = 0.85, tmp.img.dir = "/tmp"),
-      max.tbl.height = 300, method = 'render')
-```
-
-.footnote[
-[1] note that `caret::train` will automatically create dummy variables for factors
+[1] Note than when using `recipes`, dummy variables should be created manually with `step_dummy`. If using `caret` by itself without `recipes`, dummy variables are created automatically. 
 ]
 
 ---
@@ -530,7 +600,7 @@ This option is useful for training ridge regression models within the `glmnet` m
 
 ```{r}
 set.seed(2021)
-ridgefit <- train(ED_severity ~ ., data = EDsim_train_tf[, -2],
+ridgefit <- train(EDsim_recipe, data = EDsim_train,
                   method = 'glmnet',
                   tuneGrid = ridgegrid,
                   trControl = EDsim_control)
@@ -545,7 +615,35 @@ ridgefit
 ]
 
 ---
+## Ridge Regression in R 
+
+Examine results of internal cross-validation: 
+
+.scroll-output[
+```{r}
+ridgefit$results
+```
+]
+
+--
+
+**Step 6: Predict on held-out test set**
+
+```{r}
+EDsim_test_baked <- 
+  EDsim_recipe %>%
+  prep(training = EDsim_train) %>%
+  bake(new_data = EDsim_test)
+
+ridgepred_test <- predict(ridgefit, newdata = EDsim_test)
+  
+postResample(pred = ridgepred_test, obs = EDsim_test_baked$ED_severity)
+```
+
+---
 ## Ridge Regression in R
+
+Examine accuracy as a function of $\lambda$. 
 
 ```{r, eval = FALSE}
 ggplot(ridgefit)
@@ -560,6 +658,8 @@ ggplot(ridgefit) +
 ---
 ## Ridge Regression in R
 
+Examine coefficients as a function of $\lambda$.
+
 ```{r}
 library(coefplot)
 coefpath(ridgefit$finalModel)
@@ -567,6 +667,8 @@ coefpath(ridgefit$finalModel)
 
 ---
 ## Ridge Regression in R
+
+Examine variable importance.
 
 ```{r, eval = FALSE}
 ggplot(varImp(ridgefit, scale = FALSE))
@@ -576,38 +678,6 @@ ggplot(varImp(ridgefit, scale = FALSE))
 ggplot(varImp(ridgefit, scale = FALSE)) +
   theme_xaringan(text_font_size = 10, title_font_size = 18) +
   theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
-```
-
----
-## Ridge Regression in R
-
-**Step 6: Predict on held-out test set**
-
-First we need to standardize the training data:
-
-```{r}
-preproc_test <- preProcess(EDsim_test[, -c(1, 2)], method = c("center", "scale"))
-preproc_test
-EDsim_test_tf <- predict(preproc_test, newdata = EDsim_test)
-```
-
----
-## Ridge Regression in R
-
-**Step 6: Predict on held-out test set**
-
-```{r}
-ridgepred_test <- predict(ridgefit, EDsim_test_tf)
-postResample(pred = ridgepred_test, obs = EDsim_test_tf$ED_severity)
-```
-
---
-
-Let's compare this to the performance metrics on our training set: 
-
-```{r}
-ridgepred_train <- predict(ridgefit, EDsim_train_tf)
-postResample(pred = ridgepred_train, obs = EDsim_train_tf$ED_severity)
 ```
 
 ---
@@ -657,7 +727,7 @@ Whereas ridge tends to shrink coefficients of correlated predictors towards each
 ```{r}
 lassogrid <- expand.grid(alpha = 1, lambda = seq(0, 1, 0.01))
 set.seed(2021)
-lassofit <- train(ED_severity ~ ., data = EDsim_train_tf[, -2],
+lassofit <- train(EDsim_recipe, data = EDsim_train,
                   method = 'glmnet',
                   tuneGrid = lassogrid,
                   trControl = EDsim_control)
@@ -670,6 +740,26 @@ lassofit <- train(ED_severity ~ ., data = EDsim_train_tf[, -2],
 lassofit
 ```
 ]
+
+---
+## Lasso Regression in R 
+
+Examine results of internal cross-validation: 
+
+.scroll-output[
+```{r}
+lassofit$results
+```
+]
+
+--
+
+**Predict on held-out test set**
+
+```{r}
+lassopred_test <- predict(lassofit, EDsim_test)
+postResample(pred = lassopred_test, obs = EDsim_test_baked$ED_severity)
+```
 
 ---
 ## Lasso Regression in R
@@ -705,27 +795,9 @@ ggplot(varImp(lassofit, scale = FALSE)) +
 ```
 
 ---
-## Lasso Regression in R
-
-**Predict on held-out test set**
-
-```{r}
-lassopred_test <- predict(lassofit, EDsim_test_tf)
-postResample(pred = lassopred_test, obs = EDsim_test_tf$ED_severity)
-```
-
---
-
-Let's compare this to the performance metrics on our training set: 
-
-```{r}
-lassopred_train <- predict(lassofit, EDsim_train_tf)
-postResample(pred = lassopred_train, obs = EDsim_train_tf$ED_severity)
-```
-
----
 class: inverse, center, middle
 # Elastic Net Regression
+
 
 ---
 ## Elastic Net Regression
@@ -762,6 +834,116 @@ At $\alpha = 0$ ridge is performed and at $\alpha = 1$ lasso is performed.
 
 Elastic net is particularly good at handling correlated predictors. 
 ]
+
+---
+## Elastic Net in R 
+
+**Set tuning grid and train model** 
+
+```{r}
+enfit <- train(EDsim_recipe, data = EDsim_train,
+               method = 'glmnet',
+               tuneLength = 20,
+               trControl = EDsim_control)
+```
+
+--
+
+.scroll-output[
+```{r}
+enfit
+```
+]
+
+---
+## Elastic Net in R 
+
+Examine results of internal cross-validation: 
+
+```{r}
+enfit$results
+```
+
+--
+
+**Predict on held-out test set**
+
+```{r}
+enpred_test <- predict(enfit, EDsim_test)
+postResample(pred = enpred_test, obs = EDsim_test_baked$ED_severity)
+```
+
+---
+## Elastic Net in R 
+
+```{r, eval = FALSE}
+ggplot(enfit) 
+```
+
+```{r, echo = FALSE}
+ggplot(enfit) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
+```
+
+---
+## Elastic Net in R 
+
+```{r}
+coefpath(enfit$finalModel)
+```
+
+---
+## Elastic Net in R 
+
+```{r, eval = FALSE}
+ggplot(varImp(enfit, scale = FALSE))
+```
+
+```{r, echo = FALSE}
+ggplot(varImp(enfit, scale = FALSE)) +
+  theme_xaringan(text_font_size = 10, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
+```
+
+---
+## Comprehension check
+.pull-left[
+### Question 1
+**Which model uses an $L_2$ squared penalty?**
+
+a) Ridge
+
+b) Lasso
+
+c) Elastic Net
+
+d) None of the above
+]
+
+.pull-right[
+### Question 2
+**What do the $\lambda$ and $\alpha$ hyperparameters refer to?**
+
+a) $\lambda$ = shrinkage, $\alpha$ = validation
+
+b) $\lambda$ = feature selection, $\alpha$ = mixing
+
+c) $\lambda$ = shrinkage, $\alpha$ = mixing
+
+d) $\lambda$ = feature selection, $\alpha$ = shrinkage
+]
+
+---
+class: inverse, center, middle
+# Model Comparison
+
+---
+## Model Comparison
+
+```{r, echo = FALSE}
+training <- c(summary(ridgefit$results))
+```
 
 ---
 class: inverse, center, middle

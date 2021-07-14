@@ -1,0 +1,42 @@
+---
+title: "Day 3A Activity (Regularized Regression)"
+output:
+  html_notebook:
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Load Packages
+
+```{r, message=FALSE}
+if (!require("tidyverse")) {install.packages("tidyverse"); require("tidyverse")}     
+if (!require("summarytools")) {install.packages("summarytools"); require("summarytools")}     
+if (!require("psych")) {install.packages("psych"); require("psych")}     
+if (!require("psychTools")) {install.packages("psychTools"); require("psychTools")}     
+if (!require("caret")) {install.packages("caret"); require("caret")}
+if (!require("mice")) {install.packages("mice"); require("mice")}     
+if (!require("VIM")) {install.packages("VIM"); require("VIM")}     
+```
+
+# Load Data
+
+```{r}
+
+
+```
+
+# Use Elastic Net 
+
+```{r}
+
+```
+
+
+# Bonus: Use Ridge and Lasso and compare model performance
+
+```{r}
+
+```
+
+
