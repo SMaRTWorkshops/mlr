@@ -254,10 +254,105 @@ trained_model &lt;- train(
 class: inverse, center, middle
 # Model Evaluation
 ---
+class: onecol
+## Performance Metrics
+.left-column[
+&lt;br /&gt;
+&lt;img src="target.jpg" width="100%" /&gt;
+]
 
-train$results
+.right-column[
+
+**Metrics for Supervised Regression**
+- ![:emphasize](Distance) between predicted and trusted values
+- ![:emphasize](Correlation) between predicted and trusted values
+
+**Metrics for Supervised Classification**
+- ![:emphasize](Confusion matrix) between predicted and trusted classes
+- Compare predicted ![:emphasize](class probabilities) to trusted classes
+- Construct a ![:emphasize](performance curve) across decision thresholds
+]
 
 ---
+class: onecol
+## Classic Distance Metrics for Regression
+
+**Root Mean Squared Error (RMSE)**
+.pull-left[
+- Based on squared loss
+- Easier to computationally optimize
+- Ranges from `\(0\)` (best) to `\(+\infty\)` (worst)
+]
+
+.pull-right[
+`$$RMSE=\sqrt{\frac{1}{n} \sum_{i=1}^n (y-\hat{y})^2}$$`
+]
+
+
+
+&lt;p style="padding-top:10px;"&gt;&lt;b&gt;Mean Absolute Error (MAE)&lt;/b&gt;&lt;/p&gt;
+.pull-left[
+- Based on absolute loss
+- More robust to outliers
+- Ranges from `\(0\)` (best) to `\(+\infty\)` (worst) 
+]
+
+.pull-right[
+`$$MAE=\frac{1}{n}\sum_{i=1}^n|y-\hat{y}|$$`
+]
+
+---
+class: onecol
+## Advanced Distance Metrics for Regression
+**Huber loss**
+
+.pull-left[
+- Combines benefits of RMSE and MAE
+- Easy to computationally optimize
+- More robust to outliers
+- Requires setting or tuning &amp;delta;, which controls what to consider an outlier
+]
+
+.pull-right[
+`$$L_\delta = \begin{cases}\frac{1}{2}(y-\hat{y})^2 &amp; \text{for } |y-\hat{y}| \le \delta \\ \delta (|y - \hat{y}| - \delta/2) &amp; \text{otherwise} \end{cases}$$`
+]
+
+---
+## Comparing Loss Functions
+
+&lt;img src="Day_2B_files/figure-html/losses-1.png" width="100%" /&gt;
+
+---
+class: onecol
+## Correlation Metrics for Regression
+
+**R-Squared `\((R^2\)` or RSQ)**
+- The squared correlation between the predicted and trusted labels
+- Cannot be calculated if either the predicted or trusted labels are constant
+- Ranges from `\(0\)` (worst) to `\(1\)` (best)
+`$$R^2 = \left(\frac{\text{cov}(y, \hat{y})}{s_y s_\hat{y}}\right)^2$$`
+
+.footnote[[1] Note that this formula is different from the traditional `\(R^2\)` in statistics (cannot be negative).&lt;br /&gt;
+[2] Note that the adjusted `\(R^2\)` is inappropriate because we are applying the model to new data.]
+
+---
+class: onecol
+## Advanced Correlation Metrics for Regression
+
+**Concordance Correlation Coefficient (CCC)**
+- Similar to certain forms of the intraclass correlation coefficient
+- Combines both accuracy (distance) and consistency (correlation)
+- Ranges from `\(-1\)` (worst) to `\(+1\)` (best)
+
+`$$CCC = \frac{2\text{cov}(y,\hat{y})}{s_y^2 + s_\hat{y}^2 + (\hat{y} - \bar{\hat{y}})^2}$$`
+
+---
+class: onecol
+# Training Set Performance
+
+---
+class: onecol
+# Test Set Predictions
 
 predict()
 - object
