@@ -62,35 +62,255 @@ class: inverse, center, middle
 </style>
 ---
 class: onecol
-## Lecture Topics
-In this lecture, we will discuss 
+## Lecture Plan
+<p style="padding-top:15px;">We will begin with <b>overview slides</b> and then dive into an <b>extended live coding</b></p>
+- Training and Cross-Validation
+- Model Evaluation
+- Model Interpretation
 
+--
 
----
+We will start by **adapting familiar algorithms** to the predictive modeling framework
+- Linear modeling (multiple regression) will be used for *regression*
+- Generalized linear modeling (logistic regression) will be used for *classification*
 
-Training and Tuning
+--
 
-
-Performance Evaluation
--
-
-Variable importance
-
-
----
-class: inverse, center, middle
-# Training and splitting
----
-
-
+We will also **foreshadow future topics** (e.g., regularized regression and tuning)
 
 ---
 class: inverse, center, middle
-# Hyperparameter tuning
+# Training and Cross-Validation
 ---
-class: inverse, center, middle
-# Performance evaluation
----
-class: inverse, center, middle
-# Variable Importance
+class: onecol
+## `caret::train()`
 
+{caret} standardizes the syntax to train over 200 different ML algorithms
+
+It also plays nicely with the {recipes} package we learned for preprocessing
+
+--
+
+<p style="padding-top:20px;">The train() function will handle model <b>training</b>, <b>resampling</b>, and <b>tuning</b></p>
+
+Because LM and GLM have no hyperparameters, we don't need tuning (yet!)
+
+--
+
+<p style="padding-top:20px;">Today, we will <b>focus on training</b> and just use resampling to estimate performance</p>
+
+We will point to where tuning would be configured but leave that for tomorrow
+
+---
+class: onecol
+## Main Arguments to `train()`
+
+Argument&emsp; | Description
+:------- | :----------
+`x` | A {recipe} object with variable roles and preprocessing steps
+`data` | A data frame to be used for training (prior to baking)
+`method` | A string indicating the algorithm to train (e.g., "lm" or "glm")&emsp;
+
+--
+
+To train any of the 200+ supported algorithms, you just need to change `method`<sup>1</sup>
+
+This makes it *super easy* to implement new algorithms and explore the world of ML!
+
+But be sure you understand an algorithm before trying to publish a paper using it
+
+.footnote[[1] Of course, you may also need to adapt the features and tuning procedures to match the new algorithm.]
+
+---
+class: onecol
+## Pseudocode for simple training
+
+```{r, eval=FALSE}
+# Create data splits
+set.seed(2021)
+index <- createDataPartition(my_data$outcome, p = 0.80, list = FALSE)
+my_training_set <- my_data[index, ]
+my_testing_set <- my_data[-index, ]
+
+# Set up recipe
+my_recipe <- 
+  my_data %>% 
+  recipe(outcome ~ .) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_corr(all_predictors())
+
+# Train model from recipe
+trained_model <- train( #<<
+  x = my_recipe, #<<
+  data = my_training_set, #<<
+  method = "lm" #<<
+) #<<
+```
+
+---
+class: onecol
+## Additional Arguments to `train()`
+
+Argument | Description
+:------- | :----------
+`trControl` | Controls the resampling procedure used during tuning
+`metric` | Controls which metric to optimize during tuning
+`tuneGrid` | Control which specific tuning values to compare
+`tuneLength`&emsp; | Control how many tuning values to automatically compare&emsp;
+
+These arguments are largely used to configure tuning (discussed tomorrow)
+
+The training set will be resampled and different tuning values will be compared
+
+The "best" tuning values will be used to train a **final model** using all the training data
+
+---
+class: onecol
+## Resampling options
+
+The `trControl` argument can be configured by `trainControl()`:
+
+Argument&emsp; | Description
+:------- | :----------
+`method` | Controls the type of resampling (e.g., "cv", "repeatedcv", "boot")&emsp;
+`number` | Controls the number of folds in cv and iterations in boot
+`repeats` | Controls the number of repetitions in repeatedcv
+
+"cv" will perform resampling through $k$-fold cross-validation
+
+"repeatedcv" will repeat $k$-fold cross-validation multiple times
+
+"boot" will perform resampling through bootstrapping
+
+---
+class: onecol
+## Pseudocode for training with resampling
+
+```{r, eval=FALSE}
+# Configure resampling options
+resampling_options <- trainControl( #<<
+  method = "repeatedcv", #<<
+  number = 10, #<<
+  repeats = 3 #<<
+) #<<
+
+# Train model from recipe
+trained_model <- train(
+  x = my_recipe,
+  data = my_training_set,
+  method = "lm",
+  trControl = resampling_options #<<
+)
+```
+
+---
+class: onecol
+## Advanced Resampling Options
+
+There are many other arguments to `trainControl()` to explore
+
+- **`selectionFunction`** can be used to prioritize less complex models*
+- **`predictionBounds`** can be used to constrain predicted values in regression
+- **`sampling`** can be used to address imbalanced labels in classification*
+- **`seeds`** can be used to make the resampling procedure reproducible
+
+.footnote[*These are both advanced topics that we plan to revisit on Day 5-A.]
+
+--
+
+There are also alternative resampling methods to explore
+- Fancier versions of bootstrapping (e.g., "boot632")
+- Algorithm-specific methods (e.g., "oob")
+- Adaptive methods that tune faster/smarter (e.g., "adaptive_cv")
+
+---
+## Comprehension check
+
+.pull-left[
+```{r, eval=FALSE}
+# Assume packages and data are loaded
+
+# Part 1
+my_recipe <- 
+  my_data %>% 
+  recipe(outcome ~ .) %>% 
+  step_center(all_numeric_predictors()) %>% 
+  step_zv(all_predictors()) %>% 
+  prep(training = my_training_set)
+
+# Part 2
+trained_model <- train(
+  x = my_recipe,
+  data = my_training_set,
+  method = "cv"
+)
+```
+
+]
+
+.pull-right[
+**1. What was the main mistake made in Part 1?**
+
+&emsp; a) The predictors should be listed in `recipe()`
+
+&emsp; b) Numeric predictors cannot be centered
+
+&emsp; c) `step_zv()` only works for numeric predictors
+
+&emsp; d) The recipe should not be prepped yet
+
+**2. What was the main mistake made in Part 2?**
+
+&emsp; a) `data` should be `my_testing_set`
+
+&emsp; b) `x` should be `my_data`
+
+&emsp; c) "cv" is not a method for `train()`
+
+&emsp; d) Forgot to add the `number` argument
+]
+
+---
+class: inverse, center, middle
+# Model Evaluation
+---
+
+train$results
+
+---
+
+predict()
+- object
+- newdata 
+- type
+- na.action
+
+---
+
+postResample()
+- pred
+- obs
+
+---
+
+confusionMatrix()
+
+---
+
+yardstick
+- ccc
+- huber_loss
+- mcc
+- roc_auc
+- metric_set
+
+---
+class: inverse, center, middle
+# Model Interpretation
+
+varImp()
+- object
+- scale
+
+train$finalModel

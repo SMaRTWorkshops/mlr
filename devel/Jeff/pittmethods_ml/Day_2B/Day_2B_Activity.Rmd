@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Day 2B Activity (Basic Predictive Modeling)"
 output: html_notebook
 ---
 
@@ -9,7 +9,7 @@ library(caret)
 library(recipes)
 ```
 
-## Using linear regression to predict Titanic fares
+## Using linear regression to predict Titanic fares (regression)
 
 ```{r}
 # Read in data
@@ -27,8 +27,11 @@ fare_test <- titanic[-fare_index, ]
 fare_recipe <- 
   titanic %>% 
   recipe(fare ~ .) %>% 
+  step_rm(survived) %>%
   step_normalize(all_numeric_predictors()) %>% 
-  step_dummy(all_nominal_predictors())
+  step_dummy(all_nominal_predictors()) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_corr(all_predictors())
 ```
 
 ```{r}
@@ -38,14 +41,14 @@ fare_lm <- train(
   fare_recipe, 
   data = fare_train,
   method = "lm",
-  metric = "RMSE",
   trControl = trainControl(method = "cv", number = 10)
 )
+# Examine results of internal cross-validation
 fare_lm$results
 ```
 
 ```{r}
-# Extract model predictions
+# Extract model predictions on test set
 fare_pred <- predict(fare_lm, newdata = fare_test)
 glimpse(fare_pred)
 ```
@@ -62,21 +65,27 @@ postResample(pred = fare_pred, obs = fare_test_baked$fare)
 
 ```{r}
 # Plot predictions against test set labels
-fare_test %>% 
+fare_test_baked %>% 
   mutate(fare_pred = fare_pred) %>% 
-  ggplot(aes(x = fare, y = fare_pred)) + 
-  geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
-  geom_point()
-```
-
-```{r}
-# Plot predictions against test set labels in a square
-fare_test %>% 
-  mutate(fare_pred = predictions) %>% 
   ggplot(aes(x = fare, y = fare_pred)) + 
   geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
   geom_point() +
   coord_fixed(xlim = c(0, 520), ylim = c(0, 520))
+```
+
+```{r}
+# Combine the trusted labels and predictions into a data frame
+fare_test_data <- data.frame(
+  obs = fare_test_baked$fare, 
+  pred = fare_pred
+)
+
+library(yardstick)
+ccc(fare_test_data, truth = obs, estimate = pred)
+huber_loss(fare_test_data, truth = obs, estimate = pred)
+
+my_metrics <- metric_set(rmse, huber_loss, rsq, ccc)
+my_metrics(fare_test_data, truth = obs, estimate = pred)
 ```
 
 ```{r}
@@ -85,7 +94,12 @@ lm_imp <- varImp(fare_lm, scale = FALSE) %>% print()
 plot(lm_imp)
 ```
 
-## Using Logistic Regression to predict Titanic survival
+```{r}
+# Examine the coefficients (not available for all algorithms)
+fare_lm$finalModel
+```
+
+## Using Logistic Regression to predict Titanic survival (classification)
 
 ```{r}
 # Create a training and testing set (stratified by survived)
@@ -101,7 +115,10 @@ surv_recipe <-
   titanic %>% 
   recipe(survived ~ .) %>% 
   step_normalize(all_numeric_predictors()) %>% 
-  step_dummy(all_nominal_predictors())
+  step_dummy(all_nominal_predictors()) %>% 
+  step_interact(~sex_male:starts_with("pclass")) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_corr(all_predictors())
 ```
 
 ```{r}
@@ -155,16 +172,16 @@ test_data <- bind_cols(
 )
 
 yardstick::mcc(test_data, truth = obs, estimate = pred)
-yardstick::roc_auc(test_data, no, truth = obs)
+yardstick::roc_auc(test_data, yes, truth = obs, event_level = "second")
+yardstick::roc_curve(test_data, yes, truth = obs, event_level = "second") %>% autoplot()
+```
+
+
+```{r}
+varImp(surv_glm, scale = FALSE) %>% plot()
 ```
 
 ```{r}
-glm_imp <- varImp(surv_glm, scale = FALSE) %>% print()
-plot(glm_imp)
-```
-
-```{r}
-# Look at actual coefficients (not useful for every algorithm)
+# Look at the model coefficients (not available for every algorithm)
 surv_glm$finalModel
 ```
-
