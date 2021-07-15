@@ -357,7 +357,7 @@ include_graphics("hyperparameter_tuning2.png")
 ---
 ## Dataset 
 
-Today, we'll work with a simulated dataset examining predictors of eating disorder severity (for regression problems) and diagnosis (for classification problems)<sup>1</sup>. Simulated variables include  theoretically *related* and theoretically *unrelated* to eating disorders severity and diagnoses:
+Today, we'll work with a simulated dataset examining predictors of eating disorder severity<sup>1</sup>. Simulated variables include  theoretically *related* and theoretically *unrelated* to eating disorders severity:
 
 .pull-left[
 - Emotion regulation
@@ -385,7 +385,7 @@ Today, we'll work with a simulated dataset examining predictors of eating disord
 
 
 .footnote[
-[1] Note: Slides will offer a regression example and live coding will offer a classification example.
+[1] Note: Slides will offer a regression example and live coding will offer a classification example in a different dataset.
 ]
 
 
@@ -558,7 +558,7 @@ seeds[[31]] <- sample.int(1000, 1) # for the last model
 This `seeds` object can be included in the `trainControl` function to obtain the same resampling seeds each time the code is run for fully reproducible results. 
 
 ```{r}
-EDsim_control <- trainControl(method = 'repeatedCV',
+EDsim_control <- trainControl(method = 'repeatedcv',
                               number = 10,
                               repeats = 3,
                               classProbs = FALSE,
@@ -625,7 +625,8 @@ ridgefit$results
 ```
 ]
 
---
+---
+## Ridge Regression in R
 
 **Step 6: Predict on held-out test set**
 
@@ -687,7 +688,7 @@ class: inverse, center, middle
 ---
 ## Lasso Regression
 
-Lasso stands for the **L**east **A**bsolute **S**hrinkage and **S**election **O**perator. 
+Lasso stands for the ![:emphasize](Least Absolute Shrinkage and Selection Operator). 
 
 Similar to ridge regression, lasso regression adds an additional penalty term (in this case, the $L1$ penalty) to the OLS error function:
 
@@ -860,9 +861,11 @@ enfit
 
 Examine results of internal cross-validation: 
 
+.scroll-output[
 ```{r}
 enfit$results
 ```
+]
 
 --
 
@@ -936,29 +939,28 @@ d) $\lambda$ = feature selection, $\alpha$ = shrinkage
 
 ---
 class: inverse, center, middle
-# Model Comparison
-
----
-## Model Comparison
-
-```{r, echo = FALSE}
-training <- c(summary(ridgefit$results))
-```
-
----
-class: inverse, center, middle
 # Live Coding
 
 ---
-## Live Coding
+## Live Coding Activity
 
-notes to self: 
+**Live Coding**: I will walk through examples of ridge, lasso, and elastic net for classification in RStudio. 
 
-do regular regression, ridge, lasso, elastic net, and compare the models 
+- You can follow along in your own RStudio (easiest with 1 large or 2+ monitors)
+- Or you can download `Day_3A_Activity.Rmd` and follow along
+- In either case, please download the `heart.csv` and `hcp_memory.csv` files. 
 
-also show categorical
+.footnote[
+All files are on the workshop OSF page: https://osf.io/3qhc8/. 
+]
 
-remember to add in some knowledge checks
+--
+</br>
 
----
-## Group Activity
+**Small Group Activity**: Afterwards, we will split you into small breakout room groups to practice a full machine learning workflow using a new dataset. 
+
+If you have any questions, please post them in the chat or workshop Slack channel. 
+
+We will also float between different breakout rooms to answer questions. 
+
+

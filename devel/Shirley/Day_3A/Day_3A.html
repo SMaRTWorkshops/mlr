@@ -274,7 +274,7 @@ We can find the 'best' value of `\(\lambda\)` through cross-validation hyperpara
 ---
 ## Dataset 
 
-Today, we'll work with a simulated dataset examining predictors of eating disorder severity (for regression problems) and diagnosis (for classification problems)&lt;sup&gt;1&lt;/sup&gt;. Simulated variables include  theoretically *related* and theoretically *unrelated* to eating disorders severity and diagnoses:
+Today, we'll work with a simulated dataset examining predictors of eating disorder severity&lt;sup&gt;1&lt;/sup&gt;. Simulated variables include  theoretically *related* and theoretically *unrelated* to eating disorders severity:
 
 .pull-left[
 - Emotion regulation
@@ -302,7 +302,7 @@ Today, we'll work with a simulated dataset examining predictors of eating disord
 
 
 .footnote[
-[1] Note: Slides will offer a regression example and live coding will offer a classification example.
+[1] Note: Slides will offer a regression example and live coding will offer a classification example in a different dataset.
 ]
 
 
@@ -370,7 +370,7 @@ min < med < max:
 -9.8 < -4.1 < 2.3
 IQR (CV) : 3.4 (-0.6)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABhElEQVR42u3ZTW7CMBgG4UnFHblDex56h56y3byLCEPzA8Z2mNkhoUIfxSafM/1i8NH6C/SRDIAM6TR/MVX8oMuNTeir5gcuNv9Cp91/ZXPnq9c/xTvaUb2QYU3LVHVybwBkSDIAMiQZABmSDIAMqent06WbKb8pQ6t7xjIXBSBDkgGQIckAyJBkAGRIMgAyJBkAGVKl0aqf2bEpQ0/T45pcFMCTrobRlkAlhtGWQJmLApAhdfZEu6zcd2o86u+e4TW7josCkCHJAMiQZABkSDIAu+4bxh+knsIw/iBV5qIAZEgyADIkGQAZkgyADEkGQIYkAyBD6v5kuqzGkf2ADDXmWxcFIEOSAZAhyQDIkBZ/MI94Dr2D4Yjn0GUuCkCGJAMgQ5IBkCHJAMiQZABkSDIAMiQZgKsJc9Sh+vEj+6tB+1y8YYSx+vGjABcFIEMa8KnVmrbuFgdl2LpbHJSh7Mav4Oz6eBuG/6+PaY70Peh9w74+Z1fD9Fb/+d38wQRkSDIA8Af13Sr0o5SuyAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMEUH2V0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDA0WmHhAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECL8OGsMAAABhElEQVR42u3ZTW7CMBgG4UnFHblDex56h56y3byLCEPzA8Z2mNkhoUIfxSafM/1i8NH6C/SRDIAM6TR/MVX8oMuNTeir5gcuNv9Cp91/ZXPnq9c/xTvaUb2QYU3LVHVybwBkSDIAMiQZABmSDIAMqent06WbKb8pQ6t7xjIXBSBDkgGQIckAyJBkAGRIMgAyJBkAGVKl0aqf2bEpQ0/T45pcFMCTrobRlkAlhtGWQJmLApAhdfZEu6zcd2o86u+e4TW7josCkCHJAMiQZABkSDIAu+4bxh+knsIw/iBV5qIAZEgyADIkGQAZkgyADEkGQIYkAyBD6v5kuqzGkf2ADDXmWxcFIEOSAZAhyQDIkBZ/MI94Dr2D4Yjn0GUuCkCGJAMgQ5IBkCHJAMiQZABkSDIAMiQZgKsJc9Sh+vEj+6tB+1y8YYSx+vGjABcFIEMa8KnVmrbuFgdl2LpbHJSh7Mav4Oz6eBuG/6+PaY70Peh9w74+Z1fD9Fb/+d38wQRkSDIA8Af13Sr0o5SuyAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNCswMDowMHp5phAAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzQrMDA6MDALJB6sAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -381,7 +381,7 @@ IQR (CV) : 3.4 (-0.6)</td>
         <td align="left">1. no_ED
 2. ED</td>
         <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">212</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">53.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">188</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">47.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFAAAAAvCAQAAADebIUyAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAAAi0lEQVRYw+3XQQqAIBRF0W+0x/ZQ66k9uMqaWpADTd4L7p05kQNfQdMZ3k1qAMDRzeXiMDmQa3oBRixqW0Tk28p+xAABqgMIUB1AgOoA9vZ4D+a2XQaWykd0at7m20qT/YjtgbczuIs+TVvlbBl8muoX037EAAGqAwhQHUCA6gD29q9Pk2P2IwbY2wXS8Au3dk7ZaAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMEUH2V0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDA0WmHhAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFAAAAAvCAQAAADebIUyAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECL8OGsMAAAAi0lEQVRYw+3XQQqAIBRF0W+0x/ZQ66k9uMqaWpADTd4L7p05kQNfQdMZ3k1qAMDRzeXiMDmQa3oBRixqW0Tk28p+xAABqgMIUB1AgOoA9vZ4D+a2XQaWykd0at7m20qT/YjtgbczuIs+TVvlbBl8muoX037EAAGqAwhQHUCA6gD29q9Pk2P2IwbY2wXS8Au3dk7ZaAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNCswMDowMHp5phAAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzQrMDA6MDALJB6sAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -394,7 +394,7 @@ min < med < max:
 1.4 < 4.8 < 8.6
 IQR (CV) : 1.7 (0.3)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABXElEQVR42u3cQW4aQRBA0YfFHX2H+DzOHXLKeFOL2bix0WRgnP93CAHjJ1UD3cKXv4qXR1/AcxQDYpiu2xuXh1zC+43l6e0fXdb2Za93P8uOvS7u+3PIFTQUiGE6aChuzf+jO2xt+Hz+j5n+dQ0FYphiQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMMiGGKATFMMWDHU6tnP547iOEZjufvr6FADFMMiGGKATFMMSCGKQbEMMWAGKYYEMMUA2KYYkAM01P8umbdepdzn58gnYDhiD3OhgIxTDEghikGxDDFgG99bjj3Ye1uDOc+rF3XUCCGKQbEMMWAGKYYEMMUA2KYYsAptmTXrb7wfX3X+vQM+/zrnIYCMUwxIIYpBsQwnf4Nc9WNTeTNp4rrNx52ur6+hXy994E/q9YGxDBdtsvB7x+2Nqz7tVkiL//VX/5pDQVimGIAH7ohHLwQiFRnAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE0VDAyOjQwOjAyKzAwOjAwRQfZXQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMDRaYeEAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECL8OGsMAAABXElEQVR42u3cQW4aQRBA0YfFHX2H+DzOHXLKeFOL2bix0WRgnP93CAHjJ1UD3cKXv4qXR1/AcxQDYpiu2xuXh1zC+43l6e0fXdb2Za93P8uOvS7u+3PIFTQUiGE6aChuzf+jO2xt+Hz+j5n+dQ0FYphiQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMMiGGKATFMMWDHU6tnP547iOEZjufvr6FADFMMiGGKATFMMSCGKQbEMMWAGKYYEMMUA2KYYkAM01P8umbdepdzn58gnYDhiD3OhgIxTDEghikGxDDFgG99bjj3Ye1uDOc+rF3XUCCGKQbEMMWAGKYYEMMUA2KYYsAptmTXrb7wfX3X+vQM+/zrnIYCMUwxIIYpBsQwnf4Nc9WNTeTNp4rrNx52ur6+hXy994E/q9YGxDBdtsvB7x+2Nqz7tVkiL//VX/5pDQVimGIAH7ohHLwQiFRnAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE1VDAyOjE2OjM0KzAwOjAwenmmEAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNVQwMjoxNjozNCswMDowMAskHqwAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -407,7 +407,7 @@ min < med < max:
 -1.4 < 2.7 < 5.8
 IQR (CV) : 1.7 (0.5)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABXUlEQVR42u3cUW7aQBRA0UPFHrOHdj3tHrLK5ud9WJUyJMg1OLn3DyGBfaQxnhmLy1/Fj0cfwHMUA2KYrtsXl4ccwu8bl6df/+mwtl97vftTduxl8d7rIUfQoEAMUwyIYYoBMUwxIIYpBsQwxYAYpqeYWq1bz0D3mX+egOGI+WeDAjFMMSCGKQbEMMWAGKYYEMMUA2KYYkAM00ET7Vu71o/usPWG91cNjtmzXtegQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMMiGGKATFMMSCGKQbEMJ3gYeF1q93Rjz9PfXqGffZGGxSIYYoBMUwxIIZptx/MZ3+66SCGZ/hPjvtrUCCGKQbEMMWAGKYYEMN0+mWXVTfubDdrU1+a4eP3tQ0KxDB9YlCcew65G8O555DrGhSIYYoB/1wbvvJFcN1le+Z/vhXDz81d5OVbnfm7dW1ADFMM4A1aJhu8TaiamQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMEUH2V0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDA0WmHhAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECL8OGsMAAABXUlEQVR42u3cUW7aQBRA0UPFHrOHdj3tHrLK5ud9WJUyJMg1OLn3DyGBfaQxnhmLy1/Fj0cfwHMUA2KYrtsXl4ccwu8bl6df/+mwtl97vftTduxl8d7rIUfQoEAMUwyIYYoBMUwxIIYpBsQwxYAYpqeYWq1bz0D3mX+egOGI+WeDAjFMMSCGKQbEMMWAGKYYEMMUA2KYYkAM00ET7Vu71o/usPWG91cNjtmzXtegQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMMiGGKATFMMSCGKQbEMJ3gYeF1q93Rjz9PfXqGffZGGxSIYYoBMUwxIIZptx/MZ3+66SCGZ/hPjvtrUCCGKQbEMMWAGKYYEMN0+mWXVTfubDdrU1+a4eP3tQ0KxDB9YlCcew65G8O555DrGhSIYYoB/1wbvvJFcN1le+Z/vhXDz81d5OVbnfm7dW1ADFMM4A1aJhu8TaiamQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNCswMDowMHp5phAAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzQrMDA6MDALJB6sAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -420,7 +420,7 @@ min < med < max:
 2.9 < 4.9 < 7.2
 IQR (CV) : 1.1 (0.2)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABW0lEQVR42u3bUW7aQBRA0UOVPWYP7XqSPXSV6c/7IBIjEYpdu7n3D4SwObJHzNi+fCh+/OsdOEYxIIbp5frFZdNNvS2HoV/bbnjR9e68PPwtD/R6893fS6D9eHZlWLXi2a/GBsQwxYAYphgQwxQDYphiQAzTJn+m3063lrPRnOLWLGHPOcJX66RADFMMiGGKATFMMSCGKQbEMMWAGKYYcJCrVqv2u6h3aIb9Lup1UiCGKQbEMMWAGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBsQwxYAYpr9aoD/fjX+bMBzh8aDn1EmBGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBhz8vshVz79t9JQMz1/suYvhLIttt/fznmPkzqPhHIttjz8L3BCJGKYYEMMUA2KYYkAMUwyIYYoBMUyfplZnmUl+reWvupp5Xq4/8/5fMqz6uWL4vjU2IIYpBvAHt8wgun7XBHYAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDBFB9ldAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE0VDAyOjQwOjAyKzAwOjAwNFph4QAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECL8OGsMAAABW0lEQVR42u3bUW7aQBRA0UOVPWYP7XqSPXSV6c/7IBIjEYpdu7n3D4SwObJHzNi+fCh+/OsdOEYxIIbp5frFZdNNvS2HoV/bbnjR9e68PPwtD/R6893fS6D9eHZlWLXi2a/GBsQwxYAYphgQwxQDYphiQAzTJn+m3063lrPRnOLWLGHPOcJX66RADFMMiGGKATFMMSCGKQbEMMWAGKYYcJCrVqv2u6h3aIb9Lup1UiCGKQbEMMWAGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBsQwxYAYpr9aoD/fjX+bMBzh8aDn1EmBGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBhz8vshVz79t9JQMz1/suYvhLIttt/fznmPkzqPhHIttjz8L3BCJGKYYEMMUA2KYYkAMUwyIYYoBMUyfplZnmUl+reWvupp5Xq4/8/5fMqz6uWL4vjU2IIYpBvAHt8wgun7XBHYAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTVUMDI6MTY6MzQrMDA6MDB6eaYQAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE1VDAyOjE2OjM0KzAwOjAwCyQerAAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -433,7 +433,7 @@ min < med < max:
 0.3 < 4.3 < 8.9
 IQR (CV) : 2.1 (0.3)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABX0lEQVR42u3awU3rUBBA0RNEj/QA9fB7+FXCZhYW0kOIYGKHe3cgAc5JnqUZfHlTPNz6Ao5RDIhhetx+cfm1P/v6yS3p5ZcuY3sJj9/+LVf2tPj+/5tcTYcCMUwxIIYpBsQwxYAYphgQwxQDYphiQAxTDIhhigExTDFg513k62n+F7TzSvZYi9d1HQrEMMWAGKYYEMMUA2KYYkAM082eb1i3nkT2ewDkgAy3mEM6FIhhigExTDEghikGxDDFgBimGBDDFANimGJADNMB1y7r9ttLnYphv73UDzCc5ymGXRnO8xTDum6RiGGKATFMMSCGKQbEMMWAGKYYEMP05dHqHubIH2A49hx57ULmVGuXdde+Rd0bEMMUA2KYYkAMUwyIYYoBMUwxIIYpBnyYMO9xp/DJa9qM4B8G7aflzxxhq/CdvjaCdyjAZfuZ+XeHh2Ld8+ZQXP7UK1/WoUAMUwzgHWv3H7zKKx0YAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE0VDAyOjQwOjAyKzAwOjAwRQfZXQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMDRaYeEAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECL8OGsMAAABX0lEQVR42u3awU3rUBBA0RNEj/QA9fB7+FXCZhYW0kOIYGKHe3cgAc5JnqUZfHlTPNz6Ao5RDIhhetx+cfm1P/v6yS3p5ZcuY3sJj9/+LVf2tPj+/5tcTYcCMUwxIIYpBsQwxYAYphgQwxQDYphiQAxTDIhhigExTDFg513k62n+F7TzSvZYi9d1HQrEMMWAGKYYEMMUA2KYYkAM082eb1i3nkT2ewDkgAy3mEM6FIhhigExTDEghikGxDDFgBimGBDDFANimGJADNMB1y7r9ttLnYphv73UDzCc5ymGXRnO8xTDum6RiGGKATFMMSCGKQbEMMWAGKYYEMP05dHqHubIH2A49hx57ULmVGuXdde+Rd0bEMMUA2KYYkAMUwyIYYoBMUwxIIYpBnyYMO9xp/DJa9qM4B8G7aflzxxhq/CdvjaCdyjAZfuZ+XeHh2Ld8+ZQXP7UK1/WoUAMUwzgHWv3H7zKKx0YAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE1VDAyOjE2OjM0KzAwOjAwenmmEAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNVQwMjoxNjozNCswMDowMAskHqwAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -446,7 +446,7 @@ min < med < max:
 1.2 < 3.6 < 6.1
 IQR (CV) : 1.1 (0.2)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABcklEQVR42u3bUU7bUBBA0ZOKPXYP7XroHlgl/ZmPiDpSlBgnL733D4TAOtI848GcPhU/Hn0Bz1EMiGF6O//gdOAPfr9wKP0+7CLOL+Dt5u9ydz83PvfxoGtpKBDDFANimGJADFMMiGGKATFMMeCQZ4r3BTY7hzxaPdND1HYNBWKYYkAMUwx46BJuu63b6/fvJ5+O4d+b6xG31oYCMUwxIIYpBsQwxYAYphgQwxQDYphiQAzTzg/aKyzjD2B41L7g3hoKxDDFgBimGBDDFANimGJADFMMiGGKATFMT/eH/a22txh7vvWwBMP3v1DYUCCGKQbccTasunzdmWGFN6Gvr6FADFMMiGGKATFMMSCGKQbEMMWAGKYYEMO0xC5yuz0XtQsz7LnvaCgQw3TFULzW1vFmhtfaOm7XUCCGKQZ8ORte4TC87T/+vxyR6x+Gt73B31Bg6V+mr+/CsJ+Nyun8K/68wNlwfb8uMfy/dTYghikG8BfVkiRYPWOvtwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMEUH2V0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDA0WmHhAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECL8OGsMAAABcklEQVR42u3bUU7bUBBA0ZOKPXYP7XroHlgl/ZmPiDpSlBgnL733D4TAOtI848GcPhU/Hn0Bz1EMiGF6O//gdOAPfr9wKP0+7CLOL+Dt5u9ydz83PvfxoGtpKBDDFANimGJADFMMiGGKATFMMeCQZ4r3BTY7hzxaPdND1HYNBWKYYkAMUwx46BJuu63b6/fvJ5+O4d+b6xG31oYCMUwxIIYpBsQwxYAYphgQwxQDYphiQAzTzg/aKyzjD2B41L7g3hoKxDDFgBimGBDDFANimGJADFMMiGGKATFMT/eH/a22txh7vvWwBMP3v1DYUCCGKQbccTasunzdmWGFN6Gvr6FADFMMiGGKATFMMSCGKQbEMMWAGKYYEMO0xC5yuz0XtQsz7LnvaCgQw3TFULzW1vFmhtfaOm7XUCCGKQZ8ORte4TC87T/+vxyR6x+Gt73B31Bg6V+mr+/CsJ+Nyun8K/68wNlwfb8uMfy/dTYghikG8BfVkiRYPWOvtwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNCswMDowMHp5phAAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzQrMDA6MDALJB6sAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -462,7 +462,7 @@ IQR (CV) : 1.1 (0.2)</td>
 6. 7
 7. 8</td>
         <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">2</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">0.5%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">30</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">7.5%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">96</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">24.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">165</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">41.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">93</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">23.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">13</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">3.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">0.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAEEAAACUCAQAAABmDYxSAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABDElEQVR42u3cQQrCMBQE0F/xjh7C83gIT6kbhbRoq7Wms3jjqrjIIz/QgYjDrfbOYW8AwiO35nPpdjDaVQN2AQEBAQEBAQFhKUNblIZuy7arBuxCAOHYPryqr+e/T+c4fjxNvr522IWAQSAgICAgIAQTJi/rHi/naXTHEMJid/w8a1vmQnf8POsPcsAgEBAQEBAQEOaivlblDaLftXm74Zt1x28yPnEBg0BAQEBAQECYi+5YFTGIAMJm9XX99fpG9fWXYxwwCAQEBAQEhGCC7lgVMYgAwpvu+P8fWr4hPLtj30MZMAgEBAQEBASEuaivVRGDGBE6XpsH7wICAsLeAAQEBIRIwuD/mhAeuQMJ4zAzVnxoXAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMEUH2V0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDA0WmHhAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAEEAAACUCAQAAABmDYxSAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABDElEQVR42u3cQQrCMBQE0F/xjh7C83gIT6kbhbRoq7Wms3jjqrjIIz/QgYjDrfbOYW8AwiO35nPpdjDaVQN2AQEBAQEBAQFhKUNblIZuy7arBuxCAOHYPryqr+e/T+c4fjxNvr522IWAQSAgICAgIAQTJi/rHi/naXTHEMJid/w8a1vmQnf8POsPcsAgEBAQEBAQEOaivlblDaLftXm74Zt1x28yPnEBg0BAQEBAQECYi+5YFTGIAMJm9XX99fpG9fWXYxwwCAQEBAQEhGCC7lgVMYgAwpvu+P8fWr4hPLtj30MZMAgEBAQEBASEuaivVRGDGBE6XpsH7wICAsLeAAQEBIRIwuD/mhAeuQMJ4zAzVnxoXAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMNwOraQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDCtUxUYAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -475,7 +475,7 @@ min < med < max:
 13.1 < 17.4 < 21.9
 IQR (CV) : 2.2 (0.1)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABYklEQVR42u3ZwVHjQBBA0WeKHDcHiAdy2Ch3L30Qh6FcGGFL/H8zBxCv1PJo5vJP8XTvC3iMYkAM0/P2w+XH/uzbJ4+k1x+6jO0lPH/5t9zYn8XP/97lahoKxDDFgBimGBDDFANimGJADFMMiGGKATFMMSCGKQbEMMWAnfci3w5zFrTzluxjbbzejeErre+h/bbuH5DhHndQj0jEMMWAGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIbpG7ZdjrPjuCvDcXYc1zUUiGGKATFMMSCG6QGPa9btd551KIb91icNBWKYYkAMUwyIYYoBMUwxIIYpBsQwxYAYpqtftM9wGvENDGc4jVjXUCCGKQbEMMWAGKYYcLBzinW3HuSchOHWpV1DgRimGBDD9OERee6X6asZ1k/cc7xOr2socJp1w7pPBn2zsDo9w3ULq4YCXLb3zPuv+qZ42QzF5Vf958saCsQwxQD+A6EbH8IZTcRTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE0VDAyOjQwOjAyKzAwOjAwRQfZXQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMDRaYeEAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABYklEQVR42u3ZwVHjQBBA0WeKHDcHiAdy2Ch3L30Qh6FcGGFL/H8zBxCv1PJo5vJP8XTvC3iMYkAM0/P2w+XH/uzbJ4+k1x+6jO0lPH/5t9zYn8XP/97lahoKxDDFgBimGBDDFANimGJADFMMiGGKATFMMSCGKQbEMMWAnfci3w5zFrTzluxjbbzejeErre+h/bbuH5DhHndQj0jEMMWAGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIbpG7ZdjrPjuCvDcXYc1zUUiGGKATFMMSCG6QGPa9btd551KIb91icNBWKYYkAMUwyIYYoBMUwxIIYpBsQwxYAYpqtftM9wGvENDGc4jVjXUCCGKQbEMMWAGKYYcLBzinW3HuSchOHWpV1DgRimGBDD9OERee6X6asZ1k/cc7xOr2socJp1w7pPBn2zsDo9w3ULq4YCXLb3zPuv+qZ42QzF5Vf958saCsQwxQD+A6EbH8IZTcRTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAw3A6tpAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMK1TFRgAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -488,7 +488,7 @@ min < med < max:
 -2.1 < 3.5 < 8.9
 IQR (CV) : 2.4 (0.5)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABeUlEQVR42u3aQW7aUBRA0UPFHruHdj3pHrLKdPIGSLgKsrCx6b2zRIjYBz8r/5vLl+LHqw/gGMWAGKbr7Q+XlxzCx+Lt6ffmB3P7Z6+r3+WJ/bz7zefOR9BQIIYpBsQwxYAYphgQwxQDYphiQAxTDIhhigExTIfYdllqaU9qux2pwzLsuyPVUGD3q+HjoE+Hdh+K12+/LtVQIIYpBsQwxYAYphgQwxQDYphiwMZriqMupHZmuF9IHWEZtVRDgRimGBDDFANimGJADNNhH9cstd2TrFMxbLe531AghikGxDDFgBimGBDDFANimGJADFMMONkKc6n7xfeapffpGZ7zQKihwBOvhvM8r9yU4ahf/HyshgIxTDEghikGxDDFgBimGBDDFANimE6/33Dfmm9BvCHDmpVuQ4EYphiw8t5w7g23pzGce8NtqYYCD1wN7zEAi2dx87/E9dsXv8UAfHcOl9sz//MWn/yj/bq5Gi7/1Zn/s26RiGGKAfwF6E0m7vCM6M4AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDBFB9ldAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE0VDAyOjQwOjAyKzAwOjAwNFph4QAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABeUlEQVR42u3aQW7aUBRA0UPFHruHdj3pHrLKdPIGSLgKsrCx6b2zRIjYBz8r/5vLl+LHqw/gGMWAGKbr7Q+XlxzCx+Lt6ffmB3P7Z6+r3+WJ/bz7zefOR9BQIIYpBsQwxYAYphgQwxQDYphiQAxTDIhhigExTIfYdllqaU9qux2pwzLsuyPVUGD3q+HjoE+Hdh+K12+/LtVQIIYpBsQwxYAYphgQwxQDYphiwMZriqMupHZmuF9IHWEZtVRDgRimGBDDFANimGJADNNhH9cstd2TrFMxbLe531AghikGxDDFgBimGBDDFANimGJADFMMONkKc6n7xfeapffpGZ7zQKihwBOvhvM8r9yU4ahf/HyshgIxTDEghikGxDDFgBimGBDDFANimE6/33Dfmm9BvCHDmpVuQ4EYphiw8t5w7g23pzGce8NtqYYCD1wN7zEAi2dx87/E9dsXv8UAfHcOl9sz//MWn/yj/bq5Gi7/1Zn/s26RiGGKAfwF6E0m7vCM6M4AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDDcDq2kAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAwrVMVGAAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -501,7 +501,7 @@ min < med < max:
 -1.1 < 3.1 < 6.2
 IQR (CV) : 1.4 (0.3)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABSklEQVR42u3cQY4SURhG0YPpPboHXU+7B1epk2+AgyJGQKr13hmEQHHIe6GoP1x+KD69+gDOUQyIYb1d37i8+mjwfmOz+vrQA7x+obc/fpan9fng/u9PfM0WBWJYMSCGFQNiWDEghhUDYlgxIIYVA152hvl+st/+Xnai/YrT6eNaFIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYAYVgw45ej4ccfjAPfO1n8ohucNA7QoEMOKATGsGBDDigFP/t5wtunHFzGcbfrxuBYFYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgxIIYVA2JYMSCGFQNiWDHgIdcpPs5FmacynOGizL3jQB9q6Oe4ez+I9gbEsH5ZFLc3u8f+oe3f6sZ7uno/l+tHffsH9vzf78sRw/9bewNiWDGAn3BgGyKwgyYpAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE0VDAyOjQwOjAyKzAwOjAwRQfZXQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMDRaYeEAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABSklEQVR42u3cQY4SURhG0YPpPboHXU+7B1epk2+AgyJGQKr13hmEQHHIe6GoP1x+KD69+gDOUQyIYb1d37i8+mjwfmOz+vrQA7x+obc/fpan9fng/u9PfM0WBWJYMSCGFQNiWDEghhUDYlgxIIYVA152hvl+st/+Xnai/YrT6eNaFIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYAYVgw45ej4ccfjAPfO1n8ohucNA7QoEMOKATGsGBDDigFP/t5wtunHFzGcbfrxuBYFYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgxIIYVA2JYMSCGFQNiWDHgIdcpPs5FmacynOGizL3jQB9q6Oe4ez+I9gbEsH5ZFLc3u8f+oe3f6sZ7uno/l+tHffsH9vzf78sRw/9bewNiWDGAn3BgGyKwgyYpAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAw3A6tpAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMK1TFRgAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -514,7 +514,7 @@ min < med < max:
 0.8 < 3.4 < 6
 IQR (CV) : 1.3 (0.3)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABeElEQVR42u3bW06EMABG4YOZPboHXc+4B1epL/8Dhk4kTQulnPOmkyj5Mr0RWH4weDv7AsZIBkCG9Fj/sJxyCc/i9PTZ/WLW//ZR/Vca9r75zffBV+CgAGRIMgAypIOnyOegm9bDV4rzV4VSDgpAhiQDIEOSAZAhyQDIkGQAZEgyADIkGQAZkgxA5/sNo95kOZhhe5NlhFsspRwUgAxJBkCGJAMgQ5IBkCHJAMiQZABkSDIADU+Y1zlUd2UY9cmFfTkoABmSDIAMSQZAhiQDIEMa4kWCUqVdab93LIZlOHZP6qAAZEgyADIkGQAZkgyADEkGQIYkAyBDGvZoVarfqfNSDP1OnQ4KQIYkAyBDkgGQIckAVO4brv1IRzOGaz/S0ZBhnLbfzJrt9eUZ2ry/4xQJyJBkAHbMDfMtjlUM8y2OpRwUwAQL5raaW3UTMtQM4j8M95gO/2W4x3S4g2HWit/z1XyxrD//utWg+HjFcN/cNwAyJBkA+AXa0Cb0JqWMcwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMEUH2V0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDA0WmHhAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABeElEQVR42u3bW06EMABG4YOZPboHXc+4B1epL/8Dhk4kTQulnPOmkyj5Mr0RWH4weDv7AsZIBkCG9Fj/sJxyCc/i9PTZ/WLW//ZR/Vca9r75zffBV+CgAGRIMgAypIOnyOegm9bDV4rzV4VSDgpAhiQDIEOSAZAhyQDIkGQAZEgyADIkGQAZkgxA5/sNo95kOZhhe5NlhFsspRwUgAxJBkCGJAMgQ5IBkCHJAMiQZABkSDIADU+Y1zlUd2UY9cmFfTkoABmSDIAMSQZAhiQDIEMa4kWCUqVdab93LIZlOHZP6qAAZEgyADIkGQAZkgyADEkGQIYkAyBDGvZoVarfqfNSDP1OnQ4KQIYkAyBDkgGQIckAVO4brv1IRzOGaz/S0ZBhnLbfzJrt9eUZ2ry/4xQJyJBkAHbMDfMtjlUM8y2OpRwUwAQL5raaW3UTMtQM4j8M95gO/2W4x3S4g2HWit/z1XyxrD//utWg+HjFcN/cNwAyJBkA+AXa0Cb0JqWMcwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMNwOraQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDCtUxUYAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -527,7 +527,7 @@ min < med < max:
 3.6 < 4.9 < 6.3
 IQR (CV) : 0.6 (0.1)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAJodZBaAAABeElEQVR42u3cUW7TQBRA0RPUPbIHWE/ZA6uEn/eRGKHKJbYn4t6/SFU7PorHY0/S2y/Fl6sHsEYxIIbp7f7F7dKhvP8xTX0/dED3f+7t07/lgMP++vDq54ljuZDhysPe1tyAGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBsQwxYAYphhw6rPI94U3yE59JLvOI9htnRSIYYoBMUwx4OLNu4/aXmKP29pdmuG8C2wnBQ5+N6y8bjyR4fFtvdKqcVsnBWKYYkAMUwyIYYoBMUwxIIYpBsQwxYAYphgQwxQDYphiQAxTDFh8u2bbcbtYL8Vw3C5WJwVimGJADFMMiGGKATFMMeDJq8jX+XTLoQxnfyr6efcYL3VPse156M0NiGGKATFMMSCGKQbEMMWAGKZdi+mz/5Xh3h7Ht2dsO+8ptqv4te4pP/+1hX+8tVr3e7b7am5ADFMM2MwNq18J9vXh9H13bLf7n/2x1Lx/dN/+xvD/1tyAGKYYwG/VzClWeRfunAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMiswMDowMEUH2V0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDIrMDA6MDA0WmHhAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABeElEQVR42u3cUW7TQBRA0RPUPbIHWE/ZA6uEn/eRGKHKJbYn4t6/SFU7PorHY0/S2y/Fl6sHsEYxIIbp7f7F7dKhvP8xTX0/dED3f+7t07/lgMP++vDq54ljuZDhysPe1tyAGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBsQwxYAYphhw6rPI94U3yE59JLvOI9htnRSIYYoBMUwx4OLNu4/aXmKP29pdmuG8C2wnBQ5+N6y8bjyR4fFtvdKqcVsnBWKYYkAMUwyIYYoBMUwxIIYpBsQwxYAYphgQwxQDYphiQAxTDFh8u2bbcbtYL8Vw3C5WJwVimGJADFMMiGGKATFMMeDJq8jX+XTLoQxnfyr6efcYL3VPse156M0NiGGKATFMMSCGKQbEMMWAGKZdi+mz/5Xh3h7Ht2dsO+8ptqv4te4pP/+1hX+8tVr3e7b7am5ADFMM2MwNq18J9vXh9H13bLf7n/2x1Lx/dN/+xvD/1tyAGKYYwG/VzClWeRfunAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMNwOraQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDCtUxUYAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -540,7 +540,7 @@ min < med < max:
 1.9 < 4.4 < 7.2
 IQR (CV) : 1.1 (0.2)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAMfcqDMAAABa0lEQVR42u3bUW7aQBRA0UOVPXYP7XqSPWSV6c/7IImjVhaGcXPvHwiBOWZsa8Zc3hQ/Hr0BaxQDYpierh9cDv+4581D0e/jP3ij60152v0uO/v56ZnXRxh8qEGBGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBsQwxYAYprtPwm21NUN53/nJJRgePz/ZoEAMUwyIYYoBMUwxIIZpicunre57Zbksw32vLA9leD7NjVUH/xo+7tMV7mXYqkMkYphiQAxTDIhhigExTDEghikGxDDFgBimGBDDdLNpl/PMNB3KsMK69P4aFIhhigExTDEghikGxDAtu5S71XGr3KdiOO46tUGBGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBuycbzj3Qt3NGM69ULdVgwIxTDEghumvh8jVzwqft2/PlP0/nCnWPivc5m9M7xhW3/N7++J7Xf1qLtevePlPGbb79RXD960zBWKYYgB/ANToI1Q3Q28CAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE0VDAyOjQwOjAzKzAwOjAw43DS6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNFQwMjo0MDowMyswMDowMJItalUAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABa0lEQVR42u3bUW7aQBRA0UOVPXYP7XqSPWSV6c/7IImjVhaGcXPvHwiBOWZsa8Zc3hQ/Hr0BaxQDYpierh9cDv+4581D0e/jP3ij60152v0uO/v56ZnXRxh8qEGBGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBsQwxYAYprtPwm21NUN53/nJJRgePz/ZoEAMUwyIYYoBMUwxIIZpicunre57Zbksw32vLA9leD7NjVUH/xo+7tMV7mXYqkMkYphiQAxTDIhhigExTDEghikGxDDFgBimGBDDdLNpl/PMNB3KsMK69P4aFIhhigExTDEghikGxDAtu5S71XGr3KdiOO46tUGBGKYYEMMUA2KYYkAMUwyIYYoBMUwxIIYpBuycbzj3Qt3NGM69ULdVgwIxTDEghumvh8jVzwqft2/PlP0/nCnWPivc5m9M7xhW3/N7++J7Xf1qLtevePlPGbb79RXD960zBWKYYgB/ANToI1Q3Q28CAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAw3A6tpAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMK1TFRgAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -553,7 +553,7 @@ min < med < max:
 3 < 5 < 6
 IQR (CV) : 1 (0.1)</td>
         <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">3</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">11</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">2.8%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">4</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">180</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">45.0%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">5</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">191</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">47.8%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">6</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">18</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">4.5%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr></table></td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAEkAAABXCAQAAADipqC8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAMfcqDMAAAAzUlEQVRo3u3awQ2EMAxEUWdFjxRBPbs9UCUcQJBkCQIO9gj9uXF7wkYaS6TJ1PKJBkB6li5/+K2LNSRvRr7R1VvqrXd/K3UEBwcJEiRIaoEECZJnuvJxjPaYWcr7nHuZ3HLSKhVSDO4bcNT99/xql7yb99HuCg4OEiRIkNQCCRIkz9C9WxHv3oKk8HNgTbYzwefAkvKjEhwcJEiQIKkFEiRInuEcaIVz4G6a54D/3zmHpP0ciFxzwcFBggQJklogQXoxSb17a0RwcJCuZAYb8Beiq3i8LQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMyswMDowMONw0ukAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDMrMDA6MDCSLWpVAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAEkAAABXCAQAAADipqC8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAAAzUlEQVRo3u3awQ2EMAxEUWdFjxRBPbs9UCUcQJBkCQIO9gj9uXF7wkYaS6TJ1PKJBkB6li5/+K2LNSRvRr7R1VvqrXd/K3UEBwcJEiRIaoEECZJnuvJxjPaYWcr7nHuZ3HLSKhVSDO4bcNT99/xql7yb99HuCg4OEiRIkNQCCRIkz9C9WxHv3oKk8HNgTbYzwefAkvKjEhwcJEiQIKkFEiRInuEcaIVz4G6a54D/3zmHpP0ciFxzwcFBggQJklogQXoxSb17a0RwcJCuZAYb8Beiq3i8LQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMNwOraQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDCtUxUYAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -566,7 +566,7 @@ min < med < max:
 1 < 3 < 6
 IQR (CV) : 1 (0.3)</td>
         <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">9</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">2.2%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">2</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">87</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">21.8%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">3</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">167</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">41.8%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">4</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">121</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">30.2%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">5</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">15</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">3.8%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">6</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">1</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">0.2%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr></table></td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAEIAAACACAQAAAAVfXfcAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAMfcqDMAAAA+klEQVR42u3cQQ6CMBCFYWq4I4fwPHIHT6kbq9NGiA6l85r8b8fKL50heQoxPab4XKIBIGxme7G+FuSazv9gu4vVSSzTEnASEuMAAQIECBAgQHgzl5f3EESyDadDoXpnp1nFRAJR7MTN+U3oaDGuFtNTc48vs8Q4QIAAAQIEiCERdMwciXFIIJp0TFfM7Bt0TE/KG0BiHCBAgAABAgQIbyi6OXrjaNsxf/9187SO+c92SYwDBAgQIECAAOENHTNHYhwSiM2i2+Pt1K+IT9Htu6AS4wABAgQIECCGRNAxcyTGoYfo+sBe+iRARAcECBAgQIAYEpH4rwEQVZ4CUyEzwWCWXgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNFQwMjo0MDowMyswMDowMONw0ukAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTRUMDI6NDA6MDMrMDA6MDCSLWpVAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAEIAAACACAQAAAAVfXfcAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAAA+klEQVR42u3cQQ6CMBCFYWq4I4fwPHIHT6kbq9NGiA6l85r8b8fKL50heQoxPab4XKIBIGxme7G+FuSazv9gu4vVSSzTEnASEuMAAQIECBAgQHgzl5f3EESyDadDoXpnp1nFRAJR7MTN+U3oaDGuFtNTc48vs8Q4QIAAAQIEiCERdMwciXFIIJp0TFfM7Bt0TE/KG0BiHCBAgAABAgQIbyi6OXrjaNsxf/9187SO+c92SYwDBAgQIECAAOENHTNHYhwSiM2i2+Pt1K+IT9Htu6AS4wABAgQIECCGRNAxcyTGoYfo+sBe+iRARAcECBAgQIAYEpH4rwEQVZ4CUyEzwWCWXgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMNwOraQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDCtUxUYAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -579,7 +579,7 @@ min < med < max:
 1.2 < 4.2 < 8
 IQR (CV) : 1.7 (0.3)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAMfcqDMAAABkklEQVR42u2aS3KDMBAFm5Tv6Dsk53HukFM6m7fAohIK85NE946NwV280YzQ8ETg4+wHqAM1AGoIt/HFcMgtH5Ny9HXMjQvGj3F7+1dWcH+5+jnjEQoMBaCGoAZADUENgBqCGgA1BDUAagi7N9OPJjY0Dpgp7sV1DTNEiaEA1BDUAKghqAFQQ1ADoIagBuCknemS87fsq9BwfrttKAA1hM1D0cZgvbuGGj/NzWMogEpWiilltPZeQCvVcHSwDAWghqAGQA1BDYAaghoANQQ1AGoIagDUECodrUr2njgb0bD3xGkoADUENQBqCGoA1BDUAKghqAFQQ1jdTLf56XZzDed8ut36fEwjo1XJ1udjrA2AGsLCUPRREFdrqOHU2h4YCkANQQ2AGkKj7dOUdVv43WhY19LPaOi1T1iooc0zr8uxRAJqCGoA1BBeSuRV1oUZDb3Oj/MYCqCjLrJk2aZttxqWxbtbDVMm78fo7biQhv/GAkskoIagBkANYRiXz+9LNdOfo5ViuNQ//xNDAaghqAGAX7V+LfxhIYwuAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE0VDAyOjQwOjAzKzAwOjAw43DS6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNFQwMjo0MDowMyswMDowMJItalUAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABkklEQVR42u2aS3KDMBAFm5Tv6Dsk53HukFM6m7fAohIK85NE946NwV280YzQ8ETg4+wHqAM1AGoIt/HFcMgtH5Ny9HXMjQvGj3F7+1dWcH+5+jnjEQoMBaCGoAZADUENgBqCGgA1BDUAagi7N9OPJjY0Dpgp7sV1DTNEiaEA1BDUAKghqAFQQ1ADoIagBuCknemS87fsq9BwfrttKAA1hM1D0cZgvbuGGj/NzWMogEpWiilltPZeQCvVcHSwDAWghqAGQA1BDYAaghoANQQ1AGoIagDUECodrUr2njgb0bD3xGkoADUENQBqCGoA1BDUAKghqAFQQ1jdTLf56XZzDed8ut36fEwjo1XJ1udjrA2AGsLCUPRREFdrqOHU2h4YCkANQQ2AGkKj7dOUdVv43WhY19LPaOi1T1iooc0zr8uxRAJqCGoA1BBeSuRV1oUZDb3Oj/MYCqCjLrJk2aZttxqWxbtbDVMm78fo7biQhv/GAkskoIagBkANYRiXz+9LNdOfo5ViuNQ//xNDAaghqAGAX7V+LfxhIYwuAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAw3A6tpAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMK1TFRgAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -592,7 +592,7 @@ min < med < max:
 2.8 < 4.2 < 5.8
 IQR (CV) : 0.8 (0.1)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAMfcqDMAAABUElEQVR42u3aQU4CQRBA0Yfxjt5Bz6N38JS6qcXERBsUccD/d4QEmhdqyDR9eFPc/fUC9lEMiGG63z44XOQtn4+4HD1dYCnbZdx/+1V+0MPi+deLr6ihQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMM+IW9yGM2XPfXL2zJ7m/DdV1DgT/aoF+3Gq1z/4+xU4avB+v8Y9VQIIYpBsQwxYAYphgQwxQDYphiQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMMiGGKATFMMSCGKQbEMMWA3Z6EW7U+i3vakcErZTj3SdwTGa7zRPTZGa7zRPS6LpGIYYoBMUwxIIYpBsQwxYAYphgQwxQDPtxh3upt9IkMt3obva6hwNVuwq07YsA3u5U3y3DaeDcU4LD97rz8q1+Kx81QHP7VJ/+0hgIxTDGAd1F5GibITqWvAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE0VDAyOjQwOjAzKzAwOjAw43DS6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNFQwMjo0MDowMyswMDowMJItalUAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABUElEQVR42u3aQU4CQRBA0Yfxjt5Bz6N38JS6qcXERBsUccD/d4QEmhdqyDR9eFPc/fUC9lEMiGG63z44XOQtn4+4HD1dYCnbZdx/+1V+0MPi+deLr6ihQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMM+IW9yGM2XPfXL2zJ7m/DdV1DgT/aoF+3Gq1z/4+xU4avB+v8Y9VQIIYpBsQwxYAYphgQwxQDYphiQAxTDIhhigExTDEghikGxDDFgBimGBDDFANimGJADFMMiGGKATFMMSCGKQbEMMWA3Z6EW7U+i3vakcErZTj3SdwTGa7zRPTZGa7zRPS6LpGIYYoBMUwxIIYpBsQwxYAYphgQwxQDPtxh3upt9IkMt3obva6hwNVuwq07YsA3u5U3y3DaeDcU4LD97rz8q1+Kx81QHP7VJ/+0hgIxTDGAd1F5GibITqWvAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAw3A6tpAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xNVQwMjoxNjozNSswMDowMK1TFRgAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -605,7 +605,7 @@ min < med < max:
 -5 < 2 < 9
 IQR (CV) : 4 (1.2)</td>
         <td align="left" style="vertical-align:middle">15 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAMfcqDMAAABkUlEQVR42u3by1HDMAAG4TWTHtMD1BN6oEq4/AdHGvAYvyRl9+YLcT4sWZGT6RuDt6tPoI1kAGRIt/nBdMpLPqrp6OOcFy6an8bt339lQ/eno68rTqHIQQGccDU8urgjnzAo7sVxC4OgzEEByJAuuVOUXX8LbYLh+tnDQQHIkGQAZEgyADIkGQAZkgxAI6vIunJ5ffTieneGffYXzt6fOuBqaG+LbTnnBkCGJAMgQ5IBkCHJAMiQZABkSDIAMiQZABmSDIAMSQZAhiQDIEOSAZAhNfq4puzoxzedMBz97MNBAexwNfTxZeDDGfp8WFfmoABkSDIAMiQZABmSDIAMSQZAhiQDIEOSAZAhyQDIkFZuu4yx17SZoYWfjsL+v+PtZGe6rP5nbNvC75ShbtuOqFMkIEOSAZAhyQDIkGQAFtcNoy6eVzKM8aB2OQcFIEN6GhQjzQTrPoMWc0MbH6P3aN07cVAAMiQZgIG2XZarJs3ZlPlCDH8tBKc50edAN8zl3mdXw/RS7/zXnCIBGZIMAPwAhXMt9AnFnp4AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTRUMDI6NDA6MDMrMDA6MDDjcNLpAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE0VDAyOjQwOjAzKzAwOjAwki1qVQAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABkUlEQVR42u3by1HDMAAG4TWTHtMD1BN6oEq4/AdHGvAYvyRl9+YLcT4sWZGT6RuDt6tPoI1kAGRIt/nBdMpLPqrp6OOcFy6an8bt339lQ/eno68rTqHIQQGccDU8urgjnzAo7sVxC4OgzEEByJAuuVOUXX8LbYLh+tnDQQHIkGQAZEgyADIkGQAZkgxAI6vIunJ5ffTieneGffYXzt6fOuBqaG+LbTnnBkCGJAMgQ5IBkCHJAMiQZABkSDIAMiQZABmSDIAMSQZAhiQDIEOSAZAhNfq4puzoxzedMBz97MNBAexwNfTxZeDDGfp8WFfmoABkSDIAMiQZABmSDIAMSQZAhiQDIEOSAZAhyQDIkFZuu4yx17SZoYWfjsL+v+PtZGe6rP5nbNvC75ShbtuOqFMkIEOSAZAhyQDIkGQAFtcNoy6eVzKM8aB2OQcFIEN6GhQjzQTrPoMWc0MbH6P3aN07cVAAMiQZgIG2XZarJs3ZlPlCDH8tBKc50edAN8zl3mdXw/RS7/zXnCIBGZIMAPwAhXMt9AnFnp4AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDDcDq2kAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAwrVMVGAAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
@@ -618,14 +618,14 @@ min < med < max:
 2.7 < 5.8 < 9.4
 IQR (CV) : 1.4 (0.2)</td>
         <td align="left" style="vertical-align:middle">400 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw4CKAMfcqDMAAABi0lEQVR42u3bQXaCMAAG4aHPO3qH9jz2Dp6y3fwLDFYehUCCMzs2Cp8EAsLwg8HH0SvQRjIAMqTLeGHY5Stvk8PR1z5fXDRejcu/P2VF14el+xGrUOSgAGRIMgAyJBkAGZIMgAxJBmCHWeStiyv5HSbT12K5hcnzAQzzHX+x1QTD8fuLh0hAhiQDIEOSAZAhyQDIkGQAZEgyADIkGQAZkgyADEkGQIYkAyBDauKW7LTyXnXtO9WNMuz9WJCDApAhyQDIkGQAZEibnzD7eJ6hOkOLjwLP56AAZEiNTqbLal9jdMJQ+3jjoABkSDIAMiQZgA3OFH1Onjdn6HPyXOagAGRIMgAyJBkAGZIMgAxJBkCGJAMgQ5IBkCHJAHRzg75s6/d4O2XY+j1eBwUgQ1o4KM5xA3Y1Qwtv19fIQQHIkGQAup03TFv3IMhpGOb+O3tyjhtBzTCc6QT5CuqB4dlG9/oP5bIfsNgbzjMrWLYlnikAGMb7zveJjgTzfY4OkcNbbfmfOSgAGZIMAPwCAoYtiMfbc1sAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTRUMDI6NDA6MDMrMDA6MDDjcNLpAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE0VDAyOjQwOjAzKzAwOjAwki1qVQAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBw8CECOLP1uaAAABi0lEQVR42u3bQXaCMAAG4aHPO3qH9jz2Dp6y3fwLDFYehUCCMzs2Cp8EAsLwg8HH0SvQRjIAMqTLeGHY5Stvk8PR1z5fXDRejcu/P2VF14el+xGrUOSgAGRIMgAyJBkAGZIMgAxJBmCHWeStiyv5HSbT12K5hcnzAQzzHX+x1QTD8fuLh0hAhiQDIEOSAZAhyQDIkGQAZEgyADIkGQAZkgyADEkGQIYkAyBDauKW7LTyXnXtO9WNMuz9WJCDApAhyQDIkGQAZEibnzD7eJ6hOkOLjwLP56AAZEiNTqbLal9jdMJQ+3jjoABkSDIAMiQZgA3OFH1Onjdn6HPyXOagAGRIMgAyJBkAGZIMgAxJBkCGJAMgQ5IBkCHJAHRzg75s6/d4O2XY+j1eBwUgQ1o4KM5xA3Y1Qwtv19fIQQHIkGQAup03TFv3IMhpGOb+O3tyjhtBzTCc6QT5CuqB4dlG9/oP5bIfsNgbzjMrWLYlnikAGMb7zveJjgTzfY4OkcNbbfmfOSgAGZIMAPwCAoYtiMfbc1sAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMTVUMDI6MTY6MzUrMDA6MDDcDq2kAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE1VDAyOjE2OjM1KzAwOjAwrVMVGAAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
         <td align="center">0
 (0.0%)</td>
       </tr>
     </tbody>
   </table>
 </div>
-<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.9 (<a href='https://www.r-project.org/'>R</a> version 4.1.0)<br/>2021-07-13</p>
+<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.9 (<a href='https://www.r-project.org/'>R</a> version 4.1.0)<br/>2021-07-14</p>
 </div>
 
 ---
@@ -696,7 +696,7 @@ This `seeds` object can be included in the `trainControl` function to obtain the
 
 
 ```r
-EDsim_control &lt;- trainControl(method = 'repeatedCV',
+EDsim_control &lt;- trainControl(method = 'repeatedcv',
                               number = 10,
                               repeats = 3,
                               classProbs = FALSE,
@@ -1096,7 +1096,8 @@ ridgefit$results
 ```
 ]
 
---
+---
+## Ridge Regression in R
 
 **Step 6: Predict on held-out test set**
 
@@ -1162,7 +1163,7 @@ class: inverse, center, middle
 ---
 ## Lasso Regression
 
-Lasso stands for the **L**east **A**bsolute **S**hrinkage and **S**election **O**perator. 
+Lasso stands for the ![:emphasize](Least Absolute Shrinkage and Selection Operator). 
 
 Similar to ridge regression, lasso regression adds an additional penalty term (in this case, the `\(L1\)` penalty) to the OLS error function:
 
@@ -1874,7 +1875,206 @@ enfit
 ##   0.5263158  0.6516223502  1.3810152  0.7790922  1.1590324
 ##   0.5263158  1.0103507447  1.6696417  0.7241825  1.3864998
 ##   0.5263158  1.5665647856  2.0541642  0.6008458  1.6954909
-##  [ reached getOption("max.print") -- omitted 200 rows ]
+##   0.5736842  0.0003766177  0.9878732  0.8303376  0.8452199
+##   0.5736842  0.0005839516  0.9878732  0.8303376  0.8452199
+##   0.5736842  0.0009054262  0.9878227  0.8303562  0.8452071
+##   0.5736842  0.0014038776  0.9875690  0.8304491  0.8451141
+##   0.5736842  0.0021767344  0.9870086  0.8306337  0.8449199
+##   0.5736842  0.0033750611  0.9864448  0.8308109  0.8448912
+##   0.5736842  0.0052330856  0.9862721  0.8308349  0.8454987
+##   0.5736842  0.0081139818  0.9859468  0.8308971  0.8462371
+##   0.5736842  0.0125808570  0.9847542  0.8312417  0.8463821
+##   0.5736842  0.0195068174  0.9830945  0.8317858  0.8464614
+##   0.5736842  0.0302456285  0.9821372  0.8321666  0.8476974
+##   0.5736842  0.0468963247  0.9815518  0.8326948  0.8494693
+##   0.5736842  0.0727134920  0.9826153  0.8334109  0.8528018
+##   0.5736842  0.1127434177  0.9916553  0.8331941  0.8622075
+##   0.5736842  0.1748104496  1.0186110  0.8309352  0.8836501
+##   0.5736842  0.2710463628  1.0783515  0.8251061  0.9274258
+##   0.5736842  0.4202616660  1.2015578  0.8093653  1.0192640
+##   0.5736842  0.6516223502  1.4191781  0.7702433  1.1879503
+##   0.5736842  1.0103507447  1.7250264  0.7098330  1.4313275
+##   0.5736842  1.5665647856  2.1249313  0.5604727  1.7512948
+##   0.6210526  0.0003766177  0.9878413  0.8303596  0.8452995
+##   0.6210526  0.0005839516  0.9878413  0.8303596  0.8452995
+##   0.6210526  0.0009054262  0.9878003  0.8303755  0.8452850
+##   0.6210526  0.0014038776  0.9875391  0.8304676  0.8451853
+##   0.6210526  0.0021767344  0.9869310  0.8306604  0.8449817
+##   0.6210526  0.0033750611  0.9863909  0.8308300  0.8449526
+##   0.6210526  0.0052330856  0.9861722  0.8308664  0.8455513
+##   0.6210526  0.0081139818  0.9858528  0.8309176  0.8463007
+##   0.6210526  0.0125808570  0.9845218  0.8313186  0.8463230
+##   0.6210526  0.0195068174  0.9829490  0.8318342  0.8466111
+##   0.6210526  0.0302456285  0.9821616  0.8321770  0.8479175
+##   0.6210526  0.0468963247  0.9816387  0.8327412  0.8497080
+##   0.6210526  0.0727134920  0.9833418  0.8333850  0.8534970
+##   0.6210526  0.1127434177  0.9941917  0.8328834  0.8640581
+##   0.6210526  0.1748104496  1.0245429  0.8301606  0.8876774
+##   0.6210526  0.2710463628  1.0906862  0.8233072  0.9352341
+##   0.6210526  0.4202616660  1.2263961  0.8044640  1.0382517
+##   0.6210526  0.6516223502  1.4568921  0.7617328  1.2169555
+##   0.6210526  1.0103507447  1.7789631  0.6968567  1.4748442
+##   0.6210526  1.5665647856  2.1906099  0.5236018  1.8039393
+##   0.6684211  0.0003766177  0.9874842  0.8304552  0.8450293
+##   0.6684211  0.0005839516  0.9874842  0.8304552  0.8450293
+##   0.6684211  0.0009054262  0.9874891  0.8304553  0.8450378
+##   0.6684211  0.0014038776  0.9872103  0.8305572  0.8449487
+##   0.6684211  0.0021767344  0.9866517  0.8307443  0.8447981
+##   0.6684211  0.0033750611  0.9862625  0.8308757  0.8449090
+##   0.6684211  0.0052330856  0.9860404  0.8309065  0.8455717
+##   0.6684211  0.0081139818  0.9857141  0.8309530  0.8463169
+##   0.6684211  0.0125808570  0.9843382  0.8313785  0.8462979
+##   0.6684211  0.0195068174  0.9828307  0.8318754  0.8467468
+##   0.6684211  0.0302456285  0.9822329  0.8321743  0.8481614
+##   0.6684211  0.0468963247  0.9818164  0.8327618  0.8499697
+##   0.6684211  0.0727134920  0.9842614  0.8332994  0.8542701
+##   0.6684211  0.1127434177  0.9968951  0.8325343  0.8659956
+##   0.6684211  0.1748104496  1.0302831  0.8294612  0.8916910
+##   0.6684211  0.2710463628  1.1037841  0.8212402  0.9438572
+##   0.6684211  0.4202616660  1.2521645  0.7989255  1.0578723
+##   0.6684211  0.6516223502  1.4946890  0.7529972  1.2462679
+##   0.6684211  1.0103507447  1.8342130  0.6818171  1.5188933
+##   0.6684211  1.5665647856  2.2559216  0.4558487  1.8557821
+##   0.7157895  0.0003766177  0.9877983  0.8303822  0.8452408
+##   0.7157895  0.0005839516  0.9877983  0.8303822  0.8452408
+##   0.7157895  0.0009054262  0.9877455  0.8304008  0.8452175
+##   0.7157895  0.0014038776  0.9873680  0.8305307  0.8450831
+##   0.7157895  0.0021767344  0.9866796  0.8307608  0.8448565
+##   0.7157895  0.0033750611  0.9860956  0.8309367  0.8448520
+##   0.7157895  0.0052330856  0.9859233  0.8309409  0.8455944
+##   0.7157895  0.0081139818  0.9855498  0.8310044  0.8462939
+##   0.7157895  0.0125808570  0.9841556  0.8314363  0.8462784
+##   0.7157895  0.0195068174  0.9827661  0.8318992  0.8469109
+##   0.7157895  0.0302456285  0.9823823  0.8321477  0.8484213
+##   0.7157895  0.0468963247  0.9820952  0.8327512  0.8502810
+##   0.7157895  0.0727134920  0.9851525  0.8332330  0.8549721
+##   0.7157895  0.1127434177  0.9995005  0.8322417  0.8679257
+##   0.7157895  0.1748104496  1.0364680  0.8286306  0.8958712
+##   0.7157895  0.2710463628  1.1173946  0.8189749  0.9533925
+##   0.7157895  0.4202616660  1.2785856  0.7927730  1.0775545
+##   0.7157895  0.6516223502  1.5327246  0.7437788  1.2755000
+##   0.7157895  1.0103507447  1.8906619  0.6613450  1.5631216
+##   0.7157895  1.5665647856  2.3098200  0.3489118  1.8975346
+##   0.7631579  0.0003766177  0.9874372  0.8304481  0.8448661
+##   0.7631579  0.0005839516  0.9874372  0.8304481  0.8448661
+##   0.7631579  0.0009054262  0.9873604  0.8304780  0.8448408
+##   0.7631579  0.0014038776  0.9869702  0.8306190  0.8447683
+##   0.7631579  0.0021767344  0.9863109  0.8308534  0.8446609
+##   0.7631579  0.0033750611  0.9859247  0.8309848  0.8448264
+##   0.7631579  0.0052330856  0.9858240  0.8309687  0.8456370
+##   0.7631579  0.0081139818  0.9853718  0.8310563  0.8462499
+##   0.7631579  0.0125808570  0.9840218  0.8314789  0.8462984
+##   0.7631579  0.0195068174  0.9828787  0.8318646  0.8471538
+##   0.7631579  0.0302456285  0.9825810  0.8321054  0.8486910
+##   0.7631579  0.0468963247  0.9822649  0.8327849  0.8505340
+##   0.7631579  0.0727134920  0.9857616  0.8332724  0.8555057
+##   0.7631579  0.1127434177  1.0023447  0.8318961  0.8699573
+##   0.7631579  0.1748104496  1.0429890  0.8277117  0.9002061
+##   0.7631579  0.2710463628  1.1315224  0.8164928  0.9634293
+##   0.7631579  0.4202616660  1.3054455  0.7860869  1.0974597
+##   0.7631579  0.6516223502  1.5711843  0.7337844  1.3055869
+##   0.7631579  1.0103507447  1.9467714  0.6358593  1.6071366
+##   0.7631579  1.5665647856  2.3426856  0.2745765  1.9208826
+##   0.8105263  0.0003766177  0.9876139  0.8304252  0.8450231
+##   0.8105263  0.0005839516  0.9876139  0.8304252  0.8450231
+##   0.8105263  0.0009054262  0.9874860  0.8304701  0.8449750
+##   0.8105263  0.0014038776  0.9870286  0.8306274  0.8448526
+##   0.8105263  0.0021767344  0.9863205  0.8308636  0.8447031
+##   0.8105263  0.0033750611  0.9858937  0.8309925  0.8448889
+##   0.8105263  0.0052330856  0.9857043  0.8309960  0.8456346
+##   0.8105263  0.0081139818  0.9851956  0.8311097  0.8462170
+##   0.8105263  0.0125808570  0.9839279  0.8315098  0.8463417
+##   0.8105263  0.0195068174  0.9830713  0.8318006  0.8474236
+##   0.8105263  0.0302456285  0.9828004  0.8320603  0.8489783
+##   0.8105263  0.0468963247  0.9820617  0.8329546  0.8505587
+##   0.8105263  0.0727134920  0.9865225  0.8332744  0.8561525
+##   0.8105263  0.1127434177  1.0053591  0.8315141  0.8720492
+##   0.8105263  0.1748104496  1.0498086  0.8267138  0.9046945
+##   0.8105263  0.2710463628  1.1460906  0.8137865  0.9736488
+##   0.8105263  0.4202616660  1.3313740  0.7796120  1.1166451
+##   0.8105263  0.6516223502  1.6091068  0.7234544  1.3355271
+##   0.8105263  1.0103507447  2.0006208  0.6091943  1.6497790
+##   0.8105263  1.5665647856  2.3509511  0.0742136  1.9266075
+##   0.8578947  0.0003766177  0.9877966  0.8303893  0.8452081
+##   0.8578947  0.0005839516  0.9877966  0.8303893  0.8452081
+##   0.8578947  0.0009054262  0.9876037  0.8304517  0.8451182
+##   0.8578947  0.0014038776  0.9870640  0.8306323  0.8449502
+##   0.8578947  0.0021767344  0.9862882  0.8308860  0.8447366
+##   0.8578947  0.0033750611  0.9857686  0.8310340  0.8448911
+##   0.8578947  0.0052330856  0.9855722  0.8310305  0.8456162
+##   0.8578947  0.0081139818  0.9850390  0.8311527  0.8461914
+##   0.8578947  0.0125808570  0.9838709  0.8315287  0.8464328
+##   0.8578947  0.0195068174  0.9833178  0.8317194  0.8477050
+##   0.8578947  0.0302456285  0.9826632  0.8321394  0.8490365
+##   0.8578947  0.0468963247  0.9818255  0.8331390  0.8505388
+##   0.8578947  0.0727134920  0.9874364  0.8332381  0.8569051
+##   0.8578947  0.1127434177  1.0084723  0.8311228  0.8741809
+##   0.8578947  0.1748104496  1.0568919  0.8256455  0.9092584
+##   0.8578947  0.2710463628  1.1611361  0.8108618  0.9844747
+##   0.8578947  0.4202616660  1.3560816  0.7738411  1.1354181
+##   0.8578947  0.6516223502  1.6449167  0.7145977  1.3641128
+##   0.8578947  1.0103507447  2.0524306  0.5821279  1.6912645
+##   0.8578947  1.5665647856  2.3512645        NaN  1.9268163
+##   0.9052632  0.0003766177  0.9877854  0.8303923  0.8451825
+##   0.9052632  0.0005839516  0.9877847  0.8303924  0.8451809
+##   0.9052632  0.0009054262  0.9875304  0.8304747  0.8450666
+##   0.9052632  0.0014038776  0.9869480  0.8306697  0.8448937
+##   0.9052632  0.0021767344  0.9861921  0.8309166  0.8446963
+##   0.9052632  0.0033750611  0.9857796  0.8310254  0.8449764
+##   0.9052632  0.0052330856  0.9855080  0.8310512  0.8456922
+##   0.9052632  0.0081139818  0.9847123  0.8312624  0.8460618
+##   0.9052632  0.0125808570  0.9837964  0.8315500  0.8465440
+##   0.9052632  0.0195068174  0.9836073  0.8316282  0.8480222
+##   0.9052632  0.0302456285  0.9823614  0.8322762  0.8489554
+##   0.9052632  0.0468963247  0.9816943  0.8332917  0.8505528
+##   0.9052632  0.0727134920  0.9884803  0.8331700  0.8576931
+##   0.9052632  0.1127434177  1.0116675  0.8307265  0.8763403
+##   0.9052632  0.1748104496  1.0642036  0.8245092  0.9139997
+##   0.9052632  0.2710463628  1.1763638  0.8078167  0.9961706
+##   0.9052632  0.4202616660  1.3801894  0.7683607  1.1538907
+##   0.9052632  0.6516223502  1.6798657  0.7064899  1.3924230
+##   0.9052632  1.0103507447  2.1019849  0.5570004  1.7311475
+##   0.9052632  1.5665647856  2.3512645        NaN  1.9268163
+##   0.9526316  0.0003766177  0.9877056  0.8304183  0.8451106
+##   0.9526316  0.0005839516  0.9877039  0.8304188  0.8451083
+##   0.9526316  0.0009054262  0.9874184  0.8305129  0.8449885
+##   0.9526316  0.0014038776  0.9868029  0.8307191  0.8448148
+##   0.9526316  0.0021767344  0.9860503  0.8309654  0.8446221
+##   0.9526316  0.0033750611  0.9857615  0.8310292  0.8450385
+##   0.9526316  0.0052330856  0.9854944  0.8310552  0.8457761
+##   0.9526316  0.0081139818  0.9842839  0.8314073  0.8458652
+##   0.9526316  0.0125808570  0.9838123  0.8315402  0.8467198
+##   0.9526316  0.0195068174  0.9836159  0.8316352  0.8481374
+##   0.9526316  0.0302456285  0.9819835  0.8324416  0.8487864
+##   0.9526316  0.0468963247  0.9816722  0.8334145  0.8506140
+##   0.9526316  0.0727134920  0.9896706  0.8330671  0.8585834
+##   0.9526316  0.1127434177  1.0149694  0.8303124  0.8785496
+##   0.9526316  0.1748104496  1.0717286  0.8233149  0.9188431
+##   0.9526316  0.2710463628  1.1917508  0.8046527  1.0078182
+##   0.9526316  0.4202616660  1.4045892  0.7625969  1.1727232
+##   0.9526316  0.6516223502  1.7154366  0.6979545  1.4212027
+##   0.9526316  1.0103507447  2.1508561  0.5333387  1.7707069
+##   0.9526316  1.5665647856  2.3512645        NaN  1.9268163
+##   1.0000000  0.0003766177  0.9875900  0.8304576  0.8450218
+##   1.0000000  0.0005839516  0.9875871  0.8304582  0.8450179
+##   1.0000000  0.0009054262  0.9872608  0.8305667  0.8448812
+##   1.0000000  0.0014038776  0.9866070  0.8307838  0.8446976
+##   1.0000000  0.0021767344  0.9859070  0.8310120  0.8445436
+##   1.0000000  0.0033750611  0.9857879  0.8310208  0.8451440
+##   1.0000000  0.0052330856  0.9854358  0.8310666  0.8458190
+##   1.0000000  0.0081139818  0.9839094  0.8315336  0.8456760
+##   1.0000000  0.0125808570  0.9839189  0.8314948  0.8469654
+##   1.0000000  0.0195068174  0.9834226  0.8317102  0.8481209
+##   1.0000000  0.0302456285  0.9816275  0.8326013  0.8486283
+##   1.0000000  0.0468963247  0.9817362  0.8335122  0.8507023
+##   1.0000000  0.0727134920  0.9910125  0.8329216  0.8596079
+##   1.0000000  0.1127434177  1.0183342  0.8298884  0.8807440
+##   1.0000000  0.1748104496  1.0794583  0.8220674  0.9241164
+##   1.0000000  0.2710463628  1.2075362  0.8012271  1.0196678
+##   1.0000000  0.4202616660  1.4294625  0.7563266  1.1920282
+##   1.0000000  0.6516223502  1.7522702  0.6878928  1.4507765
+##   1.0000000  1.0103507447  2.2009754  0.4974365  1.8113951
+##   1.0000000  1.5665647856  2.3512645        NaN  1.9268163
 ## 
 ## RMSE was used to select the optimal model using
 ##  the smallest value.
@@ -1888,6 +2088,7 @@ enfit
 
 Examine results of internal cross-validation: 
 
+.scroll-output[
 
 ```r
 enfit$results
@@ -2020,6 +2221,281 @@ enfit$results
 ## 123 0.3842105 0.0009054262 0.9877774 0.8303507 0.8450026
 ## 124 0.3842105 0.0014038776 0.9876798 0.8303854 0.8449810
 ## 125 0.3842105 0.0021767344 0.9874716 0.8304624 0.8450407
+## 126 0.3842105 0.0033750611 0.9869576 0.8306319 0.8449914
+## 127 0.3842105 0.0052330856 0.9864811 0.8307772 0.8451407
+## 128 0.3842105 0.0081139818 0.9863162 0.8308003 0.8458585
+## 129 0.3842105 0.0125808570 0.9857065 0.8309582 0.8464231
+## 130 0.3842105 0.0195068174 0.9842220 0.8314058 0.8464396
+## 131 0.3842105 0.0302456285 0.9827189 0.8319193 0.8469843
+## 132 0.3842105 0.0468963247 0.9817880 0.8323826 0.8485994
+## 133 0.3842105 0.0727134920 0.9816216 0.8330090 0.8511422
+## 134 0.3842105 0.1127434177 0.9845780 0.8336877 0.8564608
+## 135 0.3842105 0.1748104496 0.9980401 0.8333344 0.8692912
+## 136 0.3842105 0.2710463628 1.0334786 0.8310215 0.8977605
+## 137 0.3842105 0.4202616660 1.1096691 0.8246841 0.9545078
+## 138 0.3842105 0.6516223502 1.2590915 0.8069161 1.0689934
+## 139 0.3842105 1.0103507447 1.5016459 0.7641265 1.2564386
+## 140 0.3842105 1.5665647856 1.8165823 0.6984028 1.5078586
+## 141 0.4315789 0.0003766177 0.9876654 0.8303843 0.8449565
+## 142 0.4315789 0.0005839516 0.9876654 0.8303843 0.8449565
+## 143 0.4315789 0.0009054262 0.9876653 0.8303841 0.8449560
+## 144 0.4315789 0.0014038776 0.9875784 0.8304195 0.8449603
+## 145 0.4315789 0.0021767344 0.9873114 0.8305183 0.8449793
+## 146 0.4315789 0.0033750611 0.9867991 0.8306848 0.8449452
+## 147 0.4315789 0.0052330856 0.9864245 0.8307935 0.8452238
+## 148 0.4315789 0.0081139818 0.9862202 0.8308266 0.8459629
+## 149 0.4315789 0.0125808570 0.9854748 0.8310212 0.8464514
+## 150 0.4315789 0.0195068174 0.9838898 0.8315160 0.8464238
+## 151 0.4315789 0.0302456285 0.9824779 0.8320099 0.8471682
+## 152 0.4315789 0.0468963247 0.9816959 0.8324631 0.8488698
+## 153 0.4315789 0.0727134920 0.9816484 0.8331620 0.8514255
+## 154 0.4315789 0.1127434177 0.9859035 0.8336709 0.8577516
+## 155 0.4315789 0.1748104496 1.0022884 0.8329455 0.8722459
+## 156 0.4315789 0.2710463628 1.0436357 0.8298327 0.9048704
+## 157 0.4315789 0.4202616660 1.1314445 0.8214981 0.9694381
+## 158 0.4315789 0.6516223502 1.2994878 0.7986060 1.0987691
+## 159 0.4315789 1.0103507447 1.5574114 0.7515997 1.2988595
+## 160 0.4315789 1.5665647856 1.8940370 0.6773017 1.5696283
+## 161 0.4789474 0.0003766177 0.9876331 0.8304079 0.8449899
+## 162 0.4789474 0.0005839516 0.9876331 0.8304079 0.8449899
+## 163 0.4789474 0.0009054262 0.9876326 0.8304081 0.8449897
+## 164 0.4789474 0.0014038776 0.9874759 0.8304636 0.8449534
+## 165 0.4789474 0.0021767344 0.9871312 0.8305771 0.8449156
+## 166 0.4789474 0.0033750611 0.9866267 0.8307410 0.8449152
+## 167 0.4789474 0.0052330856 0.9863760 0.8308051 0.8453302
+## 168 0.4789474 0.0081139818 0.9861408 0.8308480 0.8460781
+## 169 0.4789474 0.0125808570 0.9852172 0.8310979 0.8464265
+## 170 0.4789474 0.0195068174 0.9835704 0.8316235 0.8463815
+## 171 0.4789474 0.0302456285 0.9822193 0.8321079 0.8473035
+## 172 0.4789474 0.0468963247 0.9816046 0.8325487 0.8490717
+## 173 0.4789474 0.0727134920 0.9818298 0.8332739 0.8518128
+## 174 0.4789474 0.1127434177 0.9875535 0.8335705 0.8591866
+## 175 0.4789474 0.1748104496 1.0072289 0.8323853 0.8757444
+## 176 0.4789474 0.2710463628 1.0545958 0.8284332 0.9122323
+## 177 0.4789474 0.4202616660 1.1544156 0.8177705 0.9850376
+## 178 0.4789474 0.6516223502 1.3403493 0.7891887 1.1289267
+## 179 0.4789474 1.0103507447 1.6128054 0.7391586 1.3418110
+## 180 0.4789474 1.5665647856 1.9750100 0.6444797 1.6335704
+## 181 0.5263158 0.0003766177 0.9877961 0.8303578 0.8450927
+## 182 0.5263158 0.0005839516 0.9877961 0.8303578 0.8450927
+## 183 0.5263158 0.0009054262 0.9877780 0.8303647 0.8450869
+## 184 0.5263158 0.0014038776 0.9875605 0.8304427 0.8450340
+## 185 0.5263158 0.0021767344 0.9870983 0.8305925 0.8449220
+## 186 0.5263158 0.0033750611 0.9865482 0.8307714 0.8449009
+## 187 0.5263158 0.0052330856 0.9863478 0.8308127 0.8454332
+## 188 0.5263158 0.0081139818 0.9860376 0.8308754 0.8461522
+## 189 0.5263158 0.0125808570 0.9849702 0.8311737 0.8463930
+## 190 0.5263158 0.0195068174 0.9832998 0.8317155 0.8463586
+## 191 0.5263158 0.0302456285 0.9821453 0.8321470 0.8474937
+## 192 0.5263158 0.0468963247 0.9815447 0.8326284 0.8492550
+## 193 0.5263158 0.0727134920 0.9821275 0.8333649 0.8522349
+## 194 0.5263158 0.1127434177 0.9894539 0.8334170 0.8606307
+## 195 0.5263158 0.1748104496 1.0127097 0.8317055 0.8796000
+## 196 0.5263158 0.2710463628 1.0663390 0.8268056 0.9197939
+## 197 0.5263158 0.4202616660 1.1775594 0.8138109 1.0015927
+## 198 0.5263158 0.6516223502 1.3810152 0.7790922 1.1590324
+## 199 0.5263158 1.0103507447 1.6696417 0.7241825 1.3864998
+## 200 0.5263158 1.5665647856 2.0541642 0.6008458 1.6954909
+## 201 0.5736842 0.0003766177 0.9878732 0.8303376 0.8452199
+## 202 0.5736842 0.0005839516 0.9878732 0.8303376 0.8452199
+## 203 0.5736842 0.0009054262 0.9878227 0.8303562 0.8452071
+## 204 0.5736842 0.0014038776 0.9875690 0.8304491 0.8451141
+## 205 0.5736842 0.0021767344 0.9870086 0.8306337 0.8449199
+## 206 0.5736842 0.0033750611 0.9864448 0.8308109 0.8448912
+## 207 0.5736842 0.0052330856 0.9862721 0.8308349 0.8454987
+## 208 0.5736842 0.0081139818 0.9859468 0.8308971 0.8462371
+## 209 0.5736842 0.0125808570 0.9847542 0.8312417 0.8463821
+## 210 0.5736842 0.0195068174 0.9830945 0.8317858 0.8464614
+## 211 0.5736842 0.0302456285 0.9821372 0.8321666 0.8476974
+## 212 0.5736842 0.0468963247 0.9815518 0.8326948 0.8494693
+## 213 0.5736842 0.0727134920 0.9826153 0.8334109 0.8528018
+## 214 0.5736842 0.1127434177 0.9916553 0.8331941 0.8622075
+## 215 0.5736842 0.1748104496 1.0186110 0.8309352 0.8836501
+## 216 0.5736842 0.2710463628 1.0783515 0.8251061 0.9274258
+## 217 0.5736842 0.4202616660 1.2015578 0.8093653 1.0192640
+## 218 0.5736842 0.6516223502 1.4191781 0.7702433 1.1879503
+## 219 0.5736842 1.0103507447 1.7250264 0.7098330 1.4313275
+## 220 0.5736842 1.5665647856 2.1249313 0.5604727 1.7512948
+## 221 0.6210526 0.0003766177 0.9878413 0.8303596 0.8452995
+## 222 0.6210526 0.0005839516 0.9878413 0.8303596 0.8452995
+## 223 0.6210526 0.0009054262 0.9878003 0.8303755 0.8452850
+## 224 0.6210526 0.0014038776 0.9875391 0.8304676 0.8451853
+## 225 0.6210526 0.0021767344 0.9869310 0.8306604 0.8449817
+## 226 0.6210526 0.0033750611 0.9863909 0.8308300 0.8449526
+## 227 0.6210526 0.0052330856 0.9861722 0.8308664 0.8455513
+## 228 0.6210526 0.0081139818 0.9858528 0.8309176 0.8463007
+## 229 0.6210526 0.0125808570 0.9845218 0.8313186 0.8463230
+## 230 0.6210526 0.0195068174 0.9829490 0.8318342 0.8466111
+## 231 0.6210526 0.0302456285 0.9821616 0.8321770 0.8479175
+## 232 0.6210526 0.0468963247 0.9816387 0.8327412 0.8497080
+## 233 0.6210526 0.0727134920 0.9833418 0.8333850 0.8534970
+## 234 0.6210526 0.1127434177 0.9941917 0.8328834 0.8640581
+## 235 0.6210526 0.1748104496 1.0245429 0.8301606 0.8876774
+## 236 0.6210526 0.2710463628 1.0906862 0.8233072 0.9352341
+## 237 0.6210526 0.4202616660 1.2263961 0.8044640 1.0382517
+## 238 0.6210526 0.6516223502 1.4568921 0.7617328 1.2169555
+## 239 0.6210526 1.0103507447 1.7789631 0.6968567 1.4748442
+## 240 0.6210526 1.5665647856 2.1906099 0.5236018 1.8039393
+## 241 0.6684211 0.0003766177 0.9874842 0.8304552 0.8450293
+## 242 0.6684211 0.0005839516 0.9874842 0.8304552 0.8450293
+## 243 0.6684211 0.0009054262 0.9874891 0.8304553 0.8450378
+## 244 0.6684211 0.0014038776 0.9872103 0.8305572 0.8449487
+## 245 0.6684211 0.0021767344 0.9866517 0.8307443 0.8447981
+## 246 0.6684211 0.0033750611 0.9862625 0.8308757 0.8449090
+## 247 0.6684211 0.0052330856 0.9860404 0.8309065 0.8455717
+## 248 0.6684211 0.0081139818 0.9857141 0.8309530 0.8463169
+## 249 0.6684211 0.0125808570 0.9843382 0.8313785 0.8462979
+## 250 0.6684211 0.0195068174 0.9828307 0.8318754 0.8467468
+## 251 0.6684211 0.0302456285 0.9822329 0.8321743 0.8481614
+## 252 0.6684211 0.0468963247 0.9818164 0.8327618 0.8499697
+## 253 0.6684211 0.0727134920 0.9842614 0.8332994 0.8542701
+## 254 0.6684211 0.1127434177 0.9968951 0.8325343 0.8659956
+## 255 0.6684211 0.1748104496 1.0302831 0.8294612 0.8916910
+## 256 0.6684211 0.2710463628 1.1037841 0.8212402 0.9438572
+## 257 0.6684211 0.4202616660 1.2521645 0.7989255 1.0578723
+## 258 0.6684211 0.6516223502 1.4946890 0.7529972 1.2462679
+## 259 0.6684211 1.0103507447 1.8342130 0.6818171 1.5188933
+## 260 0.6684211 1.5665647856 2.2559216 0.4558487 1.8557821
+## 261 0.7157895 0.0003766177 0.9877983 0.8303822 0.8452408
+## 262 0.7157895 0.0005839516 0.9877983 0.8303822 0.8452408
+## 263 0.7157895 0.0009054262 0.9877455 0.8304008 0.8452175
+## 264 0.7157895 0.0014038776 0.9873680 0.8305307 0.8450831
+## 265 0.7157895 0.0021767344 0.9866796 0.8307608 0.8448565
+## 266 0.7157895 0.0033750611 0.9860956 0.8309367 0.8448520
+## 267 0.7157895 0.0052330856 0.9859233 0.8309409 0.8455944
+## 268 0.7157895 0.0081139818 0.9855498 0.8310044 0.8462939
+## 269 0.7157895 0.0125808570 0.9841556 0.8314363 0.8462784
+## 270 0.7157895 0.0195068174 0.9827661 0.8318992 0.8469109
+## 271 0.7157895 0.0302456285 0.9823823 0.8321477 0.8484213
+## 272 0.7157895 0.0468963247 0.9820952 0.8327512 0.8502810
+## 273 0.7157895 0.0727134920 0.9851525 0.8332330 0.8549721
+## 274 0.7157895 0.1127434177 0.9995005 0.8322417 0.8679257
+## 275 0.7157895 0.1748104496 1.0364680 0.8286306 0.8958712
+## 276 0.7157895 0.2710463628 1.1173946 0.8189749 0.9533925
+## 277 0.7157895 0.4202616660 1.2785856 0.7927730 1.0775545
+## 278 0.7157895 0.6516223502 1.5327246 0.7437788 1.2755000
+## 279 0.7157895 1.0103507447 1.8906619 0.6613450 1.5631216
+## 280 0.7157895 1.5665647856 2.3098200 0.3489118 1.8975346
+## 281 0.7631579 0.0003766177 0.9874372 0.8304481 0.8448661
+## 282 0.7631579 0.0005839516 0.9874372 0.8304481 0.8448661
+## 283 0.7631579 0.0009054262 0.9873604 0.8304780 0.8448408
+## 284 0.7631579 0.0014038776 0.9869702 0.8306190 0.8447683
+## 285 0.7631579 0.0021767344 0.9863109 0.8308534 0.8446609
+## 286 0.7631579 0.0033750611 0.9859247 0.8309848 0.8448264
+## 287 0.7631579 0.0052330856 0.9858240 0.8309687 0.8456370
+## 288 0.7631579 0.0081139818 0.9853718 0.8310563 0.8462499
+## 289 0.7631579 0.0125808570 0.9840218 0.8314789 0.8462984
+## 290 0.7631579 0.0195068174 0.9828787 0.8318646 0.8471538
+## 291 0.7631579 0.0302456285 0.9825810 0.8321054 0.8486910
+## 292 0.7631579 0.0468963247 0.9822649 0.8327849 0.8505340
+## 293 0.7631579 0.0727134920 0.9857616 0.8332724 0.8555057
+## 294 0.7631579 0.1127434177 1.0023447 0.8318961 0.8699573
+## 295 0.7631579 0.1748104496 1.0429890 0.8277117 0.9002061
+## 296 0.7631579 0.2710463628 1.1315224 0.8164928 0.9634293
+## 297 0.7631579 0.4202616660 1.3054455 0.7860869 1.0974597
+## 298 0.7631579 0.6516223502 1.5711843 0.7337844 1.3055869
+## 299 0.7631579 1.0103507447 1.9467714 0.6358593 1.6071366
+## 300 0.7631579 1.5665647856 2.3426856 0.2745765 1.9208826
+## 301 0.8105263 0.0003766177 0.9876139 0.8304252 0.8450231
+## 302 0.8105263 0.0005839516 0.9876139 0.8304252 0.8450231
+## 303 0.8105263 0.0009054262 0.9874860 0.8304701 0.8449750
+## 304 0.8105263 0.0014038776 0.9870286 0.8306274 0.8448526
+## 305 0.8105263 0.0021767344 0.9863205 0.8308636 0.8447031
+## 306 0.8105263 0.0033750611 0.9858937 0.8309925 0.8448889
+## 307 0.8105263 0.0052330856 0.9857043 0.8309960 0.8456346
+## 308 0.8105263 0.0081139818 0.9851956 0.8311097 0.8462170
+## 309 0.8105263 0.0125808570 0.9839279 0.8315098 0.8463417
+## 310 0.8105263 0.0195068174 0.9830713 0.8318006 0.8474236
+## 311 0.8105263 0.0302456285 0.9828004 0.8320603 0.8489783
+## 312 0.8105263 0.0468963247 0.9820617 0.8329546 0.8505587
+## 313 0.8105263 0.0727134920 0.9865225 0.8332744 0.8561525
+## 314 0.8105263 0.1127434177 1.0053591 0.8315141 0.8720492
+## 315 0.8105263 0.1748104496 1.0498086 0.8267138 0.9046945
+## 316 0.8105263 0.2710463628 1.1460906 0.8137865 0.9736488
+## 317 0.8105263 0.4202616660 1.3313740 0.7796120 1.1166451
+## 318 0.8105263 0.6516223502 1.6091068 0.7234544 1.3355271
+## 319 0.8105263 1.0103507447 2.0006208 0.6091943 1.6497790
+## 320 0.8105263 1.5665647856 2.3509511 0.0742136 1.9266075
+## 321 0.8578947 0.0003766177 0.9877966 0.8303893 0.8452081
+## 322 0.8578947 0.0005839516 0.9877966 0.8303893 0.8452081
+## 323 0.8578947 0.0009054262 0.9876037 0.8304517 0.8451182
+## 324 0.8578947 0.0014038776 0.9870640 0.8306323 0.8449502
+## 325 0.8578947 0.0021767344 0.9862882 0.8308860 0.8447366
+## 326 0.8578947 0.0033750611 0.9857686 0.8310340 0.8448911
+## 327 0.8578947 0.0052330856 0.9855722 0.8310305 0.8456162
+## 328 0.8578947 0.0081139818 0.9850390 0.8311527 0.8461914
+## 329 0.8578947 0.0125808570 0.9838709 0.8315287 0.8464328
+## 330 0.8578947 0.0195068174 0.9833178 0.8317194 0.8477050
+## 331 0.8578947 0.0302456285 0.9826632 0.8321394 0.8490365
+## 332 0.8578947 0.0468963247 0.9818255 0.8331390 0.8505388
+## 333 0.8578947 0.0727134920 0.9874364 0.8332381 0.8569051
+## 334 0.8578947 0.1127434177 1.0084723 0.8311228 0.8741809
+## 335 0.8578947 0.1748104496 1.0568919 0.8256455 0.9092584
+## 336 0.8578947 0.2710463628 1.1611361 0.8108618 0.9844747
+## 337 0.8578947 0.4202616660 1.3560816 0.7738411 1.1354181
+## 338 0.8578947 0.6516223502 1.6449167 0.7145977 1.3641128
+## 339 0.8578947 1.0103507447 2.0524306 0.5821279 1.6912645
+## 340 0.8578947 1.5665647856 2.3512645       NaN 1.9268163
+## 341 0.9052632 0.0003766177 0.9877854 0.8303923 0.8451825
+## 342 0.9052632 0.0005839516 0.9877847 0.8303924 0.8451809
+## 343 0.9052632 0.0009054262 0.9875304 0.8304747 0.8450666
+## 344 0.9052632 0.0014038776 0.9869480 0.8306697 0.8448937
+## 345 0.9052632 0.0021767344 0.9861921 0.8309166 0.8446963
+## 346 0.9052632 0.0033750611 0.9857796 0.8310254 0.8449764
+## 347 0.9052632 0.0052330856 0.9855080 0.8310512 0.8456922
+## 348 0.9052632 0.0081139818 0.9847123 0.8312624 0.8460618
+## 349 0.9052632 0.0125808570 0.9837964 0.8315500 0.8465440
+## 350 0.9052632 0.0195068174 0.9836073 0.8316282 0.8480222
+## 351 0.9052632 0.0302456285 0.9823614 0.8322762 0.8489554
+## 352 0.9052632 0.0468963247 0.9816943 0.8332917 0.8505528
+## 353 0.9052632 0.0727134920 0.9884803 0.8331700 0.8576931
+## 354 0.9052632 0.1127434177 1.0116675 0.8307265 0.8763403
+## 355 0.9052632 0.1748104496 1.0642036 0.8245092 0.9139997
+## 356 0.9052632 0.2710463628 1.1763638 0.8078167 0.9961706
+## 357 0.9052632 0.4202616660 1.3801894 0.7683607 1.1538907
+## 358 0.9052632 0.6516223502 1.6798657 0.7064899 1.3924230
+## 359 0.9052632 1.0103507447 2.1019849 0.5570004 1.7311475
+## 360 0.9052632 1.5665647856 2.3512645       NaN 1.9268163
+## 361 0.9526316 0.0003766177 0.9877056 0.8304183 0.8451106
+## 362 0.9526316 0.0005839516 0.9877039 0.8304188 0.8451083
+## 363 0.9526316 0.0009054262 0.9874184 0.8305129 0.8449885
+## 364 0.9526316 0.0014038776 0.9868029 0.8307191 0.8448148
+## 365 0.9526316 0.0021767344 0.9860503 0.8309654 0.8446221
+## 366 0.9526316 0.0033750611 0.9857615 0.8310292 0.8450385
+## 367 0.9526316 0.0052330856 0.9854944 0.8310552 0.8457761
+## 368 0.9526316 0.0081139818 0.9842839 0.8314073 0.8458652
+## 369 0.9526316 0.0125808570 0.9838123 0.8315402 0.8467198
+## 370 0.9526316 0.0195068174 0.9836159 0.8316352 0.8481374
+## 371 0.9526316 0.0302456285 0.9819835 0.8324416 0.8487864
+## 372 0.9526316 0.0468963247 0.9816722 0.8334145 0.8506140
+## 373 0.9526316 0.0727134920 0.9896706 0.8330671 0.8585834
+## 374 0.9526316 0.1127434177 1.0149694 0.8303124 0.8785496
+## 375 0.9526316 0.1748104496 1.0717286 0.8233149 0.9188431
+## 376 0.9526316 0.2710463628 1.1917508 0.8046527 1.0078182
+## 377 0.9526316 0.4202616660 1.4045892 0.7625969 1.1727232
+## 378 0.9526316 0.6516223502 1.7154366 0.6979545 1.4212027
+## 379 0.9526316 1.0103507447 2.1508561 0.5333387 1.7707069
+## 380 0.9526316 1.5665647856 2.3512645       NaN 1.9268163
+## 381 1.0000000 0.0003766177 0.9875900 0.8304576 0.8450218
+## 382 1.0000000 0.0005839516 0.9875871 0.8304582 0.8450179
+## 383 1.0000000 0.0009054262 0.9872608 0.8305667 0.8448812
+## 384 1.0000000 0.0014038776 0.9866070 0.8307838 0.8446976
+## 385 1.0000000 0.0021767344 0.9859070 0.8310120 0.8445436
+## 386 1.0000000 0.0033750611 0.9857879 0.8310208 0.8451440
+## 387 1.0000000 0.0052330856 0.9854358 0.8310666 0.8458190
+## 388 1.0000000 0.0081139818 0.9839094 0.8315336 0.8456760
+## 389 1.0000000 0.0125808570 0.9839189 0.8314948 0.8469654
+## 390 1.0000000 0.0195068174 0.9834226 0.8317102 0.8481209
+## 391 1.0000000 0.0302456285 0.9816275 0.8326013 0.8486283
+## 392 1.0000000 0.0468963247 0.9817362 0.8335122 0.8507023
+## 393 1.0000000 0.0727134920 0.9910125 0.8329216 0.8596079
+## 394 1.0000000 0.1127434177 1.0183342 0.8298884 0.8807440
+## 395 1.0000000 0.1748104496 1.0794583 0.8220674 0.9241164
+## 396 1.0000000 0.2710463628 1.2075362 0.8012271 1.0196678
+## 397 1.0000000 0.4202616660 1.4294625 0.7563266 1.1920282
+## 398 1.0000000 0.6516223502 1.7522702 0.6878928 1.4507765
+## 399 1.0000000 1.0103507447 2.2009754 0.4974365 1.8113951
+## 400 1.0000000 1.5665647856 2.3512645       NaN 1.9268163
 ##         RMSESD RsquaredSD      MAESD
 ## 1   0.09538553 0.03356681 0.08858063
 ## 2   0.09538553 0.03356681 0.08858063
@@ -2146,8 +2622,283 @@ enfit$results
 ## 123 0.09497195 0.03340772 0.08815811
 ## 124 0.09496744 0.03337314 0.08821580
 ## 125 0.09492176 0.03327312 0.08841947
-##  [ reached 'max' / getOption("max.print") -- omitted 275 rows ]
+## 126 0.09464948 0.03306490 0.08860143
+## 127 0.09432394 0.03286385 0.08869497
+## 128 0.09365587 0.03267746 0.08840729
+## 129 0.09250890 0.03238403 0.08821064
+## 130 0.09127110 0.03198822 0.08822810
+## 131 0.09002611 0.03148966 0.08853255
+## 132 0.08902973 0.03111333 0.08947344
+## 133 0.08803397 0.03083616 0.09039752
+## 134 0.08767687 0.03064515 0.09183977
+## 135 0.08885466 0.03092042 0.09367510
+## 136 0.09276342 0.03192255 0.09707809
+## 137 0.10038380 0.03434154 0.10089730
+## 138 0.11146341 0.04006082 0.10782996
+## 139 0.12374413 0.05124191 0.11363868
+## 140 0.13572748 0.06917968 0.11257476
+## 141 0.09497972 0.03338961 0.08818077
+## 142 0.09497972 0.03338961 0.08818077
+## 143 0.09497998 0.03338946 0.08818140
+## 144 0.09499974 0.03335172 0.08826961
+## 145 0.09491104 0.03322942 0.08846328
+## 146 0.09460698 0.03300769 0.08863728
+## 147 0.09422764 0.03282248 0.08867414
+## 148 0.09342809 0.03261595 0.08834089
+## 149 0.09223759 0.03230227 0.08815737
+## 150 0.09100319 0.03187177 0.08820379
+## 151 0.08980547 0.03136593 0.08865793
+## 152 0.08887133 0.03107392 0.08956017
+## 153 0.08780323 0.03077012 0.09046754
+## 154 0.08779932 0.03071872 0.09206199
+## 155 0.08931019 0.03111648 0.09397931
+## 156 0.09392671 0.03245079 0.09739050
+## 157 0.10239530 0.03548510 0.10256340
+## 158 0.11436606 0.04194269 0.10887979
+## 159 0.12675764 0.05437220 0.11398423
+## 160 0.13950425 0.07402489 0.11251745
+## 161 0.09501591 0.03338603 0.08831120
+## 162 0.09501591 0.03338603 0.08831120
+## 163 0.09501571 0.03338611 0.08831120
+## 164 0.09501143 0.03332457 0.08837431
+## 165 0.09485081 0.03318029 0.08847807
+## 166 0.09453429 0.03295394 0.08866346
+## 167 0.09409960 0.03277915 0.08865442
+## 168 0.09320443 0.03255498 0.08830014
+## 169 0.09196962 0.03221696 0.08810375
+## 170 0.09074864 0.03176941 0.08817758
+## 171 0.08961428 0.03125854 0.08879243
+## 172 0.08868382 0.03103648 0.08959683
+## 173 0.08767724 0.03074658 0.09055932
+## 174 0.08792991 0.03082896 0.09218654
+## 175 0.08987896 0.03141606 0.09442565
+## 176 0.09517103 0.03305713 0.09761267
+## 177 0.10437778 0.03683430 0.10416247
+## 178 0.11728906 0.04400349 0.11043538
+## 179 0.13039939 0.05769577 0.11495001
+## 180 0.14317035 0.08444316 0.11217416
+## 181 0.09481744 0.03334690 0.08825208
+## 182 0.09481744 0.03334690 0.08825208
+## 183 0.09482432 0.03334573 0.08826308
+## 184 0.09486164 0.03327933 0.08835891
+## 185 0.09470619 0.03312209 0.08844118
+## 186 0.09447462 0.03291818 0.08867985
+## 187 0.09399590 0.03274361 0.08861646
+## 188 0.09298359 0.03249917 0.08823963
+## 189 0.09174431 0.03213953 0.08806827
+## 190 0.09050171 0.03166063 0.08815324
+## 191 0.08945962 0.03122085 0.08888411
+## 192 0.08850732 0.03100380 0.08962633
+## 193 0.08763739 0.03076323 0.09070106
+## 194 0.08807608 0.03095580 0.09225841
+## 195 0.09051943 0.03176145 0.09494137
+## 196 0.09646378 0.03375407 0.09786722
+## 197 0.10654445 0.03822961 0.10528759
+## 198 0.11993970 0.04677356 0.11236675
+## 199 0.13354285 0.06249552 0.11550850
+## 200 0.14595169 0.09671834 0.11138408
+## 201 0.09493705 0.03336989 0.08838452
+## 202 0.09493705 0.03336989 0.08838452
+## 203 0.09492880 0.03335135 0.08839082
+## 204 0.09491815 0.03326532 0.08846010
+## 205 0.09463584 0.03306861 0.08846827
+## 206 0.09439174 0.03287335 0.08868422
+## 207 0.09387625 0.03270584 0.08858084
+## 208 0.09279392 0.03245443 0.08819360
+## 209 0.09156335 0.03207033 0.08804252
+## 210 0.09030408 0.03155413 0.08820129
+## 211 0.08935928 0.03120063 0.08898367
+## 212 0.08833209 0.03097352 0.08964060
+## 213 0.08767145 0.03080329 0.09087508
+## 214 0.08830192 0.03110086 0.09231994
+## 215 0.09120528 0.03214082 0.09551020
+## 216 0.09773985 0.03443861 0.09817896
+## 217 0.10879228 0.03952027 0.10650882
+## 218 0.12204962 0.04969315 0.11319698
+## 219 0.13454092 0.06553867 0.11427215
+## 220 0.14827039 0.10833021 0.11030549
+## 221 0.09497393 0.03338896 0.08841608
+## 222 0.09497393 0.03338896 0.08841608
+## 223 0.09497339 0.03336385 0.08844646
+## 224 0.09493961 0.03326122 0.08852017
+## 225 0.09460491 0.03302911 0.08849065
+## 226 0.09430041 0.03283152 0.08864734
+## 227 0.09375987 0.03266989 0.08857208
+## 228 0.09263822 0.03242147 0.08816766
+## 229 0.09142917 0.03202458 0.08804809
+## 230 0.09017688 0.03146926 0.08830087
+## 231 0.08928185 0.03119014 0.08907040
+## 232 0.08817408 0.03094739 0.08962716
+## 233 0.08774331 0.03087509 0.09105216
+## 234 0.08856320 0.03126415 0.09241297
+## 235 0.09185713 0.03251716 0.09580830
+## 236 0.09909099 0.03512323 0.09876262
+## 237 0.11089381 0.04065048 0.10741901
+## 238 0.12447374 0.05217099 0.11408888
+## 239 0.13655408 0.06770687 0.11406798
+## 240 0.15072821 0.12186623 0.11054414
+## 241 0.09509561 0.03339036 0.08843114
+## 242 0.09509561 0.03339036 0.08843114
+## 243 0.09509921 0.03338861 0.08843666
+## 244 0.09503435 0.03325992 0.08854653
+## 245 0.09466286 0.03299258 0.08858232
+## 246 0.09428811 0.03279936 0.08869080
+## 247 0.09363793 0.03263264 0.08854960
+## 248 0.09246356 0.03238143 0.08811261
+## 249 0.09127104 0.03197484 0.08804249
+## 250 0.09005891 0.03139898 0.08840796
+## 251 0.08920316 0.03118576 0.08911702
+## 252 0.08807453 0.03094943 0.08965494
+## 253 0.08788674 0.03098131 0.09126467
+## 254 0.08882845 0.03145668 0.09264687
+## 255 0.09262108 0.03286896 0.09611366
+## 256 0.10054282 0.03590267 0.10015652
+## 257 0.11300660 0.04183234 0.10816387
+## 258 0.12680005 0.05426725 0.11495325
+## 259 0.13946163 0.07223229 0.11455448
+## 260 0.15424686 0.14081317 0.11196209
+## 261 0.09473792 0.03326377 0.08832615
+## 262 0.09473792 0.03326377 0.08832615
+## 263 0.09476717 0.03325669 0.08835955
+## 264 0.09473665 0.03312703 0.08850646
+## 265 0.09449913 0.03286654 0.08863465
+## 266 0.09413254 0.03272023 0.08866227
+## 267 0.09352805 0.03259407 0.08853323
+## 268 0.09234875 0.03235261 0.08810030
+## 269 0.09111120 0.03191069 0.08803965
+## 270 0.08992941 0.03133314 0.08846663
+## 271 0.08911591 0.03118732 0.08910591
+## 272 0.08802415 0.03098563 0.08967875
+## 273 0.08795095 0.03107347 0.09139286
+## 274 0.08917277 0.03165164 0.09308405
+## 275 0.09348506 0.03327168 0.09649788
+## 276 0.10205158 0.03676390 0.10182323
+## 277 0.11525930 0.04328080 0.10902401
+## 278 0.12953020 0.05660995 0.11624265
+## 279 0.14180945 0.07932648 0.11451302
+## 280 0.15467625 0.15888598 0.11230443
+## 281 0.09470077 0.03335011 0.08831805
+## 282 0.09470077 0.03335011 0.08831805
+## 283 0.09472126 0.03332513 0.08835701
+## 284 0.09467307 0.03317047 0.08851089
+## 285 0.09444792 0.03288459 0.08868580
+## 286 0.09405240 0.03269946 0.08871135
+## 287 0.09343354 0.03256522 0.08852914
+## 288 0.09226631 0.03233047 0.08810741
+## 289 0.09094909 0.03184048 0.08802338
+## 290 0.08990436 0.03131866 0.08853082
+## 291 0.08897818 0.03118607 0.08903299
+## 292 0.08789733 0.03100994 0.08968443
+## 293 0.08795792 0.03113034 0.09150452
+## 294 0.08950531 0.03184756 0.09353854
+## 295 0.09437436 0.03369532 0.09678994
+## 296 0.10368146 0.03765920 0.10332139
+## 297 0.11752196 0.04495610 0.11046881
+## 298 0.13208943 0.05950958 0.11698455
+## 299 0.14413625 0.08679935 0.11460778
+## 300 0.15368032 0.13041777 0.11217765
+## 301 0.09492226 0.03337460 0.08841607
+## 302 0.09492226 0.03337460 0.08841607
+## 303 0.09492583 0.03332956 0.08846618
+## 304 0.09482794 0.03316085 0.08859633
+## 305 0.09451952 0.03287910 0.08874130
+## 306 0.09403834 0.03268233 0.08873465
+## 307 0.09343736 0.03254259 0.08862333
+## 308 0.09224041 0.03230809 0.08816279
+## 309 0.09082049 0.03176848 0.08803354
+## 310 0.08983602 0.03131970 0.08854247
+## 311 0.08875831 0.03118343 0.08889416
+## 312 0.08776639 0.03098931 0.08978566
+## 313 0.08797443 0.03119181 0.09157911
+## 314 0.08991227 0.03207750 0.09401624
+## 315 0.09523789 0.03411236 0.09700623
+## 316 0.10532085 0.03852611 0.10475181
+## 317 0.11924234 0.04679282 0.11196493
+## 318 0.13300415 0.06269469 0.11651029
+## 319 0.14552361 0.09427748 0.11347364
+## 320 0.14945861 0.01825233 0.10908164
+## 321 0.09480212 0.03324627 0.08835830
+## 322 0.09480212 0.03324627 0.08835830
+## 323 0.09481047 0.03319998 0.08842125
+## 324 0.09469319 0.03303056 0.08855511
+## 325 0.09437522 0.03277882 0.08870033
+## 326 0.09389235 0.03262608 0.08870302
+## 327 0.09341522 0.03251495 0.08869997
+## 328 0.09211466 0.03225019 0.08814451
+## 329 0.09069033 0.03167703 0.08808287
+## 330 0.08970971 0.03132601 0.08848692
+## 331 0.08859524 0.03116657 0.08886375
+## 332 0.08769765 0.03098407 0.08991825
+## 333 0.08802869 0.03125373 0.09163786
+## 334 0.09034304 0.03230816 0.09449933
+## 335 0.09609080 0.03453459 0.09728762
+## 336 0.10689250 0.03934441 0.10572651
+## 337 0.12078417 0.04855977 0.11299457
+## 338 0.13362340 0.06439107 0.11577893
+## 339 0.14731041 0.10381857 0.11254748
+## 340 0.14927949         NA 0.10881443
+## 341 0.09478190 0.03324158 0.08831978
+## 342 0.09478158 0.03324194 0.08832070
+## 343 0.09478746 0.03318075 0.08839440
+## 344 0.09463910 0.03299148 0.08853033
+## 345 0.09429869 0.03274805 0.08866720
+## 346 0.09394189 0.03264532 0.08875900
+## 347 0.09336014 0.03248721 0.08867431
+## 348 0.09201827 0.03215670 0.08818738
+## 349 0.09051478 0.03158917 0.08808050
+## 350 0.08957193 0.03134588 0.08840880
+## 351 0.08843133 0.03113051 0.08887073
+## 352 0.08765365 0.03098397 0.09006076
+## 353 0.08809964 0.03131743 0.09172567
+## 354 0.09079824 0.03255797 0.09488540
+## 355 0.09694357 0.03499851 0.09757718
+## 356 0.10819504 0.04004296 0.10632385
+## 357 0.12282149 0.05066178 0.11396874
+## 358 0.13460863 0.06586119 0.11512078
+## 359 0.14832676 0.11066096 0.11090570
+## 360 0.14927949         NA 0.10881443
+## 361 0.09471195 0.03321520 0.08828275
+## 362 0.09471298 0.03321553 0.08828351
+## 363 0.09472404 0.03314568 0.08837002
+## 364 0.09456353 0.03294625 0.08851493
+## 365 0.09420463 0.03271693 0.08864589
+## 366 0.09392964 0.03264284 0.08877588
+## 367 0.09330766 0.03246850 0.08862908
+## 368 0.09200343 0.03206312 0.08832662
+## 369 0.09034345 0.03150399 0.08807051
+## 370 0.08951999 0.03138275 0.08841976
+## 371 0.08829451 0.03110499 0.08889346
+## 372 0.08764238 0.03099919 0.09019590
+## 373 0.08826345 0.03141406 0.09184296
+## 374 0.09125755 0.03280596 0.09521166
+## 375 0.09788050 0.03550122 0.09792486
+## 376 0.10953556 0.04081838 0.10688403
+## 377 0.12474351 0.05276289 0.11471089
+## 378 0.13613958 0.06826615 0.11484817
+## 379 0.15036194 0.12045424 0.11078092
+## 380 0.14927949         NA 0.10881443
+## 381 0.09466169 0.03321953 0.08823124
+## 382 0.09466217 0.03322033 0.08823230
+## 383 0.09467411 0.03313880 0.08832898
+## 384 0.09447888 0.03292049 0.08847028
+## 385 0.09410189 0.03269422 0.08859118
+## 386 0.09388493 0.03261302 0.08879670
+## 387 0.09326400 0.03245164 0.08862786
+## 388 0.09207178 0.03201562 0.08854051
+## 389 0.09001949 0.03140006 0.08791901
+## 390 0.08938009 0.03134927 0.08842585
+## 391 0.08819000 0.03108564 0.08894326
+## 392 0.08765892 0.03102225 0.09035308
+## 393 0.08849654 0.03153969 0.09204209
+## 394 0.09173995 0.03304153 0.09552145
+## 395 0.09878828 0.03601798 0.09860174
+## 396 0.11092742 0.04160589 0.10738837
+## 397 0.12617001 0.05455460 0.11521239
+## 398 0.13808605 0.07204273 0.11498908
+## 399 0.15246381 0.13527538 0.11131525
+## 400 0.14927949         NA 0.10881443
 ```
+]
 
 --
 
@@ -2225,30 +2976,31 @@ d) `\(\lambda\)` = feature selection, `\(\alpha\)` = shrinkage
 
 ---
 class: inverse, center, middle
-# Model Comparison
-
----
-## Model Comparison
-
-
-
----
-class: inverse, center, middle
 # Live Coding
 
 ---
-## Live Coding
+## Live Coding Activity
 
-notes to self: 
+**Live Coding**: I will walk through examples of ridge, lasso, and elastic net for classification in RStudio. 
 
-do regular regression, ridge, lasso, elastic net, and compare the models 
+- You can follow along in your own RStudio (easiest with 1 large or 2+ monitors)
+- Or you can download `Day_3A_Activity.Rmd` and follow along
+- In either case, please download the `heart.csv` and `hcp_memory.csv` files. 
 
-also show categorical
+.footnote[
+All files are on the workshop OSF page: https://osf.io/3qhc8/. 
+]
 
-remember to add in some knowledge checks
+--
+&lt;/br&gt;
 
----
-## Group Activity
+**Small Group Activity**: Afterwards, we will split you into small breakout room groups to practice a full machine learning workflow using a new dataset. 
+
+If you have any questions, please post them in the chat or workshop Slack channel. 
+
+We will also float between different breakout rooms to answer questions. 
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
