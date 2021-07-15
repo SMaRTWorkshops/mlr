@@ -254,10 +254,181 @@ trained_model &lt;- train(
 class: inverse, center, middle
 # Model Evaluation
 ---
+class: onecol
+## Performance Metrics
+.left-column[
+&lt;br /&gt;
+&lt;img src="target.jpg" width="100%" /&gt;
+]
 
-train$results
+.right-column[
+
+**Metrics for Supervised Regression**
+- ![:emphasize](Distance) between predicted and trusted values
+- ![:emphasize](Correlation) between predicted and trusted values
+
+**Metrics for Supervised Classification**
+- ![:emphasize](Confusion matrix) between predicted and trusted classes
+- Compare predicted ![:emphasize](class probabilities) to trusted classes
+- Construct a ![:emphasize](performance curve) across decision thresholds
+]
 
 ---
+class: onecol
+## Classic Distance Metrics for Regression
+
+.pull-left[
+**Root Mean Squared Error (RMSE)**
+- Based on squared loss
+- Easier to computationally optimize
+- Ranges from `\(0\)` to `\(+\infty\)`, lower is better
+]
+
+.pull-right[
+&lt;br /&gt;
+`$$RMSE=\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - p_i)^2}$$`
+]
+
+.pull-left[
+**Mean Absolute Error (MAE)**
+- Based on absolute loss
+- More robust to outliers
+- Ranges from `\(0\)` to `\(+\infty\)`, lower is better
+]
+
+.pull-right[
+&lt;br /&gt;
+`$$MAE=\frac{1}{n} \sum_{i=1}^n \left\lvert y_i - p_i \right\rvert$$`
+]
+
+.footnote[[1] Note that, here, we will refer to the trusted labels as `\\(y\\)` and the predicted labels as `\\(p\\)`.]
+
+---
+class: onecol
+exclude: true
+## Advanced Distance Metrics for Regression
+**Huber loss (HL)**
+
+- Combines benefits of RMSE and MAE
+ + Easy to computationally optimize AND more robust to outliers
+- Requires setting or tuning `\(\delta\)` (controls what to consider an outlier)
+- Ranges from `\(0\)` (best) to `\(+\infty\)` (worst), lower is better
+
+`$$\begin{split}
+HL &amp;= \frac{1}{n} \sum_{i=1}^n L_\delta(y_i, p_i) \\
+L_\delta(y_i, p_i) &amp;= \begin{cases}\frac{1}{2}(y_i - p_i)^2 &amp; \text{for } \lvert y_i - p_i \rvert \le \delta \\ \delta (\lvert y_i - p_i \rvert - \frac{1}{2}\delta) &amp; \text{otherwise} \end{cases}
+\end{split}$$`
+
+---
+## Comparing Loss Functions
+
+&lt;img src="Day_2B_files/figure-html/losses-1.png" width="100%" /&gt;
+
+---
+exclude: true
+## Comparing Loss Functions
+
+&lt;img src="Day_2B_files/figure-html/losses3-1.png" width="100%" /&gt;
+
+---
+class: onecol
+## Correlation Metrics for Regression
+
+**R-Squared `\((R^2\)` or RSQ)**
+- How much of the variability in the trusted labels do the predictions explain?
+ + Calculated in ML as the **squared correlation** between the predictions and labels
+- Several cautions about using RSQ as a performance metric
+ + It is a measure of **consistency** and not accuracy (may disagree with distance)
+ + It cannot be calculated if the predicted or trusted labels are constant
+ + It is highly sensitive to the amount of label variability (may be unstable)
+- Ranges from `\(0\)` to `\(1\)`, higher is better
+
+`$$R^2 = \left(\frac{\text{cov}(y, p)}{\sigma_y\sigma_p}\right)^2 = \left(\frac{\sum(y_i - \bar{y})(p_i - \bar{p})}{\sqrt{\sum (y_i-\bar{y})^2}\sqrt{\sum(p_i-\bar{p})^2}}\right)^2$$`
+
+---
+class: onecol
+## Comparing Distance and Correlation Metrics
+
+&lt;img src="Day_2B_files/figure-html/dvc-1.png" width="100%" /&gt;
+
+
+---
+exclude: true
+class: onecol
+## Advanced Correlation Metrics for Regression
+
+**Concordance Correlation Coefficient (CCC)**
+- Equivalent to certain formulations of the intraclass correlation coefficient
+- Combines both accuracy (distance) and consistency (correlation) information
+- Ranges from `\(-1\)` (worst) to `\(+1\)` (best)
+
+`$$CCC = \frac{\frac{2}{n}\sum_{i=1}^n (t_i - \bar{t})(p_i - \bar{p})}{\frac{1}{n}\sum_{i=1}^n(t_i - \bar{t})^2 + \frac{1}{n}\sum_{i=1}^n(p_i - \bar{p})^2 + (\bar{t} - \bar{p})^2}$$`
+---
+## Confusion Matrix Metrics for Classification
+
+The classic confusion matrix is for binary (i.e., no/yes or 0/1) classification
+
+ | Trusted = No | Trusted = Yes
+:--| :--: | :--:
+**Predicted = No** | True Negatives (TN) | False Negative (FN)
+**Predicted = Yes** | False Positive (FP) | True Positive (TP)
+
+The counts or proportions can be informative on their own or combined into metrics
+
+--
+
+.pull-left[
+`$$\begin{split}
+\text{Accuracy} &amp;= \frac{TN + TP}{(TN + FN + FP + TP)} \\
+\text{Sensitivity} &amp;= \frac{TP}{TP+FN} \\
+\text{Specificity} &amp;= \frac{TN}{TN + FP} \\
+\text{Balanced Accuracy} &amp;= (\text{Sensitivity} + \text{Specificity})/2 \\
+\end{split}$$`
+]
+
+--
+
+.pull-right[
+`$$\begin{split}
+\text{Precision} &amp;= \frac{TP}{TP+FP} \\
+\text{Recall} &amp;= \text{Sensitivity} \\
+F_1 \text{ Score} &amp;= \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}} \\
+PPV &amp;= \text{Precision} \\
+NPV &amp;= \frac{TN}{TN + FN}
+\end{split}$$`
+]
+
+---
+class: onecol
+## Multiclass Confusion Matrix
+
+With more than two classes, the same principles apply (but the math gets harder)
+
+ | Trusted = Healthy | Trusted = Depression | Trusted = Mania
+:--| :--: | :--: | :--:
+**Predicted = Healthy** | 100 | 3 | 7
+**Predicted = Depression** | 2 | 25 | 0 
+**Predicted = Mania** | 10 | 1 | 10
+
+`$$\text{Average Accuracy} = \frac{1}{k}\sum_{j=1}^k\frac{TP_j + TN_j}{TP_j + TN_j + FP_j + FN_j}$$`
+
+.footnote[[1] In multiclass settings, there are micro- and macro-averages but that is a more advanced topic to explore later.]
+
+---
+class: onecol
+## Class Probability Metrics for Classification
+
+---
+class: onecol
+## Performance Curves for Classification
+
+---
+class: onecol
+## Training Set Performance
+
+---
+class: onecol
+## Test Set Predictions
 
 predict()
 - object
