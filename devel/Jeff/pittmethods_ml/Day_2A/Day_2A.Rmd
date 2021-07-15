@@ -435,7 +435,7 @@ bake(it_recipe, new_data = titanic_train) %>% glimpse()
 ```
 
 ---
-## Comprehension check
+## Comprehension Check \#1
 .pull-left[
 ### Question 1
 **What is the correct order in which to add the {recipe} functions to a pipeline?**
@@ -751,9 +751,9 @@ ggplot(nl_train, aes(x = age_poly_1, y = age_poly_2)) +
 
 ---
 
-## Comprehension check
+## Comprehension check \#2
 .pull-left[
-### Question 3
+### Question 1
 **I want to transform two predictors to have the same variance. Which would NOT achieve this?**
 
 a) Centering both
@@ -766,7 +766,7 @@ d) Dividing each by its SD
 ]
 
 .pull-right[
-### Question 4
+### Question 2
 **Which of the following issues would the Yeo-Johnson transformation NOT help with?**
 
 a) Positive skew
