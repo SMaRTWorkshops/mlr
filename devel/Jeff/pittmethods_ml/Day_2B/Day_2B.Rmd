@@ -39,6 +39,10 @@ style_mono_light(
 )
 ```
 
+```{r xaringan-tachyons, echo=FALSE}
+xaringanExtra::use_tachyons()
+```
+
 ```{r packages, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(knitr)
@@ -63,20 +67,310 @@ class: inverse, center, middle
 ---
 class: onecol
 ## Lecture Plan
-<p style="padding-top:15px;">We will begin with <b>overview slides</b> and then dive into an <b>extended live coding</b></p>
-- Training and Cross-Validation
-- Model Evaluation
-- Model Interpretation
+We will begin with **overview slides** and then dive into an **extended live coding**
+- Performance Metrics
+- Model Training in R
+- Model Evaluation in R
+- Model Interpretation in R
 
 --
 
+.pt1[
 We will start by **adapting familiar algorithms** to the predictive modeling framework
 - Linear modeling (multiple regression) will be used for *regression*
 - Generalized linear modeling (logistic regression) will be used for *classification*
+]
 
 --
 
+.pt1[
 We will also **foreshadow future topics** (e.g., regularized regression and tuning)
+]
+
+---
+class: inverse, center, middle
+# Performance Metrics
+---
+class: onecol
+## Performance Metrics
+.left-column.pt3[
+```{r target, echo=FALSE}
+include_graphics("target.jpg")
+```
+]
+
+.right-column[
+
+**Metrics for Supervised Regression**
+- ![:emphasize](Distance) between predicted and trusted values
+- ![:emphasize](Correlation) between predicted and trusted values
+
+.pt1[
+**Metrics for Supervised Classification**
+]
+- ![:emphasize](Confusion matrix) between predicted and trusted classes
+- Compare predicted ![:emphasize](class probabilities) to trusted classes
+- Construct a ![:emphasize](performance curve) across decision thresholds
+]
+
+---
+class: onecol
+## Classic Distance Metrics for Regression
+
+.pull-left[
+**Root Mean Squared Error (RMSE)**
+- Based on squared loss
+- Easier to computationally optimize
+- Ranges from $0$ to $+\infty$, lower is better
+]
+
+.pull-right.pt4[
+$$RMSE=\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - p_i)^2}$$
+]
+
+.pull-left[
+**Mean Absolute Error (MAE)**
+- Based on absolute loss
+- More robust to outliers
+- Ranges from $0$ to $+\infty$, lower is better
+]
+
+.pull-right.pt4[
+$$MAE=\frac{1}{n} \sum_{i=1}^n \left\lvert y_i - p_i \right\rvert$$
+]
+
+.footnote[[1] Note that, here, we will refer to the trusted labels as `\\(y\\)` and the predicted labels as `\\(p\\)`.]
+
+---
+exclude: true
+class: onecol
+## Advanced Distance Metrics for Regression
+**Huber loss (HL)**
+
+- Combines benefits of RMSE and MAE
+ + Easy to computationally optimize AND more robust to outliers
+- Requires setting or tuning $\delta$ (controls what to consider an outlier)
+- Ranges from $0$ (best) to $+\infty$ (worst), lower is better
+
+$$\begin{split}
+HL &= \frac{1}{n} \sum_{i=1}^n L_\delta(y_i, p_i) \\
+L_\delta(y_i, p_i) &= \begin{cases}\frac{1}{2}(y_i - p_i)^2 & \text{for } \lvert y_i - p_i \rvert \le \delta \\ \delta (\lvert y_i - p_i \rvert - \frac{1}{2}\delta) & \text{otherwise} \end{cases}
+\end{split}$$
+
+---
+## Comparing Loss Functions
+
+```{r losses, echo=FALSE}
+tibble(
+  error = seq(-2, 2, length.out = 100), 
+  sq_err = error^2,
+  abs_err = abs(error)
+) %>% 
+  pivot_longer(-error, names_to = "type", values_to = "loss") %>% 
+  mutate(type = factor(
+    type, 
+    levels = c("sq_err", "abs_err"), 
+    labels = c("Squared Loss (RMSE)", "Absolute Loss (MAE)")
+  )) %>% 
+  ggplot(aes(x = error, y = loss, color = type)) + 
+  facet_wrap(~type, nrow = 1) + 
+  geom_line(size = 1.5) + 
+  labs(x = latex2exp::TeX("Error $(y_i - p_i)$"), y = "Loss") +
+  theme_xaringan(text_font_size = 18, title_font_size = 18) +
+  theme(
+    legend.position = "none",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+---
+exclude: true
+## Comparing Loss Functions
+
+```{r losses3, echo=FALSE}
+tibble(
+  error = seq(-2, 2, length.out = 100), 
+  sq_err = error^2,
+  abs_err = abs(error),
+  huber1 = ifelse(abs(error) <= 1, 0.5 * error^2, 1 * (abs(error) - 0.5 * 1))
+) %>% 
+  pivot_longer(-error, names_to = "type", values_to = "loss") %>% 
+  mutate(type = factor(
+    type, 
+    levels = c("sq_err", "abs_err", "huber1"), 
+    labels = c("Squared Loss", "Absolute Loss", "Huber Loss (delta=1)")
+  )) %>% 
+  ggplot(aes(x = error, y = loss, color = type)) + 
+  facet_wrap(~type, nrow = 1) + 
+  geom_line(size = 1.5) + 
+  labs(x = "Error (y - p)", y = "Loss") +
+  theme_xaringan(text_font_size = 18, title_font_size = 18) +
+  theme(
+    legend.position = "none",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+---
+class: onecol
+## Correlation Metrics for Regression
+
+**R-Squared $(R^2$ or RSQ)**
+- Calculated in ML as the **squared correlation** between the predictions and labels
+- Ranges from $0$ to $1$, higher is better
+
+$$R^2 = \left(\frac{\text{cov}(y, p)}{\sigma_y\sigma_p}\right)^2 = \left(\frac{\sum(y_i - \bar{y})(p_i - \bar{p})}{\sqrt{\sum (y_i-\bar{y})^2}\sqrt{\sum(p_i-\bar{p})^2}}\right)^2$$
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3[
+- Several cautions about using RSQ as a performance metric
+ + It is a measure of **consistency** and not accuracy (may disagree with distance)
+ + It cannot be calculated if the predicted or trusted labels are constant
+ + It is highly sensitive to the amount of label variability (may be unstable)
+]
+
+---
+class: onecol
+## Advanced Correlation Metrics for Regression
+
+**Concordance Correlation Coefficient (CCC)**
+
+- Combines both accuracy (distance) and consistency (correlation) information
+
+- Equivalent to certain formulations of the intraclass correlation coefficient
+
+- Ranges from $-1$ to $+1$, where higher is better
+
+.pt1[
+$$CCC = \frac{2\rho_{yp}\sigma_y\sigma_p}{\sigma_y^2 + \sigma_p^2 + (\mu_y - \mu_p)^2}
+= \frac{\frac{2}{n}\sum (y_i - \bar{y})(p_i - \bar{p})}{\frac{1}{n}\sum(y_i - \bar{y})^2 + \frac{1}{n}\sum(p_i - \bar{p})^2 + (\bar{y} - \bar{p})^2}$$
+]
+---
+class: onecol
+## Comparing Regression Performance Metrics
+
+```{r dvc, echo=FALSE}
+set.seed(2021)
+dvc <- tibble(
+  label = rnorm(100, 0, 10),
+  pred1 = label + rnorm(100, 0, 5),
+  pred2 = 5 * label + rnorm(100, 0, 28)
+)
+
+title1 <- paste0(
+  "RMSE = ", round(yardstick::rmse_vec(dvc$label, dvc$pred1), 1),
+  ", MAE = ", round(yardstick::mae_vec(dvc$label, dvc$pred1), 1),
+  "\nRSQ = ", round(yardstick::rsq_vec(dvc$label, dvc$pred1), 2),
+  ", CCC = ", round(yardstick::ccc_vec(dvc$label, dvc$pred1), 2)
+)
+
+p1 <- ggplot(dvc, aes(x = label, y = pred1)) + 
+  geom_abline(intercept = 0, slope = 1, size = 1.5, color = "grey") + 
+  geom_point(color = "#1b9e77", size = 2) +
+  labs(x = "Trusted Label", y = "Model 1's Predictions", title = title1) +
+  theme_xaringan(text_font_size = 20, title_font_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.title.position = "panel",
+    legend.position = "none",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+
+title2 <- paste0(
+  "RMSE = ", round(yardstick::rmse_vec(dvc$label, dvc$pred2), 1),
+  ", MAE = ", round(yardstick::mae_vec(dvc$label, dvc$pred2), 1),
+  "\nRSQ = ", round(yardstick::rsq_vec(dvc$label, dvc$pred2), 2),
+  ", CCC = ", round(yardstick::ccc_vec(dvc$label, dvc$pred2), 2)
+)
+
+p2 <- ggplot(dvc, aes(x = label, y = pred2)) + 
+  geom_abline(intercept = 0, slope = 1, size = 1.5, color = "grey") + 
+  geom_point(color = "#d95f02", size = 2) +
+  labs(x = "Trusted Label", y = "Model 2's Predictions", title = title2) +
+  theme_xaringan(text_font_size = 20, title_font_size = 14) +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(hjust = 0.5),
+    plot.title.position = "panel",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+
+p1 | p2
+```
+
+---
+## Confusion Matrix Metrics for Classification
+
+.pt3.pb4[
+ | Trusted = No<br /> $(y=0)$ | Trusted = Yes<br /> $(y=1)$
+:--:| :--: | :--:
+**Predicted = No**&emsp;<br /> $(p=0)$ | True Negatives (TN) | False Negative (FN)
+**Predicted = Yes**&emsp;<br /> $(p=1)$ | False Positive (FP) | True Positive (TP)
+]
+
+--
+
+.pull-left[
+$$\begin{split}
+\text{Accuracy} &= \frac{TN + TP}{(TN + FN + FP + TP)} \\
+\text{Sensitivity} &= \frac{TP}{TP+FN} \\
+\text{Specificity} &= \frac{TN}{TN + FP} \\
+\end{split}$$
+]
+
+--
+
+.pull-right[
+$$\begin{split}
+\text{Balanced Acc.} &= (\text{Sensitivity} + \text{Specificity})/2 \\
+\text{Precision} &= \frac{TP}{TP+FP} \\
+\text{Recall} &= \text{Sensitivity} \\
+F_1 \text{ Score} &= \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}} \\
+\end{split}$$
+]
+
+---
+class: onecol
+## Multiclass Confusion Matrix
+
+With more than two classes, the same principles apply (but the math gets harder)
+
+ | &emsp; $y$ = Healthy&emsp; | &emsp; $y$ = Depression&emsp; | &emsp; $y$ = Mania&emsp;
+:--| :--: | :--: | :--:
+** $p$ = Healthy**&emsp; | 100 | 3 | 7
+** $p$ = Depression**&emsp; | 2 | 25 | 0 
+** $p$ = Mania**&emsp; | 10 | 1 | 10
+
+$$\text{Average Accuracy} = \frac{1}{k}\sum_{j=1}^k\frac{TP_j + TN_j}{TP_j + TN_j + FP_j + FN_j}$$
+
+.footnote[[1] In multiclass settings, there are micro- and macro-averages but that is a more advanced topic to explore later.]
+
+---
+class: onecol
+## Class Probability Metrics for Classification
+
+---
+class: onecol
+## Performance Curves for Classification
+
+---
+class: oncol
+## Comprehension Check \#1
+.fl.w-third[
+test1
+]
+.fl.w-third[
+test2
+]
+.fl.w-third[
+test3
+]
+
 
 ---
 class: inverse, center, middle
@@ -225,7 +519,7 @@ There are also alternative resampling methods to explore
 - Adaptive methods that tune faster/smarter (e.g., "adaptive_cv")
 
 ---
-## Comprehension check
+## Comprehension Check \#2
 
 .pull-left[
 ```{r, eval=FALSE}
@@ -276,271 +570,6 @@ class: inverse, center, middle
 # Model Evaluation
 ---
 class: onecol
-## Performance Metrics
-.left-column[
-<br />
-```{r target, echo=FALSE}
-include_graphics("target.jpg")
-```
-]
-
-.right-column[
-
-**Metrics for Supervised Regression**
-- ![:emphasize](Distance) between predicted and trusted values
-- ![:emphasize](Correlation) between predicted and trusted values
-
-**Metrics for Supervised Classification**
-- ![:emphasize](Confusion matrix) between predicted and trusted classes
-- Compare predicted ![:emphasize](class probabilities) to trusted classes
-- Construct a ![:emphasize](performance curve) across decision thresholds
-]
-
----
-class: onecol
-## Classic Distance Metrics for Regression
-
-.pull-left[
-**Root Mean Squared Error (RMSE)**
-- Based on squared loss
-- Easier to computationally optimize
-- Ranges from $0$ to $+\infty$, lower is better
-]
-
-.pull-right[
-<br />
-$$RMSE=\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - p_i)^2}$$
-]
-
-.pull-left[
-**Mean Absolute Error (MAE)**
-- Based on absolute loss
-- More robust to outliers
-- Ranges from $0$ to $+\infty$, lower is better
-]
-
-.pull-right[
-<br />
-$$MAE=\frac{1}{n} \sum_{i=1}^n \left\lvert y_i - p_i \right\rvert$$
-]
-
-.footnote[[1] Note that, here, we will refer to the trusted labels as `\\(y\\)` and the predicted labels as `\\(p\\)`.]
-
----
-class: onecol
-exclude: true
-## Advanced Distance Metrics for Regression
-**Huber loss (HL)**
-
-- Combines benefits of RMSE and MAE
- + Easy to computationally optimize AND more robust to outliers
-- Requires setting or tuning $\delta$ (controls what to consider an outlier)
-- Ranges from $0$ (best) to $+\infty$ (worst), lower is better
-
-$$\begin{split}
-HL &= \frac{1}{n} \sum_{i=1}^n L_\delta(y_i, p_i) \\
-L_\delta(y_i, p_i) &= \begin{cases}\frac{1}{2}(y_i - p_i)^2 & \text{for } \lvert y_i - p_i \rvert \le \delta \\ \delta (\lvert y_i - p_i \rvert - \frac{1}{2}\delta) & \text{otherwise} \end{cases}
-\end{split}$$
-
----
-## Comparing Loss Functions
-
-```{r losses, echo=FALSE}
-tibble(
-  error = seq(-3, 3, length.out = 100),
-  sq_err = error^2,
-  abs_err = abs(error)
-) %>%
-  pivot_longer(-error, names_to = "type", values_to = "loss") %>%
-  mutate(
-    type = factor(
-      type,
-      levels = c("sq_err", "abs_err"),
-      labels = c("Squared Loss (RMSE)", "Absolute Loss (MAE)")
-    )
-  ) %>%
-  ggplot(aes(x = error, y = loss, color = type)) +
-  facet_wrap(~type, nrow = 1) +
-  geom_line(size = 1.5) +
-  labs(x = "Error (y - p)", y = "Loss") +
-  theme_xaringan(text_font_size = 20, title_font_size = 20) +
-  theme(
-    legend.position = "none",
-    panel.grid.minor = element_blank(),
-    panel.background = element_rect(fill = "white")
-  )
-```
-
----
-exclude: true
-## Comparing Loss Functions
-
-```{r losses3, echo=FALSE}
-tibble(
-  error = seq(-2, 2, length.out = 100), 
-  sq_err = error^2,
-  abs_err = abs(error),
-  huber1 = ifelse(abs(error) <= 1, 0.5 * error^2, 1 * (abs(error) - 0.5 * 1))
-) %>% 
-  pivot_longer(-error, names_to = "type", values_to = "loss") %>% 
-  mutate(type = factor(
-    type, 
-    levels = c("sq_err", "abs_err", "huber1"), 
-    labels = c("Squared Loss", "Absolute Loss", "Huber Loss (delta=1)")
-  )) %>% 
-  ggplot(aes(x = error, y = loss, color = type)) + 
-  facet_wrap(~type, nrow = 1) + 
-  geom_line(size = 1.5) + 
-  labs(x = "Error (y - p)", y = "Loss") +
-  theme_xaringan(text_font_size = 18, title_font_size = 18) +
-  theme(
-    legend.position = "none",
-    panel.grid.minor = element_blank(), 
-    panel.background = element_rect(fill = "white")
-  )
-```
-
----
-class: onecol
-## Correlation Metrics for Regression
-
-**R-Squared $(R^2$ or RSQ)**
-- How much of the variability in the trusted labels do the predictions explain?
- + Calculated in ML as the **squared correlation** between the predictions and labels
-- Several cautions about using RSQ as a performance metric
- + It is a measure of **consistency** and not accuracy (may disagree with distance)
- + It cannot be calculated if the predicted or trusted labels are constant
- + It is highly sensitive to the amount of label variability (may be unstable)
-- Ranges from $0$ to $1$, higher is better
-
-$$R^2 = \left(\frac{\text{cov}(y, p)}{\sigma_y\sigma_p}\right)^2 = \left(\frac{\sum(y_i - \bar{y})(p_i - \bar{p})}{\sqrt{\sum (y_i-\bar{y})^2}\sqrt{\sum(p_i-\bar{p})^2}}\right)^2$$
-
----
-class: onecol
-## Comparing Distance and Correlation Metrics
-
-```{r dvc, echo=FALSE}
-set.seed(2021)
-dvc <- tibble(
-  label = rnorm(100, 0, 10),
-  pred1 = label + rnorm(100, 0, 5),
-  pred2 = 5 * label + rnorm(100, 0, 28)
-)
-
-title1 <- paste0(
-  "RMSE=", round(yardstick::rmse(dvc, truth = label, estimate = pred1)$.estimate, 1),
-  ", MAE=", round(yardstick::mae(dvc, truth = label, estimate = pred1)$.estimate, 1),
-  ", RSQ=", round(yardstick::rsq(dvc, truth = label, estimate = pred1)$.estimate, 2)
-)
-
-p1 <- ggplot(dvc, aes(x = label, y = pred1)) + 
-  geom_abline(intercept = 0, slope = 1, size = 1.5, color = "grey") + 
-  geom_point(color = "#1b9e77", size = 2) +
-  labs(x = "Trusted Label", y = "Model 1's Predictions", title = title1) +
-  theme_xaringan(text_font_size = 20, title_font_size = 14) +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.title.position = "panel",
-    legend.position = "none",
-    panel.grid.minor = element_blank(), 
-    panel.background = element_rect(fill = "white")
-  )
-
-title2 <- paste0(
-  "RMSE=", round(yardstick::rmse(dvc, truth = label, estimate = pred2)$.estimate, 1),
-  ", MAE=", round(yardstick::mae(dvc, truth = label, estimate = pred2)$.estimate, 1),
-  ", RSQ=", round(yardstick::rsq(dvc, truth = label, estimate = pred2)$.estimate, 2)
-)
-
-p2 <- ggplot(dvc, aes(x = label, y = pred2)) + 
-  geom_abline(intercept = 0, slope = 1, size = 1.5, color = "grey") + 
-  geom_point(color = "#d95f02", size = 2) +
-  labs(x = "Trusted Label", y = "Model 2's Predictions", title = title2) +
-  theme_xaringan(text_font_size = 20, title_font_size = 14) +
-  theme(
-    legend.position = "none",
-    plot.title = element_text(hjust = 0.5),
-    plot.title.position = "panel",
-    panel.grid.minor = element_blank(), 
-    panel.background = element_rect(fill = "white")
-  )
-
-p1 | p2
-```
-
-
----
-exclude: true
-class: onecol
-## Advanced Correlation Metrics for Regression
-
-**Concordance Correlation Coefficient (CCC)**
-- Equivalent to certain formulations of the intraclass correlation coefficient
-- Combines both accuracy (distance) and consistency (correlation) information
-- Ranges from $-1$ (worst) to $+1$ (best)
-
-$$CCC = \frac{\frac{2}{n}\sum_{i=1}^n (t_i - \bar{t})(p_i - \bar{p})}{\frac{1}{n}\sum_{i=1}^n(t_i - \bar{t})^2 + \frac{1}{n}\sum_{i=1}^n(p_i - \bar{p})^2 + (\bar{t} - \bar{p})^2}$$
----
-## Confusion Matrix Metrics for Classification
-
-The classic confusion matrix is for binary (i.e., no/yes or 0/1) classification
-
- | Trusted = No | Trusted = Yes
-:--| :--: | :--:
-**Predicted = No** | True Negatives (TN) | False Negative (FN)
-**Predicted = Yes** | False Positive (FP) | True Positive (TP)
-
-The counts or proportions can be informative on their own or combined into metrics
-
---
-
-.pull-left[
-$$\begin{split}
-\text{Accuracy} &= \frac{TN + TP}{(TN + FN + FP + TP)} \\
-\text{Sensitivity} &= \frac{TP}{TP+FN} \\
-\text{Specificity} &= \frac{TN}{TN + FP} \\
-\text{Balanced Accuracy} &= (\text{Sensitivity} + \text{Specificity})/2 \\
-\end{split}$$
-]
-
---
-
-.pull-right[
-$$\begin{split}
-\text{Precision} &= \frac{TP}{TP+FP} \\
-\text{Recall} &= \text{Sensitivity} \\
-F_1 \text{ Score} &= \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}} \\
-PPV &= \text{Precision} \\
-NPV &= \frac{TN}{TN + FN}
-\end{split}$$
-]
-
----
-class: onecol
-## Multiclass Confusion Matrix
-
-With more than two classes, the same principles apply (but the math gets harder)
-
- | Trusted = Healthy | Trusted = Depression | Trusted = Mania
-:--| :--: | :--: | :--:
-**Predicted = Healthy** | 100 | 3 | 7
-**Predicted = Depression** | 2 | 25 | 0 
-**Predicted = Mania** | 10 | 1 | 10
-
-$$\text{Average Accuracy} = \frac{1}{k}\sum_{j=1}^k\frac{TP_j + TN_j}{TP_j + TN_j + FP_j + FN_j}$$
-
-.footnote[[1] In multiclass settings, there are micro- and macro-averages but that is a more advanced topic to explore later.]
-
----
-class: onecol
-## Class Probability Metrics for Classification
-
----
-class: onecol
-## Performance Curves for Classification
-
----
-class: onecol
 ## Training Set Performance
 
 ---
@@ -575,9 +604,10 @@ yardstick
 ---
 class: inverse, center, middle
 # Model Interpretation
-
+---
 varImp()
 - object
 - scale
 
 train$finalModel
+---
