@@ -66,25 +66,27 @@ class: inverse, center, middle
 </style>
 ---
 class: onecol
-## Lecture Plan
-We will begin with **overview slides** and then dive into an **extended live coding**
-- Performance Metrics
-- Model Training in R
-- Model Evaluation in R
-- Model Interpretation in R
+## Plan for Day 2-B
+First will be an extended lecture on **Performance Metrics** (one of my favorite topics)
+
+Second will be a brief **lecture overview** of training, evaluation, and interpretation in R
+
+Third, we will apply this with an extended **live coding** session and hands-on activity
 
 --
 
 .pt1[
-We will start by **adapting familiar algorithms** to the predictive modeling framework
-- Linear modeling (multiple regression) will be used for *regression*
-- Generalized linear modeling (logistic regression) will be used for *classification*
+In the live coding, we will **adapt familiar algorithms** to predictive modeling
+- Linear modeling will be adapted for continuous prediction (regression)
+- Generalized linear modeling will be adapted for discrete prediction (classification)
+
+*This will ease the transition to ML and highlight its similarities with classical stats*
 ]
 
 --
 
 .pt1[
-We will also **foreshadow future topics** (e.g., regularized regression and tuning)
+We will also **foreshadow future topics** (e.g., regularized linear models and tuning)
 ]
 
 ---
@@ -93,6 +95,7 @@ class: inverse, center, middle
 ---
 class: onecol
 ## Performance Metrics
+
 .left-column.pt3[
 ```{r target, echo=FALSE}
 include_graphics("target.jpg")
@@ -128,6 +131,8 @@ class: onecol
 $$RMSE=\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - p_i)^2}$$
 ]
 
+--
+
 .pull-left[
 **Mean Absolute Error (MAE)**
 - Based on absolute loss
@@ -158,7 +163,7 @@ L_\delta(y_i, p_i) &= \begin{cases}\frac{1}{2}(y_i - p_i)^2 & \text{for } \lvert
 \end{split}$$
 
 ---
-## Comparing Loss Functions
+## Visualizing Regression Loss Functions
 
 ```{r losses, echo=FALSE}
 tibble(
@@ -178,6 +183,7 @@ tibble(
   labs(x = latex2exp::TeX("Error $(y_i - p_i)$"), y = "Loss") +
   theme_xaringan(text_font_size = 18, title_font_size = 18) +
   theme(
+    axis.title = element_text(size = 20),
     legend.position = "none",
     panel.grid.minor = element_blank(), 
     panel.background = element_rect(fill = "white")
@@ -225,11 +231,12 @@ $$R^2 = \left(\frac{\text{cov}(y, p)}{\sigma_y\sigma_p}\right)^2 = \left(\frac{\
 
 --
 
-.bg-light-yellow.b--light-red.ba.bw1.br3[
-- Several cautions about using RSQ as a performance metric
- + It is a measure of **consistency** and not accuracy (may disagree with distance)
- + It cannot be calculated if the predicted or trusted labels are constant
- + It is highly sensitive to the amount of label variability (may be unstable)
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution!**
++ RSQ is a measure of *consistency* (i.e., linear association) and not distance
++ RSQ can become unstable or undefined when data variability is low
++ RSQ can become unstable when applied in small samples (e.g., test sets)
+
 ]
 
 ---
@@ -240,7 +247,7 @@ class: onecol
 
 - Combines both accuracy (distance) and consistency (correlation) information
 
-- Equivalent to certain formulations of the intraclass correlation coefficient
+- Very similar to certain formulations of the intraclass correlation coefficient
 
 - Ranges from $-1$ to $+1$, where higher is better
 
@@ -304,41 +311,115 @@ p1 | p2
 ```
 
 ---
+class: twocol
 ## Confusion Matrix Metrics for Classification
 
-.pt3.pb4[
  | Trusted = No<br /> $(y=0)$ | Trusted = Yes<br /> $(y=1)$
 :--:| :--: | :--:
 **Predicted = No**&emsp;<br /> $(p=0)$ | True Negatives (TN) | False Negative (FN)
 **Predicted = Yes**&emsp;<br /> $(p=1)$ | False Positive (FP) | True Positive (TP)
+
+.mt4[
+$$\text{Accuracy} = \frac{TN + TP}{(TN + FN + FP + TP)}$$
+]
+.tc[
+Ranges from $0$ to $1$, higher is better
 ]
 
 --
 
-.pull-left[
+.bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
+Accuracy can be misleading when the classes are highly imbalanced (e.g., if $TN \gg TP$)
+]
+
+---
+## Additional Confusion Matrix Metrics
+
+ | $y=0$ | $y=1$
+:--:| :--: | :--:
+&emsp; ** $p=0$**&emsp; | &emsp;True Negatives (TN)&emsp; | &emsp;False Negative (FN)&emsp;
+** $p=1$** | False Positive (FP) | True Positive (TP)
+
+.pull-left.pt3[
 $$\begin{split}
-\text{Accuracy} &= \frac{TN + TP}{(TN + FN + FP + TP)} \\
 \text{Sensitivity} &= \frac{TP}{TP+FN} \\
 \text{Specificity} &= \frac{TN}{TN + FP} \\
+\text{Balanced Accuracy} &= \frac{\text{Sensitivity} + \text{Specificity}}{2} \\
 \end{split}$$
 ]
 
 --
 
-.pull-right[
+.pull-right.pt3[
 $$\begin{split}
-\text{Balanced Acc.} &= (\text{Sensitivity} + \text{Specificity})/2 \\
 \text{Precision} &= \frac{TP}{TP+FP} \\
-\text{Recall} &= \text{Sensitivity} \\
+\text{Recall} &= \frac{TP}{TP+FN} \\
 F_1 \text{ Score} &= \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}} \\
 \end{split}$$
 ]
 
+.tc[
+All range from $0$ to $1$, higher is better
+]
+
+--
+
+.footnote[[1] Note that the formulas for Sensitivity and Recall are the same. Many of these metrics enjoy many names.<br />[2] `\\(F_1\\)` does not consider `\\(TN\\)`, which is sometimes a reason to use it and sometimes a reason to avoid it.]
+
+---
+## Confusion Matrix Metrics Examples
+.pull-left.tc[
+**Balanced Classes**
+
+ | $y=0$ | $y=1$
+:--:| :--: | :--:
+** $p=0$ ** | 101 | 54
+** $p=1$ ** | 33 | 105
+.pt3[
+
+$$\begin{split}
+\text{Accuracy} &= 0.70 \\
+\\
+\text{Sensitivity} &= 0.66 \\
+\text{Specificity} &= 0.75 \\
+\text{Balanced Accuracy} &= 0.71 \\
+\\
+\text{Precision} &= 0.76 \\
+\text{Recall} &= 0.66 \\
+F_1 &= 0.71
+\end{split}$$
+
+]
+]
+
+--
+
+.pull-right.tc[
+**Imbalanced Classes**
+
+ | $y=0$ | $y=1$
+:--:| :--: | :--:
+** $p=0$ ** | 256 | 11
+** $p=1$ ** | 6 | 2
+.pt3[
+
+$$\begin{split}
+\text{Accuracy} &= 0.94 \\ 
+\\
+\text{Sensitivity} &= 0.15 \\
+\text{Specificity} &= 0.98 \\
+\text{Balanced Accuracy} &= 0.57 \\
+\\
+\text{Precision} &= 0.25 \\
+\text{Recall} &= 0.15 \\
+F_1 &= 0.19
+\end{split}$$
+]
+]
+
 ---
 class: onecol
-## Multiclass Confusion Matrix
-
-With more than two classes, the same principles apply (but the math gets harder)
+## Multiclass Performance Strategies
 
  | &emsp; $y$ = Healthy&emsp; | &emsp; $y$ = Depression&emsp; | &emsp; $y$ = Mania&emsp;
 :--| :--: | :--: | :--:
@@ -346,30 +427,142 @@ With more than two classes, the same principles apply (but the math gets harder)
 ** $p$ = Depression**&emsp; | 2 | 25 | 0 
 ** $p$ = Mania**&emsp; | 10 | 1 | 10
 
-$$\text{Average Accuracy} = \frac{1}{k}\sum_{j=1}^k\frac{TP_j + TN_j}{TP_j + TN_j + FP_j + FN_j}$$
+--
 
-.footnote[[1] In multiclass settings, there are micro- and macro-averages but that is a more advanced topic to explore later.]
+.pt3[
+![:emphasize](Macro-averaging): compute the performance for each class in a one-versus-all manner using standard binary metrics, then calculate the unweighted average across classes
+]
+
+--
+
+![:emphasize](Macro-weighting): same as macro-averaging but use a weighted average across classes such that performance on larger/more frequent classes is emphasized
+
+--
+
+![:emphasize](Micro-averaging): compute a confusion matrix for each class in a one-versus-all manner, then calculate binary metrics using sums of each cell (e.g., $\sum {TP}_j$)
 
 ---
 class: onecol
 ## Class Probability Metrics for Classification
 
----
-class: onecol
-## Performance Curves for Classification
+Some classifiers estimate **the probability of each class** as their prediction $(p_{ij})$
+
+If we consider a higher estimated probability as higher "confidence"
+
+- We can **reward** the classifier for being more **confident when correct**...
+
+- ...and ![:emphasize](penalize) the classifier for being more ![:emphasize](confident when wrong)
+
+--
+
+This gives rise to the Logistic or **Log Loss**, which can be summed or averaged
+
+$$L_{log}(Y,P) = -\frac{1}{n}\sum_{i=1}^n\sum_{j=1}^q \left(y_{ij}\log( p_{ij})\right)$$
+
+.pl4[
+$y_{ij}\in\{0,1\}$ is a binary indicator of whether observation $i$ is truly in class $j$<br />
+$p_{ij}\in(0,1)$ is the estimated probability that observation $i$ is in class $j$
+]
 
 ---
-class: oncol
+
+## Visualizing Log Loss in Binary Classification
+
+```{r logloss, echo=FALSE}
+tibble(
+  truth = factor(rep(0:1, each = 501)),
+  p = c(seq(0, 1, length.out = 501), seq(1, 0, length.out = 501))
+) %>% 
+  rowwise() %>% 
+  mutate(loss = yardstick::mn_log_loss_vec(truth, p, event_level = "second")) %>% 
+  ggplot(aes(x = p, y = loss, color = truth, linetype = truth)) + 
+  geom_line(size = 2.25) +
+  coord_cartesian(ylim = c(0, 8)) +
+  scale_color_brewer(palette = "Set2", guide = guide_legend(keywidth = unit(2, "cm"))) +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "Predicted Probability of Class 1", y = "Log Loss", 
+       color = "True Class", linetype = "True Class") +
+  theme_xaringan(text_font_size = 18, title_font_size = 16) +
+  theme(
+    axis.title = element_text(size = 18),
+    legend.position = "top",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+---
+class: onecol
+## Performance Curves
+
+- When a classifier outputs class probabilities, we can choose any **decision threshold**
+
+- We might naturally consider any probability over 50% positive and all others negative
+
+- But we could choose a threshold more conservative (e.g., 75%) or liberal (e.g., 25%)
+
+--
+
+.pt1[
+- **Performance curves** plot the characteristics of different decision thresholds
+
+- This gives us an overview of how the classification system performs in general
+]
+
+--
+
+.pt1[
+- There are many performance curves<sup>1</sup>, so we'll use the original as an example
+
+- Finally, the **area under the curve (AUC)** is often used as a performance metric
+]
+
+.footnote[[1] Popular options include ROC curves, precision-recall curves, gain curves, and lift curves.]
+
+---
+class: onecol
+## Receiver Operating Characteristic (ROC) Curves
+
+.pull-left[
+Each point in a ROC curve corresponds to a possible decision threshold
+
+The performance metrics compared for each point are Sensitivity and Specificity
+
+Better curves are closer to the top-left
+
+The area under the ROC curve (AUC-ROC) ranges from $0.5$ to $1.0$, higher is better.
+
+AUCROC is the probability that a random positive example has a higher estimate than a random negative example.
+
+]
+
+--
+
+.pull-right[
+```{r rocex, echo=FALSE, fig.width=7, fig.height=6.8, out.width='95%'}
+test_data <- read_rds("preds.rds")
+yardstick::roc_curve(test_data, yes, truth = obs, event_level = "second") %>% 
+  arrange(sensitivity) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) + 
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted", size = 2, color = "grey") +
+  geom_line(size = 2, color = "darkblue") +
+  annotate(geom = "text", x = 0.75, y = 0.125, size = 12, label = "AUC = 0.82", 
+           color = "darkblue") +
+  coord_fixed() +
+  labs(x = "1 - Specificity", y = "Sensitivity") +
+  theme_xaringan(text_font_size = 20) +
+  theme(
+    axis.title = element_text(size = 26),
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+]
+
+---
+class: onecol
 ## Comprehension Check \#1
-.fl.w-third[
-test1
-]
-.fl.w-third[
-test2
-]
-.fl.w-third[
-test3
-]
+
 
 
 ---
