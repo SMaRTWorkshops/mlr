@@ -43,6 +43,7 @@ class: inverse, center, middle
 **Ensemble Methods**
 - Random forests 
 - Aggregating predictions from many models
+- Improved prediction accuracy at the cost of lower interpretability  
 ]
 
 .pull-right[
@@ -92,24 +93,184 @@ class: inverse, center, middle
 # Decision Trees
 
 ---
-## Modeling Nonlinearity
+## Decision Trees
 
+Tree-based models use the logic of `if-then` statements in order to partition the data into ![:emphasize](homogeneous groups). For instance: 
+
+`if has legs` &lt;/br&gt;
+`| if barks then animal = dog` &lt;/br&gt;
+`| else animal = cat` &lt;/br&gt;
+`else animal = fish`
+
+--
+
+This is an example of a simple **classification tree**. Decision trees can also be used for regression problems (i.e., **regression trees**).
+
+A key benefit of decision trees is that they are ![:emphasize](highly interpretable) and able to model nonlinear relationships. 
+
+However, they typically provide ![:emphasize](poorer predictive accuracy) than other supervised learning methods (e.g., random forests, which we will talk about later today).
 
 ---
-## Recursive Partioning 
+## Decision Trees
 
+.pull-left[
+Decision trees are often visualized graphically.
+
+The top node is called the ![:emphasize](root node).
+
+Subsequent splitting nodes are called ![:emphasize](internal nodes) or ![:emphasize](branches).
+
+The output labels are called ![:emphasize](terminal nodes) or ![:emphasize](leaves).
+
+Typically, if a statement is ![:emphasize](true), you go to the left. If a statement is ![:emphasize](false), you go to the right.
+]
+
+.pull-right[
+&lt;img src="simpletree.png" width="100%" /&gt;
+]
 
 ---
 class: inverse, center, middle
 # Classification Trees
 
 ---
-## Classification Trees
+## Building a Classification Tree
 
+The goal of classification trees are to partition data into homogenous groups, as defined by ![:emphasize](purity) (i.e., including a larger proportion of one class than the other in each node).
+
+In building a classification tree, we use ![:emphasize](recursive partioning) to find the best data splits that maximize node purity.
+
+The ![:emphasize](Gini index) is the most commonly-used metric for quantifying purity, and is calculated as:
+
+`$$Gini = 1 - \sum\limits_{i = 1}^C(p_i)^2$$`
+where
+- `\(p_i\)` = the probability of being in the `\(i\)`th class
+- `\(C\)` = total number of classes
 
 ---
-## Classification Trees in R
+## Building a Classification Tree
 
+Let's walk through an example of building a classification tree using this toy dataset to predict depression risk: 
+
+Stressful Event&amp;emsp; | Family History&amp;emsp; | Age&amp;emsp;&amp;emsp;&amp;emsp; | Depression Risk&amp;emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+No | No | 12 | Low
+Yes | Yes | 16 | High
+Yes | Yes | 22 | High
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | No | 46 | Low
+
+--
+
+The first thing we need to do is choose the ![:emphasize](root node) by determine which feature (stressful life event, family history of depression, or age) best predicts future depression risk. 
+
+---
+## Choosing the Root Node
+
+.pull-left[
+Start by finding the **Gini index** of stressful life events.
+
+![:emphasize](Stressful Event)&amp;emsp; | Family History&amp;emsp; | Age&amp;emsp;&amp;emsp;&amp;emsp; | ![:emphasize](Depression Risk)&amp;emsp;
+:------- | :-------- | :------- |:------- |
+![:emphasize](No) | Yes | 10 | ![:emphasize](Low) 
+![:emphasize](No) | No | 12 | ![:emphasize](Low)
+![:emphasize](Yes) | Yes | 16 | ![:emphasize](High)
+![:emphasize](Yes) | Yes | 22 | ![:emphasize](High)
+![:emphasize](No) | Yes | 30 | ![:emphasize](High) 
+![:emphasize](No) | No | 38 | ![:emphasize](Low)
+![:emphasize](Yes) | No | 46 | ![:emphasize](Low)
+]
+
+--
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+
+To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
+
+`\(Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444\)`
+`\(Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375\)`
+
+We then calculate the total Gini index by taking the weighted average of the Gini leaf indices:
+
+`\(Gini_{stress} = (\frac{3}{7})*0.444 + (\frac{4}{7})*0.375 = 0.405\)`
+]
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+---
+## Choosing the Root Node
+
+We can compare this to the Gini index for family history, which comes to:
+
+`\(Gini_{family}=((\frac{4}{7})*(1 - (\frac{3}{4})^2 - (\frac{1}{4})^2)) + ((\frac{3}{7})*(1 - (\frac{0}{3})^2 - (\frac{3}{3})^2)) = 0.214\)`
+
+.pull-left[
+Stressful Event&amp;emsp; | ![:emphasize](Family History)&amp;emsp; | Age&amp;emsp;&amp;emsp;&amp;emsp; | ![:emphasize](Depression Risk)&amp;emsp;
+:------- | :-------- | :------- |:------- |
+No | ![:emphasize](Yes) | 10 | ![:emphasize](Low) 
+No | ![:emphasize](No) | 12 | ![:emphasize](Low)
+Yes | ![:emphasize](Yes) | 16 | ![:emphasize](High)
+Yes | ![:emphasize](Yes) | 22 | ![:emphasize](High)
+No | ![:emphasize](Yes) | 30 | ![:emphasize](High) 
+No | ![:emphasize](No) | 38 | ![:emphasize](Low)
+Yes | ![:emphasize](No) | 46 | ![:emphasize](Low)
+]
+
+--
+
+.pull-right[
+&lt;img src="familytree.png" width="90%" /&gt;
+]
+
+---
+## Choosing the Root Node
+
+Calculating the Gini index for numerical features is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all  splits. In this case, the lowest Gini index is for age &lt; 14.5 (Gini = 0.343): 
+
+.pull-left[
+Stressful Event&amp;emsp; | Family History&amp;emsp; | ![:emphasize](Age)&amp;emsp;&amp;emsp;&amp;emsp; | ![:emphasize](Depression Risk)&amp;emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | ![:emphasize](10) | ![:emphasize](Low) 
+No | No | ![:emphasize](13) | ![:emphasize](Low)
+Yes | Yes | ![:emphasize](16) | ![:emphasize](High)
+Yes | Yes | ![:emphasize](22) | ![:emphasize](High)
+No | Yes | ![:emphasize](30) | ![:emphasize](High) 
+No | No | ![:emphasize](38) | ![:emphasize](Low)
+Yes | No | ![:emphasize](46) | ![:emphasize](Low)
+]
+.pull-right[
+&lt;img src="agetree.png" width="90%" /&gt;
+]
+
+---
+## Recursive Partioning
+
+.pull-left[
+Comparing the Gini index for stressful life events (0.405) to family history of depression (0.214) to age&lt;14.5 (0.343), we see that family history has the lowest Gini index (i.e., highest **purity**).
+
+Thus, we set family history as the root node. 
+
+We then ![:emphasize](continue partioning the data) to find the next split from the impure node.
+
+We can continue this process until we are left with ![:emphasize](only pure nodes). 
+]
+
+--
+
+.pull-right[
+&lt;img src="familytree2.png" width="90%" /&gt;
+]
 
 ---
 class: inverse, center, middle
@@ -119,9 +280,92 @@ class: inverse, center, middle
 ---
 ## Regression Trees
 
+rather than working with gini (or other metrics) we're back to SSE: 
+
+leaves also don't give a class, but a predicted value. 
+
+the mean of observations in that leaf. 
+
+---
+## Comprehension Check 
+
+&lt;span style="font-size:30px;"&gt;**Let's say we continued this recursive partioning process until we were left only with pure nodes. What are some problems that could arise?**&lt;/span&gt;
+
+--
+
+&lt;/br&gt; 
+Some answers: 
+
+- Overfitting training data
+- Poor prediction on test data/future/new data
+- Instability of model (if data are even slightly altered, you may find entirely different splits)
+- Small number of participants in leaves
+- Selection bias: features with higher number of distinct values are favored
+
+---
+class: inverse, center, middle
+## Preventing Overfitting
+
+
+---
+## Stopping Criteria 
+
+only allowing tree to grow to a certain depth 
+
+maxdepth hyperparameter in rpart2
+
+---
+## Pruning
+
+cp parameter
+
+gini_cp = gini + cp * number of terminal nodes
+
+reminds you of regularization! 
+
+cp parameter in rpart
+
+again, goal is to fit training less less well to improve testing
+
+for regression: get total SSR, then calculate SSR for removing leaves (it gets larger and larger). 
+
+this helps, but decision trees are ultimately still limited by low accuracy. RF helps with this! 
+
+---
+class: inverse, center, middle
+# Random Forests
+
+---
+## Random Forests
+
+
+1. bootstrap 
+2. create a decision tree with the bootstrapped data, but only use a random subset of features at each step (how many? hyperparameter...)
+3. go back to step 1 and repeat. repeat many times. 
+
+this gives a ~random forest~ of trees. the diversity is what makes it more effective than a single decision tree. 
+
+new data -&gt; run through all trees -&gt; see what got the most votes. 
+
+OOB samples incorrectly classified = out of bag error
+
+---
+## Classification Trees in R 
+
+use the heart data again 
+
+show variable importance
+
+
 
 ---
 ## Regression Trees in R
+
+
+
+
+---
+## Random Forests in R 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

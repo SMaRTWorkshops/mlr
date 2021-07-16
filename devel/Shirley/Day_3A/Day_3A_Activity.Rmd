@@ -146,10 +146,10 @@ ridgepred_test <- predict(ridgefit, newdata = heart_test)
 lassopred_test <- predict(lassofit, newdata = heart_test)
 enpred_test <- predict(enfit, newdata = heart_test)
 
-confusionMatrix(data = logpred_test, reference = heart_test_baked$output)
-confusionMatrix(data = ridgepred_test, reference = heart_test_baked$output)
-confusionMatrix(data = lassopred_test, reference = heart_test_baked$output)
-confusionMatrix(data = enpred_test, reference = heart_test_baked$output)
+roc(predictor = as.numeric(logpred_test), response = heart_test_baked$output)
+roc(predictor = as.numeric(ridgepred_test), response = heart_test_baked$output)
+roc(predictor = as.numeric(lassopred_test), response = heart_test_baked$output)
+roc(predictor = as.numeric(enpred_test), response = heart_test_baked$output)
 ```
 
 
