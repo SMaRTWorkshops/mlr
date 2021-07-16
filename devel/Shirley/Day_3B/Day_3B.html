@@ -114,7 +114,7 @@ However, they typically provide ![:emphasize](poorer predictive accuracy) than o
 ## Decision Trees
 
 .pull-left[
-Decision trees are often visualized graphically.
+Decision trees are often visualized **graphically**.
 
 The top node is called the ![:emphasize](root node).
 
@@ -122,7 +122,9 @@ Subsequent splitting nodes are called ![:emphasize](internal nodes) or ![:emphas
 
 The output labels are called ![:emphasize](terminal nodes) or ![:emphasize](leaves).
 
-Typically, if a statement is ![:emphasize](true), you go to the left. If a statement is ![:emphasize](false), you go to the right.
+If a statement is ![:emphasize](true), you go to the left. 
+
+If a statement is ![:emphasize](false), you go to the right.
 ]
 
 .pull-right[
@@ -138,7 +140,11 @@ class: inverse, center, middle
 
 The goal of classification trees are to partition data into homogenous groups, as defined by ![:emphasize](purity) (i.e., including a larger proportion of one class than the other in each node).
 
+--
+
 In building a classification tree, we use ![:emphasize](recursive partioning) to find the best data splits that maximize node purity.
+
+--
 
 The ![:emphasize](Gini index) is the most commonly-used metric for quantifying purity, and is calculated as:
 
@@ -193,6 +199,32 @@ Start by finding the **Gini index** of stressful life events.
 ## Choosing the Root Node
 .pull-left[
 Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+]
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+
+To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
+
+`\(Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444\)`
+`\(Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375\)`
+]
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
 
 To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
 
@@ -207,6 +239,7 @@ We then calculate the total Gini index by taking the weighted average of the Gin
 .pull-right[
 &lt;img src="stresstree.png" width="90%" /&gt;
 ]
+
 
 ---
 ## Choosing the Root Node
@@ -236,7 +269,7 @@ Yes | ![:emphasize](No) | 46 | ![:emphasize](Low)
 ---
 ## Choosing the Root Node
 
-Calculating the Gini index for numerical features is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all  splits. In this case, the lowest Gini index is for age &lt; 14.5 (Gini = 0.343): 
+Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all  splits. In this case, the lowest Gini index is for age &lt; 14.5 (Gini = 0.343): 
 
 .pull-left[
 Stressful Event&amp;emsp; | Family History&amp;emsp; | ![:emphasize](Age)&amp;emsp;&amp;emsp;&amp;emsp; | ![:emphasize](Depression Risk)&amp;emsp;
@@ -249,6 +282,9 @@ No | Yes | ![:emphasize](30) | ![:emphasize](High)
 No | No | ![:emphasize](38) | ![:emphasize](Low)
 Yes | No | ![:emphasize](46) | ![:emphasize](Low)
 ]
+
+--
+
 .pull-right[
 &lt;img src="agetree.png" width="90%" /&gt;
 ]
@@ -263,7 +299,9 @@ Thus, we set family history as the root node.
 
 We then ![:emphasize](continue partioning the data) to find the next split from the impure node.
 
-We can continue this process until we are left with ![:emphasize](only pure nodes). 
+We can continue this process until we are left with ![:emphasize](only pure leaves). 
+
+Note that if we are left with an ![:emphasize](impure) leaf, the label is set to the **mode** of all observations within the leaf.
 ]
 
 --
