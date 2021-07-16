@@ -381,7 +381,7 @@ ggplot(dat) +
 
 ]
 ---
-## Comprehension check
+## Comprehension Check \#1
 <span style="font-size:30px;">Ann has developed an ML system that looks at a patient's physiological signals and tries to determine whether they are having a micro-seizure.</span>
 
 .pull-left[
@@ -523,11 +523,11 @@ include_graphics("target.jpg")
 
 ]
 ---
-## Comprehension check
+## Comprehension Check \#2
 <span style="font-size:30px;">Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.</span>
 
 .pull-left[
-### Question 3
+### Question 1
 **Calculating the length of each tweet is <span style="text-decoration: underline; white-space: pre;">           </span>?**
 
 a) Feature Engineering
@@ -540,7 +540,7 @@ d) Model Evaluation
 ]
 
 .pull-right[
-### Question 4
+### Question 2
 **When should problems with the data be found?**
 
 a) Model Evaluation
@@ -903,11 +903,11 @@ include_graphics("overfitting_lay.png")
 ```
 
 ---
-## Comprehension check
+## Comprehension Check \#3
 <span style="font-size:30px;">Sam used all emails in his inbox to create an ML model to classify emails as "work-related" or "personal." Its accuracy on these emails was 98%.</span>
 
 .pull-left[
-### Question 5
+### Question 1
 **Is Sam done with this ML project?**
 
 a) Yes, he should sell this model right now!
@@ -920,7 +920,7 @@ d) No, his model needs to capture more noise
 ]
 
 .pull-right[
-### Question 6
+### Question 2
 **Which problems has Sam already addressed?**
 
 a) Overfitting
@@ -995,11 +995,11 @@ Cross-validation can also be **repeated** to avoid problems with any single spli
 
 .footnote[A great default procedure is nested, stratified, and 3x repeated 10-fold cross-validation.]
 ---
-## Comprehension check
+## Comprehension Check \#4
 <span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
 
 .pull-left[
-### Question 7
+### Question 1
 **What major mistake did Bogdan make?**
 
 a) He used a testing set instead of a holdout set
@@ -1012,7 +1012,7 @@ d) He did not use k-fold cross-validation
 ]
 
 .pull-right[
-### Question 8
+### Question 2
 **Which step should not be done in the training set?**
 
 a) Exploratory Analysis
