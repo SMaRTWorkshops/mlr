@@ -400,10 +400,35 @@ AUCROC is the probability that a random positive example has a higher estimate t
 ]
 
 ---
-class: onecol
+class: twocol
 ## Comprehension Check \#1
 
+&lt;span style="font-size:30px;"&gt;Bindi trains Model [A] to predict how many kilometers each bird will migrate this year and Model [B] to predict whether or not it will reproduce this year.&lt;/span&gt;
 
+.pull-left[
+**1. Which combination of performance metrics would be appropriate to use?**
+
+a) ROC-Curve for [A] and CCC for [B]
+
+b) Precision for [A] and Recall for [B]
+
+c) MAE for [A] and Balanced Accuracy for [B]
+
+d) None of the above
+
+]
+
+.pull-right[
+**2. Which combination of performance scores should Bindi hope to see?**
+
+a) RMSE = 531.6 and AUC-ROC = 0.04
+
+b) RMSE = 1129.7 and AUC-ROC = 0.04
+
+c) RMSE = 531.6 and AUC-ROC = 0.88
+
+d) RMSE = 1129.7 and AUC-ROC = 0.88
+]
 
 ---
 class: inverse, center, middle
@@ -444,8 +469,9 @@ To train any of the 200+ supported algorithms, you just need to change `method`&
 
 This makes it *super easy* to implement new algorithms and explore the world of ML!
 
-But be sure you understand an algorithm before trying to publish a paper using it
-
+.bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
+Be sure you understand an algorithm before trying to publish a paper using it.
+]
 .footnote[[1] Of course, you may also need to adapt the features and tuning procedures to match the new algorithm.]
 
 ---
@@ -544,7 +570,7 @@ There are many other arguments to `trainControl()` to explore
 - **`sampling`** can be used to address imbalanced labels in classification*
 - **`seeds`** can be used to make the resampling procedure reproducible
 
-.footnote[*These are both advanced topics that we plan to revisit on Day 5-A.]
+.footnote[*These are both advanced topics that we can revisit on Day 5.]
 
 --
 
@@ -552,15 +578,16 @@ There are also alternative resampling methods to explore
 - Fancier versions of bootstrapping (e.g., "boot632")
 - Algorithm-specific methods (e.g., "oob")
 - Adaptive methods that tune faster/smarter (e.g., "adaptive_cv")
+- The {rsample} package from {tidymodels} provides even more options
 
 ---
 ## Comprehension Check \#2
 
 .pull-left[
+Luca wrote the following code to train a model but keeps getting errors and warnings from R. Luca then sent me this message: 👿🔪💻🔪🥕 
+
 
 ```r
-# Assume packages and data are loaded
-
 # Part 1
 my_recipe &lt;- 
   my_data %&gt;% 
@@ -602,27 +629,138 @@ trained_model &lt;- train(
 ]
 
 ---
+class: onecol
+# Live Coding: Part 1
+Let's put what we just learned into practice in R
+
+.pt1[
+We will use {caret} and {recipes} to train two models on the `titanic` data
+]
+
+- We will load in and split the data
+
+- We will create two recipes for feature engineering
+
+- We will use LM to try to predict each passenger's fare (how much they paid)
+
+- We will use GLM to try to predict whether each passenger survived the disaster
+
+.pt1[
+You can follow along on your computer (the code is online) or just watch me code
+]
+
+---
 class: inverse, center, middle
 # Model Evaluation
 ---
 class: onecol
 ## Training Set Performance
 
+The object created by `train()` will contain lots of information
+
+.pt1[
+We can view a summary of training set performance in the **`results`** field
+
+- e.g., we can print `trained_model$results` to the console to see it
+
+- Each row corresponds to be one combination or set of hyperparameters
+
+- Columns define the **hyperparameter values** and the set's **performance scores** 
+]
+
+--
+.pt1[
+Results will include the Mean and SD of performance metrics across resamples
+
+- By default, it includes {RMSE, RSQ, and MAE} or {Accuracy and Kappa&lt;sup&gt;1&lt;/sup&gt;}
+]
+
+.footnote[[1] We did not discuss kappa, but it is basically accuracy with an adjustment for class imbalance.]
+
+---
+class: onecol
+## Test Set Predictions
+To evaluate performance on the test set, we need two things:
+
+1. Predictions from the model on the test set (e.g., values, classes, or probabilities)
+
+2. Trusted labels on the test set (after any preprocessing steps from {recipes})
+
+--
+
+.pt1[
+We can compare these predicted and trusted labels using {caret} or {yardstick}
+]
+- {caret} has basic performance metrics built in and is straightforward to use
+
+- {yardstick} offers many more options but requires some coding to work with {caret}
+
 ---
 class: onecol
 ## Test Set Predictions
 
-predict()
-- object
-- newdata 
-- type
-- na.action
+To get predictions from the final model on new data&lt;sup&gt;1&lt;/sup&gt;, we can use `predict()`
+
+--
+
+Argument&amp;emsp; | Description
+:------- | :----------
+`object` | A trained model object created by `train()`
+`newdata` | A data frame with the same raw features as the training set&lt;br /&gt;(prior to baking, if using {recipes})
+`type` | A string indicating whether to return raw predictions (i.e., predicted values or classes) or class probabilities (i.e., "raw" or "prob")
+
+*Note that class probabilities are not available for all classification algorithms*
+
+
+```r
+test_pred &lt;- predict(trained_model, newdata = my_testing_set, type = "raw")
+```
+
+
+.footnote[[1] The same process is used for both evaluating performance and deploying the model in the real world.]
 
 ---
+class: onecol
+## Test Set Labels 
+To get labels from the final model in the format expected by R, we can use `bake()`
 
-postResample()
-- pred
-- obs
+
+```r
+my_testing_set_baked &lt;- 
+  my_recipe %&gt;% 
+  prep(training = my_training_set) %&gt;% 
+  bake(new_data = my_testing_set)
+
+test_labs &lt;- my_testing_set_baked$outcome
+```
+
+--
+
+.pt1[
+A few points of potential confusion to avoid:
+]
+1. Use `train()` and `predict()` before baking the recipe (i.e., let them do it)
+
+2. `caret::predict()` uses `newdata`, whereas `recipes::bake()` uses `new_data`
+
+---
+class: onecol
+## Estimating Test Set Performance
+
+To estimate performance in {caret}, use `postResample()`
+
+Argument&amp;emsp; | Description
+:------- | :----------
+`pred` | A vector of predicted labels&amp;emsp;
+`obs` | A vector of trusted labels
+
+
+```r
+postResample(pred = test_pred, obs = test_labs)
+```
+
+This will calculate the same performance metrics that were in the `results` field
+- RMSE, MAE, and RSQ for regression and Accuracy and Kappa for classification
 
 ---
 
