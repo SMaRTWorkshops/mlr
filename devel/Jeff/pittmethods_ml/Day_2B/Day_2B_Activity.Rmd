@@ -54,38 +54,45 @@ glimpse(fare_pred)
 ```
 
 ```{r}
-# Bake test set and then calculate performance
+# Bake test set and save trusted labels
 fare_test_baked <- 
   fare_recipe %>% 
   prep(training = fare_train) %>% 
   bake(new_data = fare_test)
 
+fare_labs <- fare_test_baked$fare
+glimpse(fare_labs)
+```
+
+```{r}
+# Calculate test set performance
 postResample(pred = fare_pred, obs = fare_test_baked$fare)
 ```
 
 ```{r}
-# Plot predictions against test set labels
+# Quick plot
+qplot(x = fare_labs, y = fare_pred)
+```
+
+
+```{r}
+# Fancy Plot
 fare_test_baked %>% 
   mutate(fare_pred = fare_pred) %>% 
   ggplot(aes(x = fare, y = fare_pred)) + 
   geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
-  geom_point() +
-  coord_fixed(xlim = c(0, 520), ylim = c(0, 520))
+  geom_point(color = "darkblue", size = 2, alpha = 1/4) +
+  coord_cartesian(xlim = c(0, 520), ylim = c(0, 520))
 ```
 
 ```{r}
-# Combine the trusted labels and predictions into a data frame
-fare_test_data <- data.frame(
-  obs = fare_test_baked$fare, 
-  pred = fare_pred
-)
+# Huber Loss (blends RMSE and MAE)
+yardstick::huber_loss_vec(truth = fare_labs, estimate = fare_pred)
+```
 
-library(yardstick)
-ccc(fare_test_data, truth = obs, estimate = pred)
-huber_loss(fare_test_data, truth = obs, estimate = pred)
-
-my_metrics <- metric_set(rmse, huber_loss, rsq, ccc)
-my_metrics(fare_test_data, truth = obs, estimate = pred)
+```{r}
+# Concordance Correlation Coefficient
+yardstick::ccc_vec(truth = fare_labs, estimate = fare_pred)
 ```
 
 ```{r}
@@ -157,23 +164,21 @@ postResample(pred = surv_pred, obs = surv_test_baked$survived)
 ```
 
 ```{r}
-# Get detailed class-based performance scores
-confusionMatrix(data = surv_pred, reference = surv_test_baked$survived, positive = "yes")
-```
-
-```{r}
-# Use performance metrics from the yardstick package
-# https://yardstick.tidymodels.org/reference/
-
 test_data <- bind_cols(
   surv_prob, 
   obs = surv_test_baked$survived, 
   pred = surv_pred
 )
 
+cm <- yardstick::conf_mat(test_data, truth = obs, estimate = pred)
+autoplot(cm, type = "heatmap")
+summary(cm)
+
 yardstick::mcc(test_data, truth = obs, estimate = pred)
+
+roc <- yardstick::roc_curve(test_data, yes, truth = obs, event_level = "second")
+autoplot(roc)
 yardstick::roc_auc(test_data, yes, truth = obs, event_level = "second")
-yardstick::roc_curve(test_data, yes, truth = obs, event_level = "second") %>% autoplot()
 ```
 
 

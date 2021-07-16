@@ -38,20 +38,24 @@ class: inverse, center, middle
 .twocol {
   font-size: 24px;
 }
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
 &lt;/style&gt;
 ---
 class: onecol
 ## Plan for Day 2-B
-First will be an extended lecture on **Performance Metrics** (one of my favorite topics)
+First will be a lecture on **Performance Metrics** (one of my favorite topics)
 
 Second will be a brief **lecture overview** of training, evaluation, and interpretation in R
 
-Third, we will apply this with an extended **live coding** session and hands-on activity
+Third, we will apply this with a **live coding** session and hands-on activity
 
 --
 
 .pt1[
-In the live coding, we will **adapt familiar algorithms** to predictive modeling
+In parts 2 and 3, we will **adapt familiar algorithms** to predictive modeling
 - Linear modeling will be adapted for continuous prediction (regression)
 - Generalized linear modeling will be adapted for discrete prediction (classification)
 
@@ -465,42 +469,13 @@ Argument&amp;emsp; | Description
 
 --
 
-To train any of the 200+ supported algorithms, you just need to change `method`&lt;sup&gt;1&lt;/sup&gt;
+To train any of the 200+ supported algorithms, you just need to change `method`
 
 This makes it *super easy* to implement new algorithms and explore the world of ML!
 
 .bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
 Be sure you understand an algorithm before trying to publish a paper using it.
 ]
-.footnote[[1] Of course, you may also need to adapt the features and tuning procedures to match the new algorithm.]
-
----
-class: onecol
-## Pseudocode for simple training
-
-
-```r
-# Create data splits
-set.seed(2021)
-index &lt;- createDataPartition(my_data$outcome, p = 0.80, list = FALSE)
-my_training_set &lt;- my_data[index, ]
-my_testing_set &lt;- my_data[-index, ]
-
-# Set up recipe
-my_recipe &lt;- 
-  my_data %&gt;% 
-  recipe(outcome ~ .) %&gt;% 
-  step_dummy(all_nominal_predictors()) %&gt;% 
-  step_nzv(all_predictors()) %&gt;% 
-  step_corr(all_predictors())
-
-# Train model from recipe
-*trained_model &lt;- train(
-* x = my_recipe,
-* data = my_training_set,
-* method = "lm"
-*) 
-```
 
 ---
 class: onecol
@@ -539,7 +514,7 @@ Argument&amp;emsp; | Description
 
 ---
 class: onecol
-## Pseudocode for training with resampling
+## Pseudo-code for training with resampling
 
 
 ```r
@@ -553,7 +528,7 @@ class: onecol
 # Train model from recipe
 trained_model &lt;- train(
   x = my_recipe,
-  data = my_training_set,
+  data = my_training,
   method = "lm",
 * trControl = resampling_options
 )
@@ -584,17 +559,15 @@ There are also alternative resampling methods to explore
 ## Comprehension Check \#2
 
 .pull-left[
-Luca wrote the following code to train a model but keeps getting errors and warnings from R. Luca then sent me this message: 👿🔪💻🔪🥕 
-
 
 ```r
 # Part 1
 my_recipe &lt;- 
   my_data %&gt;% 
   recipe(outcome ~ .) %&gt;% 
-  step_center(all_numeric_predictors()) %&gt;% 
+  step_center(all_numeric()) %&gt;% 
   step_zv(all_predictors()) %&gt;% 
-  prep(training = my_training_set)
+  prep(training = my_training)
 
 # Part 2
 trained_model &lt;- train(
@@ -643,11 +616,72 @@ We will use {caret} and {recipes} to train two models on the `titanic` data
 
 - We will use LM to try to predict each passenger's fare (how much they paid)
 
-- We will use GLM to try to predict whether each passenger survived the disaster
-
 .pt1[
 You can follow along on your computer (the code is online) or just watch me code
 ]
+
+---
+class: onecol
+## Live Coding Summary
+
+
+```r
+# Read in data
+titanic &lt;- read.csv("titanic.csv")
+
+# Create a training and testing set (stratified by fare)
+set.seed(2021)
+fare_index &lt;- createDataPartition(titanic$fare, p = 0.75, list = FALSE)
+fare_train &lt;- titanic[fare_index, ]
+fare_test &lt;- titanic[-fare_index, ]
+```
+
+
+```r
+# Check sizes
+dim(fare_train)
+#&gt; [1] 723   7
+dim(fare_test)
+#&gt; [1] 240   7
+```
+
+---
+class: onecol
+## Live Coding Summary
+
+
+```r
+# Create a preprocessing recipe (no prep)
+fare_recipe &lt;- 
+  titanic %&gt;% 
+  recipe(fare ~ .) %&gt;% 
+  step_rm(survived) %&gt;%
+  step_normalize(all_numeric_predictors()) %&gt;% 
+  step_dummy(all_nominal_predictors()) %&gt;% 
+  step_nzv(all_predictors()) %&gt;% 
+  step_corr(all_predictors())
+```
+
+---
+class: onecol
+
+## Live Coding Summary
+
+
+```r
+set.seed(2021)
+
+# Configure resampling
+fare_tc &lt;- trainControl(method = "cv", number = 10)
+
+# Train the model using the recipe, data, and method
+fare_lm &lt;- train(
+  fare_recipe, 
+  data = fare_train,
+  method = "lm",
+  trControl = fare_tc
+)
+```
 
 ---
 class: inverse, center, middle
@@ -658,24 +692,44 @@ class: onecol
 
 The object created by `train()` will contain lots of information
 
-.pt1[
 We can view a summary of training set performance in the **`results`** field
-
-- e.g., we can print `trained_model$results` to the console to see it
-
-- Each row corresponds to be one combination or set of hyperparameters
-
+- Each row corresponds to one combination or set of hyperparameters
 - Columns define the **hyperparameter values** and the set's **performance scores** 
-]
+- Results will include the Mean and SD of each metric across resamples
 
 --
-.pt1[
-Results will include the Mean and SD of performance metrics across resamples
 
-- By default, it includes {RMSE, RSQ, and MAE} or {Accuracy and Kappa&lt;sup&gt;1&lt;/sup&gt;}
-]
 
-.footnote[[1] We did not discuss kappa, but it is basically accuracy with an adjustment for class imbalance.]
+```r
+fare_lm$results
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; intercept &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; RMSE &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Rsquared &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; MAE &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; RMSESD &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; RsquaredSD &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; MAESD &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; TRUE &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 41.31 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.96 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.84 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.83 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+.footnote[[1] Because there are no real hyperparameters for LM, there is only one result row.]
 
 ---
 class: onecol
@@ -706,16 +760,17 @@ To get predictions from the final model on new data&lt;sup&gt;1&lt;/sup&gt;, we 
 Argument&amp;emsp; | Description
 :------- | :----------
 `object` | A trained model object created by `train()`
-`newdata` | A data frame with the same raw features as the training set&lt;br /&gt;(prior to baking, if using {recipes})
-`type` | A string indicating whether to return raw predictions (i.e., predicted values or classes) or class probabilities (i.e., "raw" or "prob")
+`newdata` | A data frame with the same features (prior to baking)&amp;emsp;
+`type` | Return raw classes ("raw") or probabilities ("prob")?
 
-*Note that class probabilities are not available for all classification algorithms*
-
+.pt3[
 
 ```r
-test_pred &lt;- predict(trained_model, newdata = my_testing_set, type = "raw")
+fare_pred &lt;- predict(fare_lm, newdata = fare_test)
+glimpse(fare_pred)
+#&gt;  num [1:240] 114 103.6 101.6 93.7 92.9 ...
 ```
-
+]
 
 .footnote[[1] The same process is used for both evaluating performance and deploying the model in the real world.]
 
@@ -726,22 +781,52 @@ To get labels from the final model in the format expected by R, we can use `bake
 
 
 ```r
-my_testing_set_baked &lt;- 
-  my_recipe %&gt;% 
-  prep(training = my_training_set) %&gt;% 
-  bake(new_data = my_testing_set)
+fare_test_baked &lt;- 
+  fare_recipe %&gt;% 
+  prep(training = fare_train) %&gt;% 
+  bake(new_data = fare_test)
 
-test_labs &lt;- my_testing_set_baked$outcome
+fare_labs &lt;- fare_test_baked$fare
+glimpse(fare_labs)
+#&gt;  num [1:240] 151.6 51.5 227.5 78.8 76.3 ...
 ```
 
 --
 
-.pt1[
 A few points of potential confusion to avoid:
-]
-1. Use `train()` and `predict()` before baking the recipe (i.e., let them do it)
 
+1. Use `train()` and `predict()` before baking the recipe (i.e., let them do it)
 2. `caret::predict()` uses `newdata`, whereas `recipes::bake()` uses `new_data`
+
+---
+class: onecol
+## Visualizing Predicted and Trusted Labels
+
+
+```r
+# Simple Version
+qplot(x = fare_labs, y = fare_pred)
+```
+
+&lt;img src="Day_2B_files/figure-html/quick-1.png" width="100%" /&gt;
+
+---
+## Visualizing Predicted and Trusted Labels
+
+```r
+# Fancy Version
+fare_test_baked %&gt;% 
+  mutate(fare_pred = fare_pred) %&gt;% 
+  ggplot(aes(x = fare, y = fare_pred)) + 
+  geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
+  geom_point(color = "darkred", size = 2, alpha = 1/3) +
+  coord_cartesian(xlim = c(0, 520), ylim = c(0, 520)) +
+  labs(x = "True Fare", y = "Predicted Fare")
+```
+
+---
+## Visualizing Predicted and Trusted Labels
+&lt;img src="Day_2B_files/figure-html/fancy-1.png" width="100%" /&gt;
 
 ---
 class: onecol
@@ -756,35 +841,251 @@ Argument&amp;emsp; | Description
 
 
 ```r
-postResample(pred = test_pred, obs = test_labs)
+postResample(pred = fare_pred, obs = fare_labs)
+#&gt;       RMSE   Rsquared        MAE 
+#&gt; 44.2923446  0.4240302 21.5320223
 ```
 
-This will calculate the same performance metrics that were in the `results` field
-- RMSE, MAE, and RSQ for regression and Accuracy and Kappa for classification
+This function will give basic results (e.g., Accuracy) for classification too
 
 ---
+class: onecol
+## More Metrics from {yardstick}
 
-confusionMatrix()
+The {yardstick} package provides lots of performance metrics
 
----
+For regression, I like the **Huber Loss** distance metric and **CCC** correlation metric
 
-yardstick
-- ccc
-- huber_loss
-- mcc
-- roc_auc
-- metric_set
+
+```r
+# Huber Loss (blends RMSE and MAE)
+yardstick::huber_loss_vec(truth = fare_labs, estimate = fare_pred)
+#&gt; [1] 21.04084
+```
+
+
+```r
+# Concordance Correlation Coefficient
+yardstick::ccc_vec(truth = fare_labs, estimate = fare_pred)
+#&gt; [1] 0.593931
+```
+
+For classification, I like **MCC**, **Log Loss**, and **ROC Curve** (shown in next Live Coding)
 
 ---
 class: inverse, center, middle
 # Model Interpretation
 ---
-varImp()
-- object
-- scale
+class: onecol
+## Variable Importance
 
-train$finalModel
+Predictive accuracy is emphasized in ML over interpretability
+
+- The main goal of most applied ML studies is to quantify performance
+
+--
+
+However, some algorithms can provide insight into their decision-making
+
+- As a model usually used for inference, LM has strong interpretability
+
+- We can examine the model coefficients (intercept and slopes)
+
+--
+
+
+```r
+fare_lm$finalModel %&gt;% coefficients()
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; (Intercept) &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; age &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sibsp &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; parch &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pclass_X2nd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pclass_X3rd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sex_male &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 99.59 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.78 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5.36 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.53 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -71.78 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -80.65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -9.88 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
 ---
+class: onecol
+## Variable Importance
+
+However, these coefficients have different units and levels of uncertainty
+
+Instead, for LM, we use the absolute value of each coefficient's `\(t\)`-statistic
+
+
+```r
+varImp(fare_lm, scale = FALSE)
+#&gt; lm variable importance
+#&gt; 
+#&gt;             Overall
+#&gt; pclass_X3rd  19.028
+#&gt; pclass_X2nd  15.867
+#&gt; parch         4.941
+#&gt; sibsp         3.120
+#&gt; sex_male      2.824
+#&gt; age           1.002
+```
+
+.footnote[[1] Other algorithms have different ways to estimate variable importance, but `varImp()` will take care of it.&lt;br /&gt;[2] Some algorithms have no easy way to estimate variable importance and are considered true "black boxes."]
+
+---
+class: onecol
+## Live Coding Part 2
+
+Now that we have explored the prediction of passenger fare, let's predict survival
+
+Training, evaluating, and interpreting a ![:emphasize](classification) model is very similar but...
+
+- We will be using GLM (logistic regression) instead of LM as our **new algorithm**
+
+- We will have some **different performance metrics** to calculate and interpret
+
+- We can explore the **raw class predictions** and **estimated class probabilities**
+
+---
+class: onecol
+## Live Coding Summary
+
+
+```r
+# Create a training and testing set (stratified by survived)
+set.seed(2021)
+surv_index &lt;- createDataPartition(titanic$survived, p = 0.75, list = FALSE)
+surv_train &lt;- titanic[surv_index, ]
+surv_test &lt;- titanic[-surv_index, ]
+```
+
+
+```r
+# Create a preprocessing recipe (no prep)
+surv_recipe &lt;- 
+  titanic %&gt;% 
+  recipe(survived ~ .) %&gt;% 
+  step_normalize(all_numeric_predictors()) %&gt;% 
+  step_dummy(all_nominal_predictors()) %&gt;% 
+  step_interact(~sex_male:starts_with("pclass")) %&gt;% 
+  step_nzv(all_predictors()) %&gt;% 
+  step_corr(all_predictors())
+```
+
+---
+class: onecol
+## Live Coding Summary
+
+
+```r
+set.seed(2021)
+#  Train the model using the recipe, data, and method
+surv_glm &lt;- train(
+  surv_recipe, 
+  data = surv_train,
+  method = "glm",
+  metric = "Accuracy",
+  trControl = trainControl(method = "cv", number = 10)
+)
+surv_glm$results
+#&gt;   parameter  Accuracy     Kappa AccuracySD    KappaSD
+#&gt; 1      none 0.8161857 0.6033769  0.0433787 0.09834056
+```
+
+---
+## Live Coding Summary
+
+
+```r
+# Extract model predictions as classes
+surv_pred &lt;- predict(surv_glm, newdata = surv_test)
+glimpse(surv_pred)
+#&gt;  Factor w/ 2 levels "no","yes": 2 2 2 1 2 2 1 2 1 1 ...
+```
+
+
+```r
+# Extract model predictions as probabilities
+surv_prob &lt;- predict(surv_glm, newdata = surv_test, type = "prob")
+glimpse(surv_prob)
+#&gt; Rows: 240
+#&gt; Columns: 2
+#&gt; $ no  &lt;dbl&gt; 0.005978694, 0.015023250, 0.007633175, 0.885823439, 0.002502193, 0~
+#&gt; $ yes &lt;dbl&gt; 0.99402131, 0.98497675, 0.99236682, 0.11417656, 0.99749781, 0.9943~
+```
+
+---
+## Live Coding Summary
+
+
+```r
+# Bake test set
+surv_test_baked &lt;- 
+  surv_recipe %&gt;% 
+  prep(training = surv_train) %&gt;% 
+  bake(new_data = surv_test)
+
+surv_labs &lt;- surv_test_baked$survived
+glimpse(surv_labs)
+#&gt;  Factor w/ 2 levels "no","yes": 1 2 2 2 2 2 2 2 1 2 ...
+```
+
+
+```r
+postResample(pred = surv_pred, obs = surv_labs)
+#&gt;  Accuracy     Kappa 
+#&gt; 0.7875000 0.5486726
+```
+
+---
+## Live Coding Summary
+
+
+```r
+test_data &lt;- bind_cols(
+  surv_prob, 
+  obs = surv_labs, 
+  pred = surv_pred
+)
+
+library(yardstick)
+cm &lt;- conf_mat(test_data, truth = obs, estimate = pred)
+autoplot(cm, type = "heatmap")
+summary(cm)
+
+mcc(test_data, truth = obs, estimate = pred)
+
+roc &lt;- roc_curve(test_data, yes, truth = obs, event_level = "second")
+autoplot(roc)
+roc_auc(test_data, yes, truth = obs, event_level = "second")
+# Results too large to show here
+```
+
+---
+## Live Coding Summary
+
+
+```r
+varImp(surv_glm, scale = FALSE) %&gt;% plot()
+```
+
+&lt;img src="Day_2B_files/figure-html/glm_varimp-1.png" width="100%" /&gt;
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
