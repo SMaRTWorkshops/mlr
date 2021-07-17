@@ -87,7 +87,6 @@ class: onecol
 ]
 - ![:emphasize](Confusion matrix) between predicted and trusted classes
 - Compare predicted ![:emphasize](class probabilities) to trusted classes
-- Construct a ![:emphasize](performance curve) across decision thresholds
 ]
 
 ---
@@ -100,7 +99,7 @@ class: onecol
 .pull-left[
 **Root Mean Squared Error (RMSE)**
 - Based on squared loss
-- Sensitive to outliers, easy to optimize
+- Penalizes severe errors harsher, Sensitive to outliers
 - Ranges from `\(0\)` to `\(+\infty\)`, lower is better
 ]
 
@@ -115,7 +114,7 @@ class: onecol
 .pull-left[
 **Mean Absolute Error (MAE)**
 - Based on absolute loss
-- Robust to outliers, harder to optimize
+- Penalizes error consistently, Robust to outliers
 - Ranges from `\(0\)` to `\(+\infty\)`, lower is better
 ]
 
@@ -197,15 +196,17 @@ class: inverse, center, middle
 # Metrics for Classification
 ---
 class: twocol
-## Confusion Matrix Metrics for Classification
+## Confusion Matrix Metrics
 
  | Trusted = No&lt;br /&gt; `\((y=0)\)` | Trusted = Yes&lt;br /&gt; `\((y=1)\)`
 :--:| :--: | :--:
 **Predicted = No**&amp;emsp;&lt;br /&gt; `\((p=0)\)` | True Negatives (TN) | False Negative (FN)
 **Predicted = Yes**&amp;emsp;&lt;br /&gt; `\((p=1)\)` | False Positive (FP) | True Positive (TP)
 
+--
+
 .mt4[
-`$$\text{Accuracy} = \frac{TN + TP}{(TN + FN + FP + TP)}$$`
+`$$\text{Accuracy} = \frac{TN + TP}{n}$$`
 ]
 .tc[
 Ranges from `\(0\)` to `\(1\)`, higher is better
@@ -214,7 +215,31 @@ Ranges from `\(0\)` to `\(1\)`, higher is better
 --
 
 .bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
-Accuracy can be misleading when the classes are highly imbalanced (e.g., if `\(TN \gg TP\)`)
+Accuracy can be misleading when the classes are highly imbalanced (e.g., more `\(0\)`s than `\(1\)`s)
+]
+
+---
+class:onecol
+## Confusion Matrix Metrics
+
+With imbalanced classes, predicting the larger class will often be right "by chance"
+
+To "correct" accuracy for imbalanced classes, **Cohen's Kappa** is often used
+
+`$$\kappa = \frac{\text{Accuracy} - \text{Chance}}{1 - \text{Chance}}$$`
+
+--
+
+Chance agreement is estimated using the observed class probabilities from `\(y\)` and `\(p\)`
+
+`$$\text{Chance} = \Pr(y=0)\cdot\Pr(p=0) + \Pr(y=1)\cdot\Pr(p=1)$$`
+
+Kappa also ranges from `\(0\)` to `\(1\)` (technically `\(-1\)` to `\(1\)`), higher is better
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
+Paradoxically, Kappa can be overly conservative when classes are very imbalanced.
 ]
 
 ---
@@ -249,26 +274,26 @@ All range from `\(0\)` to `\(1\)`, higher is better
 
 --
 
-.footnote[[1] Note that the formulas for Sensitivity and Recall are the same. Many of these metrics enjoy many names.&lt;br /&gt;[2] `\\(F_1\\)` does not consider `\\(TN\\)`, which is sometimes a reason to use it and sometimes a reason to avoid it.]
+.bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
+`\(F_1\)` does not consider `\(TN\)`, so only use it when detecting negatives is not important for your application.]
+
+
 
 ---
 ## Confusion Matrix Metrics Examples
 .pull-left.tc[
-**Balanced Classes**
-
- | `\(y=0\)` | `\(y=1\)`
+&amp;emsp;**Balanced**&amp;emsp; | &amp;emsp; `\(y=0\)` &amp;emsp; | &amp;emsp; `\(y=1\)` &amp;emsp;
 :--:| :--: | :--:
 ** `\(p=0\)` ** | 101 | 54
 ** `\(p=1\)` ** | 33 | 105
-.pt3[
 
+.pt3.f5[
 `$$\begin{split}
 \text{Accuracy} &amp;= 0.70 \\
-\\
+\kappa &amp;= 0.41\\ \\
 \text{Sensitivity} &amp;= 0.66 \\
 \text{Specificity} &amp;= 0.75 \\
-\text{Balanced Accuracy} &amp;= 0.71 \\
-\\
+\text{Balanced Accuracy} &amp;= 0.71 \\ \\
 \text{Precision} &amp;= 0.76 \\
 \text{Recall} &amp;= 0.66 \\
 F_1 &amp;= 0.71
@@ -280,16 +305,16 @@ F_1 &amp;= 0.71
 --
 
 .pull-right.tc[
-**Imbalanced Classes**
-
- | `\(y=0\)` | `\(y=1\)`
+&amp;emsp;**Imbalanced**&amp;emsp; | &amp;emsp; `\(y=0\)` &amp;emsp; | &amp;emsp; `\(y=1\)` &amp;emsp;
 :--:| :--: | :--:
 ** `\(p=0\)` ** | 256 | 11
 ** `\(p=1\)` ** | 6 | 2
-.pt3[
+
+.pt3.f5[
 
 `$$\begin{split}
 \text{Accuracy} &amp;= 0.94 \\ 
+\kappa &amp;= 0.16 \\
 \\
 \text{Sensitivity} &amp;= 0.15 \\
 \text{Specificity} &amp;= 0.98 \\
@@ -358,6 +383,7 @@ This gives rise to the Logistic or **Log Loss**, which can be summed or averaged
 &lt;img src="Day_2B_files/figure-html/logloss-1.png" width="100%" /&gt;
 
 ---
+exclude: true
 class: onecol
 ## Performance Curves
 
@@ -367,15 +393,11 @@ class: onecol
 
 - But we could choose a threshold more conservative (e.g., 75%) or liberal (e.g., 25%)
 
---
-
 .pt1[
 - **Performance curves** plot the characteristics of different decision thresholds
 
 - This gives us an overview of how the classification system performs in general
 ]
-
---
 
 .pt1[
 - There are many performance curves&lt;sup&gt;1&lt;/sup&gt;, so we'll use the original as an example
@@ -386,6 +408,7 @@ class: onecol
 .footnote[[1] Popular options include ROC curves, precision-recall curves, gain curves, and lift curves.]
 
 ---
+exclude: true
 class: onecol
 ## Receiver Operating Characteristic (ROC) Curves
 
@@ -402,8 +425,6 @@ AUCROC is the probability that a random positive example has a higher estimate t
 
 ]
 
---
-
 .pull-right[
 &lt;img src="Day_2B_files/figure-html/rocex-1.png" width="95%" /&gt;
 ]
@@ -417,7 +438,7 @@ class: twocol
 .pull-left[
 **1. Which combination of performance metrics would be appropriate to use?**
 
-a) ROC-Curve for [A] and CCC for [B]
+a) Log Loss for [A] and CCC for [B]
 
 b) Precision for [A] and Recall for [B]
 
@@ -430,13 +451,13 @@ d) None of the above
 .pull-right[
 **2. Which combination of performance scores should Bindi hope to see?**
 
-a) RMSE = 531.6 and AUC-ROC = 0.04
+a) RMSE = 531.6 and Kappa = 0.04
 
-b) RMSE = 1129.7 and AUC-ROC = 0.04
+b) RMSE = 1129.7 and Kappa = 0.04
 
-c) RMSE = 531.6 and AUC-ROC = 0.88
+c) RMSE = 531.6 and Kappa = 0.88
 
-d) RMSE = 1129.7 and AUC-ROC = 0.88
+d) RMSE = 1129.7 and Kappa = 0.88
 ]
 
 ---
@@ -540,6 +561,7 @@ trained_model &lt;- train(
 ```
 
 ---
+exclude: true
 class: onecol
 ## Advanced Resampling Options
 
@@ -551,8 +573,6 @@ There are many other arguments to `trainControl()` to explore
 - **`seeds`** can be used to make the resampling procedure reproducible
 
 .footnote[*These are both advanced topics that we can revisit on Day 5.]
-
---
 
 There are also alternative resampling methods to explore
 - Fancier versions of bootstrapping (e.g., "boot632")
@@ -667,7 +687,7 @@ fare_recipe &lt;-
 
 ---
 class: onecol
-## Live Coding Summary
+## Applied Example 
 
 
 ```r
@@ -694,7 +714,7 @@ class: onecol
 
 The object created by `train()` will contain lots of information
 
-We can view a summary of training set performance in the **`results`** field
+We can view a summary of training set performance in the `$results` field
 - Each row corresponds to one combination or set of hyperparameters
 - Columns define the **hyperparameter values** and the set's **performance scores** 
 - Results will include the Mean and SD of each metric across resamples
@@ -731,7 +751,7 @@ fare_lm$results
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-.footnote[[1] Because there are no real hyperparameters for LM, there is only one result row.]
+.footnote[[1] Because there are no real hyperparameters for LM, there is only one row in `results`.]
 
 ---
 class: onecol
@@ -806,28 +826,10 @@ class: onecol
 
 
 ```r
-# Simple Version
-qplot(x = fare_true, y = fare_pred)
+qplot(x = fare_true, y = fare_pred) + geom_abline()
 ```
 
 &lt;img src="Day_2B_files/figure-html/quick-1.png" width="100%" /&gt;
-
----
-## Visualizing Predicted and Trusted Labels
-
-```r
-# Fancy Version
-data.frame(fare_true, fare_pred) %&gt;% 
-  ggplot(aes(x = fare_true, y = fare_pred)) + 
-  geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
-  geom_point(color = "darkblue", size = 3, alpha = 1/3) +
-  coord_cartesian(xlim = c(0, 520), ylim = c(0, 520)) +
-  labs(x = "True Fare", y = "Predicted Fare") +
-```
-
----
-## Visualizing Predicted and Trusted Labels
-&lt;img src="Day_2B_files/figure-html/fancy-1.png" width="100%" /&gt;
 
 ---
 class: onecol
@@ -965,10 +967,8 @@ Training, evaluating, and interpreting a ![:emphasize](classification) model is 
 --
 
 .pt1[
-Finally, as a hands-on activity, you will classify satisfaction in the `airsat` dataset
+Finally, as a hands-on activity, you will classify `satisfaction` in the `airsat` dataset
 ]
-
-- Note that this will build upon the work you did in Activity 2-A!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

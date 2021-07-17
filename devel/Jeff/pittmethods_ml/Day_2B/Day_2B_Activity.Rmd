@@ -28,6 +28,9 @@ library(recipes)
 # Predicting Titanic survival (with GLM)
 
 ```{r}
+# Read in data
+titanic <- read_csv("titanic.csv")
+
 # Create a training and testing set (stratified by survived)
 set.seed(2021)
 surv_index <- createDataPartition(titanic$survived, p = 0.75, list = FALSE)
@@ -105,7 +108,9 @@ yardstick::roc_auc(test_data, yes, truth = obs, event_level = "second")
 
 
 ```{r}
-varImp(surv_glm, scale = FALSE) %>% plot()
+surv_vi <- varImp(surv_glm, scale = FALSE)
+surv_vi
+plot(surv_vi)
 ```
 
 ```{r}
@@ -117,3 +122,4 @@ surv_glm$finalModel
 
 ## Hands-on Activity
 
+TBD
