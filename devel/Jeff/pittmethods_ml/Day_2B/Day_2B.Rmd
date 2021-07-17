@@ -1,5 +1,5 @@
 ---
-title: '<span style="font-size:48pt;">Basic Predictive Modeling</span>'
+title: '<span style="font-size:48pt;">Predictive Modeling Basics</span>'
 subtitle: '🧮 🔮 👨‍💻' 
 author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
 date: 'Lecture 2-B &emsp; &emsp; July 20, 2021'
@@ -317,7 +317,8 @@ p1 | p2
 
 ---
 class: inverse, center, middle
-# Metrics for Classification
+# Metrics for Classification 
+## (Based on Predicted Classes)
 ---
 class: twocol
 ## Confusion Matrix Metrics
@@ -347,6 +348,8 @@ class:onecol
 ## Confusion Matrix Metrics
 
 With imbalanced classes, predicting the larger class will often be right "by chance"
+
+--
 
 To "correct" accuracy for imbalanced classes, **Cohen's Kappa** is often used
 
@@ -478,6 +481,10 @@ With more than two classes, you can make a larger (e.g., $3\times 3$) confusion 
 <!-- $$ (\Sigma TN=345, \Sigma TP=135, \Sigma FP=75, \Sigma FN=75)~\text{Micro }F_1=0.64$$ -->
 
 ---
+class: inverse, center, middle
+# Metrics for Classification 
+## (Based on Class Probabilities)
+---
 class: onecol
 ## Class Probability Metrics for Classification
 
@@ -530,7 +537,6 @@ tibble(
 ```
 
 ---
-exclude: true
 class: onecol
 ## Performance Curves
 
@@ -540,11 +546,15 @@ class: onecol
 
 - But we could choose a threshold more conservative (e.g., 75%) or liberal (e.g., 25%)
 
+--
+
 .pt1[
 - **Performance curves** plot the characteristics of different decision thresholds
 
 - This gives us an overview of how the classification system performs in general
 ]
+
+--
 
 .pt1[
 - There are many performance curves<sup>1</sup>, so we'll use the original as an example
@@ -555,7 +565,6 @@ class: onecol
 .footnote[[1] Popular options include ROC curves, precision-recall curves, gain curves, and lift curves.]
 
 ---
-exclude: true
 class: onecol
 ## Receiver Operating Characteristic (ROC) Curves
 
@@ -615,13 +624,13 @@ d) None of the above
 .pull-right[
 **2. Which combination of performance scores should Bindi hope to see?**
 
-a) RMSE = 531.6 and Kappa = 0.04
+a) RMSE = 531.6 and AUC-ROC = 0.04
 
-b) RMSE = 1129.7 and Kappa = 0.04
+b) RMSE = 1129.7 and AUC-ROC = 0.04
 
-c) RMSE = 531.6 and Kappa = 0.88
+c) RMSE = 531.6 and AUC-ROC = 0.88
 
-d) RMSE = 1129.7 and Kappa = 0.88
+d) RMSE = 1129.7 and AUC-ROC = 0.88
 ]
 
 ---
@@ -654,7 +663,7 @@ class: onecol
 Argument&emsp; | Description
 :------- | :----------
 x | A {recipe} object with variable roles and preprocessing steps
-data | A data frame to be used for training (prior to baking)
+data | A data frame to be used for training (prior to prep and bake)
 method | A string indicating the algorithm to train (e.g., "lm" or "glm")&emsp;
 
 --
@@ -662,6 +671,8 @@ method | A string indicating the algorithm to train (e.g., "lm" or "glm")&emsp;
 To train any of the 200+ supported algorithms, you just need to change `method`
 
 This makes it *super easy* to implement new algorithms and explore the world of ML!
+
+--
 
 .bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
 Be sure you understand an algorithm before trying to publish a paper using it.
@@ -794,20 +805,20 @@ class: onecol
 Let's put what we just learned into practice in R
 
 .pt1[
-Let's use {caret} and {recipes} to train two models on the `titanic` data
+Let's use {caret} and {recipes} to train a regression model on the `titanic` data
 ]
 
 - We will load in and split the data
 
-- We will create two recipes for feature engineering
+- We will create a recipe for feature engineering
 
-- We will use LM to try to predict each passenger's fare (how much they paid)
+- We will train LM to predict each passenger's fare (how much they paid)
 
 ---
 class: onecol
 ## Applied Example
 
-```{r}
+```{r, message=FALSE}
 # Read in data
 titanic <- read_csv("titanic.csv")
 
@@ -831,7 +842,7 @@ class: onecol
 ## Applied Example
 
 ```{r}
-# Create a preprocessing recipe (no prep)
+# Create a preprocessing recipe (don't prep or bake)
 fare_recipe <- 
   titanic %>% 
   recipe(fare ~ .) %>% 
@@ -839,7 +850,8 @@ fare_recipe <-
   step_normalize(all_numeric_predictors()) %>% 
   step_dummy(all_nominal_predictors()) %>% 
   step_nzv(all_predictors()) %>% 
-  step_corr(all_predictors())
+  step_corr(all_predictors()) %>% 
+  step_lincomb(all_predictors())
 ```
 
 ---
@@ -911,13 +923,15 @@ class: onecol
 
 To get predictions from the final model on new data<sup>1</sup>, we can use `predict()`
 
---
-
 Argument&emsp; | Description
 :------- | :----------
 object | A trained model object created by `train()`
 newdata | A data frame with the same features (prior to baking)&emsp;
 type | Return raw classes ("raw") or probabilities ("prob")?
+
+.footnote[[1] The same process is used for both evaluating performance and deploying the model in the real world.]
+
+--
 
 .pt3[
 ```{r}
@@ -926,7 +940,7 @@ glimpse(fare_pred)
 ```
 ]
 
-.footnote[[1] The same process is used for both evaluating performance and deploying the model in the real world.]
+
 
 ---
 class: onecol
@@ -979,6 +993,8 @@ Argument&emsp; | Description
 pred | A vector of predicted labels&emsp;
 obs | A vector of trusted labels
 
+--
+
 ```{r}
 postResample(pred = fare_pred, obs = fare_true)
 ```
@@ -1003,7 +1019,9 @@ yardstick::huber_loss_vec(truth = fare_true, estimate = fare_pred)
 yardstick::ccc_vec(truth = fare_true, estimate = fare_pred)
 ```
 
-For classification, I like **MCC**, **Log Loss**, and **ROC Curve** (shown in Live Coding)
+--
+
+For classification, I like the **MCC** class metric and **Log Loss** probability metric
 
 ---
 class: inverse, center, middle
@@ -1012,9 +1030,9 @@ class: inverse, center, middle
 class: onecol
 ## Variable Importance
 
-Predictive accuracy is emphasized in ML over interpretability
+Predictive **accuracy** is emphasized in ML over interpretability and inference
 
-- The main goal of most applied ML studies is to quantify performance
+- The main goal of most applied ML studies is to **quantify performance**
 
 --
 
@@ -1042,11 +1060,25 @@ However, these coefficients have different units and levels of uncertainty
 
 Instead, for LM, we use the absolute value of each coefficient's $t$-statistic
 
+--
+
+.pull-left[
 ```{r, out.width='80%'}
 varImp(fare_lm, scale = FALSE)
 ```
+]
 
-.footnote[[1] Other algorithms have different ways to estimate variable importance, but `varImp()` will take care of it.<br />[2] Some algorithms have no easy way to estimate variable importance and are considered true "black boxes."]
+--
+
+.pull-right[
+```{r, out.width='80%'}
+varImp(fare_lm, scale = TRUE)
+```
+]
+
+--
+
+.footnote[[1] Other algorithms have different ways to estimate variable importance, but `varImp()` will take care of it.]
 
 ---
 class: onecol
@@ -1067,3 +1099,28 @@ Training, evaluating, and interpreting a ![:emphasize](classification) model is 
 .pt1[
 Finally, as a hands-on activity, you will classify `satisfaction` in the `airsat` dataset
 ]
+
+---
+
+## Hands-on Activity
+
+Modify the [Live Coding example code](https://osf.io/gtbzq/) to achieve the following goals:
+
+ 1. Read in the `airsatisfaction.csv` file (same as used in Activity 2-A)
+ 
+ 1. Create a 75% training and 25% testing set stratified by `satisfaction`
+ 
+ 1. Create a recipe predicting `satisfaction` with the following steps:
+  + `step_nzv(all_predictors())`
+  + `step_normalize(all_numeric_predictors())`
+  + `step_pca(all_numeric_predictors(), threshold = 0.9)`
+  + `step_dummy(all_nominal_predictors())`
+  
+ 1. Train a GLM with this recipe with 10-fold cross-validation repeated 3 times
+
+ 1. Estimate Accuracy and Kappa in the training and testing sets
+ 
+**BONUS 1:** Examine and plot the model's variable importance. What effect does PCA have on interpretation?
+ 
+**BONUS 2:** Construct a confusion matrix and ROC curve for the model
+ 

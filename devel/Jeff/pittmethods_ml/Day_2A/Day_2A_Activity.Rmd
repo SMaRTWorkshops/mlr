@@ -1,5 +1,5 @@
 ---
-title: "Day 2A Activity (Feature Engineering)"
+title: "Day 2A Activity <br /> (Feature Engineering)"
 output:
   prettydoc::html_pretty:
     theme: cayman
@@ -96,15 +96,15 @@ airsat_baked_test
 
 Modify the code above to accomplish the following goals:
 
-1) Use 75% of the data for training and 25% of the data for testing.
+ 1. Use 75% of the data for training and 25% of the data for testing.
 
-2) Apply the Yeo-Johnson transformation to the `flight_distance` variable (before normalizing it).
+ 1. Apply the Yeo-Johnson transformation to the `flight_distance` variable (before normalizing it).
 
-3) Instead of using PCA to address multicollinearity, drop highly correlated predictors.
+ 1. Instead of using PCA to address multicollinearity, drop highly correlated predictors.
 
-4) Use one-hot encoding for the nominal predictors instead of dummy codes.
+ 1. Use one-hot encoding for the nominal predictors instead of dummy codes.
 
-5) Add an interaction term that conditions `seat_comfort` on `flight_distance`
+ 1. Add an interaction term that conditions `seat_comfort` on `flight_distance`
 
 **BONUS:** Read the "Recommended preprocessing" appendix (https://www.tmwr.org/pre-proc-table.html) 
 
