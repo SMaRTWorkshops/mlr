@@ -62,6 +62,12 @@ library(AppliedPredictiveModeling)
 class: inverse, center, middle
 # Overview
 
+<style type="text/css">
+.remark-code {
+  border: 1px solid grey;
+}
+</style>
+
 ---
 ##Lecture Topics
 .left-column[

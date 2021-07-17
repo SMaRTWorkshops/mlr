@@ -82,6 +82,12 @@ library(pROC)
 class: inverse, center, middle
 # Overview
 
+<style type="text/css">
+.remark-code {
+  border: 1px solid grey;
+}
+</style>
+
 ---
 ## Lecture Topics
 
@@ -513,7 +519,7 @@ EDsim_recipe <-
   EDsim_train %>% 
   recipe(ED_severity ~ .) %>%
   step_rm(ED_diagnosis) %>%
-  step_normalize(all_numeric_predictors()) %>%
+  step_normalize(all_numeric_predictors()) %>% #<<
   step_dummy(all_nominal_predictors()) 
 ```
 
@@ -548,9 +554,9 @@ Note that the cross-validation process involves choosing random indices for data
 
 ```{r}
 set.seed(2021)
-seeds <- vector(mode = "list", length = 30) # length = n data splits
-for(i in 1:30) seeds[[i]] <- sample.int(1000, 21)
-seeds[[31]] <- sample.int(1000, 1) # for the last model 
+seeds <- vector(mode = "list", length = 30) # length = n data splits #<<
+for(i in 1:30) seeds[[i]] <- sample.int(1000, 21) #<<
+seeds[[31]] <- sample.int(1000, 1) # for the last model  #<<
 ```
 
 --
@@ -563,7 +569,7 @@ EDsim_control <- trainControl(method = 'repeatedcv',
                               repeats = 3,
                               classProbs = FALSE,
                               summaryFunction = defaultSummary,
-                              seeds = seeds)
+                              seeds = seeds) #<<
 ```
 
 ---
@@ -633,8 +639,8 @@ ridgefit$results
 ```{r}
 EDsim_test_baked <- 
   EDsim_recipe %>%
-  prep(training = EDsim_train) %>%
-  bake(new_data = EDsim_test)
+  prep(training = EDsim_train) %>% #<<
+  bake(new_data = EDsim_test) #<<
 
 ridgepred_test <- predict(ridgefit, newdata = EDsim_test)
   
@@ -726,11 +732,11 @@ Whereas ridge tends to shrink coefficients of correlated predictors towards each
 **Set tuning grid and train model** 
 
 ```{r}
-lassogrid <- expand.grid(alpha = 1, lambda = seq(0, 1, 0.01))
+lassogrid <- expand.grid(alpha = 1, lambda = seq(0, 1, 0.01)) #<<
 set.seed(2021)
 lassofit <- train(EDsim_recipe, data = EDsim_train,
                   method = 'glmnet',
-                  tuneGrid = lassogrid,
+                  tuneGrid = lassogrid, #<<
                   trControl = EDsim_control)
 ```
 
@@ -844,7 +850,7 @@ Elastic net is particularly good at handling correlated predictors.
 ```{r}
 enfit <- train(EDsim_recipe, data = EDsim_train,
                method = 'glmnet',
-               tuneLength = 20,
+               tuneLength = 20, #<<
                trControl = EDsim_control)
 ```
 
