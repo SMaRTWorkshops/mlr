@@ -102,7 +102,7 @@ class: onecol
 
 .left-column.pt3[
 ```{r target, echo=FALSE}
-include_graphics("target.jpg")
+include_graphics("../figs/target.jpg")
 ```
 ]
 

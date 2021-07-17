@@ -1,6 +1,6 @@
 ---
 title: '<span style="font-size:48pt;">Feature Engineering</span>'
-subtitle: '.big[👷 🗄️ 🛠️] ' 
+subtitle: '👨‍🔧️ 📊 🛠️'
 author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
 date: 'Lecture 2-A &emsp; &emsp; July 20, 2021'
 output:
@@ -79,7 +79,7 @@ class: onecol
 .left-column[
 <br />
 ```{r engineer, echo=FALSE}
-include_graphics("engineer.jpg")
+include_graphics("../figs/engineer.jpg")
 ```
 ]
 .right-column[
@@ -122,7 +122,7 @@ class: onecol
 <br />
 
 ```{r, echo=FALSE}
-include_graphics("july.jpg")
+include_graphics("../figs/july.jpg")
 ```
 
 ]
@@ -147,7 +147,7 @@ class: onecol
 .left-column[
 <br />
 ```{r, echo=FALSE}
-include_graphics("cones.jpg")
+include_graphics("../figs/cones.jpg")
 ```
 ]
 .right-column[
@@ -170,7 +170,7 @@ class: onecol
 .left-column[
 <br />
 ```{r, echo=FALSE}
-include_graphics("chef.jpg")
+include_graphics("../figs/chef.jpg")
 ```
 
 ]
