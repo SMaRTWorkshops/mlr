@@ -1,0 +1,1073 @@
+---
+title: '<span style="font-size:48pt;">Applied Machine Learning in R</span>'
+subtitle: '.big[&#128104;&#8205;&#128187; &#129302; &#128105;&#8205;&#127979;] ' 
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Lecture 1-A &emsp; &emsp; July 19, 2021'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      beforeInit: "macros.js"
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b",
+  footnote_font_size = "20px",
+  footnote_color = "gray",
+  text_slide_number_font_size = "18px"
+)
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Workshop Overview
+
+<style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
+}
+</style>
+---
+class: twocol
+## Jeffrey Girard
+
+.pull-left[
+Assistant Professor<br />
+University of Kansas
+
+**Research Areas**
+- Affective Science
+- Clinical Psychology
+- Computer Science
+
+**Machine Learning**
+- Recognition of Facial Expressions
+- Prediction of Emotional States
+- Prediction of Mental Health Status
+]
+
+.pull-right[
+.center[
+```{r jg, echo=FALSE, out.width=300, out.height=300}
+include_graphics("jg_headshot.jpeg")
+```
+
+[www.jmgirard.com](https://www.jmgirard.com)<br /> [jmgirard@ku.edu](mailto:jmgirard@ku.edu)<br /> [@jeffreymgirard](https://twitter.com/jeffreymgirard)
+]
+]
+---
+class: twocol
+
+##Shirley Wang
+
+.pull-left[
+Doctoral Candidate<br />
+Harvard University
+
+**Research Areas**
+- Clinical Psychology
+- Computational Psychiatry
+- Mathematical Modeling
+
+**Machine Learning**
+- Prediction of suicide risk
+- Prediction of longitudinal illness course
+- Idiographic prediction
+]
+
+.pull-right[
+.center[
+```{r sw, echo=FALSE, out.width=300, out.height=300}
+include_graphics("sw_headshot.jpeg")
+```
+
+[shirleywang.rbind.io](https://shirleywang.rbind.io/)<br /> [shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)<br /> [@ShirleyBWang](https://twitter.com/ShirleyBWang)
+]
+]
+---
+class: twocol
+
+## Goals and Timeline
+.pull-left[
+**Build a foundation** of concepts and skills
+
+**Describe every step** from start to finish
+
+Emphasize **practical and applied** aspects
+
+Provide intuitions rather than lots of theory
+
+Dive deeper into a few algorithms
+
+Highlight algorithms good for beginners
+
+Communicate the pros and cons of choices
+]
+
+--
+
+.pull-right[
+```{r timeline, echo=FALSE}
+timeline <- tribble(
+  ~Day, ~Topic, ~Lead,
+  "1-A", "Conceptual introductions", "JG",
+  "1-B", "Logistics and data exploration", "SW",
+  "2-A", "Feature engineering", "JG",
+  "2-B", "Predictive modeling basics", "JG",
+  "3-A", "Regularized regression", "SW",
+  "3-B", "Decision trees and random forests", "SW",
+  "4-A", "Support vector machines","JG",
+  "4-B", "Practical matters and advice", "SW",
+  "5-A", "Panel Q&A and discussion", "Both",
+  "5-B", "Hackathon and consultation", "Both"
+)
+kable(timeline, format = "html") %>% kable_styling(font_size = 20)
+```
+]
+---
+class: twocol
+## Format and Materials
+.pull-left[
+Each workshop day will have **two parts**
+
+Most parts will have **lecture** and **live coding**
+
+Most parts will have hands-on **activities**
+
+We will take a **~10m break** after the first part
+]
+--
+.pull-right[
+Course materials are on Github and OSF
+
+- [github.com/ShirleyBWang/pittmethods_ml](https://github.com/ShirleyBWang/pittmethods_ml)
+
+- [osf.io/3qhc8](https://osf.io/3qhc8)
+
+You can download and re-use the materials according to our "CC-By Attribution" license
+]
+
+.footnote[A few inspirations for this workshop include [Applied Predictive Modeling](http://appliedpredictivemodeling.com/), [Tidy Modeling with R](https://www.tmwr.org/), and [StatQuest](https://statquest.org/).]
+---
+class: twocol
+## Etiquette and Responsibilities
+.pull-left[
+**Behave professionally** at all times
+
+Stay on topic and **minimize distractions**
+
+**Stay muted** unless talking to minimize noise
+
+Ask **questions** in chat or use "Raise Hand"
+
+Be **respectful** to everyone in the workshop
+
+Be **patient** with yourself and others
+]
+--
+.pull-right[
+![:emphasize](You have the right to:)
+
+- Be **treated with respect** at all times
+- Turn your **camera on or off**
+- **Arrive and depart** whenever needed
+- **Ask for help** with workshop content
+- **Share your opinions** respectfully
+- **Reuse materials** according to the license
+- Receive **reasonable accommodations**
+- **Contact the instructors** by email
+]
+---
+class: inverse, center, middle
+# Icebreakers
+---
+class: onecol
+## Icebreakers
+We will randomly assign everyone to one of two breakout rooms
+
+Each person will have *up to one minute* to introduce themselves
+
+In addition to **sharing your name**, please answer these questions:
+
+1. Where are you joining us from?
+2. What field(s) do you work in?
+3. What is one of your research interests?
+4. What is one of your personal interests?
+
+The instructor will go first and call on attendees to go next
+
+If you would prefer not to share, please indicate that in chat
+---
+class: inverse, center, middle
+# Conceptual Introduction
+---
+class: onecol
+## What is machine learning?
+
+The field of machine learning (ML) is a **branch of computer science**
+
+ML researchers **develop algorithms** with the capacity to ![:emphasize](learn from data)
+
+When algorithms learn from (i.e., are **trained on**) data, they create **models**<sup>1</sup>
+
+<p style="padding-top:20px;">This workshop is all about applying ML algorithms to create ![:emphasize](predictive models)</p>
+
+The goal will be to **predict unknown values** of important variables **in new data**
+
+.footnote[
+[1] ML models are commonly used for prediction, data mining, and data generation.
+]
+
+
+---
+class: twocol
+
+.pull-left[
+## Labels / Outcomes
+Labels are variables we ![:emphasize](want to predict)<br />the values of (because they are unknown)
+
+Labels tend to be expensive or difficult to measure in new data (though are known in some existing data that we can learn from)
+
+AKA outcome, dependent, or $y$ variables
+
+```{r label_icons, echo=FALSE}
+include_graphics("label_icons.png")
+```
+
+]
+--
+.pull-right[
+## Features / Predictors
+Features are variables we ![:emphasize](use to predict)<br />the unknown values of the label variables
+
+Features tend to be relatively cheaper and easier to measure in new data than labels (and are also known in some existing data)
+
+AKA predictor, independent, or $x$ variables
+
+```{r feature_icons, echo=FALSE}
+include_graphics("feature_icons.png")
+```
+
+]
+
+---
+class: twocol
+
+## Modes of Predictive Modeling
+.pull-left[
+When labels have continuous values, predicting them is called ![:emphasize](regression)
+
+```{r regression_diagram, echo=FALSE}
+include_graphics("regression_diagram.png")
+```
+
+- *How much will a customer spend?*
+- *What GPA will a student achieve?*
+- *How long will a patient be hospitalized?*
+]
+--
+.pull-right[
+When labels have categorical values, predicting them is called ![:emphasize](classification)
+
+```{r classification_diagram, echo=FALSE}
+include_graphics("classification_diagram.png")
+```
+
+- *Is an email spam or non-spam?*
+- *Which candidate will a user vote for?*
+- *Is a patient's glucose low, normal, or high?*
+]
+
+.footnote[*Unsupervised learning* (AKA data mining) has no explicit labels and just looks for patterns within the features.]
+---
+class: onecol
+## Modes of Predictive Modeling
+
+.pull-left[
+.center[**Regression**]
+```{r regression_example, echo=FALSE, fig.height=3, fig.width=4}
+set.seed(2021)
+signal <- function(x) {sin(2*pi*x)}
+x_linspace <- seq(0, 1, by = 0.02)
+x_data <- runif(length(x_linspace), 0, 1)
+y_true <- signal(x_linspace)
+y_data <- signal(x_data) + rnorm(length(x_data), 0, 0.25)
+dat <- tibble(
+  x_linspace,
+  x_data,
+  y_true,
+  y_data
+)
+ggplot(dat) + 
+  geom_point(
+    aes(x = x_data, y = y_data), 
+    shape = 21, size = 3, fill = "black", alpha = 1/3
+  ) + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 4), 
+    color = "purple",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(x = "feature", y = "label") +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+]
+--
+.pull-right[
+.center[**Classification**]
+```{r classification_example, echo=FALSE, fig.height=3, fig.width=4}
+set.seed(2021)
+x_data <- rnorm(50, 100, 15)
+y_data <- as.integer(x_data + rnorm(50, 0, 10) > 85)
+dat <- tibble(x_data, y_data)
+ggplot(dat) + 
+  geom_point(
+    aes(x = x_data, y = y_data), 
+    shape = 21, size = 3, fill = "black", alpha = 1/3
+  ) +
+  stat_smooth(
+    aes(x = x_data, y = y_data),
+    method = "glm",
+    se = FALSE,
+    method.args = list(family=binomial),
+    color = "purple",
+    size = 1.5
+  ) + 
+  labs(x = "feature", y = "label") +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+]
+---
+## Comprehension Check \#1
+<span style="font-size:30px;">Ann has developed an ML system that looks at a patient's physiological signals and tries to determine whether they are having a micro-seizure.</span>
+
+.pull-left[
+### Question 1
+**The features are <span style="text-decoration: underline; white-space: pre;">           </span> and the labels are <span style="text-decoration: underline; white-space: pre;">           </span>.**
+
+a) physiological signals; physiological signals
+
+b) physiological signals; micro-seizure (yes/no)
+
+c) micro-seizure (yes/no); physiological signals
+
+d) micro-seizure (yes/no); micro-seizure (yes/no)
+
+]
+
+.pull-right[
+### Question 2
+**Which "mode" of predictive modeling is this?**
+
+a) Regression
+
+b) Classification
+
+c) Unsupervised learning
+
+d) All of the above
+]
+---
+class: inverse, center, middle
+# Modeling Workflow
+---
+## Typical ML Workflow
+
+<br /><br />
+
+.center[
+```{r workflow, echo=FALSE}
+include_graphics("workflow.png")
+```
+]
+---
+class: onecol
+## Exploratory Analysis
+.left-column[
+<br />
+```{r explore, echo=FALSE}
+include_graphics("explore.jpg")
+```
+]
+.right-column[
+**Verify the quality of your variables**
+- Examine the distributions of feature and label variables
+- Look for errors, outliers, missing data, etc.
+
+**Gain inspiration for your model**
+- Identify relevant features for a label
+- Detect highly correlated features
+- Determine the "shape" of relationships
+]
+
+---
+class: onecol
+## Feature Engineering
+.left-column[
+<br />
+```{r engineer, echo=FALSE}
+include_graphics("engineer.jpg")
+```
+]
+.right-column[
+**Prepare the features for analysis**
+- *Extract* features
+- *Transform* features
+- *Re-encode* features
+- *Combine* features
+- *Reduce* feature dimensionality
+- *Impute* missing feature values
+- *Select* and drop features
+]
+---
+class: onecol
+## Model Development
+.left-column[
+<br />
+```{r develop, echo=FALSE}
+include_graphics("develop.jpg")
+```
+]
+.right-column[
+**Choose algorithms, software, and architecture**
+- Elastic Net and/or Random Forest
+- `caret` or `tidymodels`, `elasticnet` or `glmnet`
+- Regression or classification
+
+**Train the model by estimating parameters**
+- Learn the nature of the feature-label relationships
+- For instance, estimate the intercept and slopes
+]
+---
+class: onecol
+## Model Tuning
+.left-column[
+<br />
+```{r tune, echo=FALSE}
+include_graphics("tune.jpg")
+```
+]
+.right-column[
+**Determine how complex the model can become**
+- How many features to include in the model
+- How complex the shape of relationships can be
+- How many features can interact together
+- How much to penalize adding more complexity
+
+**Make other decisions in a data-driven manner**
+- Which of three algorithms should be preferred
+- Which optimization method should be used
+]
+---
+class: onecol
+## Model Evaluation
+
+.left-column[
+```{r target, echo=FALSE}
+include_graphics("target.jpg")
+```
+]
+
+.right-column[
+
+**Decide how to quantify predictive performance**
+- In regression, performance is based on the errors/residuals
+- In classification, performance is based on the confusion matrix
+
+**Determine how successful your predictive model was**
+- Compare predictions (i.e., predicted labels) to trusted labels
+- Compare the performance of one model to another model
+
+]
+---
+## Comprehension Check \#2
+<span style="font-size:30px;">Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.</span>
+
+.pull-left[
+### Question 1
+**Calculating the length of each tweet is <span style="text-decoration: underline; white-space: pre;">           </span>?**
+
+a) Feature Engineering
+
+b) Model Development
+
+c) Model Tuning
+
+d) Model Evaluation
+]
+
+.pull-right[
+### Question 2
+**When should problems with the data be found?**
+
+a) Model Evaluation
+
+b) Model Tuning
+
+c) Model Development
+
+d) Exploratory Analysis
+]
+---
+class: inverse, center, middle
+# Signal and Noise
+---
+class: onecol
+
+## A Delicate Balance
+
+Any data we collect will contain a mixture of **signal** and **noise**
+
+- The "signal" represents informative patterns that generalize to new data
+- The "noise" represents distracting patterns specific to the original data
+
+We want to capture as much signal and as little noise as possible
+
+--
+
+<p style="padding-top:30px;">More complex models will allow us to capture <b>more signal</b> but also <b>more noise</b></p>
+
+![:emphasize](Overfitting): If our model is too complex, we will capture unwanted noise
+
+![:emphasize](Underfitting): If our model is too simple, we will miss important signal
+
+---
+
+## Model Complexity
+```{r complexity, echo=FALSE}
+set.seed(2021)
+signal <- function(x) {sin(2*pi*x)}
+x_linspace <- seq(0, 1, by = 0.02)
+x_data <- runif(length(x_linspace), 0, 1)
+y_true <- signal(x_linspace)
+y_data <- signal(x_data) + rnorm(length(x_data), 0, 0.25)
+dat <- tibble(
+  x_linspace,
+  x_data,
+  y_true,
+  y_data
+)
+
+p1 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm", 
+    se = FALSE,
+    formula = y ~ x, 
+    color = "blue",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Underfitting", x = "feature", y = "label") +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p2 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 4), 
+    color = "purple",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Good Fit", x = "feature", y = NULL) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p3 <- 
+  ggplot(dat) + 
+  geom_point(aes(x = x_data, y = y_data), shape = 1, size = 3, color = "grey30") + 
+  stat_smooth(
+    aes(x = x_data, y = y_data), 
+    method = "lm",
+    se = FALSE,
+    formula = y ~ poly(x, 17), 
+    color = "red",
+    size = 1.5
+  ) +
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Overfitting", x = "feature", y = NULL) +
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+(p1 | p2 | p3) + 
+  plot_annotation(
+    theme = theme(
+      plot.background = element_rect(fill = "#E9EBEE", color = NA)
+    )
+  )
+```
+
+---
+class: twocol
+## A Super Metaphor
+.pull-left[
+What makes machine learning so amazing is its **ability to learn complex patterns**
+
+However, with this great power and flexibility comes the looming **danger of overfitting**
+
+Thus, much of ML research is about finding ways to **detect** and **counteract** overfitting
+
+For detection, we need two sets of data:
+
+![:emphasize](Training set): used to learn relationships
+
+![:emphasize](Testing set): used to evaluate performance
+]
+
+.pull-right[
+.center[
+```{r kryptonite, echo=FALSE, out.width="67%"}
+include_graphics("kryptonite.png")
+```
+]
+]
+---
+layout: true
+## An Example of Overfitting
+
+---
+
+```{r overex1, echo=FALSE}
+set.seed(2021)
+training <- data.frame(
+  x = c(1:5) * 20,
+  y = c(21, 20, 28, 24, 30) * 3
+)
+testing <- data.frame(
+  x = c(1.5, 2, 3, 4.5) * 20,
+  y = c(22, 24, 22, 27) * 3
+)
+alldata <- bind_rows(training, testing, .id = "dataset") %>%
+  mutate(dataset = factor(dataset, labels = c("training", "testing")))
+
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+---
+.pull-left[
+.center[**Model A (Low Complexity)**]
+```{r overex2, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  geom_smooth(method = "lm", size = 1.5, color = "black",
+              se = FALSE, formula = y~x, linetype = "dashed") +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+.pull-right[
+.center[**Model B (High Complexity)**]
+```{r overex3, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  ggalt::geom_xspline(color = "black", size = 1.5, spline_shape = -1, linetype = "dashed") + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+---
+count: false
+.pull-left[
+.center[**Model A (Low Complexity)**]
+```{r overex4, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  geom_smooth(method = "lm", size = 1.5, color = "black",
+              se = FALSE, formula = y~x, linetype = "dashed") +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on training data = `r sum(abs(lm(y~x, training)$residuals))` (![:emphasize](High Bias))
+]
+
+.pull-right[
+.center[**Model B (High Complexity)**]
+```{r overex5, echo=FALSE, fig.width=4, fig.height = 3}
+ggplot(training, aes(x, y)) + 
+  geom_point(size = 6, color = "#d95f02") +
+  ggalt::geom_xspline(color = "black", size = 1.5, spline_shape = -1, linetype = "dashed") + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on training data = 0.0 (![:emphasize](Low Bias))
+]
+---
+```{r overex6, echo=FALSE}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = alldata, 
+    aes(shape = dataset, color = dataset), 
+    size = 6
+  ) +
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+
+---
+.pull-left[
+.center[**Model A (Low Complexity)**]
+```{r overex7, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  geom_smooth(
+    data = training,
+    method = "lm",
+    color = "black",
+    size = 1.5,
+    linetype = "dashed"
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+
+.pull-right[
+.center[**Model B (High Complexity)**]
+```{r overex8, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  ggalt::geom_xspline(
+    data = training,
+    spline_shape = -1,
+    color = "black",
+    size = 1.5,
+    linetype = "dashed",
+    aes(outfit = fity <<-..y.., outfit = fitx <<-..x..)
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+]
+---
+count: false
+.pull-left[
+.center[**Model A (Low Complexity)**]
+```{r overex9, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  geom_smooth(
+    data = training,
+    method = "lm",
+    color = "black",
+    size = 1.5,
+    linetype = "dashed"
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on testing set = `r sum(abs(testing$y - predict(lm(y~x, training), newdata = testing)))` (![:emphasize](Low Variance))
+]
+
+.pull-right[
+.center[**Model B (High Complexity)**]
+```{r overex10, echo=FALSE, fig.width=4, fig.height=3}
+ggplot(mapping = aes(x, y)) +
+  geom_point(
+    data = testing, 
+    shape = "triangle",
+    color = "#00BFC4",
+    size = 6
+  ) +
+  ggalt::geom_xspline(
+    data = training,
+    spline_shape = -1,
+    color = "black",
+    size = 1.5,
+    linetype = "dashed",
+    aes(outfit = fity <<-..y.., outfit = fitx <<-..x..)
+  ) + 
+  coord_cartesian(ylim = c(50, 100), xlim = c(20, 100)) +
+  labs(x = "Study Time", y = "Test Score") +
+  config
+```
+Total error on testing set = `r round(sum(abs(testing$y - fity[c(39, 56, 110, 180)])), 1)` (![:emphasize](High Variance))
+]
+---
+layout: false
+class: onecol
+## Conclusions from Example
+In ML, ![:emphasize](bias) is a lack of predictive accuracy in the original data (the "training set")
+
+In ML, ![:emphasize](variance) is a lack of predictive accuracy in new data (the "testing set")
+
+--
+
+<p style="padding-top:25px;">An ideal predictive model would have both low bias and low variance</p>
+
+However, there is often an inherent <b>trade-off between bias and variance</b><sup>1</sup>
+
+.footnote[[1] To increase our testing set performance, we often need to worsen our performance in the training set.]
+
+--
+
+<p style="padding-top:25px;">We want to find the model that is <b>as simple as possible</b> but <b>no simpler</b></p>
+
+
+
+---
+## A Graphical Explanation of Overfitting
+```{r overgraph, echo=FALSE}
+include_graphics("overfitting.png")
+```
+
+---
+## A Meme-based Explanation of Overfitting
+```{r overmeme, echo=FALSE}
+include_graphics("overfitting_lay.png")
+```
+
+---
+## Comprehension Check \#3
+<span style="font-size:30px;">Sam used all emails in his inbox to create an ML model to classify emails as "work-related" or "personal." Its accuracy on these emails was 98%.</span>
+
+.pull-left[
+### Question 1
+**Is Sam done with this ML project?**
+
+a) Yes, he should sell this model right now!
+
+b) No, he needs to create a training set
+
+c) No, he needs to test the model on new data
+
+d) No, his model needs to capture more noise
+]
+
+.pull-right[
+### Question 2
+**Which problems has Sam already addressed?**
+
+a) Overfitting
+
+b) Underfitting
+
+c) Variance
+
+d) All of the above
+]
+---
+class: inverse, center, middle
+# Countering Overfitting
+---
+class: onecol
+## Cross-Validation
+There are some clever algorithmic tricks to prevent overfitting
+
+- For example, we can penalize the model for adding complexity
+
+The main approach, however, is to use ![:emphasize](cross-validation):
+
+--
+
+- Multiple **fully independent** sets of data are created (by subsetting or resampling)
+
+- Some sets are used for training (and tuning) and other sets are used for testing
+
+- **Model evaluation is always done on data that were not used to train the model**
+
+- This way, if performance looks good, we can worry less about variance/overfitting<sup>1</sup>
+
+.footnote[[1] Although we always need to worry somewhat about whether the original data was itself representative.]
+---
+# Holdout Cross-Validation
+```{r, echo=FALSE}
+include_graphics("holdout.png")
+```
+
+---
+# Holdout Cross-Validation
+```{r, echo=FALSE}
+include_graphics("holdout2.png")
+```
+
+---
+# k-fold Cross-Validation
+```{r, echo=FALSE}
+include_graphics("kfold1.png")
+```
+
+---
+count: false
+# k-fold Cross-Validation
+.center[
+```{r, echo=FALSE, out.width="70%"}
+include_graphics("kfold2.png")
+```
+]
+---
+class: onecol
+## Advanced Cross-Validation
+Cross-validation can also be **nested** to let the model tune on unseen data:
+
+ - An outer loop (applied to the original data) is used for *model evaluation*
+
+ - An inner loop (applied to the training set) is used for *model tuning*
+
+Cross-validation can also be **stratified** to keep the sets relatively similar
+
+Cross-validation can also be **repeated** to avoid problems with any single split
+
+.footnote[A great default procedure is nested, stratified, and 3x repeated 10-fold cross-validation.]
+---
+## Comprehension Check \#4
+<span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
+
+.pull-left[
+### Question 1
+**What major mistake did Bogdan make?**
+
+a) He used a testing set instead of a holdout set
+
+b) Some patients are in both training and testing
+
+c) The two subsets of data have different sizes
+
+d) He did not use k-fold cross-validation 
+]
+
+.pull-right[
+### Question 2
+**Which step should not be done in the training set?**
+
+a) Exploratory Analysis
+
+b) Feature Engineering
+
+c) Model Development
+
+d) Model Evaluation
+]
+
+---
+class: inverse, center, middle
+# Small Group Discussion
+---
+class: onecol
+# Small Group Discussion
+
+We will randomly assign you to a small breakout room
+
+We will jump between rooms to join discussions and answer questions
+
+**Introduce yourselves again and discuss the following topics**
+
+ 1. What types of labels and features would you like to work with?
+
+ 2. What problems might predictive modeling help your field solve?
+
+ 3. Do you have any questions or comments about the material so far?
+
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```

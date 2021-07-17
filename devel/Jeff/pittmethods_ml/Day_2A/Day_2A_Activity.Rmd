@@ -27,10 +27,9 @@ library(recipes)
 ---
 
 # Read in data from CSV file 
-Note that you either need to provide the entire path to the file (e.g., `"C:/users/jmgirard/downloads/airsatisfaction.csv"`) or use an RStudio Project and save both the RNotebook and CSV files in that project folder.
 
 ```{r, message=FALSE}
-airsat <- read_csv("airsatisfaction.csv")
+airsat <- read_csv("https://osf.io/7sqcn/download")
 airsat
 ```
 

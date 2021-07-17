@@ -146,7 +146,7 @@ a.sourceLine {
 <div id="data-preparation" class="section level1">
 <h1>Data Preparation</h1>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>titanic <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;titanic.csv&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>titanic <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://osf.io/juez2/download&quot;</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a training and testing set (stratified by survived)</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2021</span>)</span>
@@ -305,7 +305,7 @@ a.sourceLine {
 <h1>Hands-on Activity</h1>
 <p>Modify the code from above to achieve the following goals:</p>
 <ol style="list-style-type: decimal">
-<li><p>Read in the <code>airsatisfaction.csv</code> file from Activity 2-A</p></li>
+<li><p>Read in the <code>airsatisfaction.csv</code> file from <a href="https://osf.io/7sqcn/download" class="uri">https://osf.io/7sqcn/download</a></p></li>
 <li><p>Create a 75% training and 25% testing set stratified by <code>satisfaction</code></p></li>
 <li><p>Create a recipe predicting <code>satisfaction</code> with the following steps:</p></li>
 </ol>
@@ -329,7 +329,7 @@ a.sourceLine {
 Click here to see the answer key for the hands-on activity
 </summary>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 1</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>airsat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;airsatisfaction.csv&quot;</span>)</span></code></pre></div>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>airsat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://osf.io/7sqcn/download&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 2</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>index <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(airsat<span class="sc">$</span>satisfaction, <span class="at">p =</span> <span class="fl">0.75</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>airsat_train <span class="ot">&lt;-</span> airsat[index, ]</span>
