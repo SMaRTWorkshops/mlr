@@ -69,35 +69,32 @@ class: inverse, center, middle
   font-size: 24px;
   border: 1px solid grey;
 }
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
+}
 </style>
 ---
 class: onecol
 ## Plan for Day 2-B
 First will be a lecture on **Performance Metrics** (one of my favorite topics)
 
-Second will be a brief **lecture overview** of training, evaluation, and interpretation in R
-
-Third, we will apply this with a **live coding** session and hands-on activity
-
---
-
 .pt1[
-In parts 2 and 3, we will **adapt familiar algorithms** to predictive modeling
-- Linear modeling will be adapted for continuous prediction (regression)
-- Generalized linear modeling will be adapted for discrete prediction (classification)
-
-*This will ease the transition to ML and highlight its similarities with classical stats*
+Second will be a **lecture** on training, evaluation, and interpretation in R
 ]
 
---
+- We will **adapt familiar (statistical) algorithms** to predictive modeling
+
+- *This will ease the transition to ML and highlight its similarities with classical statistics*
+
+- We will also **foreshadow future topics** (e.g., regularized linear models and tuning)
 
 .pt1[
-We will also **foreshadow future topics** (e.g., regularized linear models and tuning)
+Finally, we will have a Live Coding Activity and related Hands-on Activity
 ]
 
----
-class: inverse, center, middle
-# Performance Metrics
 ---
 class: onecol
 ## Performance Metrics
@@ -123,13 +120,16 @@ include_graphics("target.jpg")
 ]
 
 ---
+class: inverse, center, middle
+# Metrics for Regression
+---
 class: onecol
 ## Classic Distance Metrics for Regression
 
 .pull-left[
 **Root Mean Squared Error (RMSE)**
 - Based on squared loss
-- Easier to computationally optimize
+- Sensitive to outliers, easy to optimize
 - Ranges from $0$ to $+\infty$, lower is better
 ]
 
@@ -137,20 +137,20 @@ class: onecol
 $$RMSE=\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - p_i)^2}$$
 ]
 
+.footnote[[1] Note that, here, we will refer to the trusted labels as `\\(y\\)` and the predicted labels as `\\(p\\)`.]
+
 --
 
 .pull-left[
 **Mean Absolute Error (MAE)**
 - Based on absolute loss
-- More robust to outliers
+- Robust to outliers, harder to optimize
 - Ranges from $0$ to $+\infty$, lower is better
 ]
 
 .pull-right.pt4[
 $$MAE=\frac{1}{n} \sum_{i=1}^n \left\lvert y_i - p_i \right\rvert$$
 ]
-
-.footnote[[1] Note that, here, we will refer to the trusted labels as `\\(y\\)` and the predicted labels as `\\(p\\)`.]
 
 ---
 exclude: true
@@ -317,6 +317,9 @@ p1 | p2
 ```
 
 ---
+class: inverse, center, middle
+# Metrics for Classification
+---
 class: twocol
 ## Confusion Matrix Metrics for Classification
 
@@ -427,25 +430,27 @@ F_1 &= 0.19
 class: onecol
 ## Multiclass Performance Strategies
 
+With more than two classes, you can make a larger (e.g., $3\times 3$) confusion matrix)
+
  | &emsp; $y$ = Healthy&emsp; | &emsp; $y$ = Depression&emsp; | &emsp; $y$ = Mania&emsp;
 :--| :--: | :--: | :--:
 ** $p$ = Healthy**&emsp; | 100 | 3 | 7
-** $p$ = Depression**&emsp; | 2 | 25 | 0 
+** $p$ = Depression**&emsp; | 30 | 25 | 20 
 ** $p$ = Mania**&emsp; | 10 | 1 | 10
 
 --
 
 .pt3[
-![:emphasize](Macro-averaging): compute the performance for each class in a one-versus-all manner using standard binary metrics, then calculate the unweighted average across classes
+![:emphasize](Macro-averaging): compute the standard binary metric for each class separately (using a one-vs-rest procedure) and then calculate the average metric score across classes
 ]
 
---
-
-![:emphasize](Macro-weighting): same as macro-averaging but use a weighted average across classes such that performance on larger/more frequent classes is emphasized
+<!-- $$(F_1^H = 0.79, F_1^D = 0.46, F_1^M = 0.34)~\text{Macro }F_1=0.53$$ -->
 
 --
 
-![:emphasize](Micro-averaging): compute a confusion matrix for each class in a one-versus-all manner, then calculate binary metrics using sums of each cell (e.g., $\sum {TP}_j$)
+![:emphasize](Micro-averaging): compute a confusion matrix for each class separately (one-vs-rest), add these matrices together, and calculate the binary metric from the summed matrix
+
+<!-- $$ (\Sigma TN=345, \Sigma TP=135, \Sigma FP=75, \Sigma FN=75)~\text{Micro }F_1=0.64$$ -->
 
 ---
 class: onecol
@@ -625,9 +630,9 @@ class: onecol
 
 Argument&emsp; | Description
 :------- | :----------
-`x` | A {recipe} object with variable roles and preprocessing steps
-`data` | A data frame to be used for training (prior to baking)
-`method` | A string indicating the algorithm to train (e.g., "lm" or "glm")&emsp;
+x | A {recipe} object with variable roles and preprocessing steps
+data | A data frame to be used for training (prior to baking)
+method | A string indicating the algorithm to train (e.g., "lm" or "glm")&emsp;
 
 --
 
@@ -645,10 +650,10 @@ class: onecol
 
 Argument | Description
 :------- | :----------
-`trControl` | Controls the resampling procedure used during tuning
-`metric` | Controls which metric to optimize during tuning
-`tuneGrid` | Control which specific tuning values to compare
-`tuneLength`&emsp; | Control how many tuning values to automatically compare&emsp;
+trControl | Controls the resampling procedure used during tuning
+metric | Controls which metric to optimize during tuning
+tuneGrid | Control which specific tuning values to compare
+tuneLength&emsp; | Control how many tuning values to automatically compare&emsp;
 
 These arguments are largely used to configure tuning (discussed tomorrow)
 
@@ -664,9 +669,9 @@ The `trControl` argument can be configured by `trainControl()`:
 
 Argument&emsp; | Description
 :------- | :----------
-`method` | Controls the type of resampling (e.g., "cv", "repeatedcv", "boot")&emsp;
-`number` | Controls the number of folds in cv and iterations in boot
-`repeats` | Controls the number of repetitions in repeatedcv
+method | Controls the type of resampling (e.g., "cv", "repeatedcv", "boot")&emsp;
+number | Controls the number of folds in cv and iterations in boot
+repeats | Controls the number of repetitions in repeatedcv
 
 "cv" will perform resampling through $k$-fold cross-validation
 
@@ -763,11 +768,11 @@ trained_model <- train(
 
 ---
 class: onecol
-# Live Coding: Part 1
+# Applied Example
 Let's put what we just learned into practice in R
 
 .pt1[
-We will use {caret} and {recipes} to train two models on the `titanic` data
+Let's use {caret} and {recipes} to train two models on the `titanic` data
 ]
 
 - We will load in and split the data
@@ -776,17 +781,13 @@ We will use {caret} and {recipes} to train two models on the `titanic` data
 
 - We will use LM to try to predict each passenger's fare (how much they paid)
 
-.pt1[
-You can follow along on your computer (the code is online) or just watch me code
-]
-
 ---
 class: onecol
-## Live Coding Summary
+## Applied Example
 
 ```{r}
 # Read in data
-titanic <- read.csv("titanic.csv")
+titanic <- read_csv("titanic.csv")
 
 # Create a training and testing set (stratified by fare)
 set.seed(2021)
@@ -794,6 +795,8 @@ fare_index <- createDataPartition(titanic$fare, p = 0.75, list = FALSE)
 fare_train <- titanic[fare_index, ]
 fare_test <- titanic[-fare_index, ]
 ```
+
+--
 
 ```{r}
 # Check sizes
@@ -803,7 +806,7 @@ dim(fare_test)
 
 ---
 class: onecol
-## Live Coding Summary
+## Applied Example
 
 ```{r}
 # Create a preprocessing recipe (no prep)
@@ -819,7 +822,6 @@ fare_recipe <-
 
 ---
 class: onecol
-
 ## Live Coding Summary
 
 ```{r}
@@ -891,9 +893,9 @@ To get predictions from the final model on new data<sup>1</sup>, we can use `pre
 
 Argument&emsp; | Description
 :------- | :----------
-`object` | A trained model object created by `train()`
-`newdata` | A data frame with the same features (prior to baking)&emsp;
-`type` | Return raw classes ("raw") or probabilities ("prob")?
+object | A trained model object created by `train()`
+newdata | A data frame with the same features (prior to baking)&emsp;
+type | Return raw classes ("raw") or probabilities ("prob")?
 
 .pt3[
 ```{r}
@@ -915,8 +917,8 @@ fare_test_baked <-
   prep(training = fare_train) %>% 
   bake(new_data = fare_test)
 
-fare_labs <- fare_test_baked$fare
-glimpse(fare_labs)
+fare_true <- fare_test_baked$fare
+glimpse(fare_true)
 ```
 
 --
@@ -932,12 +934,12 @@ class: onecol
 
 ```{r, eval=FALSE}
 # Simple Version
-qplot(x = fare_labs, y = fare_pred)
+qplot(x = fare_true, y = fare_pred)
 ```
 
 ```{r quick, echo=FALSE, fig.height=3.25}
 # Quick Version
-qplot(x = fare_labs, y = fare_pred) +
+qplot(x = fare_true, y = fare_pred) +
   theme_xaringan(text_font_size = 20) +
   theme(
     axis.title = element_text(size = 20),
@@ -950,22 +952,20 @@ qplot(x = fare_labs, y = fare_pred) +
 ## Visualizing Predicted and Trusted Labels
 ```{r, eval=FALSE}
 # Fancy Version
-fare_test_baked %>% 
-  mutate(fare_pred = fare_pred) %>% 
-  ggplot(aes(x = fare, y = fare_pred)) + 
+data.frame(fare_true, fare_pred) %>% 
+  ggplot(aes(x = fare_true, y = fare_pred)) + 
   geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
-  geom_point(color = "darkred", size = 2, alpha = 1/3) +
+  geom_point(color = "darkblue", size = 3, alpha = 1/3) +
   coord_cartesian(xlim = c(0, 520), ylim = c(0, 520)) +
-  labs(x = "True Fare", y = "Predicted Fare")
+  labs(x = "True Fare", y = "Predicted Fare") +
 ```
 
 ---
 ## Visualizing Predicted and Trusted Labels
 ```{r fancy, echo=FALSE, fig.height=4}
 # Fancy Version
-fare_test_baked %>% 
-  mutate(fare_pred = fare_pred) %>% 
-  ggplot(aes(x = fare, y = fare_pred)) + 
+data.frame(fare_true, fare_pred) %>% 
+  ggplot(aes(x = fare_true, y = fare_pred)) + 
   geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
   geom_point(color = "darkblue", size = 3, alpha = 1/3) +
   coord_cartesian(xlim = c(0, 520), ylim = c(0, 520)) +
@@ -986,11 +986,11 @@ To estimate performance in {caret}, use `postResample()`
 
 Argument&emsp; | Description
 :------- | :----------
-`pred` | A vector of predicted labels&emsp;
-`obs` | A vector of trusted labels
+pred | A vector of predicted labels&emsp;
+obs | A vector of trusted labels
 
 ```{r}
-postResample(pred = fare_pred, obs = fare_labs)
+postResample(pred = fare_pred, obs = fare_true)
 ```
 
 This function will give basic results (e.g., Accuracy) for classification too
@@ -1005,15 +1005,15 @@ For regression, I like the **Huber Loss** distance metric and **CCC** correlatio
 
 ```{r}
 # Huber Loss (blends RMSE and MAE)
-yardstick::huber_loss_vec(truth = fare_labs, estimate = fare_pred)
+yardstick::huber_loss_vec(truth = fare_true, estimate = fare_pred)
 ```
 
 ```{r}
 # Concordance Correlation Coefficient
-yardstick::ccc_vec(truth = fare_labs, estimate = fare_pred)
+yardstick::ccc_vec(truth = fare_true, estimate = fare_pred)
 ```
 
-For classification, I like **MCC**, **Log Loss**, and **ROC Curve** (shown in next Live Coding)
+For classification, I like **MCC**, **Log Loss**, and **ROC Curve** (shown in Live Coding)
 
 ---
 class: inverse, center, middle
@@ -1060,7 +1060,7 @@ varImp(fare_lm, scale = FALSE)
 
 ---
 class: onecol
-## Live Coding Part 2
+## Live Coding
 
 Now that we have explored the prediction of passenger fare, let's predict survival
 
@@ -1072,107 +1072,10 @@ Training, evaluating, and interpreting a ![:emphasize](classification) model is 
 
 - We can explore the **raw class predictions** and **estimated class probabilities**
 
----
-class: onecol
-## Live Coding Summary
+--
 
-```{r}
-# Create a training and testing set (stratified by survived)
-set.seed(2021)
-surv_index <- createDataPartition(titanic$survived, p = 0.75, list = FALSE)
-surv_train <- titanic[surv_index, ]
-surv_test <- titanic[-surv_index, ]
-```
+.pt1[
+Finally, as a hands-on activity, you will classify satisfaction in the `airsat` dataset
+]
 
-```{r}
-# Create a preprocessing recipe (no prep)
-surv_recipe <- 
-  titanic %>% 
-  recipe(survived ~ .) %>% 
-  step_normalize(all_numeric_predictors()) %>% 
-  step_dummy(all_nominal_predictors()) %>% 
-  step_interact(~sex_male:starts_with("pclass")) %>% 
-  step_nzv(all_predictors()) %>% 
-  step_corr(all_predictors())
-```
-
----
-class: onecol
-## Live Coding Summary
-
-```{r}
-set.seed(2021)
-#  Train the model using the recipe, data, and method
-surv_glm <- train(
-  surv_recipe, 
-  data = surv_train,
-  method = "glm",
-  metric = "Accuracy",
-  trControl = trainControl(method = "cv", number = 10)
-)
-surv_glm$results
-```
-
----
-## Live Coding Summary
-
-```{r}
-# Extract model predictions as classes
-surv_pred <- predict(surv_glm, newdata = surv_test)
-glimpse(surv_pred)
-```
-
-```{r}
-# Extract model predictions as probabilities
-surv_prob <- predict(surv_glm, newdata = surv_test, type = "prob")
-glimpse(surv_prob)
-```
-
----
-## Live Coding Summary
-
-```{r}
-# Bake test set
-surv_test_baked <- 
-  surv_recipe %>% 
-  prep(training = surv_train) %>% 
-  bake(new_data = surv_test)
-
-surv_labs <- surv_test_baked$survived
-glimpse(surv_labs)
-```
-
-```{r}
-postResample(pred = surv_pred, obs = surv_labs)
-```
-
----
-## Live Coding Summary
-
-```{r, eval=FALSE}
-test_data <- bind_cols(
-  surv_prob, 
-  obs = surv_labs, 
-  pred = surv_pred
-)
-
-library(yardstick)
-cm <- conf_mat(test_data, truth = obs, estimate = pred)
-autoplot(cm, type = "heatmap")
-summary(cm)
-
-mcc(test_data, truth = obs, estimate = pred)
-
-roc <- roc_curve(test_data, yes, truth = obs, event_level = "second")
-autoplot(roc)
-roc_auc(test_data, yes, truth = obs, event_level = "second")
-# Results too large to show here
-```
-
----
-## Live Coding Summary
-
-```{r glm_varimp}
-varImp(surv_glm, scale = FALSE) %>% plot()
-```
-
+- Note that this will build upon the work you did in Activity 2-A!

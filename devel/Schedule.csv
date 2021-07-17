@@ -19,7 +19,15 @@ Day,Part,Title,Description,Minutes
 2,A,Feature Engineering,Adding Predictors,15
 2,A,Feature Engineering,Transforming Predictors,15
 2,A,Feature Engineering,Reducing Predictors,15
-2,A,Feature Engineering,Advanced Topics,15
-2,A,Feature Engineering,Live Coding,15
-2,A,Feature Engineering,Activity,25
+2,A,Feature Engineering,Advanced Topics,10
+2,A,Feature Engineering,Live Coding,25
+2,A,Feature Engineering,Hands-on Activity,20
 2,X,,Break,10
+2,B,Basic Predictive Modeling,Overview,5
+2,B,Basic Predictive Modeling,Performance Metrics for Regression,10
+2,B,Basic Predictive Modeling,Performance Metrics for Classification,15
+2,B,Basic Predictive Modeling,Training and Cross Validation,15
+2,B,Basic Predictive Modeling,Model Evaluation,15
+2,B,Basic Predictive Modeling,Model Interpretation,10
+2,B,Basic Predictive Modeling,Live Coding,25
+2,B,Basic Predictive Modeling,Hands-on activity,20

@@ -56,6 +56,16 @@ class: inverse, center, middle
 .twocol {
   font-size: 24px;
 }
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
+}
 </style>
 ---
 class: twocol
@@ -147,8 +157,8 @@ timeline <- tribble(
   "3-A", "Regularized regression", "SW",
   "3-B", "Decision trees and random forests", "SW",
   "4-A", "Support vector machines","JG",
-  "4-B", "Practical issues", "SW",
-  "5-A", "Challenges and next steps", "Both",
+  "4-B", "Practical issues and advice", "SW",
+  "5-A", "Panel Q&A and discussion", "Both",
   "5-B", "Hackathon and consultation", "Both"
 )
 kable(timeline, format = "html") %>% kable_styling(font_size = 20)
