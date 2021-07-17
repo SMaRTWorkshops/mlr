@@ -1,7 +1,21 @@
 ---
 title: "Day 2B Activity (Basic Predictive Modeling)"
-output: html_notebook
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    df_print: paged
 ---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  df_print = "paged"
+)
+```
+
+# Load packages
 
 ```{r, message=FALSE}
 library(tidyverse)
@@ -9,104 +23,9 @@ library(caret)
 library(recipes)
 ```
 
-## Using linear regression to predict Titanic fares (regression)
+---
 
-```{r}
-# Read in data
-titanic <- read.csv("titanic.csv")
-
-# Create a training and testing set (stratified by fare)
-set.seed(2021)
-fare_index <- createDataPartition(titanic$fare, p = 0.75, list = FALSE)
-fare_train <- titanic[fare_index, ]
-fare_test <- titanic[-fare_index, ]
-```
-
-```{r}
-# Create a preprocessing recipe (no prep)
-fare_recipe <- 
-  titanic %>% 
-  recipe(fare ~ .) %>% 
-  step_rm(survived) %>%
-  step_normalize(all_numeric_predictors()) %>% 
-  step_dummy(all_nominal_predictors()) %>% 
-  step_nzv(all_predictors()) %>% 
-  step_corr(all_predictors())
-```
-
-```{r}
-set.seed(2021)
-#  Train the model using the recipe, data, and method
-fare_lm <- train(
-  fare_recipe, 
-  data = fare_train,
-  method = "lm",
-  trControl = trainControl(method = "cv", number = 10)
-)
-# Examine results of internal cross-validation
-fare_lm$results
-```
-
-```{r}
-# Extract model predictions on test set
-fare_pred <- predict(fare_lm, newdata = fare_test)
-glimpse(fare_pred)
-```
-
-```{r}
-# Bake test set and save trusted labels
-fare_test_baked <- 
-  fare_recipe %>% 
-  prep(training = fare_train) %>% 
-  bake(new_data = fare_test)
-
-fare_labs <- fare_test_baked$fare
-glimpse(fare_labs)
-```
-
-```{r}
-# Calculate test set performance
-postResample(pred = fare_pred, obs = fare_test_baked$fare)
-```
-
-```{r}
-# Quick plot
-qplot(x = fare_labs, y = fare_pred)
-```
-
-
-```{r}
-# Fancy Plot
-fare_test_baked %>% 
-  mutate(fare_pred = fare_pred) %>% 
-  ggplot(aes(x = fare, y = fare_pred)) + 
-  geom_abline(slope = 1, intercept = 0, color = "grey", size = 2) +
-  geom_point(color = "darkblue", size = 2, alpha = 1/4) +
-  coord_cartesian(xlim = c(0, 520), ylim = c(0, 520))
-```
-
-```{r}
-# Huber Loss (blends RMSE and MAE)
-yardstick::huber_loss_vec(truth = fare_labs, estimate = fare_pred)
-```
-
-```{r}
-# Concordance Correlation Coefficient
-yardstick::ccc_vec(truth = fare_labs, estimate = fare_pred)
-```
-
-```{r}
-# Plot the importance of each predictor (the absolute value of its t-statistic)
-lm_imp <- varImp(fare_lm, scale = FALSE) %>% print()
-plot(lm_imp)
-```
-
-```{r}
-# Examine the coefficients (not available for all algorithms)
-fare_lm$finalModel
-```
-
-## Using Logistic Regression to predict Titanic survival (classification)
+# Predicting Titanic survival (with GLM)
 
 ```{r}
 # Create a training and testing set (stratified by survived)
@@ -131,12 +50,13 @@ surv_recipe <-
 ```{r}
 set.seed(2021)
 #  Train the model using the recipe, data, and method
+surv_tc <- trainControl(method = "cv", number = 10)
+
 surv_glm <- train(
   surv_recipe, 
   data = surv_train,
   method = "glm",
-  metric = "Accuracy",
-  trControl = trainControl(method = "cv", number = 10)
+  trControl = surv_tc
 )
 surv_glm$results
 ```
@@ -175,7 +95,9 @@ autoplot(cm, type = "heatmap")
 summary(cm)
 
 yardstick::mcc(test_data, truth = obs, estimate = pred)
+```
 
+```{r}
 roc <- yardstick::roc_curve(test_data, yes, truth = obs, event_level = "second")
 autoplot(roc)
 yardstick::roc_auc(test_data, yes, truth = obs, event_level = "second")
@@ -190,3 +112,8 @@ varImp(surv_glm, scale = FALSE) %>% plot()
 # Look at the model coefficients (not available for every algorithm)
 surv_glm$finalModel
 ```
+
+---
+
+## Hands-on Activity
+
