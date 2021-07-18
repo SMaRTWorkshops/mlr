@@ -41,7 +41,7 @@ class: inverse, center, middle
 ##Lecture Topics
 .left-column[
 &lt;/br&gt;
-&lt;img src="agenda.png" width="100%" height="200%" /&gt;
+&lt;img src="agenda.png" width="100%" height="350" /&gt;
 ]
 
 .right-column[
@@ -81,7 +81,7 @@ class: inverse, center, middle
 
 There are ![:emphasize](many packages) for building and evaluating machine learning models in R. 
 
-Each implements specific ML models (e.g., `glmnet` for lasso and elastic net regularization, `rpart` for decision trees, `randomforest` for random forests).
+Each implements specific ML models (e.g., {glmnet} for lasso, ridge, and elastic net regularization, {rpart} for decision trees, {randomforest} for random forests).
 
 These packages were built by different people over time, so ![:emphasize](syntax and conventions differ).
 
@@ -225,6 +225,24 @@ class: inverse, center, middle
 # Simple Holdout Set
 
 ---
+##Why EDA on training data only?
+
+The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into  data to make informed modeling decisions). 
+
+We split our data into training and testing subsets to evaluate the accuracy of our model in predicting *unseen* data. 
+
+This gives us a sense for how our model might perform in the **future** on new datasets.
+
+--
+
+&lt;/br&gt; 
+If modeling decisions are made based on data patterns we observe in the test set, we ![:emphasize](risk artificially inflating model performance) estimates in the test set. 
+
+**When possible, it is ideal** to perform exploratory data analysis only on your training data only.
+
+But note that doesn't mean we can't check the test data for coding errors or data anomalies!
+
+---
 ##Simple Train/Test Split
 
 &lt;img src="datasplit_simple.png" width="100%" /&gt;
@@ -244,9 +262,9 @@ An important note on terminology beyond simple train/test data splits&lt;sup&gt;
 [1] More details on model training and cross-validation methods to come tomorrow in section 2-B.
 ]
 ---
-##Simple Train/Test Split
+##Simple Train/Test Split in R
 
-Use the `caret::createDataPartition()` function to create balanced training and testing splits based on the outcome variable. Random sampling occurs within each factor level to ![:emphasize](maintain class distribution) in the datasets. 
+Use the `createDataPartition()` function in {caret} to create balanced training and testing splits based on the outcome variable. Random sampling occurs within each factor level to ![:emphasize](maintain class distribution) in the datasets. 
 
 Specify the proportion of data you want in the training split (e.g., `p = 0.8`) for an 80%/20% data split.
 
@@ -254,6 +272,7 @@ Remember to set a seed so your results are ![:emphasize](reproducible)!
 
 --
 
+&lt;/br&gt; 
 
 ```r
 library(caret)
@@ -264,7 +283,7 @@ trainIndex &lt;- createDataPartition(iris$Species, p = .8,
 ```
 
 ---
-##Simple Train/Test Split
+##Simple Train/Test Split in R
 
 Use the `createDataPartition` row indices to split your data into single train and test sets.
 
@@ -286,23 +305,6 @@ dim(irisTest)
 #&gt; [1] 30  5
 ```
 
----
-##Why EDA on training data only?
-
-The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into  data to make informed modeling decisions). 
-
-We split our data into training and testing subsets to evaluate the accuracy of our model in predicting *unseen* data. 
-
-This gives us a sense for how our model might perform in the **future** on new datasets.
-
---
-
-&lt;/br&gt; 
-If modeling decisions are made based on data patterns we observe in the test set, we ![:emphasize](risk artificially inflating model performance) estimates in the test set. 
-
-**When possible, it is ideal** to perform exploratory data analysis only on your training data only.
-
-But note that doesn't mean we can't check the test data for coding errors or data anamolies!
 
 ---
 ##Knowledge check
@@ -311,7 +313,7 @@ But note that doesn't mean we can't check the test data for coding errors or dat
 
 .pull-left[
 ### Question 1
-**Looking for outliers or data anomolies:**
+**Looking for outliers or data anomalies:**
 
 a) Training data only
 
@@ -402,7 +404,7 @@ min < med < max:
 4.4 < 5.8 < 7.7
 IQR (CV) : 1.3 (0.1)</td>
         <td align="left" style="vertical-align:middle">32 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIUNRP/zetRAAABSklEQVR42u3cUW7aQABF0UOVPXYP7XraPWSV7c/7QJECLUkNqPf+ISQYH3mQR2Nz+qX4cu8BPEYxIIb1cv7idJch/Ljy8/T9Hw3r/Gtfbv6UT+zrhfdeDxlBkwKHnQ3XTvx7d9ikeP/EP+a0v1yTAjGsGBDDigExrBgQw/qLy6dHvxI8iOHaEuj+C6Tba1IghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgPcZfs5S7vpH/OrcRPwHDETnmTAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMOKATGsGPBmD/MZHz/+wJjPNoHfbOU+3wPGl/4658+PpkmBGFYMiGHFgBhWDIhhxYAYVgyIYZ3OF2g/n3CFeXvfzlaYp//qyN+tSYEYVgzgNxVtGR5h23/qAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDIwOjUzOjE5KzAwOjAwhwNL1AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQyMDo1MzoxOSswMDowMPZe82gAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIWLBWOKjMSAAABSklEQVR42u3cUW7aQABF0UOVPXYP7XraPWSV7c/7QJECLUkNqPf+ISQYH3mQR2Nz+qX4cu8BPEYxIIb1cv7idJch/Ljy8/T9Hw3r/Gtfbv6UT+zrhfdeDxlBkwKHnQ3XTvx7d9ikeP/EP+a0v1yTAjGsGBDDigExrBgQw/qLy6dHvxI8iOHaEuj+C6Tba1IghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgPcZfs5S7vpH/OrcRPwHDETnmTAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMOKATGsGPBmD/MZHz/+wJjPNoHfbOU+3wPGl/4658+PpkmBGFYMiGHFgBhWDIhhxYAYVgyIYZ3OF2g/n3CFeXvfzlaYp//qyN+tSYEYVgzgNxVtGR5h23/qAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDIyOjQ0OjIxKzAwOjAweW1zogAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQyMjo0NDoyMSswMDowMAgwyx4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">120
 (100.0%)</td>
         <td align="center">0
@@ -417,7 +419,7 @@ min < med < max:
 2 < 3 < 4.4
 IQR (CV) : 0.5 (0.1)</td>
         <td align="left" style="vertical-align:middle">22 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIUNRP/zetRAAABO0lEQVR42u3cS2rcUBRF0VXBc8wckvEkc/Aok85pCEMCsrEs7L17BfXTgqvGrUc9/ii+ffQXuEcxIIb1dHzwOPniXydvLD/PfsC7dvzyT69+F/D9xHOfP/q6/1NDgRhWDIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYA3b5/Odd+l3aUMZ1Z21y7tGgrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYsCLs09nj2h9nl4cAbvvIa33raFADCsGXHw89GzXnaq9NcN1N+yGAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBhw813k2U6ucA8L3E/F8Pr/Mm0oEMN6HMfp95f6RfvH4d7w+FJX/s8aCsSwYgB/AaJNFPa2TCg7AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDIwOjUzOjE5KzAwOjAwhwNL1AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQyMDo1MzoxOSswMDowMPZe82gAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIWLBWOKjMSAAABO0lEQVR42u3cS2rcUBRF0VXBc8wckvEkc/Aok85pCEMCsrEs7L17BfXTgqvGrUc9/ii+ffQXuEcxIIb1dHzwOPniXydvLD/PfsC7dvzyT69+F/D9xHOfP/q6/1NDgRhWDIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYA3b5/Odd+l3aUMZ1Z21y7tGgrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYsCLs09nj2h9nl4cAbvvIa33raFADCsGXHw89GzXnaq9NcN1N+yGAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBhw813k2U6ucA8L3E/F8Pr/Mm0oEMN6HMfp95f6RfvH4d7w+FJX/s8aCsSwYgB/AaJNFPa2TCg7AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDIyOjQ0OjIxKzAwOjAweW1zogAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQyMjo0NDoyMSswMDowMAgwyx4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">120
 (100.0%)</td>
         <td align="center">0
@@ -432,7 +434,7 @@ min < med < max:
 1 < 4.3 < 6.9
 IQR (CV) : 3.5 (0.5)</td>
         <td align="left" style="vertical-align:middle">39 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIUNRP/zetRAAABSklEQVR42u3cQYoaURhG0WPoPWYPyXqSPfQqk8k3MIRAYSulnXtnIoh18Invr7IuvxRfzn4Dz1EMiGG9XT/4efiL4vvl7Df+8a4P9u3Pp74eeoH3s4/g7rUoEMOKATGsGBDDigExrBgQw4oBf+0pzujHE2zonoDhGTZ0LQrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGPMn06WjHxnW3jOpeiuHIsO62UV2LAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMayHDuiPXwZ8dg8+T/G4Mwv3rUWBGFYMiGHFgBhWDIhhxYAYVgyIYcWAGFYMeLHrIo91eNhzdRnpJ2S45R/fLQrEsGJADCsGxLBiQAzrxp9Pr3Na7qEM59+b5761KMDl+tN9/M7Cn6FvV1ury3915P+sRYEYVgzgNyD5F47nUYb/AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDIwOjUzOjE5KzAwOjAwhwNL1AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQyMDo1MzoxOSswMDowMPZe82gAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIWLBWOKjMSAAABSklEQVR42u3cQYoaURhG0WPoPWYPyXqSPfQqk8k3MIRAYSulnXtnIoh18Invr7IuvxRfzn4Dz1EMiGG9XT/4efiL4vvl7Df+8a4P9u3Pp74eeoH3s4/g7rUoEMOKATGsGBDDigExrBgQw4oBf+0pzujHE2zonoDhGTZ0LQrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGPMn06WjHxnW3jOpeiuHIsO62UV2LAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMayHDuiPXwZ8dg8+T/G4Mwv3rUWBGFYMiGHFgBhWDIhhxYAYVgyIYcWAGFYMeLHrIo91eNhzdRnpJ2S45R/fLQrEsGJADCsGxLBiQAzrxp9Pr3Na7qEM59+b5761KMDl+tN9/M7Cn6FvV1ury3915P+sRYEYVgzgNyD5F47nUYb/AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDIyOjQ0OjIxKzAwOjAweW1zogAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQyMjo0NDoyMSswMDowMAgwyx4AAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
         <td align="center">120
 (100.0%)</td>
         <td align="center">0
@@ -447,7 +449,7 @@ min < med < max:
 0.1 < 1.3 < 2.5
 IQR (CV) : 1.5 (0.6)</td>
         <td align="left" style="vertical-align:middle">22 distinct values</td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIUNRP/zetRAAABPElEQVR42u3cQY7TQBRF0RPUe2QPsB7YQ68SJm/gFmLgdJMYuHdmRYpcR6roy5Xk9kPx6dk3cI1iQAzr5Xjx/fQHxdfbsxdwf8fFvrx96fOpN3p99ko+rDYFYlgxIIYVA2JYMSCGFQN+mSL/ZN8uPKo/kOHKo3qbAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMN66HHN2c6ec91/ynVphsedcrUpEMOKATGsGBDDigEXnxvOdnLcOgxb/xTDmXHr7bDVpkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAzrnQ/oz//g+Jq9k+H+k4Fr1aZADCsGxLBiQAwrBsSwYkAMKwbEsGJADOt2fGBw/p+F/+a+HL4XefuvVv7b2hSIYcUAfgKm4xT20hudVAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xOFQyMDo1MzoxOSswMDowMIcDS9QAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMThUMjA6NTM6MTkrMDA6MDD2XvNoAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIWLBWOKjMSAAABPElEQVR42u3cQY7TQBRF0RPUe2QPsB7YQ68SJm/gFmLgdJMYuHdmRYpcR6roy5Xk9kPx6dk3cI1iQAzr5Xjx/fQHxdfbsxdwf8fFvrx96fOpN3p99ko+rDYFYlgxIIYVA2JYMSCGFQN+mSL/ZN8uPKo/kOHKo3qbAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMN66HHN2c6ec91/ynVphsedcrUpEMOKATGsGBDDigEXnxvOdnLcOgxb/xTDmXHr7bDVpkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAzrnQ/oz//g+Jq9k+H+k4Fr1aZADCsGxLBiQAwrBsSwYkAMKwbEsGJADOt2fGBw/p+F/+a+HL4XefuvVv7b2hSIYcUAfgKm4xT20hudVAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xOFQyMjo0NDoyMSswMDowMHltc6IAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMThUMjI6NDQ6MjErMDA6MDAIMMseAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
         <td align="center">120
 (100.0%)</td>
         <td align="center">0
@@ -461,7 +463,7 @@ IQR (CV) : 1.5 (0.6)</td>
 2. versicolor
 3. virginica</td>
         <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
-        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAADcAAABDCAQAAACSYVUaAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIUNRP/zetRAAAAfUlEQVRYw+3WsQ2AMAxEURuxIzuwD+yQKaENSEQoxE5k/nVu/AoXPj3EM5OrFpyb82E3OeSqD5zI0hxLlyn27eDg4ODghuVu/y7VbXkdzR+4Vq8pJRd+dLvNpuNSjeDg4ODgenN0lYahq3wKXQUODg4ObgCuZzWyT+zbOXMnOYsQtmjbE/cAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMThUMjA6NTM6MTkrMDA6MDCHA0vUAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE4VDIwOjUzOjE5KzAwOjAw9l7zaAAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAADcAAABDCAQAAACSYVUaAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxIWLBWOKjMSAAAAfUlEQVRYw+3WsQ2AMAxEURuxIzuwD+yQKaENSEQoxE5k/nVu/AoXPj3EM5OrFpyb82E3OeSqD5zI0hxLlyn27eDg4ODghuVu/y7VbXkdzR+4Vq8pJRd+dLvNpuNSjeDg4ODgenN0lYahq3wKXQUODg4ObgCuZzWyT+zbOXMnOYsQtmjbE/cAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMThUMjI6NDQ6MjErMDA6MDB5bXOiAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE4VDIyOjQ0OjIxKzAwOjAwCDDLHgAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
         <td align="center">120
 (100.0%)</td>
         <td align="center">0
