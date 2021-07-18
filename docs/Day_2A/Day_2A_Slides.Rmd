@@ -42,6 +42,11 @@ style_mono_light(
 )
 ```
 
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
 ```{r packages, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(knitr)
