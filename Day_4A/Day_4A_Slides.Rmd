@@ -1,0 +1,117 @@
+---
+title: '<span style="font-size:48pt;">Support Vector Machines</span>'
+subtitle: '🚧  🛣️  🦿 ' 
+author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
+date: 'Lecture 4-A &emsp; &emsp; July 22, 2021'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      beforeInit: "macros.js"
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b",
+  footnote_font_size = "20px",
+  footnote_color = "gray",
+  text_slide_number_font_size = "18px"
+)
+```
+
+```{r xaringan-tachyons, echo=FALSE}
+xaringanExtra::use_tachyons()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+library(caret)
+library(recipes)
+```
+
+class: inverse, center, middle
+# Overview
+
+<style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
+}
+</style>
+---
+## Maximal margin classifier
+
+---
+## Support vector classifier
+
+---
+## Support vector machine
+
+---
+## Support vector regression
+
+---
+# Kernels
+
+---
+## Overview of kernerls
+
+---
+## Polynomial kernel
+
+---
+## Radial basis function (RBF) kernel
+
+---
+## Hyperparameters for SVM
+
+---
+## Applied Example
+
+---
+## Live Coding Activity
+
+---
+## Hands-on Activity
+
+---
+## Break and timer
