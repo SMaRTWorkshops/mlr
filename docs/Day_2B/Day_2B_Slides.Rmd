@@ -823,7 +823,7 @@ class: onecol
 
 ```{r, message=FALSE}
 # Read in data
-titanic <- read_csv("https://osf.io/juez2/download")
+titanic <- read_csv("https://bit.ly/amlr-titanic")
 
 # Create a training and testing set (stratified by fare)
 set.seed(2021)
@@ -1107,9 +1107,9 @@ Finally, as a hands-on activity, you will classify `satisfaction` in the `airsat
 
 ## Hands-on Activity
 
-Modify the [Live Coding example code](https://osf.io/gtbzq/) to achieve the following goals:
+Modify the [Live Coding example code](https://pittmethods.github.io/appliedml/Day_2B/Day_2B_Activity.html) to achieve the following goals:
 
- 1. Read in the `airsatisfaction.csv` file from https://osf.io/7sqcn/download
+ 1. Read in the `airsatisfaction.csv` file from https://bit.ly/amlr-airsat
  
  1. Create a 75% training and 25% testing set stratified by `satisfaction`
  

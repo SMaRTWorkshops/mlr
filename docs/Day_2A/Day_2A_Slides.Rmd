@@ -216,7 +216,7 @@ fare | Cost of passenger fare ($)
 ```{r, message=FALSE}
 library(tidyverse)
 titanic <- read_csv(
-  "https://osf.io/juez2/download"
+  "https://bit.ly/amlr-titanic"
 )
 
 library(caret)
@@ -1069,7 +1069,7 @@ If you have questions, please post them in chat or in the workshop Slack channel
 class: onecol
 # Hands-on Activity
 
-Modify the [Live Coding example code](https://osf.io/2f5ad/) to accomplish the following goals:
+Modify the [Live Coding example code](https://pittmethods.github.io/appliedml/Day_2A/Day_2A_Activity.html) to accomplish the following goals:
 
  1. Use 75% of the data for training and 25% of the data for testing.
 

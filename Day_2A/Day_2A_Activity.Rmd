@@ -29,7 +29,7 @@ library(recipes)
 # Read in data from CSV file 
 
 ```{r, message=FALSE}
-airsat <- read_csv("https://osf.io/7sqcn/download")
+airsat <- read_csv("https://bit.ly/amlr-airsat")
 airsat
 ```
 

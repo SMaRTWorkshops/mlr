@@ -109,7 +109,19 @@ class: inverse, center, middle
 ---
 ## Brief R Intro
 
-Placeholder slide
+R is like engine of a car and RStudio is like the cabin
+
+R packages give you extra features (i.e., functions and data)
+
+To install a package into your library, use `install.packages("caret")`<sup>1</sup>
+
+To load the `caret` package from your library, use `library("caret")`<sup>2</sup>
+
+.footnote[
+[1] You only need to install a package once per version (e.g., 6.0-88)<br />
+[2] You need to load a package once per session (i.e., until closing R)
+]
+
 
 ---
 class: inverse, center, middle

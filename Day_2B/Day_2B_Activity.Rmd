@@ -30,7 +30,7 @@ library(yardstick)
 
 ```{r, message=FALSE}
 # Read in data
-titanic <- read_csv("https://osf.io/juez2/download")
+titanic <- read_csv("https://bit.ly/amlr-titanic")
 
 # Create a training and testing set (stratified by survived)
 set.seed(2021)
@@ -174,7 +174,7 @@ plot(surv_vi)
 
 Modify the code from above to achieve the following goals:
 
- 1. Read in the `airsatisfaction.csv` file from https://osf.io/7sqcn/download
+ 1. Read in the `airsatisfaction.csv` file from https://bit.ly/amlr-airsat
  
  1. Create a 75% training and 25% testing set stratified by `satisfaction`
  
@@ -199,7 +199,7 @@ Modify the code from above to achieve the following goals:
 <details><summary>Click here to see the answer key for the hands-on activity</summary>
 ```{r, message=FALSE}
 # Question 1
-airsat <- read_csv("https://osf.io/7sqcn/download")
+airsat <- read_csv("https://bit.ly/amlr-airsat")
 ```
 
 ```{r}
