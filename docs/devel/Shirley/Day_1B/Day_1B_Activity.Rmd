@@ -1,0 +1,109 @@
+---
+title: "Day 1A Activity (Exploratory Data Analysis) - Solutions"
+output:
+  html_notebook:
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Load Packages
+
+```{r, message=FALSE}
+if (!require("tidyverse")) {install.packages("tidyverse"); require("tidyverse")}     
+if (!require("summarytools")) {install.packages("summarytools"); require("summarytools")}     
+if (!require("psych")) {install.packages("psych"); require("psych")}     
+if (!require("psychTools")) {install.packages("psychTools"); require("psychTools")}     
+if (!require("caret")) {install.packages("caret"); require("caret")}
+if (!require("mice")) {install.packages("mice"); require("mice")}     
+if (!require("VIM")) {install.packages("VIM"); require("VIM")}     
+```
+
+# Load Data
+
+This activity will use the 'globalWarm' dataset from the 'psychTools' package, a dataset exploring the relationships between emotions, ideology, and party affiliation as predictors of attitudes towards government action on climate change. 
+
+1. Load in the 'globalWarm' dataset: 
+
+(optional: read a bit about this dataset using ?globalWarm)
+
+```{r}
+
+
+```
+
+# Data Split
+
+2. Split the dataset into a training set (80%) and testing set (20%). 
+3. Name the training set 'globalWarm_train' and the test set 'globalWarm_test'.  
+4. Check the dimensions of your training and test set to make sure the splitting was done accurately. 
+
+Remember to set a seed so your results are reproducible! 
+
+(hint: the outcome variable of interest is 'govact')
+
+```{r}
+
+
+```
+
+
+# EDA: Data distributions and error detection
+
+5. Explore basic summary statistics and data distributions using the dfSummary() function. Feel free to explore summary statistics and data distributions using other functions as well! 
+6. Write a few sentences describing your observations about the dataset and variables. Are there any extreme values, nonsensical values, inconsistencies, variables with low variance, or outliers?
+
+```{r}
+
+
+```
+
+# EDA: Missing Data 
+
+As you can see, the dataset does not have any missing values. For the purposes of this exercise, let's insert some missingness to explore by running this line of code:
+
+```{r}
+
+
+```
+
+Now, use data visualizations to inspect missingness in the dataset. Specifically, 
+
+7. How much missing data is there? (hint: aggregation plot)
+8. Do missing data systematically vary by other observed data? (hint: spineplots/spinograms/mosiac plots)
+9. Are there any patterns of missingness across the entire dataset? (hint: parallel coordinate plots)
+
+```{r}
+
+
+```
+
+
+# EDA: Correlations
+
+10. Inspect the correlation matrix. Are there any highly correlated features? What about clusters of correlated features? Any features that are particularly correlated with the outcome? 
+
+```{r}
+
+```
+
+# EDA: Shape of relationships 
+
+12. Use a scatterplot matrix to examine the shape of relationships between features and the outcome variable. Do the relationships look linear or nonlinear? 
+
+```{r}
+
+
+```
+
+# Conclusions
+
+13. In a few sentences, please describe what you learned about this dataset through these exploratory data analyses. 
+
+
+
+14. What are some ideas you have for using this knowledge to inform your feature engineering and modeling decisions? 
+
+
+
+

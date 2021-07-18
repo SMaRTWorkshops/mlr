@@ -1,0 +1,34 @@
+Day,Part,Title,Description,Minutes
+1,A,Introductions,Workshop Overview,15
+1,A,Introductions,Group Icebreakers,15
+1,A,Introductions,Conceptual Introduction,15
+1,A,Introductions,Modeling Workflow,15
+1,A,Introductions,Flexibility and Overfitting,15
+1,A,Introductions,Addressing Overfitting,15
+1,A,Introductions,Small group activity,25
+1,X,,Break,10
+1,B,Logistics and Data Exploration,Packages (caret + tidymodels),10
+1,B,Logistics and Data Exploration,EDA: intro,5
+1,B,Logistics and Data Exploration,Simple data split,15
+1,B,Logistics and Data Exploration,"EDA: Errors, outliers, missing data",15
+1,B,Logistics and Data Exploration,EDA: Correlations,15
+1,B,Logistics and Data Exploration,EDA: Linearity vs nonlinearity,15
+1,B,Logistics and Data Exploration,Small group activity,25
+1,B,Logistics and Data Exploration,Small group activity,25
+2,A,Feature Engineering,Overview,15
+2,A,Feature Engineering,Adding Predictors,15
+2,A,Feature Engineering,Transforming Predictors,15
+2,A,Feature Engineering,Reducing Predictors,15
+2,A,Feature Engineering,Advanced Topics,10
+2,A,Feature Engineering,Live Coding,25
+2,A,Feature Engineering,Hands-on Activity,20
+2,X,,Break,10
+2,B,Basic Predictive Modeling,Overview,5
+2,B,Basic Predictive Modeling,Performance Metrics for Regression,10
+2,B,Basic Predictive Modeling,Performance Metrics for Classification,25
+2,B,Basic Predictive Modeling,Training and Cross Validation,15
+2,B,Basic Predictive Modeling,Applied Example,5
+2,B,Basic Predictive Modeling,Model Evaluation,10
+2,B,Basic Predictive Modeling,Model Interpretation,5
+2,B,Basic Predictive Modeling,Live Coding,15
+2,B,Basic Predictive Modeling,Hands-on activity,25

@@ -1,0 +1,282 @@
+---
+title: "Day 2B Activity<br />(Predictive Modeling Basics)"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    df_print: paged
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  df_print = "paged"
+)
+```
+
+# Load packages
+
+```{r, message=FALSE}
+library(tidyverse)
+library(caret)
+library(recipes)
+library(yardstick)
+```
+
+---
+
+# Data Preparation
+
+```{r, message=FALSE}
+# Read in data
+titanic <- read_csv("https://osf.io/juez2/download")
+
+# Create a training and testing set (stratified by survived)
+set.seed(2021)
+surv_index <- createDataPartition(titanic$survived, p = 0.75, list = FALSE)
+surv_train <- titanic[surv_index, ]
+surv_test <- titanic[-surv_index, ]
+```
+
+---
+
+# Feature Engineering
+
+```{r}
+# Create a preprocessing recipe (no prep)
+surv_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_interact(~sex_male:starts_with("pclass")) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_corr(all_predictors()) %>% 
+  step_lincomb(all_predictors())
+```
+
+---
+
+# Training and Resampling
+
+```{r}
+set.seed(2021)
+#  Train the model using the recipe, data, and method
+surv_tc <- trainControl(method = "cv", number = 10)
+
+surv_glm <- train(
+  surv_recipe, 
+  data = surv_train,
+  method = "glm",
+  trControl = surv_tc
+)
+```
+
+---
+
+# Model Evaluation
+
+```{r}
+# View resampling estimates of performance in the training set
+surv_glm$results
+```
+
+```{r}
+# Extract model predictions as classes
+surv_pred <- predict(surv_glm, newdata = surv_test)
+glimpse(surv_pred)
+```
+
+```{r}
+# Extract model predictions as probabilities
+surv_prob <- predict(surv_glm, newdata = surv_test, type = "prob")
+glimpse(surv_prob)
+```
+
+```{r}
+# Bake test set and extract trusted labels in correct format
+surv_test_baked <- 
+  surv_recipe %>% 
+  prep(training = surv_train) %>% 
+  bake(new_data = surv_test)
+
+surv_true <- surv_test_baked$survived
+glimpse(surv_true)
+```
+
+```{r}
+# Note that this format matches that of the predictions
+# However, it wouldn't if we had not baked the test set:
+glimpse(surv_test$survived)
+```
+
+```{r}
+# Calculate test set performance using {caret}
+postResample(pred = surv_pred, obs = surv_true)
+```
+
+```{r}
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels <- bind_cols(
+  surv_prob, 
+  true = surv_true, 
+  pred = surv_pred
+)
+collected_labels
+```
+
+```{r}
+# Construct and plot a confusion matrix using {yardstick}
+cm <- conf_mat(collected_labels, truth = true, estimate = pred)
+print(cm)
+autoplot(cm)
+autoplot(cm, type = "heatmap")
+```
+
+```{r}
+# Calculate a summary of confusion matrix metrics using {yardstick}
+summary(cm)
+```
+
+```{r}
+# Calculate mean log loss from probabilities using {yardstick}
+mn_log_loss(collected_labels, truth = true, yes, event_level = "second")
+```
+
+```{r}
+# Construct ROC curve and calculate AUC-ROC
+roc_curve(collected_labels, truth = true, yes, event_level = "second") %>% 
+  autoplot()
+
+roc_auc(collected_labels, truth = true, yes, event_level = "second")
+```
+
+---
+
+# Model Interpretation
+
+```{r}
+# Look at the model coefficients (not available for every algorithm)
+surv_glm$finalModel %>% coefficients()
+```
+
+```{r}
+# Calculate and plot variable importance using {caret}
+surv_vi <- varImp(surv_glm, scale = FALSE)
+surv_vi
+plot(surv_vi)
+```
+
+---
+
+# Hands-on Activity
+
+Modify the code from above to achieve the following goals:
+
+ 1. Read in the `airsatisfaction.csv` file from https://osf.io/7sqcn/download
+ 
+ 1. Create a 75% training and 25% testing set stratified by `satisfaction`
+ 
+ 1. Create a recipe predicting `satisfaction` with the following steps:
+  + `step_nzv(all_predictors())`
+  + `step_normalize(all_numeric_predictors())`
+  + `step_pca(all_numeric_predictors(), threshold = 0.9)`
+  + `step_dummy(all_nominal_predictors())`
+  
+ 1. Train a GLM with this recipe with 10-fold cross-validation repeated 3 times
+
+ 1. Estimate Accuracy and Kappa in the training and testing sets
+ 
+ **BONUS 1:** Examine and plot the model's variable importance. What effect does PCA have on interpretation?
+ 
+ **BONUS 2:** Construct a confusion matrix and ROC curve for the model
+
+---
+
+## Answer Key
+
+<details><summary>Click here to see the answer key for the hands-on activity</summary>
+```{r, message=FALSE}
+# Question 1
+airsat <- read_csv("https://osf.io/7sqcn/download")
+```
+
+```{r}
+# Question 2
+index <- createDataPartition(airsat$satisfaction, p = 0.75, list = FALSE)
+airsat_train <- airsat[index, ]
+airsat_test <- airsat[-index, ]
+```
+
+```{r}
+# Question 3
+airsat_recipe <- 
+  airsat %>% 
+  recipe(satisfaction ~ .) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_pca(all_numeric_predictors(), threshold = 0.8) %>% 
+  step_dummy(all_nominal_predictors())
+```
+
+```{r}
+# Question 4
+airsat_tc <- trainControl(
+  method = "repeatedcv", 
+  number = 10, 
+  repeats = 3
+)
+airsat_glm <- train(
+  airsat_recipe, 
+  data = airsat_train,
+  method = "glm",
+  trControl = airsat_tc
+)
+```
+
+```{r}
+# Question 5
+airsat_glm$results %>% print()
+airsat_pred <- predict(airsat_glm, newdata = airsat_test)
+airsat_prob <- predict(airsat_glm, newdata = airsat_test, type = "prob")
+airsat_test_baked <- 
+  airsat_recipe %>% 
+  prep(training = airsat_train) %>% 
+  bake(new_data = airsat_test)
+airsat_true <- airsat_test_baked$satisfaction
+postResample(pred = airsat_pred, obs = airsat_true)
+```
+
+```{r}
+# Bonus 1
+airsat_vi <- varImp(airsat_glm, scale = FALSE) %>% print()
+plot(airsat_vi)
+# Without knowing what the PCs are, interpretation becomes much harder
+
+# ADVANCED: Because PCA is linear, we can view and interpret its coefficients:
+airsat_glm$recipe$steps[[3]]$res$rotation %>% round(2) %>% as_tibble(rownames = "var")
+# This gives us a better sense of what PC1 might correspond to
+# This isn't so easy because interpretation isn't the point in ML
+```
+
+```{r}
+# Bonus 2
+collected_labels <- bind_cols(
+  airsat_prob,
+  pred = airsat_pred,
+  true = airsat_true
+)
+
+conf_mat(collected_labels, truth = true, estimate = pred)
+
+roc_curve(
+  collected_labels, 
+  truth = true, 
+  satisfied, 
+  event_level = "second"
+) %>% 
+  autoplot()
+```
+
+</details>
