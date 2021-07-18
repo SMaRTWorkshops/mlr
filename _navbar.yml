@@ -8,6 +8,8 @@ left:
     menu:
        - text: "Day 1-A Slides"
          href: ./Day_1A/Day_1A_Slides.html
+       - text: "Day 1-A Activity"
+         href: ./Day_1A/Day_1A_Activity.html
        - text: "Day 1-B Slides"
          href: ./Day_1B/Day_1B_Slides.html
   - text: "Day 2 Materials"

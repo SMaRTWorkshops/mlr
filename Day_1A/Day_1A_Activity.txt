@@ -1,7 +1,0 @@
-**Introduce yourselves again and discuss the following topics**
-
- 1. What types of labels and features would you like to work with?
-
- 2. What problems might predictive modeling help your field solve?
-
- 3. Do you have any questions or comments about the material so far?
