@@ -1,5 +1,5 @@
 ---
-title: "Day 1A Activity <br /> (Exploratory Data Analysis)"
+title: "Day 1-B Activity <br /> (Exploratory Data Analysis)"
 output:
   prettydoc::html_pretty:
     theme: cerulean
