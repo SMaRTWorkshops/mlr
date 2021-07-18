@@ -11,23 +11,20 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 
 ## Course Schedule
 
-```{r, echo=FALSE}
-knitr::kable(
-  tibble::tribble(
-    ~Day, ~Part, ~Topic, ~Lead,
-    "1", "A", "Conceptual introductions", "Girard",
-    "1", "B", "Logistics and data exploration", "Wang",
-    "2", "A", "Feature engineering", "Girard",
-    "2", "B", "Predictive modeling basics", "Girard",
-    "3", "A", "Regularized regression", "Wang",
-    "3", "B", "Decision trees and random forests", "Wang",
-    "4", "A", "Support vector machines","Girard",
-    "4", "B", "Practical matters and advice", "Wang",
-    "5", "A", "Panel Q&A and discussion", "Both",
-    "5", "B", "Hackathon and consultation", "Both"
-  )
-)
-```
+Day | Part | Topic | Lead
+:-: | :--: | :---- | :---
+1 | A | Conceptual introductions | Girard
+1 | B | Logistics and data exploration | Wang
+2 | A | Feature engineering | Girard
+2 | B | Predictive modeling basics | Girard
+3 | A | Regularized regression | Wang
+3 | B | Decision trees and random forests | Wang
+4 | A | Support vector machines | Girard
+4 | B | Practical matters and advice | Wang
+5 | A | Panel Q&A and discussion | Both
+5 | B | Hackathon and consultation | Both
+
+- The non-lead instructor will be available during lectures to provide assistance.
 
 ---
 
