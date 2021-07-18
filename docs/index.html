@@ -232,7 +232,7 @@ $(document).ready(function () {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="https://www.pittmethods.com/applied-ml">About the workshop</a>
+  <a href="about.html">About the Course</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -242,13 +242,16 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_1A/Day_1A_Slides.html">Day 1-A Slides</a>
+      <a href="./Day_1A/Day_1A_Slides.html">Day 1-A Lecture</a>
     </li>
     <li>
       <a href="./Day_1A/Day_1A_Activity.html">Day 1-A Activity</a>
     </li>
     <li>
-      <a href="./Day_1B/Day_1B_Slides.html">Day 1-B Slides</a>
+      <a href="./Day_1B/Day_1B_Slides.html">Day 1-B Lecture</a>
+    </li>
+    <li>
+      <a href="./Day_1B/Day_1B_Activity.html">Day 1-B Activity</a>
     </li>
   </ul>
 </li>
@@ -260,13 +263,13 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_2A/Day_2A_Slides.html">Day 2-A Slides</a>
+      <a href="./Day_2A/Day_2A_Slides.html">Day 2-A Lecture</a>
     </li>
     <li>
       <a href="./Day_2A/Day_2A_Activity.html">Day 2-A Activity</a>
     </li>
     <li>
-      <a href="./Day_2B/Day_2B_Slides.html">Day 2-B Slides</a>
+      <a href="./Day_2B/Day_2B_Slides.html">Day 2-B Lecture</a>
     </li>
     <li>
       <a href="./Day_2B/Day_2B_Activity.html">Day 2-B Activity</a>
@@ -281,10 +284,16 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_3A/Day_3A_Slides.html">Day 3-A Slides</a>
+      <a href="./Day_3A/Day_3A_Slides.html">Day 3-A Lecture</a>
     </li>
     <li>
-      <a href="./Day_3B/Day_3B_Slides.html">Day 3-B Slides</a>
+      <a href="./Day_3A/Day_3A_Activity.html">Day 3-A Activity</a>
+    </li>
+    <li>
+      <a href="./Day_3B/Day_3B_Slides.html">Day 3-B Lecture</a>
+    </li>
+    <li>
+      <a href="./Day_3B/Day_3B_Activity.html">Day 3-B Activity</a>
     </li>
   </ul>
 </li>
@@ -296,10 +305,16 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_4A/Day_4A_Slides.html">Day 4-A Slides</a>
+      <a href="./Day_4A/Day_4A_Slides.html">Day 4-A Lecture</a>
     </li>
     <li>
-      <a href="./Day_4B/Day_4B_Slides.html">Day 4-B Slides</a>
+      <a href="./Day_4A/Day_4A_Activity.html">Day 4-A Activity</a>
+    </li>
+    <li>
+      <a href="./Day_4B/Day_4B_Slides.html">Day 4-B Lecture</a>
+    </li>
+    <li>
+      <a href="./Day_4B/Day_4B_Activity.html">Day 4-B Activity</a>
     </li>
   </ul>
 </li>
@@ -347,10 +362,10 @@ $(document).ready(function () {
 </table>
 <hr />
 <p>Whereas statistical methods traditionally used in the social and behavioral sciences emphasize interpretability and quantification of uncertainty, machine learning methods emphasize complexity and accuracy of predictions. Machine learning methods are thus particularly well-suited for applications where (1) there are nonlinear and complex relationships among a large number of predictor variables and (2) accurately predicting the outcome variable is more important than fully understanding the relationships between variables.</p>
-<p>This workshop will provide a hands-on introduction to the application of machine learning techniques in R using the {caret} package. It will emphasize practical knowledge and conceptual intuitions (e.g., teaching you how to drive a car) rather than technical and theoretical mastery (e.g., teaching you how to build a car). In addition, rather than briefly surveying the full breadth of available machine learning techniques, this workshop will provide a deep dive into three supervised learning methods with broad applicability in the social and behavioral sciences: regularized regression models (e.g., GLMNET), decision tree-based models, and support vector machines. The final day of the workshop will also provide an opportunity for attendees to consult with the instructors on implementation of machine learning methods in their own research. Taken together, this workshop’s practical focus will allow attendees to learn about: formulating a good research question, preparing data for analysis, setting up a rigorous cross-validation procedure, evaluating predictive performance, and interpreting/reporting results for a scientific audience.</p>
-<p>Although attendees of all backgrounds are welcome and the skills taught will be broadly applicable, example datasets and advice will be tailored specifically to the social and behavioral sciences (e.g., psychology, medicine, education, and related fields). Workshop attendees are not expected to have any background knowledge of machine learning, but some proficiency with R (e.g., knowledge of how to import data and manipulate data frames) will be assumed and some familiarity with statistical modeling (e.g., multiple regression and generalized linear models) will be helpful.</p>
+<p>This workshop will provide a hands-on introduction to the application of machine learning techniques in R using the <a href="https://topepo.github.io/caret/">{caret}</a> package (with elements drawn from <a href="https://www.tidymodels.org/">{tidymodels}</a> such as <a href="https://recipes.tidymodels.org/">{recipes}</a> and <a href="https://yardstick.tidymodels.org/">{yardstick}</a>). It will emphasize practical knowledge and conceptual intuitions (e.g., teaching you how to drive a car) rather than technical and theoretical mastery (e.g., teaching you how to build a car). In addition, rather than briefly surveying the full breadth of available machine learning techniques, this workshop will provide a deep dive into three supervised learning methods with broad applicability in the social and behavioral sciences: regularized regression models, decision tree-based models, and support vector machines. The final day of the workshop will also provide an opportunity for attendees to consult with the instructors on implementation of machine learning methods in their own research. Taken together, this workshop’s practical focus will allow attendees to learn about: formulating a good research question, preparing data for analysis, setting up a rigorous cross-validation procedure, evaluating predictive performance, and interpreting and reporting results for a scientific audience.</p>
+<p>Although attendees of all backgrounds are welcome and the skills taught will be broadly applicable, example datasets and advice will be tailored specifically to the social and behavioral sciences (e.g., psychology, medicine, education, and related fields). Workshop attendees are not expected to have any background knowledge of machine learning, but some proficiency with R (e.g., knowledge of how to import data and manipulate data frames) will be assumed and some familiarity with statistical modeling (e.g., linear models) will be helpful.</p>
 <hr />
-<p>Note that these materials are made freely available and may be re-used according to its <a href="https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt">CC-BY License</a></p>
+<p>These materials are made freely available and may be re-used according to the <a href="https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt">CC-BY License</a>.</p>
 
 
 
