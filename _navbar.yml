@@ -1,17 +1,33 @@
-name: "Mywebsite"
-title: "My new website"
+name: "appliedml"
+title: "Applied ML in R"
 type: inverse
 left:
   - text: "About the workshop"
-    menu:
-      - text: "Learn more about me"
-        href: https://www.pittmethods.com/applied-ml
-  - text: "Materials"
+    href: https://www.pittmethods.com/applied-ml
+  - text: "Day 1 Materials"
     menu:
        - text: "Day 1-A Slides"
          href: ./Day_1A/Day_1A_Slides.html
+       - text: "Day 1-B Slides"
+         href: ./Day_1B/Day_1B_Slides.html
+  - text: "Day 2 Materials"
+    menu:
        - text: "Day 2-A Slides"
          href: ./Day_2A/Day_2A_Slides.html
+       - text: "Day 2-B Slides"
+         href: ./Day_2B/Day_2B_Slides.html
+  - text: "Day 3 Materials"
+    menu:
+       - text: "Day 3-A Slides"
+         href: ./Day_3A/Day_3A_Slides.html
+       - text: "Day 3-B Slides"
+         href: ./Day_3B/Day_3B_Slides.html
+  - text: "Day 4 Materials"
+    menu:
+       - text: "Day 4-A Slides"
+         href: ./Day_4A/Day_4A_Slides.html
+       - text: "Day 4-B Slides"
+         href: ./Day_4B/Day_4B_Slides.html
 right:
   - icon: fa-github fa-lg
     href: https://github.com/pittmethods/appliedml
