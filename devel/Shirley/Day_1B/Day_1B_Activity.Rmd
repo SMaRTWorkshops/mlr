@@ -1,7 +1,9 @@
 ---
-title: "Day 1A Activity (Exploratory Data Analysis) - Solutions"
+title: "Day 1A Activity <br /> (Exploratory Data Analysis)"
 output:
-  html_notebook:
+  prettydoc::html_pretty:
+    theme: cerulean
+    highlight: github
     df_print: paged
 editor_options: 
   chunk_output_type: inline
@@ -62,9 +64,9 @@ Remember to set a seed so your results are reproducible!
 
 As you can see, the dataset does not have any missing values. For the purposes of this exercise, let's insert some missingness to explore by running this line of code:
 
-```{r}
-
-
+```{r, eval=FALSE}
+globalWarm_train_ampute <- ampute(globalWarm_train, prop = 0.4, mech = "MAR")
+globalWarm_train_m <- globalWarm_train_ampute$amp
 ```
 
 Now, use data visualizations to inspect missingness in the dataset. Specifically, 
