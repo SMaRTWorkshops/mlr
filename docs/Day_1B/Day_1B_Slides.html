@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Logistics &amp; Data Exploration</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Applied Machine Learning in R  Pittsburgh Summer Methodology Series" />
+    <script src="Day_1B_Slides_files/header-attrs/header-attrs.js"></script>
+    <link href="Day_1B_Slides_files/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <span style="font-size:48pt;">Logistics &amp; Data Exploration</span>
+## 📋 🛠 📊
+### Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series
+### Lecture 1-B     July 19, 2021
+
+---
+
+
+
+
+
+
+
+
+
+
+class: inverse, center, middle
+# Overview
+
+&lt;style type="text/css"&gt;
+.remark-code {
+  border: 1px solid grey;
+}
+&lt;/style&gt;
+
+---
+##Lecture Topics
+.left-column[
+&lt;/br&gt;
+&lt;img src="agenda.png" width="100%" height="200%" /&gt;
+]
+
+.right-column[
+
+**Brief Refresher on using R**
+
+**Packages**
+- {caret} - primary package for this course
+- {tidymodels}
+
+**Simple Data Split**
+- Training and testing datasets
+- Data splitting in {caret}
+
+**Exploratory Data Analysis**
+- Data distributions
+- Missing data
+- Feature correlations 
+- Linearity and nonlinearity
+]
+
+---
+class: inverse, center, middle
+# Brief R Refresher 
+
+---
+## Brief R Intro
+
+Placeholder slide
+
+---
+class: inverse, center, middle
+# Packages
+
+---
+##How do we implement machine learning in R?
+
+There are ![:emphasize](many packages) for building and evaluating machine learning models in R. 
+
+Each implements specific ML models (e.g., `glmnet` for lasso and elastic net regularization, `rpart` for decision trees, `randomforest` for random forests).
+
+These packages were built by different people over time, so ![:emphasize](syntax and conventions differ).
+
+This can be confusing to remember!
+
+--
+
+&lt;img src="syntax_diff.png" width="70%" height="70%" /&gt;
+
+---
+##`caret`
+
+Recognizing the need for ![:emphasize](standardizing and streamlining) the process of building and evaluating machine learning models, Max Kuhn and others developed the `caret` (**C**lassification **A**nd **RE**gression **T**raining) package. 
+
+This package allows researchers to quickly build and compare many different models.
+
+There are 200+ machine learning models available in `caret`.
+
+--
+
+`caret` includes functions for:
+- data visualization
+- data pre-processing
+- feature selection
+- data splitting
+- model training &amp; testing
+- variable importance estimation
+
+---
+##`caret`
+
+.pull-left[
+The `train()` function is the primary function for training models and tuning hyperparameters.
+
+This ![:emphasize](same function and syntax) is used to train any and all machine learning models.
+
+Users should also specify tuning parameter values and resampling method (e.g., *k*-fold cross-validation).
+]
+
+.pull-right[
+&lt;img src="caret_train.png" width="100%" /&gt;
+]
+
+--
+&lt;/br&gt;
+
+```r
+iris_fit &lt;- train(Species ~., data = iris,
+                  method = 'glmnet',
+                  trControl = trainControl(method = "cv", number = 10))
+```
+
+---
+##`caret`
+
+Because `caret` has historically been the most popular package for machine learning in R, there are many freely available resources, solutions, and answers to questions online.
+
+--
+
+.pull-left[
+&lt;img src="caret_tutorial.png" width="100%" /&gt;
+]
+
+--
+
+.pull-right[
+&lt;img src="appliedpredictivemodeling.png" width="48%" height="48%" /&gt;
+]
+
+---
+## `tidymodels`
+
+The newer `tidymodels` package is the `tidyverse` version of `caret`. Both packages were developed by the same author (Max Kuhn)! `tidymodels` is a ![:emphasize](meta-package) and includes a collection of many packages:
+
+- `rsample` for data splitting and resampling
+- `recipes` for pre-processing
+- `parsnip` for trying out many models
+- `workflows` to streamline the pre-processing, modeling, and post-processing
+- `tune` to optimize model hyperparameters
+- `yardstick` for model performance metrics
+- `broom` for converting information to user-friendly formats
+- `dials` for creating and managing tuning parameters
+
+--
+
+We will use the older `caret` but incorporate *aspects* of the newer `tidymodels`&lt;sup&gt;1&lt;/sup&gt;
+- This will give us access to some new features without overwhelming beginners
+- It will also ease the transition to `tidymodels` if you decide to go that route
+
+.footnote[[1] We will use `recipes` and `yardstick` but not `workflows`, `rsample`, `tune`, `parsnip`, or `dials.`]
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+
+---
+## Typical Workflow
+&lt;br /&gt;
+&lt;img src="workflow.png" width="100%" /&gt;
+
+---
+## Typical Workflow
+&lt;br /&gt;
+&lt;img src="workflow_eda.png" width="100%" /&gt;
+
+---
+## Exploratory Data Analysis
+.left-column[
+&lt;/br&gt;
+&lt;img src="explore.jpg" width="100%" /&gt;
+]
+
+.right-column[
+
+**Goals**
+- Develop an understanding of your data
+- Make informed model building decisions (e.g., feature selection)
+
+**Questions**
+- What type of variation occurs in my variables?
+- Are there any anomalies, errors, or outliers?
+- How much missing data do I have?
+- What type of covariation occurs between my variables?
+- Are there any nonlinearities in my data?
+- Are my data appropriate for the task? 
+]
+
+--
+
+.right-column[
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution!**
+
+Exploratory data analysis should ideally be performed **only** on training data. 
+
+]
+]
+
+---
+class: inverse, center, middle
+# Simple Holdout Set
+
+---
+##Simple Train/Test Split
+
+&lt;img src="datasplit_simple.png" width="100%" /&gt;
+
+---
+##Data Splitting
+
+An important note on terminology beyond simple train/test data splits: 
+
+- **Training**: The data subsample used to explore the data and fit the model.
+- **Validation**: Used for model evaluation while tuning hyperparameters; often implicitly split via cross-validation.
+- **Test**: Entirely held-out from model training/tuning; used to provide a unbiased evaluation of the final model. 
+
+&lt;img src="datasplit_val.png" width="70%" height="70%" /&gt;
+
+---
+##Simple Train/Test Split
+
+Use the `caret::createDataPartition()` function to create balanced training and testing splits based on the outcome variable. Random sampling occurs within each factor level to ![:emphasize](maintain class distribution) in the datasets. 
+
+Specify the proportion of data you want in the training split (e.g., `p = 0.8`) for an 80%/20% data split.
+
+Remember to set a seed so your results are ![:emphasize](reproducible)!
+
+--
+
+
+```r
+library(caret)
+set.seed(2021)
+trainIndex &lt;- createDataPartition(iris$Species, p = .8,
+                                  list = FALSE, 
+                                  times = 1)
+```
+
+---
+##Simple Train/Test Split
+
+Use the `createDataPartition` row indices to split your data into single train and test sets.
+
+
+```r
+irisTrain &lt;- iris[trainIndex, ]
+irisTest &lt;- iris[-trainIndex, ]
+```
+
+--
+
+Now 80% of the data is designated for model training and can be used for exploratory data analysis. 20% of the data is ![:emphasize](held out and should not be explored) before testing the model, to avoid overly optimistic results. 
+
+
+```r
+dim(irisTrain)
+#&gt; [1] 120   5
+dim(irisTest)
+#&gt; [1] 30  5
+```
+
+---
+##Why EDA on training data only?
+
+The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into  data to make informed modeling decisions). 
+
+We split our data into training and testing subsets to evaluate the accuracy of our model in predicting *unseen* data. 
+
+This gives us a sense for how our model might perform in the **future** on new datasets.
+
+--
+
+&lt;/br&gt; 
+If modeling decisions are made based on data patterns we observe in the test set, we ![:emphasize](risk artificially inflating model performance) estimates in the test set. 
+
+**When possible, it is ideal** to perform exploratory data analysis only on your training data only.
+
+But note that doesn't mean we can't check the test data for coding errors or data anamolies!
+
+---
+##Knowledge check
+
+&lt;span style="font-size:30px;"&gt;Taylor is interested in building a machine learning model to predict future risk of depression. How should they explore these elements of their dataset?&lt;/span&gt;
+
+.pull-left[
+### Question 1
+**Looking for outliers or data anomolies:**
+
+a) Training data only
+
+b) Test data only
+
+c) Both training and test
+
+d) Neither 
+]
+
+.pull-right[
+### Question 2
+**Finding features that correlate with the outcome:**
+
+a) Training data only
+
+b) Test data only
+
+c) Both training and test
+
+d) Neither
+]
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+## Data Distributions and Error Detection
+
+---
+##Data distributions and error detection
+
+Typically, the first step in exploratory data analysis is to explore data distributions.
+
+This provides insight into:
+
+- Whether features are normally distributed
+- Concerning or extreme skewness 
+- Potential data anomalies or errors 
+- Data outliers 
+- Features with low variance
+- Imbalanced data (categorical variables)
+
+Methods:
+- Summary statistics
+- Histograms
+- Bar charts
+
+---
+##Data distributions and error detection in R
+
+The `dfsummary()` function from `summarytools` is useful for quickly identifying trends and anomalies at a glance. 
+
+--
+
+
+```r
+print(dfSummary(irisTrain), method = 'render')
+```
+
+<div class="container st-container">
+<div style="max-height:300px;overflow-y:scroll;margin:10px 2px">
+  <table class="table table-striped table-bordered st-table st-table-striped st-table-bordered st-multiline ">
+    <thead>
+      <tr>
+        <th align="center" class="st-protect-top-border"><strong>No</strong></th>
+        <th align="center" class="st-protect-top-border"><strong>Variable</strong></th>
+        <th align="center" class="st-protect-top-border"><strong>Stats / Values</strong></th>
+        <th align="center" class="st-protect-top-border"><strong>Freqs (% of Valid)</strong></th>
+        <th align="center" class="st-protect-top-border"><strong>Graph</strong></th>
+        <th align="center" class="st-protect-top-border"><strong>Valid</strong></th>
+        <th align="center" class="st-protect-top-border"><strong>Missing</strong></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td align="center">1</td>
+        <td align="left">Sepal.Length
+[numeric]</td>
+        <td align="left">Mean (sd) : 5.8 (0.8)
+min < med < max:
+4.4 < 5.8 < 7.7
+IQR (CV) : 1.3 (0.1)</td>
+        <td align="left" style="vertical-align:middle">32 distinct values</td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxISNTfHQ3MyAAABSklEQVR42u3cUW7aQABF0UOVPXYP7XraPWSV7c/7QJECLUkNqPf+ISQYH3mQR2Nz+qX4cu8BPEYxIIb1cv7idJch/Ljy8/T9Hw3r/Gtfbv6UT+zrhfdeDxlBkwKHnQ3XTvx7d9ikeP/EP+a0v1yTAjGsGBDDigExrBgQw/qLy6dHvxI8iOHaEuj+C6Tba1IghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgxIIYVA2JYMSCGFQNiWDEghhUDYlgPcZfs5S7vpH/OrcRPwHDETnmTAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMOKATGsGPBmD/MZHz/+wJjPNoHfbOU+3wPGl/4658+PpkmBGFYMiGHFgBhWDIhhxYAYVgyIYZ3OF2g/n3CFeXvfzlaYp//qyN+tSYEYVgzgNxVtGR5h23/qAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDE4OjUzOjU1KzAwOjAw4ovZ7AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQxODo1Mzo1NSswMDowMJPWYVAAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="center">120
+(100.0%)</td>
+        <td align="center">0
+(0.0%)</td>
+      </tr>
+      <tr>
+        <td align="center">2</td>
+        <td align="left">Sepal.Width
+[numeric]</td>
+        <td align="left">Mean (sd) : 3 (0.4)
+min < med < max:
+2 < 3 < 4.4
+IQR (CV) : 0.5 (0.1)</td>
+        <td align="left" style="vertical-align:middle">22 distinct values</td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxISNTfHQ3MyAAABO0lEQVR42u3cS2rcUBRF0VXBc8wckvEkc/Aok85pCEMCsrEs7L17BfXTgqvGrUc9/ii+ffQXuEcxIIb1dHzwOPniXydvLD/PfsC7dvzyT69+F/D9xHOfP/q6/1NDgRhWDIhhxYAYVgyIYcWAGFYMiGHFgBhWDIhhxYA3b5/Odd+l3aUMZ1Z21y7tGgrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAwrBsSwYsCLs09nj2h9nl4cAbvvIa33raFADCsGXHw89GzXnaq9NcN1N+yGAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBhw813k2U6ucA8L3E/F8Pr/Mm0oEMN6HMfp95f6RfvH4d7w+FJX/s8aCsSwYgB/AaJNFPa2TCg7AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDE4OjUzOjU1KzAwOjAw4ovZ7AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQxODo1Mzo1NSswMDowMJPWYVAAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="center">120
+(100.0%)</td>
+        <td align="center">0
+(0.0%)</td>
+      </tr>
+      <tr>
+        <td align="center">3</td>
+        <td align="left">Petal.Length
+[numeric]</td>
+        <td align="left">Mean (sd) : 3.7 (1.7)
+min < med < max:
+1 < 4.3 < 6.9
+IQR (CV) : 3.5 (0.5)</td>
+        <td align="left" style="vertical-align:middle">39 distinct values</td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxISNTfHQ3MyAAABSklEQVR42u3cQYoaURhG0WPoPWYPyXqSPfQqk8k3MIRAYSulnXtnIoh18Invr7IuvxRfzn4Dz1EMiGG9XT/4efiL4vvl7Df+8a4P9u3Pp74eeoH3s4/g7rUoEMOKATGsGBDDigExrBgQw4oBf+0pzujHE2zonoDhGTZ0LQrEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGPMn06WjHxnW3jOpeiuHIsO62UV2LAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMayHDuiPXwZ8dg8+T/G4Mwv3rUWBGFYMiGHFgBhWDIhhxYAYVgyIYcWAGFYMeLHrIo91eNhzdRnpJ2S45R/fLQrEsGJADCsGxLBiQAzrxp9Pr3Na7qEM59+b5761KMDl+tN9/M7Cn6FvV1ury3915P+sRYEYVgzgNyD5F47nUYb/AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTA3LTE4VDE4OjUzOjU1KzAwOjAw4ovZ7AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wNy0xOFQxODo1Mzo1NSswMDowMJPWYVAAAAA9dEVYdGljYzpjb3B5cmlnaHQAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC6eZtwpAAAAI3RFWHRpY2M6ZGVzY3JpcHRpb24AR2VuZXJpYyBSR0IgUHJvZmlsZRqnOI4AAAAASUVORK5CYII="></td>
+        <td align="center">120
+(100.0%)</td>
+        <td align="center">0
+(0.0%)</td>
+      </tr>
+      <tr>
+        <td align="center">4</td>
+        <td align="left">Petal.Width
+[numeric]</td>
+        <td align="left">Mean (sd) : 1.2 (0.8)
+min < med < max:
+0.1 < 1.3 < 2.5
+IQR (CV) : 1.5 (0.6)</td>
+        <td align="left" style="vertical-align:middle">22 distinct values</td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAIMAAABfCAQAAABhaLy5AAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxISNTfHQ3MyAAABPElEQVR42u3cQY7TQBRF0RPUe2QPsB7YQ68SJm/gFmLgdJMYuHdmRYpcR6roy5Xk9kPx6dk3cI1iQAzr5Xjx/fQHxdfbsxdwf8fFvrx96fOpN3p99ko+rDYFYlgxIIYVA2JYMSCGFQN+mSL/ZN8uPKo/kOHKo3qbAjGsGBDDigExrBgQw4oBMawYEMOKATGsGBDDigExrBgQw4oBMawYEMN66HHN2c6ec91/ynVphsedcrUpEMOKATGsGBDDigEXnxvOdnLcOgxb/xTDmXHr7bDVpkAMKwbEsGJADCsGxLBiQAwrBsSwYkAMKwbEsGJADCsGxLBiQAzrnQ/oz//g+Jq9k+H+k4Fr1aZADCsGxLBiQAwrBsSwYkAMKwbEsGJADOt2fGBw/p+F/+a+HL4XefuvVv7b2hSIYcUAfgKm4xT20hudVAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wNy0xOFQxODo1Mzo1NSswMDowMOKL2ewAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDctMThUMTg6NTM6NTUrMDA6MDCT1mFQAAAAPXRFWHRpY2M6Y29weXJpZ2h0AENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQunmbcKQAAACN0RVh0aWNjOmRlc2NyaXB0aW9uAEdlbmVyaWMgUkdCIFByb2ZpbGUapziOAAAAAElFTkSuQmCC"></td>
+        <td align="center">120
+(100.0%)</td>
+        <td align="center">0
+(0.0%)</td>
+      </tr>
+      <tr>
+        <td align="center">5</td>
+        <td align="left">Species
+[factor]</td>
+        <td align="left">1. setosa
+2. versicolor
+3. virginica</td>
+        <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">40</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">33.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
+        <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAADcAAABDCAQAAACSYVUaAAAAAmJLR0QA/4ePzL8AAAAHdElNRQflBxISNTfHQ3MyAAAAfUlEQVRYw+3WsQ2AMAxEURuxIzuwD+yQKaENSEQoxE5k/nVu/AoXPj3EM5OrFpyb82E3OeSqD5zI0hxLlyn27eDg4ODghuVu/y7VbXkdzR+4Vq8pJRd+dLvNpuNSjeDg4ODgenN0lYahq3wKXQUODg4ObgCuZzWyT+zbOXMnOYsQtmjbE/cAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDctMThUMTg6NTM6NTUrMDA6MDDii9nsAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA3LTE4VDE4OjUzOjU1KzAwOjAwk9ZhUAAAAD10RVh0aWNjOmNvcHlyaWdodABDb3B5cmlnaHQgMjAwNyBBcHBsZSBJbmMuLCBhbGwgcmlnaHRzIHJlc2VydmVkLp5m3CkAAAAjdEVYdGljYzpkZXNjcmlwdGlvbgBHZW5lcmljIFJHQiBQcm9maWxlGqc4jgAAAABJRU5ErkJggg=="></td>
+        <td align="center">120
+(100.0%)</td>
+        <td align="center">0
+(0.0%)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.9 (<a href='https://www.r-project.org/'>R</a> version 4.1.0)<br/>2021-07-18</p>
+</div>
+
+---
+##Data distributions and error detection in R
+
+Overlaying distributions on the same plot can also be helpful. We can use the `featurePlot()` function in `caret`.
+
+--
+
+
+
+
+
+```r
+# basic density plot
+featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density')
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-18-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://topepo.github.io/caret/visualizations.html
+]
+
+---
+##Data distributions and error detection in R
+
+Overlaying distributions on the same plot can also be helpful. We can use the `featurePlot()` function in `caret`.
+
+
+
+
+
+```r
+# make it prettier: free x &amp; y axis, add legend, change plot character
+featurePlot(x = irisTrain[, 1:4], y = irisTrain$Species, plot = 'density', 
+            scales = list(x = list(relation = "free"), y = list(relation = "free")), 
+            adjust = 1.5, pch = "|", auto.key = list(columns = 3))
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-20-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://topepo.github.io/caret/visualizations.html
+]
+
+---
+##Are there data anomalies, errors, or outliers?
+
+Check data distributions and summary statistics for:
+- Extreme values
+- Nonsensical values
+- Inconsistencies 
+- Low variance
+- You may need to adjust plot margins or axes!
+
+.pull-left[
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-21-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-22-1.png" width="100%" /&gt;
+]
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+## Missing Data
+
+---
+##A technical explanation of missing data
+
+**Missing completely at random (MCAR)**
+- No systematic pattern of missing data; the probability of an observation being missing does not depend on any observed or missing data values. 
+- E.g., If a weighing scale sometimes runs out of batter, missing data on weight is only due to bad luck and not any measured or missing data.
+
+**Missing at random (MAR)** 
+- Systematic relationship between missing values and the *observed* data, but *not* the missing data.
+- E.g., If people with eating disorders are more likely to decline being weighed, missing data on weight is systematically related to eating disorder diagnosis.
+
+**Missing not at random (MNAR)**
+- Systematic relationship between missing values and those values themselves. 
+- E.g., If people with higher weights are more likely to decline being weighed, missing data on weight is systematically related to *weight itself*.
+
+---
+##An intuitive explanation of missing data
+
+&lt;img src="mcar_dog.png" width="60%" /&gt;
+
+---
+##Missing Data
+
+
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+.pull-left[
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-25-1.png" width="100%" /&gt;
+]
+
+--
+
+.pull-right[
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-26-1.png" width="100%" /&gt;
+]
+
+--
+
+The `VIM` package is particularly helpful for visualizing patterns of missing data.
+
+Two helpful questions to guide missing data visualization:
+- Which variables have missing observations (and how many)?
+- Does missing data in one variable depend on other variables?
+
+---
+##Missing data visualization in R
+
+**Aggregation plots** are useful for inspecting the prevalence of missing data. 
+
+
+
+
+
+```r
+aggr(biopics, numbers = TRUE, prop = c(TRUE, FALSE), col = c("bisque2","darkcyan"))
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-28-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+---
+##Missing data visualization in R
+
+We also want to know if missing data systematically vary by other observed data. If the other data are numeric we use a **spinogram**; if categorical we can use a **spineplot**.
+
+
+```r
+spineMiss(biopics[, c("sub_race", "earnings")], col = c("bisque2","darkcyan"))
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-29-1.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+---
+##Missing data visualization in R
+
+Let's flip the two variables to ask: does the percentage of missing data in `sub_race` differ by `earnings`?
+
+
+```r
+spineMiss(biopics[, c("earnings", "sub_race")], col = c("bisque2","darkcyan"))
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-30-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+---
+##Missing data visualization in R
+
+**Mosiac plots** generalize spineplots and spinograms (which only plot two variables at a time) to multiple variables.
+
+
+
+
+
+```r
+mosaicMiss(biopics[, c("sub_sex", "US_movie", "earnings")], highlight = 3, 
+           plotvars = 1:2, miss.labels = FALSE, col = c("bisque2","darkcyan"))
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-32-1.png" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+
+---
+##Missing data visualization in R
+
+**Parallel coordinate plots** allow us to look at patterns of missingness across the entire dataset.
+
+
+```r
+parcoordMiss(biopics, highlight = 'earnings', alpha = 0.6, col = c("bisque2","darkcyan"))
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-33-1.png" width="75%" height="75%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+credit to https://www.datacamp.com/community/tutorials/visualize-data-vim-package
+]
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+## Feature Covariation and Correlations
+
+---
+##Feature covariation and correlations
+
+In addition to asking what type of variation occurs *within* features, we should also explore the covariation that occurs *between* features (as well as covariation between features and outcome variables).
+
+This provides insight into: 
+- Highly correlated features (multicollinearity)
+- Potential clusters of features that could be reduced into a single feature
+- Features with strong relationships to the outcome (feature selection)
+
+Methods:
+- Correlation matrices
+- Correlation matrices with clustering
+- Scatterplot matrices
+
+---
+##Feature covariation and correlations in R
+
+
+```r
+data(msq)
+cormat &lt;- cor(subset(msq, select = c("afraid", "angry", "anxious", "cheerful", "delighted", "depressed", "frustrated", "jittery", "proud", "scared", "unhappy")), use = 'pairwise.complete.obs')
+corrplot(cormat, tl.col = '#23395b', type = 'lower', tl.cex = 0.8)
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-34-1.png" width="100%" /&gt;
+
+---
+##Feature covariation and correlations in R
+
+
+```r
+# Correlation matrix with numbers
+corrplot(cormat, type = 'lower', method = 'number', 
+         tl.col = '#23395b', tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-35-1.png" width="100%" /&gt;
+
+---
+##Feature covariation and correlations in R
+
+
+```r
+# Correlation matrix with hierarchical clustering
+corrplot(cormat, tl.col = '#23395b', order = 'hclust', addrect = 3, 
+         tl.cex = 0.8, pch.cex = 0.5, number.cex = 0.55)
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-36-1.png" width="100%" /&gt;
+
+---
+##Feature covariation and correlations in R
+
+
+```r
+# Scatterplot matrix
+pairs.panels(irisTrain[, 1:4], method = 'pearson', density = TRUE, ellipses = FALSE, 
+             lm = TRUE, cex.cor = 0.8, cex.labels = 0.9)
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-37-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+## Linearity and Nonlinearity
+
+---
+##Linearity and nonlinearity 
+
+Nonlinearity between features and outcome variables are important to pay attention to, because these data patterns inform algorithm selection. 
+
+While some algorithms (e.g., decision trees, random forests) can capture and model nonlinearity, other algorithms (e.g., lasso, ridge, elastic net) cannot. 
+
+The specific **form** of nonlinearity is also important. 
+
+.pull-left[
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-38-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
+]
+---
+##Linearity and nonlinearity in R
+
+We can use the `featurePlot()` function in `caret` to look for nonlinearities between features and outcomes.
+
+
+
+
+```r
+featurePlot(x = affect[, c(4, 8, 12, 20)], y = affect$NA1, plot = "scatter",
+            type = c("p", "smooth"), labels = c("Feature", "Negative Affect"))
+```
+
+&lt;img src="Day_1B_Slides_files/figure-html/unnamed-chunk-41-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, center, middle
+# Exploratory Data Analysis
+## Takeaways
+
+---
+##Using EDA to inform model building
+
+&lt;img src="eda_takeaway.png" width="100%" /&gt;
+
+---
+##Small Group Activity
+
+We will assign you to a small breakout room.
+
+We will jump between rooms to join discussions and answer questions.
+
+**Please work through `day_1B_activity.R` to practice data splitting and EDA.**
+
+Our goal is for everyone to gain experience with all modeling processes, so everyone should work **individually** on their own code, rather than assign one person to share their screen and do the coding.
+
+If you're stuck or have questions, please feel free to consult your group members! 
+
+Also feel free to discuss the topics covered with your group members. We hope you also learn from each other!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script src="cols_macro.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current% / %total%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

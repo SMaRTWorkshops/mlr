@@ -1,0 +1,235 @@
+---
+title: "Day 3A Activity (Regularized Regression)"
+output:
+  html_notebook:
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Live Coding 
+Goal: Classify likelihood of having a heart attack based on demographics (age, sex) and health variables (type of chest pain, resting blood pressure, cholesterol, fasting blood sugar, resting electrocardiographic results, maximum heart rate, exercise induced angina, etc.). Compare performance of standard logistic, ridge, lasso, and elastic net models. 
+
+## Load Packages
+
+```{r, message=FALSE}
+if (!require("tidyverse")) {install.packages("tidyverse"); require("tidyverse")}     
+if (!require("caret")) {install.packages("caret"); require("caret")}
+if (!require("tidymodels")) {install.packages("tidymodels"); require("tidymodels")}
+if (!require("summarytools")) {install.packages("summarytools"); require("summarytools")}
+if (!require("psych")) {install.packages("psych"); require("psych")}
+if (!require("coefplot")) {install.packages("coefplot"); require("coefplot")}
+if (!require("pROC")) {install.packages("pROC"); require("pROC")}
+```
+
+## Read in data 
+```{r}
+heart <- read.csv("heart.csv")
+```
+
+## Split into train/test sets 
+```{r}
+set.seed(2021)
+trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE, times = 1)
+heart_train <- heart[trainIndex, ]
+heart_test <- heart[-trainIndex, ]
+
+# check to see that data splits were correct
+dim(heart_train)
+dim(heart_test)
+```
+
+## Quick EDA: View summary statistics and descriptives
+```{r}
+print(dfSummary(heart_train), method = 'render')
+```
+
+## Feature Engineering: Normalize (Standardize) Training and Test Sets
+```{r}
+heart_recipe <- 
+  heart_train %>% 
+  recipe(output ~ .) %>%
+  step_num2factor(output, transform = function(x) x + 1, levels = c("low_risk", "high_risk")) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(all_nominal_predictors())
+
+# normalize test dataset too 
+heart_test_baked <- 
+  heart_recipe %>%
+  prep(training = heart_train) %>%
+  bake(new_data = heart_test)
+```
+
+## Set up Training and Tuning Methods
+```{r}
+# let's use 5-fold cross-validation, repeated 3 times 
+
+# first we set the seeds for reproducible results
+set.seed(2021)
+seeds <- vector(mode = "list", length = 15) # length = n data splits
+for(i in 1:15) seeds[[i]] <- sample.int(1000, 21)
+seeds[[16]] <- sample.int(1000, 1) # for the last model 
+
+# set train control
+heart_control <- trainControl(method = 'repeatedcv',
+                              number = 5,
+                              repeats = 3,
+                              classProbs = TRUE,
+                              summaryFunction = twoClassSummary,
+                              seeds = seeds)
+
+# set ridge tuning grid
+ridgegrid <- expand.grid(alpha = 0, lambda = seq(0, 1, 0.01))
+
+# set lasso tuning grid
+lassogrid <- expand.grid(alpha = 1, lambda = seq(0, 1, 0.01))
+```
+
+## Fit Models
+```{r}
+logfit <- train(heart_recipe, data = heart_train,
+                method = 'glm', 
+                family = "binomial",
+                metric = 'ROC',
+                trControl = heart_control)
+
+ridgefit <- train(heart_recipe, data = heart_train,
+                  method = 'glmnet',
+                  family = "binomial",
+                  metric = 'ROC',
+                  tuneGrid = ridgegrid,
+                  trControl = heart_control)
+
+lassofit <- train(heart_recipe, data = heart_train,
+                  method = 'glmnet',
+                  family = "binomial",
+                  metric = 'ROC',
+                  tuneGrid = lassogrid,
+                  trControl = heart_control)
+
+enfit <- train(heart_recipe, data = heart_train,
+               method = 'glmnet',
+               family = "binomial",
+               metric = 'ROC',
+               tuneLength = 20,
+               trControl = heart_control)
+```
+
+## Examine Models 
+
+```{r}
+describe(logfit$results)
+describe(ridgefit$results)
+describe(lassofit$results)
+describe(enfit$results)
+```
+
+## Plot Accuracy by Hyperparameters
+```{r}
+ggplot(ridgefit)
+ggplot(lassofit)
+ggplot(enfit)
+```
+
+## Plot Coefficients by Hyperparameters
+```{r}
+coefpath(ridgefit$finalModel)
+coefpath(lassofit$finalModel)
+coefpath(enfit$finalModel)
+```
+
+
+## Make Predictions
+```{r}
+logpred_test <- predict(logfit, newdata = heart_test)
+ridgepred_test <- predict(ridgefit, newdata = heart_test)
+lassopred_test <- predict(lassofit, newdata = heart_test)
+enpred_test <- predict(enfit, newdata = heart_test)
+
+roc(predictor = as.numeric(logpred_test), response = heart_test_baked$output)
+roc(predictor = as.numeric(ridgepred_test), response = heart_test_baked$output)
+roc(predictor = as.numeric(lassopred_test), response = heart_test_baked$output)
+roc(predictor = as.numeric(enpred_test), response = heart_test_baked$output)
+```
+
+
+# Small Group Activity
+
+The goal of this activity is to practice a full workflow of using machine learning models (ridge, lasso, and elastic net). 
+
+In this activity, your goal is to predict scores on a memory test based on neuroimaging data from 18 brain regions involved in memory. Specifically, we will be using resting state fMRI connectivity from the Human Connectome Project (http://www.humanconnectomeproject.org/), which provides measures of the extent to which any given 2 brain regions are interacting. Please note that these data have been artificially modified to increase predictive power and make the activity more engaging.
+
+These fMRI data were first reduced to a simple matrix for each participant, with each participant having an 18 x 18 matrix of brain connections data (e.g., the entry (1, 2) represents the strength of the connection between brain region 1 and brain region 2). We then flattened these matrices for our final data setup, where each row is a participant and each column is the connection strength between 2 brain regions. 
+
+Overview of this activity: 
+
+1. Split data into training and testing subsets
+2. Feature engineering 
+3. Fit a linear regression on the training data
+4. Fit an elastic net model on the training data (use internal cross-validation to determine the best hyperparameters)
+5. Evaluate how well the standard regression predicts scores on the test set
+6. Evaluate how well elastic net predicts scores on the test set. 
+7. Compare standard regression vs. elastic net
+
+## Load data
+Read in the dataset "hcp_memory.csv". 
+
+```{r}
+
+```
+
+## Split into training and testing datasets
+Your training set should contain 80% of your data; your testing set should contain 20%.
+(remember to set a seed so your results are reproducible!)
+
+```{r}
+
+```
+
+## Feature Engineering
+Normalize (standardize) features in your training and test sets. 
+
+```{r}
+
+```
+
+## Training Methods
+Set your model training and tuning methods using trainControl(). Use 10-fold internal cross-validation (no repeats) and set seeds to use for resampling during the model training process so your results are fully reproducible.
+
+```{r}
+
+```
+
+## Fit Linear Regression 
+Use train() to fit a linear regression and examine the results of internal cross-validation. Examine variable importance. 
+
+```{r}
+
+```
+
+## Fit Elastic Net
+Use train() to fit an elastic net model with a tune length of 20, and examine the results of internal cross-validation. Examine the effect of tuning parameters on accuracy and coefficient values, as well as variable importance. 
+
+```{r}
+
+```
+
+## Evaluate Models
+Use the standard linear regression and the elastic net model to predict your held-out test set. 
+Which model does better? Why? 
+
+```{r}
+
+```
+
+
+
+
+# Bonus: Fit Ridge and Lasso
+If you finish the above exercises with time remaining, use your training data to also fit ridge and lasso regression models. Predict the held-out test data with ridge and lasso, and compare to your standard regression and elastic net. What similarities and differences do you notice between all the models? Which one performs the best?
+
+```{r}
+
+
+```
+

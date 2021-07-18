@@ -42,8 +42,9 @@ style_mono_light(
 )
 ```
 
-```{r xaringan-tachyons, echo=FALSE}
+```{r xaringanExtra, echo=FALSE}
 xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
 ```
 
 ```{r packages, echo=FALSE, message=FALSE}

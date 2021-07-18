@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Decision Trees</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Applied Machine Learning in R  Pittsburgh Summer Methodology Series" />
+    <script src="Day_3B_files/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="extras.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <span style="font-size:48pt;">Decision Trees</span>
+## .big[🤔 🌴 🍂️ ]
+### Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series
+### Lecture 3-B     July 21, 2021
+
+---
+
+
+
+
+
+
+
+
+class: inverse, center, middle
+# Overview
+
+&lt;style type="text/css"&gt;
+.remark-code {
+  border: 1px solid grey;
+}
+&lt;/style&gt;
+
+---
+## Lecture Topics
+
+.pull-left[
+**Simple Decision Trees**
+- Motivation (modeling nonlinearity)
+- Classification trees
+- Regression trees
+- Recursive partitioning
+- Pruning
+- Stopping criteria (e.g., maximum depth)
+
+**Ensemble Methods**
+- Random forests 
+- Aggregating predictions from many models
+- Improved prediction accuracy at the cost of lower interpretability  
+]
+
+.pull-right[
+&lt;img src="flowchart2.jpg" width="400" height="450" /&gt;
+]
+
+---
+## Geometry of Data
+
+Thus far, we have only been modeling linear relationships with linear boundaries between classes, e.g.: 
+
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
+
+---
+## Geometry of Data
+
+But what about other types of relationships? 
+
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-3-1.png" width="100%" /&gt;
+
+---
+## Geometry of Data
+
+But what about other types of relationships? 
+
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-4-1.png" width="100%" /&gt;
+
+---
+## Geometry of Data
+
+Whereas these classes are very clearly separated, it's no longer easy to use a **single equation** to describe the boundaries between them. 
+
+.pull-left[
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-5-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-6-1.png" width="100%" /&gt;
+]
+
+--
+
+![:emphasize](Decision trees) allow us to build models that are capable of describing these complex decision boundaries while maintaining ease of interpretability.
+
+---
+class: inverse, center, middle
+# Decision Trees
+
+---
+## Decision Trees
+
+Tree-based models use the logic of `if-then` statements in order to partition the data into ![:emphasize](homogeneous groups). For instance: 
+
+--
+
+`if has legs` &lt;/br&gt;
+`| if barks then animal = dog` &lt;/br&gt;
+`| else animal = cat` &lt;/br&gt;
+`else animal = fish`
+
+--
+
+This is an example of a simple **classification tree**. Decision trees can also be used for regression problems (i.e., **regression trees**).
+
+A key benefit of decision trees is that they are ![:emphasize](highly interpretable) and able to model nonlinear relationships. 
+
+However, they typically provide ![:emphasize](poorer predictive accuracy) than other supervised learning methods (e.g., random forests, which we will talk about later today).
+
+---
+## Decision Trees
+
+.pull-left[
+Decision trees are often visualized **graphically**.
+
+The top node is called the ![:emphasize](root node).
+
+Subsequent splitting nodes are called ![:emphasize](internal nodes) or ![:emphasize](branches).
+
+The output labels are called ![:emphasize](terminal nodes) or ![:emphasize](leaves).
+
+If a statement is ![:emphasize](true), you go to the left. 
+
+If a statement is ![:emphasize](false), you go to the right.
+]
+
+.pull-right[
+&lt;img src="simpletree.png" width="100%" /&gt;
+]
+
+---
+class: inverse, center, middle
+# Classification Trees
+
+---
+## Building a Classification Tree
+
+The goal of classification trees are to partition data into homogeneous groups, as defined by ![:emphasize](purity) (i.e., including a larger proportion of one class than the other in each node).
+
+--
+
+In building a classification tree, we use ![:emphasize](recursive partioning) to find the best data splits that maximize node purity.
+
+--
+
+The ![:emphasize](Gini index)&lt;sup&gt;[1]&lt;/sup&gt; is the most commonly-used metric for quantifying purity, and is calculated as:
+
+`$$Gini = 1 - \sum\limits_{i = 1}^C(p_i)^2$$`
+where
+- `\(p_i\)` = the probability of being in the `\(i\)`th class
+- `\(C\)` = total number of classes
+
+.footnote[
+The Gini index ranges from 0 - 1, with smaller values indicating greater purity.
+]
+
+---
+## Building a Classification Tree
+
+Let's walk through an example of building a classification tree using this toy dataset to predict depression risk: 
+
+Stressful Event&amp;emsp; | Family History&amp;emsp; | Age&amp;emsp;&amp;emsp;&amp;emsp; | Depression Risk&amp;emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+No | No | 12 | Low
+Yes | Yes | 16 | High
+Yes | Yes | 22 | High
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | No | 46 | Low
+
+--
+
+The first thing we need to do is choose the ![:emphasize](root node) by determine which feature (stressful life event, family history of depression, or age) best predicts future depression risk. 
+
+---
+## Choosing the Root Node
+
+.pull-left[
+Start by finding the **Gini index** of stressful life events.
+
+![:emphasize](Stressful Event)&amp;emsp; | Family History&amp;emsp; | Age&amp;emsp;&amp;emsp;&amp;emsp; | ![:emphasize](Depression Risk)&amp;emsp;
+:------- | :-------- | :------- |:------- |
+![:emphasize](No) | Yes | 10 | ![:emphasize](Low) 
+![:emphasize](No) | No | 12 | ![:emphasize](Low)
+![:emphasize](Yes) | Yes | 16 | ![:emphasize](High)
+![:emphasize](Yes) | Yes | 22 | ![:emphasize](High)
+![:emphasize](No) | Yes | 30 | ![:emphasize](High) 
+![:emphasize](No) | No | 38 | ![:emphasize](Low)
+![:emphasize](Yes) | No | 46 | ![:emphasize](Low)
+]
+
+--
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+]
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+
+To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
+
+`\(Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444\)`
+`\(Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375\)`
+]
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+
+To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
+
+`\(Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444\)`
+`\(Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375\)`
+
+We then calculate the total Gini index by taking the weighted average of the Gini leaf indices:
+
+`\(Gini_{stress} = (\frac{3}{7})*0.444 + (\frac{4}{7})*0.375 = 0.405\)`
+]
+
+.pull-right[
+&lt;img src="stresstree.png" width="90%" /&gt;
+]
+
+
+---
+## Choosing the Root Node
+
+We can compare this to the Gini index for family history, which comes to:
+
+`\(Gini_{family}=((\frac{4}{7})*(1 - (\frac{3}{4})^2 - (\frac{1}{4})^2)) + ((\frac{3}{7})*(1 - (\frac{0}{3})^2 - (\frac{3}{3})^2)) = 0.214\)`
+
+.pull-left[
+Stressful Event&amp;emsp; | ![:emphasize](Family History)&amp;emsp; | Age&amp;emsp;&amp;emsp;&amp;emsp; | ![:emphasize](Depression Risk)&amp;emsp;
+:------- | :-------- | :------- |:------- |
+No | ![:emphasize](Yes) | 10 | ![:emphasize](Low) 
+No | ![:emphasize](No) | 12 | ![:emphasize](Low)
+Yes | ![:emphasize](Yes) | 16 | ![:emphasize](High)
+Yes | ![:emphasize](Yes) | 22 | ![:emphasize](High)
+No | ![:emphasize](Yes) | 30 | ![:emphasize](High) 
+No | ![:emphasize](No) | 38 | ![:emphasize](Low)
+Yes | ![:emphasize](No) | 46 | ![:emphasize](Low)
+]
+
+--
+
+.pull-right[
+&lt;img src="familytree.png" width="90%" /&gt;
+]
+
+---
+## Choosing the Root Node
+
+Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all  splits. In this case, the lowest Gini index is for age &lt; 14.5 (Gini = 0.343): 
+
+.pull-left[
+Stressful Event&amp;emsp; | Family History&amp;emsp; | ![:emphasize](Age)&amp;emsp;&amp;emsp;&amp;emsp; | ![:emphasize](Depression Risk)&amp;emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | ![:emphasize](10) | ![:emphasize](Low) 
+No | No | ![:emphasize](13) | ![:emphasize](Low)
+Yes | Yes | ![:emphasize](16) | ![:emphasize](High)
+Yes | Yes | ![:emphasize](22) | ![:emphasize](High)
+No | Yes | ![:emphasize](30) | ![:emphasize](High) 
+No | No | ![:emphasize](38) | ![:emphasize](Low)
+Yes | No | ![:emphasize](46) | ![:emphasize](Low)
+]
+
+--
+
+.pull-right[
+&lt;img src="agetree.png" width="90%" /&gt;
+]
+
+---
+## Recursive Partioning
+
+.pull-left[
+Comparing the Gini index for stressful life events (0.405) to family history of depression (0.214) to age&lt;14.5 (0.343), we see that family history has the lowest Gini index (i.e., highest **purity**).
+
+Thus, we set family history as the root node. 
+
+We then ![:emphasize](continue partioning the data) to find the next split from the impure node.
+
+We can continue this process until we are left with ![:emphasize](only pure leaves). 
+
+Note that if we are left with an ![:emphasize](impure) leaf, the label is set to the **mode** of all observations within the leaf.
+]
+
+--
+
+.pull-right[
+&lt;img src="familytree2.png" width="90%" /&gt;
+]
+
+---
+class: inverse, center, middle
+# Regression Trees
+
+
+---
+## Building a Regression Tree
+
+Similar to classification trees, the goal of regression trees are to partition data into homogeneous groups. The difference is that we're now predicting ![:emphasize](numerical values) at each terminal node (leaf), rather than classes.  
+
+--
+
+In growing a regression tree, we start with the entire data set `\(S\)` to find the optimal feature and splitting value that partitions the data into two groups `\(S_1\)` and `\(S_2\)` to minimize the sum of squared errors: 
+
+`$$SSE = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2$$`
+where
+- `\(\bar{y}_1\)` = mean of training set outcomes in group `\(S_1\)`
+- `\(\bar{y}_2\)` = mean of training set outcomes in group `\(S_2\)`
+
+--
+
+Within each `\(S_1\)` and `\(S_2\)` group, we then repeat this ![:emphasize](recursive partitioning) process until the number of samples within each terminal node falls below some threshold (typically, `\(n=20\)`).
+
+The predicted value of the terminal node is then given as the ![:emphasize](mean) of all observations within that node. 
+
+---
+## Building a Regression Tree
+
+Let's say we have data that look like this. How should we model these data? 
+
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-15-1.png" width="100%" /&gt;
+
+---
+## Building a Regression Tree
+
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-16-1.png" width="100%" /&gt;
+
+---
+## Simple Regression Tree
+
+A regression tree can solve this problem by partioning the data into more homogeneous groups, and using the mean of observations within a group to make predictions.
+
+.pull-left[
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-17-1.png" width="100%" /&gt;
+]
+
+--
+
+.pull-right[
+&lt;img src="regtree.png" width="80%" /&gt;
+]
+
+---
+## Comprehension Check 
+
+&lt;span style="font-size:24px;"&gt;**Let's say we continued this recursive partioning process until we were left only with pure nodes (classification tree) or minimal SSE (regression tree). &lt;/br&gt; &lt;/br&gt; What are some problems that could arise?**&lt;/span&gt;
+
+--
+
+&lt;/br&gt; 
+Some answers: 
+
+- Overfitting training data
+- Poor prediction on test data/future/new data
+- Instability of model (if data are even slightly altered, you may find entirely different splits)
+- Small number of participants in leaves
+- Selection bias: features with higher number of distinct values are favored
+- Poorer interpretation
+
+---
+class: inverse, center, middle
+# Preventing Overfitting
+
+---
+## Preventing Overfitting
+.pull-left[
+If we let decision trees grow to their full capacity, the tree will continue to grow until each terminal node is entirely homogeneous (**100%** training accuracy).
+
+This would inevitably lead to **poor prediction** on testing data and any future datasets.
+
+To prevent this from happening, we need to ![:emphasize](stop the algorithm) at a certain point, before it overfits the training data. 
+
+There are two main methods for preventing overfitting in classification and regression trees: ![:emphasize](stopping criteria) and ![:emphasize](pruning).
+
+]
+.pull-right[
+&lt;img src="Day_3B_files/figure-html/unnamed-chunk-19-1.png" width="100%" /&gt;
+]
+---
+## Stopping Criteria 
+.left-column[
+&lt;br /&gt;
+&lt;img src="stop.png" width="100%" /&gt;
+]
+.right-column[
+![:emphasize](Stopping criteria) prevent trees from continuing to grow if certain conditions are met Common conditions include: 
+
+1) Not splitting if the leaf is homogenous (standard)
+
+2) Not splitting if the number of observations in a leaf will fall below some threshold, typically `\(n=20\)` (standard)
+
+3) Not splitting if the ![:emphasize](total number of leaves) in the tree is above some threshold
+
+How do we decide what number of leaves to stop at? **Hyperperamter tuning** with the `maxdepth` parameter with `method = rpart2` in {caret}! 
+
+While stopping criteria prevent us from overfitting a full tree, 
+]
+
+---
+## Stopping Criteria in R 
+
+
+```r
+heart &lt;- read.csv("heart.csv")
+set.seed(2021)
+trainIndex &lt;- createDataPartition(heart$output, p = 0.8, list = FALSE, times = 1)
+heart_train &lt;- heart[trainIndex, ]
+heart_test &lt;- heart[-trainIndex, ]
+
+heart_recipe &lt;- 
+  heart_train %&gt;% 
+  recipe(output ~ .) %&gt;%
+  step_num2factor(output, transform = function(x) x + 1, levels = c("low_risk", "high_risk")) %&gt;%
+  step_dummy(all_nominal_predictors())
+
+heart_tree_md &lt;- train(heart_recipe, data = heart_train, 
+*                      method = 'rpart2',
+*                      tuneLength = 6,
+                       trControl = trainControl(method = 'cv', number = 10))
+```
+
+---
+## Stopping Criteria in R 
+
+.scroll-output-full[
+
+```r
+heart_tree_md
+```
+
+```
+## CART 
+## 
+## 243 samples
+##  13 predictor
+##   2 classes: 'low_risk', 'high_risk' 
+## 
+## Recipe steps: num2factor, dummy 
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 219, 219, 218, 219, 219, 219, ... 
+## Resampling results across tuning parameters:
+## 
+##   maxdepth  Accuracy   Kappa    
+##    1        0.7115000  0.4036249
+##    3        0.7403333  0.4565185
+##    5        0.7491667  0.4766371
+##    6        0.7823333  0.5406668
+##    9        0.7823333  0.5406668
+##   10        0.7823333  0.5406668
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final value used for the model was maxdepth = 6.
+```
+]
+
+---
+## Pruning
+.left-column[
+&lt;br /&gt;
+&lt;img src="pruning.png" width="100%" /&gt;
+]
+.right-column[
+
+An alternative to stopping criterion is ![:emphasize](pruning a fully-grown tree). 
+
+Rather than preventing a complex tree from growing, we can impose a **penalty** on complex trees with ![:emphasize](cost complexity pruning). 
+
+This modifies the `\(SSE\)` to: 
+
+`\(SSE_{c_p} = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2 + c_pT\)`
+
+where:
+- `\(c_p\)` = complexity parameter
+- `\(T\)` = number of terminal nodes
+
+Much like `\(\lambda\)` in regularized regression, the `\(c_p\)` penalty allows us  we sacrifice some training accuracy to improve test accuracy. We use internal cross-validation to tune for optimal `\(c_p\)` parameters with `method = rpart` in {caret}.
+]
+
+---
+## Pruning in R
+
+
+```r
+heart_tree_cp &lt;- train(heart_recipe, data = heart_train, 
+*                      method = 'rpart',
+                       tuneLength = 6, 
+                       trControl = trainControl(method = 'cv', number = 10))
+```
+
+--
+
+.scroll-output[
+
+```r
+heart_tree_cp
+```
+
+```
+## CART 
+## 
+## 243 samples
+##  13 predictor
+##   2 classes: 'low_risk', 'high_risk' 
+## 
+## Recipe steps: num2factor, dummy 
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 219, 219, 219, 219, 218, 219, ... 
+## Resampling results across tuning parameters:
+## 
+##   cp           Accuracy   Kappa    
+##   0.009174312  0.7571667  0.4989085
+##   0.015290520  0.7691667  0.5222375
+##   0.018348624  0.7525000  0.4893608
+##   0.022935780  0.7445000  0.4695195
+##   0.068807339  0.6990000  0.3681663
+##   0.467889908  0.6378333  0.2430868
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final value used for the model was cp = 0.01529052.
+```
+]
+
+---
+## Decision Trees Summary
+
+While stopping criteria and pruning help reduce overfitting, single decision trees are still limited in overall ![:emphasize](predictive power), compared to other supervised learning methods. 
+
+A single tree has excellent interpretability and is easy to explain to people. Decision trees also closely mirror human decision-making processes! 
+
+--
+
+However, a single tree is also typically **not flexible enough** to accurately classify or predict new data. 
+
+Single trees can also be highly ![:emphasize](unstable). The structure of trees might change dramatically with a small change in the training data.
+
+--
+
+One solution to these problems is to ![:emphasize](aggregate predictions from many decision trees together) to improve predictive accuracy and model stability. 
+
+---
+class: inverse, center, middle
+# Random Forests
+
+---
+## Random Forests
+
+.left-column[
+&lt;/br&gt;
+&lt;img src="randomforest.png" width="100%" /&gt;
+]
+.right-column[
+The goal of random forests is to combine the simplicity of a single decision tree with greater model **flexibility**. 
+
+Random forests use **bootstrapped aggregation** (i.e., ![:emphasize](bagging)) to combine predictions from multiple decision trees together. 
+
+Random forests also use methods to **decorrelate** trees for more reliable and less variable predictions.
+
+Taken together, this **ensemble method** allows for greater **predictive accuracy** in new datasets than any single classification or regression tree. 
+
+However, this comes at the cost of **lower interpretability**.
+]
+
+---
+## Building a Random Forest
+
+Let's return to this toy dataset to walk through the process of building a random forest model. 
+
+.pull-left[
+Stressful Event&amp;emsp; | Family History&amp;emsp; | Age&amp;emsp;&amp;emsp;&amp;emsp; | Depression Risk&amp;emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+No | No | 12 | Low
+Yes | Yes | 16 | High
+Yes | Yes | 22 | High
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | No | 46 | Low
+]
+
+--
+
+.pull-right[
+The first step is to create a **bootstrapped dataset** from this original data. 
+
+To do so, we can randomly draw (with replacement) samples from this dataset, to create a bootstrapped dataset of the same size. 
+
+Importantly, this bootstrapped dataset will include some observations more than once. 
+
+Other observations will be left out (note: this is called the ![:emphasize](out-of-bag dataset)).
+]
+
+---
+## Building a Random Forest
+
+**Step 2**: Use the bootstrapped dataset to build a decision tree, using ![:emphasize](only a random subset of features) at each split. 
+
+--
+
+.pull-left[
+**Bootstrapped Dataset**
+
+![:emphasize](Stressful Event)&amp;emsp; | Family History&amp;emsp; | ![:emphasize](Age)&amp;emsp;&amp;emsp;&amp;emsp; | Depression Risk&amp;emsp;
+:------- | :-------- | :------- |:------- |
+Yes | Yes | 22 | High
+No | No | 38 | Low
+Yes | Yes | 16 | High
+No | No | 12 | Low
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | Yes | 22 | High
+]
+
+--
+
+.pull-right[
+&lt;img src="forest_split1.png" width="80%" /&gt;
+]
+
+---
+## Building a Random Forest
+
+**Step 2**: Use the bootstrapped dataset to build a decision tree, using ![:emphasize](only a random subset of features) at each split. 
+
+.pull-left[
+**Bootstrapped Dataset**
+
+Stressful Event&amp;emsp; | ![:emphasize](Family History)&amp;emsp; | ![:emphasize](Age)&amp;emsp;&amp;emsp;&amp;emsp; | Depression Risk&amp;emsp;
+:------- | :-------- | :------- |:------- |
+Yes | Yes | 22 | High
+No | No | 38 | Low
+Yes | Yes | 16 | High
+No | No | 12 | Low
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | Yes | 22 | High
+]
+.pull-right[
+&lt;img src="forest_split2.png" width="80%" /&gt;
+]
+---
+## Building a Random Forest
+
+**Step 3**: Repeat steps 1 and 2! Generate another bootstrapped dataset and build another decision tree, using only a random subset of `\(m\)` features at each split. Repeat for many (e.g., 1000) trees. 
+
+&lt;/br&gt;
+
+&lt;img src="manytrees.png" width="100%" /&gt;
+
+---
+## Random Forests 
+
+**Hyperparameter Tuning**: We can tune the hyperparameter `mtry` to find the ![:emphasize](optional number of random features) to select at each split using `method = rf` in {caret}.
+
+--
+
+**Evaluation**: Evaluate accuracy of our random forest based on the proportion of ![:emphasize](out-of-bag) samples that were correctly classified. 
+
+--
+
+**Prediction**: When making predictions for new data, use the outcome with the ![:emphasize](most votes) from all trees. 
+
+--
+
+**Summary**: By only using a ![:emphasize](random subset) of features at each decision tree split, our trees are ![:emphasize](decorrelated). 
+
+Even if one feature has a very strong relationship with the outcome, it will not have an outsized influence in building our trees. 
+
+Averaging the output of many uncorrelated trees is particularly effective at ![:emphasize](reducing variance).
+
+Thus, random forests typically produce more ![:emphasize](accurate predictions) than single decision trees.
+
+
+---
+class: inverse, center, middle
+# Live Coding
+
+---
+## Live Coding Activity
+
+**Live Coding**: I will walk through examples of decision trees and random forests in RStudio. 
+
+- You can follow along in your own RStudio (easiest with 1 large or 2+ monitors)
+- Or you can download `Day_3B_Activity.Rmd` and follow along
+
+.footnote[
+All files are on the workshop OSF page: https://osf.io/3qhc8/. 
+]
+
+--
+&lt;/br&gt;
+
+**Small Group Activity**: Afterwards, we will split you into small breakout room groups to practice building decision trees and random forests with a new dataset. 
+
+If you have any questions, please post them in the chat or workshop Slack channel. 
+
+We will also float between different breakout rooms to answer questions. 
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script src="cols_macro.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current% / %total%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
