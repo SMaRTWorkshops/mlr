@@ -331,6 +331,7 @@ F_1 &amp;= 0.19
 ]
 
 ---
+exclude: true
 class: onecol
 ## Multiclass Performance Strategies
 
@@ -342,7 +343,7 @@ With more than two classes, you can make a larger (e.g., `\(3\times 3\)`) confus
 ** `\(p\)` = Depression**&amp;emsp; | 30 | 25 | 20 
 ** `\(p\)` = Mania**&amp;emsp; | 10 | 1 | 10
 
---
+&lt;!-- -- --&gt;
 
 .pt3[
 ![:emphasize](Macro-averaging): compute the standard binary metric for each class separately (using a one-vs-rest procedure) and then calculate the average metric score across classes
@@ -350,7 +351,7 @@ With more than two classes, you can make a larger (e.g., `\(3\times 3\)`) confus
 
 &lt;!-- `$$(F_1^H = 0.79, F_1^D = 0.46, F_1^M = 0.34)~\text{Macro }F_1=0.53$$` --&gt;
 
---
+&lt;!-- -- --&gt;
 
 ![:emphasize](Micro-averaging): compute a confusion matrix for each class separately (one-vs-rest), add these matrices together, and calculate the binary metric from the summed matrix
 
