@@ -6,34 +6,44 @@ left:
     href: about.html
   - text: "Day 1 Materials"
     menu:
-       - text: "Day 1-A Slides"
+       - text: "Day 1-A Lecture"
          href: ./Day_1A/Day_1A_Slides.html
        - text: "Day 1-A Activity"
          href: ./Day_1A/Day_1A_Activity.html
-       - text: "Day 1-B Slides"
+       - text: "Day 1-B Lecture"
          href: ./Day_1B/Day_1B_Slides.html
+       - text: "Day 1-B Activity"
+         href: ./Day_1B/Day_1B_Activity.html
   - text: "Day 2 Materials"
     menu:
-       - text: "Day 2-A Slides"
+       - text: "Day 2-A Lecture"
          href: ./Day_2A/Day_2A_Slides.html
        - text: "Day 2-A Activity"
          href: ./Day_2A/Day_2A_Activity.html
-       - text: "Day 2-B Slides"
+       - text: "Day 2-B Lecture"
          href: ./Day_2B/Day_2B_Slides.html
        - text: "Day 2-B Activity"
          href: ./Day_2B/Day_2B_Activity.html
   - text: "Day 3 Materials"
     menu:
-       - text: "Day 3-A Slides"
+       - text: "Day 3-A Lecture"
          href: ./Day_3A/Day_3A_Slides.html
-       - text: "Day 3-B Slides"
+       - text: "Day 3-A Activity"
+         href: ./Day_3A/Day_3A_Activity.html
+       - text: "Day 3-B Lecture"
          href: ./Day_3B/Day_3B_Slides.html
+       - text: "Day 3-B Activity"
+         href: ./Day_3B/Day_3B_Activity.html
   - text: "Day 4 Materials"
     menu:
-       - text: "Day 4-A Slides"
+       - text: "Day 4-A Lecture"
          href: ./Day_4A/Day_4A_Slides.html
-       - text: "Day 4-B Slides"
+       - text: "Day 4-A Activity"
+         href: ./Day_4A/Day_4A_Activity.html
+       - text: "Day 4-B Lecture"
          href: ./Day_4B/Day_4B_Slides.html
+       - text: "Day 4-B Activity"
+         href: ./Day_4B/Day_4B_Activity.html
 right:
   - icon: fa-github fa-lg
     href: https://github.com/pittmethods/appliedml
