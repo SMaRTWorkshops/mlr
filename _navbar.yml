@@ -16,8 +16,12 @@ left:
     menu:
        - text: "Day 2-A Slides"
          href: ./Day_2A/Day_2A_Slides.html
+       - text: "Day 2-A Activity"
+         href: ./Day_2A/Day_2A_Activity.html
        - text: "Day 2-B Slides"
          href: ./Day_2B/Day_2B_Slides.html
+       - text: "Day 2-B Activity"
+         href: ./Day_2B/Day_2B_Activity.html
   - text: "Day 3 Materials"
     menu:
        - text: "Day 3-A Slides"
