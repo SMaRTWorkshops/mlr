@@ -1,5 +1,10 @@
 ---
-title: "Day 1-A Activity<br />Conceptual Introductions"
+title: "Day 1-A Activity <br /> (Conceptual Introduction)"
+output:
+  prettydoc::html_pretty:
+    theme: cerulean
+    highlight: github
+    df_print: paged
 ---
 
 **Introduce yourselves again and discuss the following topics**
