@@ -2,7 +2,7 @@
 title: "Day 1-B Activity <br /> (Exploratory Data Analysis)"
 output:
   prettydoc::html_pretty:
-    theme: cerulean
+    theme: cayman
     highlight: github
     df_print: paged
 editor_options: 
@@ -19,6 +19,7 @@ if (!require("psychTools")) {install.packages("psychTools"); require("psychTools
 if (!require("caret")) {install.packages("caret"); require("caret")}
 if (!require("mice")) {install.packages("mice"); require("mice")}     
 if (!require("VIM")) {install.packages("VIM"); require("VIM")}     
+if (!require("corrplot")) {install.packages("corrplot"); require("corrplot")}     
 ```
 
 # Load Data
@@ -91,7 +92,7 @@ Now, use data visualizations to inspect missingness in the dataset. Specifically
 
 # EDA: Shape of relationships 
 
-12. Use a scatterplot matrix to examine the shape of relationships between features and the outcome variable. Do the relationships look linear or nonlinear? 
+11. Use a scatterplot matrix to examine the shape of relationships between features and the outcome variable. Do the relationships look linear or nonlinear? 
 
 ```{r}
 
@@ -100,12 +101,54 @@ Now, use data visualizations to inspect missingness in the dataset. Specifically
 
 # Conclusions
 
-13. In a few sentences, please describe what you learned about this dataset through these exploratory data analyses. 
+12. In a few sentences, please describe what you learned about this dataset through these exploratory data analyses. 
+
+13. What are some ideas you have for using this knowledge to inform your feature engineering and modeling decisions? 
 
 
+## Answer key
 
-14. What are some ideas you have for using this knowledge to inform your feature engineering and modeling decisions? 
+<details><summary>Click here to view the answer key to the hands-on activity</summary>
 
+```{r}
+data('globalWarm') # 1
+```
 
+```{r}
+set.seed(2021)
+trainIndex <- createDataPartition(globalWarm$govact, p = .8,
+                                  list = FALSE, 
+                                  times = 1) # 2
+globalWarm_train <- globalWarm[trainIndex, ] # 3
+globalWarm_test <- globalWarm[-trainIndex, ] # 4
+
+dim(globalWarm_train)
+dim(globalWarm_test)
+```
+
+```{r}
+print(dfSummary(globalWarm_train), method = 'render') # 5
+```
+
+```{r}
+# add some missingness
+globalWarm_train_ampute <- ampute(globalWarm_train, prop = 0.4, mech = "MAR")
+globalWarm_train_m <- globalWarm_train_ampute$amp
+
+aggr(globalWarm_train_m, numbers = TRUE, prop = c(TRUE, FALSE), col = c("bisque", "darkcyan")) # 7
+spineMiss(globalWarm_train_m[, c("govact", "posemot")], miss.labels = FALSE) # 8 (example with govact and posemot variables)
+parcoordMiss(globalWarm_train_m, highlight = 'govact', alpha = 0.6, col = c("bisque2","darkcyan")) # 9 (example with govact highlighted)
+```
+```{r}
+cormat <- cor(globalWarm_train_m, use = "pairwise.complete.obs")
+corrplot(cormat, type = 'lower', tl.cex = 0.8) # 10
+```
+
+```{r}
+pairs.panels(globalWarm_train_m, method = 'pearson', density = TRUE, ellipses = FALSE, 
+             lm = TRUE, cex.cor = 0.8, cex.labels = 0.9) #11
+```
+
+</details>
 
 
