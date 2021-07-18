@@ -1,6 +1,3 @@
 # pittmethods_ml
 
-Source materials for the "Applied Machine Learning in R" workshop developed by Jeffrey Girard and Shirley Wang and hosted by the Pittsburgh Summer Methodology Series from July 19-23, 2021.
-
-Workshop Website: https://www.pittmethods.com/applied-ml
-Workshop Materials: https://osf.io/3qhc8/
+Source materials for the "Applied Machine Learning in R" workshop developed by [Jeffrey Girard](https://github.com/jmgirard) and [Shirley Wang](https://github.com/ShirleyBWang) and hosted by the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) from July 19-23, 2021.
