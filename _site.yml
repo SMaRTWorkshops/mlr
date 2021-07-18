@@ -1,0 +1,12 @@
+name: "appliedml"
+output_dir: "docs"
+navbar:
+  title: "Applied Machine Learning in R"
+  left:
+  - text: "Home"
+   href: index.html
+  - text: "Day 1-A Slides"
+   href: Day_1A_Slides.html
+output:
+  html_document:
+ theme: cayman
