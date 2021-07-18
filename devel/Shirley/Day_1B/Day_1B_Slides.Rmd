@@ -19,15 +19,16 @@ output:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(
   fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
   out.width = "100%",
   cache = FALSE,
   echo = TRUE,
   message = FALSE, 
   warning = FALSE,
   hiline = TRUE,
-  par(bg = "#E9ECEF")
+  comment = "#>",
+  collapse = TRUE
 )
-knitr::opts_knit$set(global.par = TRUE)
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -38,6 +39,10 @@ style_mono_light(
   footnote_color = "gray",
   text_slide_number_font_size = "18px"
 )
+```
+
+```{r xaringan-tachyons, echo=FALSE}
+xaringanExtra::use_tachyons()
 ```
 
 ```{r packages, echo=FALSE, message=FALSE}
@@ -78,13 +83,16 @@ include_graphics('agenda.png')
 ]
 
 .right-column[
+
+**Brief Refresher on using R**
+
 **Packages**
-- `caret` - primary package for this course
-- `tidymodels`
+- {caret} - primary package for this course
+- {tidymodels}
 
 **Simple Data Split**
 - Training and testing datasets
-- Data splitting in `caret`
+- Data splitting in {caret}
 
 **Exploratory Data Analysis**
 - Data distributions
@@ -92,6 +100,15 @@ include_graphics('agenda.png')
 - Feature correlations 
 - Linearity and nonlinearity
 ]
+
+---
+class: inverse, center, middle
+# Brief R Refresher 
+
+---
+## Brief R Intro
+
+Placeholder slide
 
 ---
 class: inverse, center, middle
@@ -245,8 +262,14 @@ include_graphics("explore.jpg")
 ]
 
 --
-.pull-right[
-<div style= "font-size:28pt; text-align:center;"> ![:emphasize](WAIT! </br> ideally on training data *only*)
+
+.right-column[
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution!**
+
+Exploratory data analysis should ideally be performed **only** on training data. 
+
+]
 ]
 
 ---
