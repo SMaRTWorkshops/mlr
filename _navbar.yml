@@ -2,8 +2,8 @@ name: "appliedml"
 title: "Applied ML in R"
 type: inverse
 left:
-  - text: "About the workshop"
-    href: https://www.pittmethods.com/applied-ml
+  - text: "About the Course"
+    href: about.html
   - text: "Day 1 Materials"
     menu:
        - text: "Day 1-A Slides"

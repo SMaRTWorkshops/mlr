@@ -30,4 +30,4 @@ Although attendees of all backgrounds are welcome and the skills taught will be 
 
 ---
 
-Note that these materials are made freely available and may be re-used according to its [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt)
+These materials are made freely available and may be re-used according to the [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt).
