@@ -72,13 +72,16 @@ class: inverse, center, middle
 .remark-code {
   border: 1px solid grey;
 }
+.remark-code-line{
+  background-color: white;
+}
 </style>
 
 ---
 ##Lecture Topics
 .left-column[
 </br>
-```{r, echo=FALSE, out.height = "200%"}
+```{r, echo=FALSE, out.height = 350}
 include_graphics('agenda.png')
 ```
 ]
@@ -107,9 +110,218 @@ class: inverse, center, middle
 # Brief R Refresher 
 
 ---
-## Brief R Intro
+## Software Ecosystem
 
-Placeholder slide
+R is like the engine of a car and RStudio is like the cabin
+- You don't have to use RStudio to use R, but it is more comfortable
+
+R packages give you extra features that aren't in R by default
+- To install a package into your library, use `install.packages("caret")`
+- To load the {caret} package from your library, use `library("caret")`
+
+The {tidyverse} is a collection of popular packages that work together
+- We will use several functions from {tidyverse} so install and load it to follow along
+- We will try to minimize how much we use it but this may be hard (especially for Jeff)
+
+.footnote[
+[1] You only need to install a package once per version (e.g., 6.0-88)<br />
+[2] You need to load a package once per session (i.e., until closing R)
+]
+
+---
+## Basic Programming
+
+Save objects and give them names using `<-`, then refer to them by name
+
+```{r}
+x <- 3.1415
+x + 2
+```
+
+Numbers can just be typed but text (called **strings**) have to be quoted
+
+```{r}
+my_fav_color <- "Blue"
+```
+
+Use functions to transform inputs into outputs 
+
+```{r}
+round(x)
+```
+
+Functions often have arguments to let you modify their behavior
+
+```{r}
+round(x, digits = 3)
+```
+
+---
+
+## Pipes and Pipelines
+
+{tidyverse} gives us the pipe `%>%` which can be read as "AND THEN"
+
+It takes an object and passes it to a function as the first argument
+
+```{r}
+library(tidyverse)
+x <- 4.9823
+# Take x and then round it
+x %>% round()
+```
+
+We can also use arguments
+
+```{r}
+# Take x and then round it to 2 digits
+x %>% round(digits = 2)
+```
+
+We can chain these pipes together into a "pipeline"
+
+```{r}
+# Take x and then square root it and then round that to 1 digit
+x %>% sqrt() %>% round(digits = 1)
+```
+
+---
+
+## Vectors and Subsetting
+
+Collect multiple objects of the same type into a single object with `c()`
+
+```{r}
+my_numbers <- c(24, 3.5, -10, 1/3)
+my_numbers
+my_books <- c("Annihilation", "Catch 22", "Goblet of Fire", "Who moved my cheese?")
+my_books
+```
+
+Extract parts (i.e., elements) from a vector using `[]`
+
+```{r}
+my_numbers[4]
+my_books[3]
+```
+
+Extract multiple elements by giving `[]` a vector
+
+```{r}
+my_books[c(1, 3)]
+```
+
+---
+
+## Special Data Types
+
+If there are only a few values data could take on, we can tell R with `factor()`
+
+```{r}
+genre_nums <- c(1, 1, 3, 2, 1, 2, 2, 2, 3)
+genre_nums
+genre <- factor(genre_nums, levels = c(1, 2, 3), labels = c("Action", "Comedy", "Drama"))
+genre
+```
+
+If we want to store binary (yes or no, true or false) information, we can use *logicals*
+
+```{r}
+my_statements <- c(TRUE, FALSE, FALSE, TRUE)
+my_statements
+```
+
+We can also get logicals by making comparisons
+
+```{r}
+my_scores <- c(100, 93, 73, 32, 88, 54)
+my_scores >= 60
+```
+
+---
+
+## NA for Missing Values
+
+We should tell R when a value is missing by setting it to `NA` (not available)
+
+```{r}
+bad_data <- c(1.2, 3.2, 2.1, 9999)
+mean(bad_data)
+
+good_data <- c(1.2, 3.2, 2.1, NA)
+mean(good_data)
+mean(good_data, na.rm = TRUE)
+```
+
+We can use {tidyverse} to automatically turn all placeholders into NAs
+
+```{r}
+na_if(bad_data, 9999)
+```
+
+---
+
+## Data Frames
+
+We often collect multiple vectors with the same number of elements into one object
+
+This is called a **data frame** and can be used like a table or spreadsheet
+
+Each row is called an **observation** and each column is called a **variable**
+
+```{r}
+instructors <- 
+  data.frame(
+    name1 = c("Jeff", "Shirley", "Aidan"),
+    name2 = c("Girard", "Wang", "Wright"),
+    school = c("KU", "Harvard", "Pitt")
+  )
+instructors
+```
+
+We can extract a single variable from a data frame using `$`
+
+```{r}
+organizations <- instructors$school
+organizations
+```
+
+---
+
+## Data Frame Subsetting
+
+We can also extract specific rows and columns from a data frame using `[rows, columns]`
+
+```{r}
+instructors[2, c(1, 3)]
+```
+
+If we leave rows or columns blank, it will give us all of them
+
+```{r}
+instructors[c(1, 2), ]
+```
+
+Finally, we can give negative numbers to deselect rather than select
+
+```{r}
+instructors[-c(1, 2), ]
+```
+
+---
+
+## Importing data
+
+Often we want to read data into R from external files (e.g., CSV files)
+
+In this course, we will be importing data from files stored online (but this also works for local files)
+
+We will use the `read_csv()` function from {tidyverse} and give it a URL (i.e., web address) for the file
+
+```{r, message=FALSE}
+titanic <- read_csv("https://bit.ly/amlr-titanic")
+titanic
+```
 
 ---
 class: inverse, center, middle
@@ -120,7 +332,7 @@ class: inverse, center, middle
 
 There are ![:emphasize](many packages) for building and evaluating machine learning models in R. 
 
-Each implements specific ML models (e.g., `glmnet` for lasso and elastic net regularization, `rpart` for decision trees, `randomforest` for random forests).
+Each implements specific ML models (e.g., {glmnet} for lasso, ridge, and elastic net regularization, {rpart} for decision trees, {randomforest} for random forests).
 
 These packages were built by different people over time, so ![:emphasize](syntax and conventions differ).
 
@@ -170,7 +382,7 @@ include_graphics("caret_train.png")
 
 --
 </br>
-```{r}
+```{r, eval=FALSE}
 iris_fit <- train(Species ~., data = iris,
                   method = 'glmnet',
                   trControl = trainControl(method = "cv", number = 10))
@@ -277,6 +489,24 @@ class: inverse, center, middle
 # Simple Holdout Set
 
 ---
+##Why EDA on training data only?
+
+The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into  data to make informed modeling decisions). 
+
+We split our data into training and testing subsets to evaluate the accuracy of our model in predicting *unseen* data. 
+
+This gives us a sense for how our model might perform in the **future** on new datasets.
+
+--
+
+</br> 
+If modeling decisions are made based on data patterns we observe in the test set, we ![:emphasize](risk artificially inflating model performance) estimates in the test set. 
+
+**When possible, it is ideal** to perform exploratory data analysis only on your training data only.
+
+But note that doesn't mean we can't check the test data for coding errors or data anomalies!
+
+---
 ##Simple Train/Test Split
 
 ```{r, echo = FALSE}
@@ -300,9 +530,9 @@ include_graphics("datasplit_val.png")
 [1] More details on model training and cross-validation methods to come tomorrow in section 2-B.
 ]
 ---
-##Simple Train/Test Split
+##Simple Train/Test Split in R
 
-Use the `caret::createDataPartition()` function to create balanced training and testing splits based on the outcome variable. Random sampling occurs within each factor level to ![:emphasize](maintain class distribution) in the datasets. 
+Use the `createDataPartition()` function in {caret} to create balanced training and testing splits based on the outcome variable. Random sampling occurs within each factor level to ![:emphasize](maintain class distribution) in the datasets. 
 
 Specify the proportion of data you want in the training split (e.g., `p = 0.8`) for an 80%/20% data split.
 
@@ -310,6 +540,7 @@ Remember to set a seed so your results are ![:emphasize](reproducible)!
 
 --
 
+</br> 
 ```{r}
 library(caret)
 set.seed(2021)
@@ -319,7 +550,7 @@ trainIndex <- createDataPartition(iris$Species, p = .8,
 ```
 
 ---
-##Simple Train/Test Split
+##Simple Train/Test Split in R
 
 Use the `createDataPartition` row indices to split your data into single train and test sets.
 
@@ -337,23 +568,6 @@ dim(irisTrain)
 dim(irisTest)
 ```
 
----
-##Why EDA on training data only?
-
-The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into  data to make informed modeling decisions). 
-
-We split our data into training and testing subsets to evaluate the accuracy of our model in predicting *unseen* data. 
-
-This gives us a sense for how our model might perform in the **future** on new datasets.
-
---
-
-</br> 
-If modeling decisions are made based on data patterns we observe in the test set, we ![:emphasize](risk artificially inflating model performance) estimates in the test set. 
-
-**When possible, it is ideal** to perform exploratory data analysis only on your training data only.
-
-But note that doesn't mean we can't check the test data for coding errors or data anamolies!
 
 ---
 ##Knowledge check
@@ -362,7 +576,7 @@ But note that doesn't mean we can't check the test data for coding errors or dat
 
 .pull-left[
 ### Question 1
-**Looking for outliers or data anomolies:**
+**Looking for outliers or data anomalies:**
 
 a) Training data only
 

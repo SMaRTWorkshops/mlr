@@ -1,7 +1,9 @@
 ---
-title: "Day 3A Activity (Regularized Regression)"
+title: "Day 3_A Activity <br /> (Regularized Regression)"
 output:
-  html_notebook:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
     df_print: paged
 editor_options: 
   chunk_output_type: inline
@@ -64,19 +66,12 @@ heart_test_baked <-
 ```{r}
 # let's use 5-fold cross-validation, repeated 3 times 
 
-# first we set the seeds for reproducible results
-set.seed(2021)
-seeds <- vector(mode = "list", length = 15) # length = n data splits
-for(i in 1:15) seeds[[i]] <- sample.int(1000, 21)
-seeds[[16]] <- sample.int(1000, 1) # for the last model 
-
 # set train control
 heart_control <- trainControl(method = 'repeatedcv',
                               number = 5,
                               repeats = 3,
                               classProbs = TRUE,
-                              summaryFunction = twoClassSummary,
-                              seeds = seeds)
+                              summaryFunction = twoClassSummary)
 
 # set ridge tuning grid
 ridgegrid <- expand.grid(alpha = 0, lambda = seq(0, 1, 0.01))
