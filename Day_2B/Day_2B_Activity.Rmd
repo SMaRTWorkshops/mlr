@@ -1,5 +1,5 @@
 ---
-title: "Day 2B Activity<br />(Predictive Modeling Basics)"
+title: "Day 2-B Activity<br />(Predictive Modeling Basics)"
 output:
   prettydoc::html_pretty:
     theme: cayman

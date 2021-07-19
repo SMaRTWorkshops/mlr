@@ -1,0 +1,178 @@
+---
+title: "Pre-Course Survey"
+output: 
+  html_document:
+    toc: FALSE
+    self-contained: true
+---
+
+```{r, message=FALSE, echo=FALSE}
+library(tidyverse)
+```
+
+```{r, message=FALSE, echo=FALSE}
+preraw <- read_csv("pre_survey.csv", col_types = cols())
+
+pretidy <- preraw %>% 
+  mutate(
+    role = factor(role, levels = c("Undergraduate student", "Graduate student", "Postdoctoral scholar", "Professor/Faculty", "Other")),
+    screen = factor(screen, levels = c("1 small screen", "1 large screen", "2 screens", "3 or more screens"))
+  )
+```
+
+Let's look at who is registered for this course! 
+
+```{r role, echo=FALSE, out.width = "50%", retina=4}
+ggplot(pretidy, aes(y = fct_rev(role), fill = fct_rev(role))) + 
+  geom_bar() +
+  scale_fill_brewer(palette = "Set2") +
+  labs(x = "Count", y = NULL, title = "Current Role") +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none")
+```
+
+The majority of attendees are graduate students, although we have a nice representation of postdoctoral scholars and faculty as well.
+
+---
+
+```{r device, echo=FALSE, out.width = "50%", retina=4}
+ggplot(pretidy, aes(y = device, fill = device)) + 
+  geom_bar() +
+  labs(x = "Count", y = NULL, title = "Type of Device") +
+  scale_fill_brewer(palette = "Set2") +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none")
+```
+
+Most attendees like to stay mobile and will be using a laptop computer. Training complex machine learning models on large amounts of data may require more computing power than a laptop can provide, but luckily that won't be a problem during the course as we will be training relatively efficient algorithms on relatively modest datasets.
+
+---
+
+```{r opsys, echo=FALSE, out.width = "50%", retina=4}
+ggplot(pretidy, aes(y = opsys, fill = opsys)) + 
+  geom_bar() +
+  labs(x = "Count", y = NULL, title = "Operating System") +
+  scale_fill_brewer(palette = "Set2") +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none")
+```
+
+Most attendees are using MacOS, although quite a few are on Windows! Jeff uses Windows and Shirley uses Mac, so we are covered! Also, R and RStudio work beautifully on both.
+
+---
+
+```{r screens, echo=FALSE, out.width = "50%", retina=4}
+ggplot(pretidy, aes(y = screen, fill = screen)) + 
+  geom_bar() +
+  labs(x = "Count", y = NULL, title = "Computer Screens/Monitors") +
+  scale_fill_brewer(palette = "Set2") +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none")
+```
+
+Most attendees are expanding their digital real-estate by using two or more screens. However, nearly half will have a single screen and will need to think about how best to use this screen during the course.
+
+---
+
+```{r rknow, echo=FALSE, out.width = "50%", retina=4}
+pretidy %>% 
+  select(starts_with("r_")) %>% 
+  pivot_longer(everything(), names_to = "var", values_to = "val") %>% 
+  mutate(
+    var = factor(
+      var,
+      levels = c("r_import", "r_wrangle", "r_analyze"),           
+      labels = c("Import Data", "Wrangle Data", "Analyze Data")
+    )
+  ) %>%
+  ggplot(aes(y = val, fill = var)) + 
+  facet_wrap(~var, nrow = 1) + 
+  geom_bar(na.rm = TRUE) + 
+  stat_summary(
+    fun.data = mean_cl_boot, 
+    na.rm = TRUE,
+    aes(x = -0.75), 
+    size = 1.5, 
+    geom = "pointrange",
+    fatten = 2
+  ) +
+  scale_y_continuous(breaks = 0:4, limits = c(-0.5, 4.5)) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() + 
+  labs(y = "Knowledge", x = "Count",
+       title = "Questions about R Knowledge") +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none")
+```
+
+As requested, most attendees are coming into the course with some existing knowledge about importing, wrangling, and analyzing data in R. A few attendees are less confident in this knowledge, so we will be including a brief refresher on R during the Day 1-B lecture.
+
+---
+
+```{r lmknow, echo=FALSE, out.width = "50%", retina=4}
+pretidy %>% 
+  select(starts_with("lm_")) %>% 
+  pivot_longer(everything(), names_to = "var", values_to = "val") %>% 
+  mutate(
+    var = factor(
+      var,
+      levels = c("lm_concepts", "lm_conducting", "lm_reviewing"),           
+      labels = c("Terms and Concepts", "Conducting a Study", "Reviewing a Study")
+    )
+  ) %>%
+  ggplot(aes(y = val, fill = var)) + 
+  facet_wrap(~var, nrow = 1) + 
+  geom_bar(na.rm = TRUE) + 
+  stat_summary(
+    fun.data = mean_cl_boot, 
+    na.rm = TRUE,
+    aes(x = -0.75), 
+    size = 1.5, 
+    geom = "pointrange",
+    fatten = 2
+  ) +
+  scale_y_continuous(breaks = 0:4, limits = c(-0.5, 4.5)) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() + 
+  labs(y = "Knowledge", x = "Count",
+       title = "Questions about Linear Modeling Knowledge") +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none")
+```
+
+Also as requested, most attendees are coming into the course with quite a bit of knowledge about linear modeling (e.g., $t$-tests, ANOVAs, linear regression, GLM, MLM, SEM). Knowledge about peer-review is a bit lower, likely due to the higher representation of graduate students who may not have had many opportunities to write reviews yet.
+
+---
+
+```{r mlknow, echo=FALSE, out.width = "50%", retina=4}
+pretidy %>% 
+  select(starts_with("ml_")) %>% 
+  pivot_longer(everything(), names_to = "var", values_to = "val") %>% 
+  mutate(
+    var = factor(
+      var,
+      levels = c("ml_concepts", "ml_conducting", "ml_reviewing"),           
+      labels = c("Terms and Concepts", "Conducting a Study", "Reviewing a Study")
+    )
+  ) %>%
+  ggplot(aes(y = val, fill = var)) + 
+  facet_wrap(~var, nrow = 1) + 
+  geom_bar(na.rm = TRUE) + 
+  stat_summary(
+    fun.data = mean_cl_boot, 
+    na.rm = TRUE,
+    aes(x = -0.75), 
+    size = 1.5, 
+    geom = "pointrange",
+    fatten = 2
+  ) +
+  scale_y_continuous(breaks = 0:4, limits = c(-0.5, 4.5)) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() + 
+  labs(y = "Knowledge", x = "Count", 
+       title = "Questions about Machine Learning Knowledge") +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none")
+```
+
+Most participants have a little knowledge about machine learning already but not much, and many have none at all. The workshop is meant to be introductory and will cater mostly to those at the lower end of this scale (where most are). For those with more existing knowledge, Day 5 will be an excellent opportunity to discuss more advanced topics and plan out where to go next.
