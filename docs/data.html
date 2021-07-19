@@ -11,7 +11,7 @@
 
 
 
-<title>Applied Machine Learning in R</title>
+<title>Data</title>
 
 <script src="site_libs/header-attrs/header-attrs.js"></script>
 <script src="site_libs/jquery/jquery.min.js"></script>
@@ -347,37 +347,70 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Applied Machine Learning in R</h1>
+<h1 class="title toc-ignore">Data</h1>
 
 </div>
 
 
-<p>This course was developed by <a href="https://github.com/jmgirard">Jeffrey Girard</a> and <a href="https://github.com/ShirleyBWang">Shirley Wang</a> for the <a href="https://www.pittmethods.com">Pittsburgh Summer Methodology Series</a> (July 19-23, 2021).</p>
-<hr />
-<table width="100%" style="text-align:center;">
-<tr>
-<td>
-<img src="figs/jg_headshot.jpeg" width="150" height="150" />
-</td>
-<td>
-<img src="figs/sw_headshot.jpeg" width="150" height="150" />
-</td>
+<div id="course-datasets" class="section level2">
+<h2>Course Datasets</h2>
+<p>The following datasets will be used in the course:</p>
+<table>
+<colgroup>
+<col width="17%" />
+<col width="47%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">Description</th>
+<th align="left">Type</th>
+<th align="left">Link</th>
 </tr>
-<tr>
-<td>
-<b><a href="https://www.jmgirard.com">Jeffrey Girard</a></b><br />University of Kansas
-</td>
-<td>
-<b><a href="https://shirleywang.rbind.io/">Shirley Wang</a></b><br />Harvard University
-</td>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">titanic</td>
+<td align="left">Data on passengers of the Titanic</td>
+<td align="left">Real</td>
+<td align="left"><a href="https://bit.ly/amlr-titanic" class="uri">https://bit.ly/amlr-titanic</a></td>
 </tr>
+<tr class="even">
+<td align="left">airsat</td>
+<td align="left">Data on Airline customer satisfaction</td>
+<td align="left">Real</td>
+<td align="left"><a href="https://bit.ly/amlr-airsat" class="uri">https://bit.ly/amlr-airsat</a></td>
+</tr>
+</tbody>
 </table>
 <hr />
-<p>Whereas statistical methods traditionally used in the social and behavioral sciences emphasize interpretability and quantification of uncertainty, machine learning methods emphasize complexity and accuracy of predictions. Machine learning methods are thus particularly well-suited for applications where (1) there are nonlinear and complex relationships among a large number of predictor variables and (2) accurately predicting the outcome variable is more important than fully understanding the relationships between variables.</p>
-<p>This workshop will provide a hands-on introduction to the application of machine learning techniques in R using the <a href="https://topepo.github.io/caret/">{caret}</a> package (with elements drawn from <a href="https://www.tidymodels.org/">{tidymodels}</a> such as <a href="https://recipes.tidymodels.org/">{recipes}</a> and <a href="https://yardstick.tidymodels.org/">{yardstick}</a>). It will emphasize practical knowledge and conceptual intuitions (e.g., teaching you how to drive a car) rather than technical and theoretical mastery (e.g., teaching you how to build a car). In addition, rather than briefly surveying the full breadth of available machine learning techniques, this workshop will provide a deep dive into three supervised learning methods with broad applicability in the social and behavioral sciences: regularized regression models, decision tree-based models, and support vector machines. The final day of the workshop will also provide an opportunity for attendees to consult with the instructors on implementation of machine learning methods in their own research. Taken together, this workshop’s practical focus will allow attendees to learn about: formulating a good research question, preparing data for analysis, setting up a rigorous cross-validation procedure, evaluating predictive performance, and interpreting and reporting results for a scientific audience.</p>
-<p>Although attendees of all backgrounds are welcome and the skills taught will be broadly applicable, example datasets and advice will be tailored specifically to the social and behavioral sciences (e.g., psychology, medicine, education, and related fields). Workshop attendees are not expected to have any background knowledge of machine learning, but some proficiency with R (e.g., knowledge of how to import data and manipulate data frames) will be assumed and some familiarity with statistical modeling (e.g., linear models) will be helpful.</p>
+</div>
+<div id="pre-workshop-survey" class="section level2">
+<h2>Pre-Workshop Survey</h2>
+<p>Let’s look at who is registered for this course!</p>
+<p><img src="data_files/figure-html/unnamed-chunk-3-1.png" width="100%" /></p>
+<p>The majority of attendees are graduate students, although we have a nice representation of postdoctoral scholars and faculty as well.</p>
 <hr />
-<p>These materials are made freely available and may be re-used according to the <a href="https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt">CC-BY License</a>.</p>
+<p><img src="data_files/figure-html/unnamed-chunk-4-1.png" width="100%" /></p>
+<p>Most attendees like to stay mobile and will be using a laptop computer. Training complex machine learning models on large amounts of data may require more computing power than a laptop can provide, but luckily that won’t be a problem during the course as we will be focusing on more training relatively efficient algorithms on relatively modest datasets.</p>
+<hr />
+<p><img src="data_files/figure-html/unnamed-chunk-5-1.png" width="100%" /></p>
+<p>Most attendees are using MacOS, although quite a few are on Windows! Luckily Jeff uses Windows and Shirley uses Mac, so we are covered! Also, R works beautifully on both.</p>
+<hr />
+<p><img src="data_files/figure-html/unnamed-chunk-6-1.png" width="100%" /></p>
+<p>Most attendees are expanding their digital real-estate by using two or more screens. However, nearly half will have a single screen and will need to think about how best to use this screen during the course.</p>
+<hr />
+<p><img src="data_files/figure-html/unnamed-chunk-7-1.png" width="100%" /></p>
+<p>As requested, most attendees are coming into the course with some existing knowledge about importing, wrangling, and analyzing data in R. A few attendees are less confident in this knowledge, so we will be including a brief refresher on R during the Day 1-B lecture.</p>
+<hr />
+<p><img src="data_files/figure-html/unnamed-chunk-8-1.png" width="100%" /></p>
+<p>Also as requested, most attendees are coming into the course with quite a bit of knowledge about linear modeling (e.g., <span class="math inline">\(t\)</span>-tests, ANOVAs, linear regression, GLM, MLM, SEM). Knowledge about peer-review is a bit lower, likely due to the higher representation of graduate students who may not have had many opportunities to write reviews yet.</p>
+<hr />
+<p><img src="data_files/figure-html/unnamed-chunk-9-1.png" width="100%" /></p>
+<p>Most participants have a little knowledge about machine learning already but not much, and many have none at all. The workshop is meant to be introductory and will cater mostly to those at the lower end of this scale (where most are). For those with more existing knowledge, Day 5 will be an excellent opportunity to discuss more advanced topics and plan out where to go next.</p>
+</div>
 
 
 

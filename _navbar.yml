@@ -2,8 +2,12 @@ name: "appliedml"
 title: "Applied ML in R"
 type: inverse
 left:
-  - text: "About the Course"
-    href: about.html
+  - text: "Details"
+    menu:
+       - text: "About the Course"
+         href: about.html
+       - text: "Course Data"
+         href: data.html
   - text: "Day 1 Materials"
     menu:
        - text: "Day 1-A Lecture"
