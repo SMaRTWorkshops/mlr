@@ -1,0 +1,13 @@
+---
+title: "Under Construction"
+output: 
+  html_document:
+    toc: FALSE
+---
+
+This page is still under construction but will be finished soon!
+
+```{r, echo=FALSE}
+knitr::include_graphics("figs/hardhats.jpg")
+```
+

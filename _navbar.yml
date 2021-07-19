@@ -43,13 +43,13 @@ left:
   - text: "Day 4 Materials"
     menu:
        - text: "Day 4-A Lecture"
-         href: ./Day_4A/Day_4A_Slides.html
+         href: wip.html
        - text: "Day 4-A Activity"
-         href: ./Day_4A/Day_4A_Activity.html
+         href: wip.html
        - text: "Day 4-B Lecture"
-         href: ./Day_4B/Day_4B_Slides.html
+         href: wip.html
        - text: "Day 4-B Activity"
-         href: ./Day_4B/Day_4B_Activity.html
+         href: wip.html
 right:
   - icon: fa-github fa-lg
     href: https://github.com/pittmethods/appliedml

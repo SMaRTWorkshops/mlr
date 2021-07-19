@@ -13,8 +13,8 @@ Name | Description | Type | Link
 :--- | :---------- | :--- | :---
 titanic | Data on passengers of the Titanic | Real | https://bit.ly/amlr-titanic
 airsat | Data on Airline customer satisfaction | Real | https://bit.ly/amlr-airsat
-iris | Data on flower measurements | Real | https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/iris.html
-globalWarm | Data on emotions, ideology, and attitudes towards action on climate change | Real | https://rdrr.io/cran/psychTools/man/globalWarm.html
+iris | Data on flower measurements | Real | https://bit.ly/amlr-iris
+globalWarm | Data on emotions, ideology, and attitudes towards action on climate change | Real | https://bit.ly/amlr-globalWarm
 
 ---
 
