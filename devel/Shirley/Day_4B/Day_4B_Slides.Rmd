@@ -65,14 +65,89 @@ class: inverse, center, middle
 ---
 ## Lecture Topics
 
-Planning experiments/identifying interesting questions
+.pull-left[
+**Planning Studies**
+- Identifying interesting questions
+- Sample size
 
-checking assumptions
+**Data Quality** 
+- Measurement error
+- Imbalanced datasets
+- Bias, representativeness, and generalizability
 
-writing up results
+**Interpreting Results**
+- When to trust your model 
+- Data-generating mechanism
+- External validation
+- Robustness checks
+]
 
-interpreting results
+.pull-right[
+**Writing**
+- Information to include in Methods
+- Information to include in Results
 
-publication tables/figures
+**Publication Tables and Figures**
+- ggplot? 
 
-peer-reviewing ML papers
+**Peer-Reviewing ML Papers**
+- Sample 
+- Measurement
+- Is ML necessary? 
+- Alignment of data, research question, methods, and algorithms 
+]
+
+---
+class: inverse, center, middle
+# Planning Studies 
+
+---
+## Planning Studies
+
+
+---
+class: inverse, center, middle
+# Data Quality 
+
+---
+## Data Quality 
+
+
+---
+class: inverse, center, middle 
+# Interpreting Results
+
+
+---
+## Interpreting Results
+
+
+---
+class: inverse, center, middle
+# Writing  
+
+---
+## Writing Methods
+
+
+---
+## Writing Results
+
+
+---
+class: inverse, center, middle
+# Publication Tables and Figures
+
+---
+## Publication Tables and Figures
+
+
+---
+class: inverse, center, middle
+# Peer-Reviewing ML Papers
+
+
+---
+## Peer-Reviewing ML Papers
+
+
