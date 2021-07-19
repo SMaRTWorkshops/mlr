@@ -314,13 +314,8 @@ instructors[-c(1, 2), ]
 
 Often we want to read data into R from external files (e.g., CSV files)
 
-<<<<<<< HEAD
-In this course, we will be importing data from files stored online (but this also works for local files). We can use the 'read.csv()' function from base R or the `read_csv()` function from {tidyverse} and give it a URL for the file.
-=======
-In this course, we will be importing data from files stored online (but this also works for local files)
 
-We can use `read.csv()` from base R or `read_csv()` from {tidyverse} and give it a URL for the file
->>>>>>> bbc19835d9dacd9d9b2a0fc4658c47f46dba918a
+In this course, we will be importing data from files stored online (but this also works for local files). We can use `read.csv()` from base R or `read_csv()` from {tidyverse} and give it a URL for the file.
 
 .scroll-output[
 ```{r, message=FALSE}
@@ -505,7 +500,7 @@ class: inverse, center, middle
 # Simple Holdout Set
 
 ---
-##Why EDA on training data only?
+## Why EDA on training data only?
 
 The **ultimate goal** of exploratory data analysis is to ![:emphasize](gain insights into  data to make informed modeling decisions). 
 
