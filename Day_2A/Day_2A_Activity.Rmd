@@ -1,5 +1,5 @@
 ---
-title: "Day 2A Activity <br /> (Feature Engineering)"
+title: "Day 2-A Activity <br /> (Feature Engineering)"
 output:
   prettydoc::html_pretty:
     theme: cayman
