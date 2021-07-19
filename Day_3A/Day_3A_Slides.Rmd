@@ -548,31 +548,6 @@ This sets our up training procedure with the following specifications:
 - For classification, set `classProbs = TRUE` and `summaryFunction = twoClassSummary` or `summaryFunction = prSummary`
 
 ---
-## Ridge Regression in R
-
-Note that the cross-validation process involves choosing random indices for data splitting. To ensure reproducibility, you can set seeds to use for resampling in the model training process:
-
-```{r}
-set.seed(2021)
-seeds <- vector(mode = "list", length = 30) # length = n data splits #<<
-for(i in 1:30) seeds[[i]] <- sample.int(1000, 21) #<<
-seeds[[31]] <- sample.int(1000, 1) # for the last model  #<<
-```
-
---
-
-This `seeds` object can be included in the `trainControl` function to obtain the same resampling seeds each time the code is run for fully reproducible results. 
-
-```{r}
-EDsim_control <- trainControl(method = 'repeatedcv',
-                              number = 10,
-                              repeats = 3,
-                              classProbs = FALSE,
-                              summaryFunction = defaultSummary,
-                              seeds = seeds) #<<
-```
-
----
 ## Ridge Regression in R 
 
 **Step 4: Set a tuning grid** (optional)

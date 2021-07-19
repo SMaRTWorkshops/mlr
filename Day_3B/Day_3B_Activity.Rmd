@@ -1,20 +1,19 @@
 ---
-title: "Day XX Activity (Decision Trees and Random Forests)"
+title: "Day 3-B Activity <br /> (Decision Trees and Random Forests)"
 output:
-  html_notebook:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
     df_print: paged
 editor_options: 
   chunk_output_type: inline
 ---
-
-
 
 # Live Coding 
 Goal: Classify likelihood of having a heart attack based on demographics (age, sex) and health variables (type of chest pain, resting blood pressure, cholesterol, fasting blood sugar, resting electrocardiographic results, maximum heart rate, exercise induced angina, etc.). Compare performance of fully grown trees, pruned trees, trees grown with a stopping parameter, and random forests.
 
 
 ## Load Packages
-
 ```{r, message=FALSE}
 if (!require("tidyverse")) {install.packages("tidyverse"); require("tidyverse")}     
 if (!require("caret")) {install.packages("caret"); require("caret")}
@@ -24,32 +23,20 @@ if (!require("psych")) {install.packages("psych"); require("psych")}
 if (!require("coefplot")) {install.packages("coefplot"); require("coefplot")}
 if (!require("pROC")) {install.packages("pROC"); require("pROC")}
 if (!require("rpart")) {install.packages("rpart"); require("rpart")}
-
+if (!require("randomForest")) {install.packages("randomForest"); require("randomForest")}
+if (!require("AppliedPredictiveModeling")) {install.packages("AppliedPredictiveModeling"); require("AppliedPredictiveModeling")} 
 ```
 
 
-## Read in data 
+## Load data
 ```{r}
-heart <- read.csv("http://people.fas.harvard.edu/~mair/datasets/Heart.csv", row.names = 1) %>% tibble()
-
-#heart <- read.csv("heart.csv")
-
-# Let's convert our outcome variable AHD, to numeric. This makes our accuracy/ROC calculations easier later.
-# if we just run as.numeric(), we get 1's and 2's. Let's subtract 1 from each response, so that
-# 0 corresponds to no, 1 to yes.
-
-heart$AHD<- as.numeric(heart$AHD) - 1 
-heart$AHD 
-
-# Let's also remove data with missing values
-heart <- na.omit(heart) # removes any rows with any missing data
-
+heart <- read.csv("heart.csv")
 ```
 
 ## Split into train/test sets 
 ```{r}
 set.seed(2021)
-trainIndex <- createDataPartition(heart$AHD, p = 0.8, list = FALSE, times = 1)
+trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE, times = 1)
 heart_train <- heart[trainIndex, ]
 heart_test <- heart[-trainIndex, ]
 
@@ -60,10 +47,10 @@ dim(heart_test)
 
 ## Fit full decision tree on training set
 
-We'll step outside of the caret world for a second to fit this tree. It's something you wouldn't typically do (you'll see why in a minute), which is why it's harder to implement in caret this way
+We'll step outside of the caret world for a second to fit this tree. It's something you wouldn't typically do (you'll see why in a minute), which is why it's harder to implement in caret this way.
 
 ```{r}
-fullTreeFit <- rpart(AHD ~ ., data = heart_train,
+fullTreeFit <- rpart(output ~ ., data = heart_train,
                      control = rpart.control(minsplit = 2, # minimum number of items in a node, in order to try to split
                                              minbucket = 1, # minimum number of items in the terminal leaf
                                              cp = 0.00 #complexity parameter. Any split that does not decrease the overall lack of fit by a factor of cp is not attempted. set to 0 so that it splits all the way down
@@ -71,42 +58,63 @@ fullTreeFit <- rpart(AHD ~ ., data = heart_train,
 
 plot(fullTreeFit)
 text(fullTreeFit, use.n = TRUE, all = TRUE)
-
 ```
 
-## evaluate classification accuracy
+## Classification Accuracy: Fully Grown Trees
 
 Let's calculate how well it does on the training set, relative to the test set. This gives us a sense of how over-fit the data is on our training set
 
 ```{r}
-
 full_tree_train_preds <- predict(fullTreeFit, newdata = heart_train)
 full_tree_test_preds <- predict(fullTreeFit, newdata = heart_test)
 
 head(full_tree_train_preds) 
 
-roc(predictor = full_tree_train_preds, response = heart_train$AHD)
-roc(predictor = full_tree_test_preds, response = heart_test$AHD)
-
+roc(predictor = full_tree_train_preds, response = heart_train$output)
+roc(predictor = full_tree_test_preds, response = heart_test$output)
 ```
 
-So we are fully overfitting - we have perfect prediction on our training set. Our AUC drops on our test set ~ .7. Let's see if we can improve on this by having modifying our approach.
+We are definitely overfitting with perfect prediction on our training set! Our AUC drops on our test set ~ .7. Let's see if we can improve on this by having modifying our approach.
 
-We'll be using caret, so let's make sure our outcome variable is now a factor.
-
+## Create Training Recipe
 ```{r}
-heart_train$AHD <- as.factor(heart_train$AHD)
+heart_recipe <- 
+  heart_train %>% 
+  recipe(output ~ .) %>%
+  step_num2factor(output, transform = function(x) x + 1, levels = c("low_risk", "high_risk")) %>%
+  step_dummy(all_nominal_predictors())
+
+# normalize test dataset too 
+heart_test_baked <- 
+  heart_recipe %>%
+  prep(training = heart_train) %>%
+  bake(new_data = heart_test)
 ```
 
-## Preventing the tree from overfititng to training data: Pruning 
+## Set up Training and Tuning Methods
 ```{r}
-pruned_tree_model <- train(
-  AHD ~., data = heart_train, method = "rpart",
-  trControl = trainControl("cv", number = 10)
-  )
+# let's use 5-fold cross-validation, repeated 3 times 
+
+# set train control
+heart_control <- trainControl(method = 'repeatedcv',
+                              number = 5,
+                              repeats = 3,
+                              classProbs = TRUE,
+                              summaryFunction = twoClassSummary)
+```
+
+## Reduce Overfitting by Pruning the Tree
+```{r}
+pruned_tree_model <- train(heart_recipe, data = heart_train, 
+                           method = "rpart",
+                           metric = 'ROC',
+                           tuneLength = 20,
+                           trControl = heart_control)
 
 plot(pruned_tree_model)
 
+plot(pruned_tree_model$finalModel)
+text(pruned_tree_model$finalModel)
 ```
 
 If we wanted to make sure we got the best possible model, what could we do now?
@@ -114,72 +122,44 @@ If we wanted to make sure we got the best possible model, what could we do now?
 We could create our own array of values that the complexitiy parameter could take on. Let's say .001 to .05, in steps of .001.
 We could then run the above again.
 
-## Preventing the tree from overfititng to training data: Stopping criteria (e.g. max depth)
-
-We'll be using the 'rpart2' method in caret. This grow a decision tree, but will stop growing after a certain number of splits (governed by a parameter called 'maxdepth'). We'll be using crossvalidation to pick the best maxdepth. We could give caret a series of maxdepth values it should try out, or we can let it try to find them automatically. Here, we'll let caret do it automatically.
-
+## Reduce Overfitting with Stopping Criteria
 
 ```{r}
-
-early_stopped_tree_model <- train(
-  AHD ~., data = heart_train, method = "rpart2",
-  trControl = trainControl("cv", number = 10)
-  )
+early_stopped_tree_model <- train(heart_recipe, data = heart_train, 
+                                  method = "rpart2",
+                                  metric = 'ROC',
+                                  tuneLength = 20,
+                                  trControl = heart_control)
 
 plot(early_stopped_tree_model)
 
+plot(early_stopped_tree_model$finalModel)
+text(early_stopped_tree_model$finalModel)
 ```
 
-
-
-## evaluate classification accuracy on test set
+## Classification Accuracy: Pruning and Stopping Criteria
 
 Let's calculate how well it does on the training set, relative to the test set. This gives us a sense of how over-fit the data is on our training set
 
 ```{r}
-
 full_tree_test_preds <- predict(fullTreeFit, newdata = heart_test)
 pruned_tree_test_preds <- predict(pruned_tree_model, newdata = heart_test)
 early_stopped_tree_test_preds <- predict(early_stopped_tree_model, newdata = heart_test)
 
-
-roc(predictor = full_tree_test_preds, response = heart_test$AHD)
-roc(predictor = as.numeric(pruned_tree_test_preds), response = heart_test$AHD)
-roc(predictor = as.numeric(early_stopped_tree_test_preds), response = heart_test$AHD)
-
-
+roc(predictor = full_tree_test_preds, response = heart_test$output)
+roc(predictor = as.numeric(pruned_tree_test_preds), response = heart_test$output)
+roc(predictor = as.numeric(early_stopped_tree_test_preds), response = heart_test$output)
 ```
 
-A bit better, but not by too much. In other datasets you might see a bigger effect. So how do we improve more significantly on this? 
+A bit better, but not by too much. In other datasets you might see a bigger effect. How can we improve more? 
 
-
-## Preventing the tree from overfitting to training data: random forests
-These trees are very interpretable: for any data point you just follow the leaves down, and you see exactly how you arrive at your prediction. 
-
-What's a solution to unstable trees (and less generalization to new data)?
-
-  - Find a robust prediction by fitting many trees on subsets of data and averaging their predictions
-  
-     What happens under the hood:
-         - sample from your rows to create ‘new’ datasets, fit a tree on each ‘new’ dataset.
-          - this allows us to have some bad models, but their errors get averaged away by good models
-  
-  New problem:  averaging different models to get a better fit only works if the models are different
-  from one another. 
-  New Solution:
-    To make sure the models are different, each tree only gets to use a random subset of our
-    predictors
-    
-We create many trees (i.e. a forest), using random resampling of data and random subsets of predictors. Hence, the name 'random forests'
-
-Let's fit random forests on the same dataset, and see how it compares.
-
-## fit random forests
+## Random Forests
 ```{r}
-rf_fit <- train(
-  AHD ~., data = heart_train, method = "rf",
-  trControl = trainControl("cv", number = 10)
-  )
+rf_fit <- train(heart_recipe, data = heart_train, 
+                method = "rf",
+                metric = 'ROC',
+                tuneLength = 20,
+                trControl = heart_control)
 
 plot(rf_fit)
 
@@ -187,18 +167,15 @@ plot(rf_fit)
 It looks like randomly selecting two predictors at each step leads to the best predictions. We can verify that below:
 
 ```{r}
-
 #what was the best tuning parameter ?
 rf_fit$bestTune
-
 ```
 
 
 ```{r}
 rf_test_preds <- predict(rf_fit, newdata = heart_test)
-roc(predictor = as.numeric(rf_test_preds), response = heart_test$AHD)
-roc(predictor = full_tree_test_preds, response = heart_test$AHD)
-
+roc(predictor = as.numeric(rf_test_preds), response = heart_test$output)
+roc(predictor = full_tree_test_preds, response = heart_test$output)
 ```
 
 Random forests do much better than the original full tree!
@@ -207,24 +184,9 @@ Random forests do much better than the original full tree!
 
 We don't know... there are many trees, so it's hard to gain insight, since there is not 'one model'. Instead, we can figure out what what the 'important variables' are across the different trees.
 
-
-## Extract important variables
-
 ```{r}
-
-varImp(rf_fit)
-
+ggplot(varImp(rf_fit))
 ```
-```{r}
-
-# relative importance plot:
-
-varImp(rf_fit) %>% plot()
-
-```
-
-
-
 
 ## Try it for yourself: random forests to predict Alzheimer's
 
@@ -232,14 +194,7 @@ Washington University conducted a clinical study to determine if biological meas
 
 The R factor vector diagnosis contains the outcome data for 333 of the subjects. The demographic and laboratory results are collected in the data frame predictors.
 
-Let's read in the data. You may have to install the package 'AppliedPredictiveModeling' first.
-
 ```{r}
-
-# the data lives in the AppliedPredictiveModeling package, so if not installed, install, then require R to import it
-if (!require("AppliedPredictiveModeling")) {install.packages("AppliedPredictiveModeling"); require("AppliedPredictiveModeling")} 
-
-
 data(AlzheimerDisease)
 predictors$E2 <- predictors$E3 <- predictors$E4 <- 0      ## just some variable preparation. dummycode Genotype
 predictors$E2[grepl("2", predictors$Genotype)] <- 1
