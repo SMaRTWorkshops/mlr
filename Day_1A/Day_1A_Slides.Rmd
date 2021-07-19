@@ -970,7 +970,12 @@ The main approach, however, is to use ![:emphasize](cross-validation):
 
 - This way, if performance looks good, we can worry less about variance/overfitting<sup>1</sup>
 
-.footnote[[1] Although we always need to worry somewhat about whether the original data was itself representative.]
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution:** We still need to consider whether the original data was representative!
+]
+
 ---
 # Holdout Cross-Validation
 ```{r, echo=FALSE}
@@ -1005,12 +1010,19 @@ Cross-validation can also be **nested** to let the model tune on unseen data:
  - An outer loop (applied to the original data) is used for *model evaluation*
 
  - An inner loop (applied to the training set) is used for *model tuning*
+ 
+ - This is what I typically do but is more advanced, so we will leave that for Day 5
 
 Cross-validation can also be **stratified** to keep the sets relatively similar
 
 Cross-validation can also be **repeated** to avoid problems with any single split
 
-.footnote[A great default procedure is nested, stratified, and 3x repeated 10-fold cross-validation.]
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+**Advice:** A good default is a stratified 10-fold cross-validation repeated 3 times.
+]
+
 ---
 ## Comprehension Check \#4
 <span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
