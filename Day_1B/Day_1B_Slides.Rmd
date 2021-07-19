@@ -5,7 +5,7 @@ author: 'Applied Machine Learning in R </br> Pittsburgh Summer Methodology Serie
 date: 'Lecture 1-B &emsp; &emsp; July 19, 2021'
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: [xaringan-themer.css, extras.css]
     nature:
       beforeInit: ["macros.js", "cols_macro.js"]
       slideNumberFormat: "%current% / %total%"
@@ -314,14 +314,24 @@ instructors[-c(1, 2), ]
 
 Often we want to read data into R from external files (e.g., CSV files)
 
-In this course, we will be importing data from files stored online (but this also works for local files)
+In this course, we will be importing data from files stored online (but this also works for local files). We can use the 'read.csv()' function from base R or the `read_csv()` function from {tidyverse} and give it a URL for the file.
 
-We can use the 'read.csv()' function from base R or the `read_csv()` function from {tidyverse} and give it a URL for the file.
-
+.scroll-output[
 ```{r, message=FALSE}
 titanic <- read_csv("https://bit.ly/amlr-titanic")
 titanic
 ```
+]
+
+We will also sometimes import data from R packages. In this case, we can use the `data()` function. 
+
+.scroll-output[
+```{r, message = FALSE}
+library(psychTools)
+data(affect)
+affect
+```
+]
 
 ---
 class: inverse, center, middle

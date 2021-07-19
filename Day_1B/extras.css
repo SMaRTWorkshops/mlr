@@ -1,0 +1,9 @@
+.scroll-output {
+  height: 25%;
+  overflow-y: scroll;
+}
+
+.scroll-output-full {
+  height: 80%;
+  overflow-y: scroll;
+}
