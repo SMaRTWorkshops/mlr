@@ -1,28 +1,16 @@
 ---
-title: "Data"
+title: "Pre-Course Survey"
 output: 
   html_document:
     toc: FALSE
+    self-contained: true
 ---
 
-## Course Datasets
-
-The following datasets will be used in the course:
-
-Name | Description | Type | Link
-:--- | :---------- | :--- | :---
-titanic | Data on passengers of the Titanic | Real | https://bit.ly/amlr-titanic
-airsat | Data on Airline customer satisfaction | Real | https://bit.ly/amlr-airsat
-
----
-
-## Pre-Workshop Survey 
-
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE, echo=FALSE}
 library(tidyverse)
 ```
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE, echo=FALSE}
 preraw <- read_csv("pre_survey.csv", col_types = cols())
 
 pretidy <- preraw %>% 
@@ -34,12 +22,12 @@ pretidy <- preraw %>%
 
 Let's look at who is registered for this course! 
 
-```{r, echo=FALSE}
+```{r role, echo=FALSE, out.width = "50%", retina = 3}
 ggplot(pretidy, aes(y = fct_rev(role), fill = fct_rev(role))) + 
   geom_bar() +
   scale_fill_brewer(palette = "Set2") +
   labs(x = "Count", y = NULL, title = "Current Role") +
-  theme_classic() +
+  theme_classic(base_size = 16) +
   theme(legend.position = "none")
 ```
 
@@ -47,12 +35,12 @@ The majority of attendees are graduate students, although we have a nice represe
 
 ---
 
-```{r, echo=FALSE}
+```{r device, echo=FALSE, out.width = "50%", retina = 3}
 ggplot(pretidy, aes(y = device, fill = device)) + 
   geom_bar() +
   labs(x = "Count", y = NULL, title = "Type of Device") +
   scale_fill_brewer(palette = "Set2") +
-  theme_classic() +
+  theme_classic(base_size = 16) +
   theme(legend.position = "none")
 ```
 
@@ -60,25 +48,25 @@ Most attendees like to stay mobile and will be using a laptop computer. Training
 
 ---
 
-```{r, echo=FALSE}
+```{r opsys, echo=FALSE, out.width = "50%", retina = 3}
 ggplot(pretidy, aes(y = opsys, fill = opsys)) + 
   geom_bar() +
   labs(x = "Count", y = NULL, title = "Operating System") +
   scale_fill_brewer(palette = "Set2") +
-  theme_classic() +
+  theme_classic(base_size = 16) +
   theme(legend.position = "none")
 ```
 
-Most attendees are using MacOS, although quite a few are on Windows! Luckily Jeff uses Windows and Shirley uses Mac, so we are covered! Also, R works beautifully on both.
+Most attendees are using MacOS, although quite a few are on Windows! Jeff uses Windows and Shirley uses Mac, so we are covered! Also, R and RStudio work beautifully on both.
 
 ---
 
-```{r, echo=FALSE}
+```{r screens, echo=FALSE, out.width = "50%", retina = 3}
 ggplot(pretidy, aes(y = screen, fill = screen)) + 
   geom_bar() +
   labs(x = "Count", y = NULL, title = "Computer Screens/Monitors") +
   scale_fill_brewer(palette = "Set2") +
-  theme_classic() +
+  theme_classic(base_size = 16) +
   theme(legend.position = "none")
 ```
 
@@ -86,7 +74,7 @@ Most attendees are expanding their digital real-estate by using two or more scre
 
 ---
 
-```{r, echo=FALSE}
+```{r rknow, echo=FALSE, out.width = "50%", retina = 3}
 pretidy %>% 
   select(starts_with("r_")) %>% 
   pivot_longer(everything(), names_to = "var", values_to = "val") %>% 
@@ -113,7 +101,7 @@ pretidy %>%
   coord_flip() + 
   labs(y = "Knowledge", x = "Count",
        title = "Questions about R Knowledge") +
-  theme_classic() +
+  theme_classic(base_size = 16) +
   theme(legend.position = "none")
 ```
 
@@ -121,7 +109,7 @@ As requested, most attendees are coming into the course with some existing knowl
 
 ---
 
-```{r, echo=FALSE}
+```{r lmknow, echo=FALSE, out.width = "50%", retina = 3}
 pretidy %>% 
   select(starts_with("lm_")) %>% 
   pivot_longer(everything(), names_to = "var", values_to = "val") %>% 
@@ -148,7 +136,7 @@ pretidy %>%
   coord_flip() + 
   labs(y = "Knowledge", x = "Count",
        title = "Questions about Linear Modeling Knowledge") +
-  theme_classic() +
+  theme_classic(base_size = 16) +
   theme(legend.position = "none")
 ```
 
@@ -156,7 +144,7 @@ Also as requested, most attendees are coming into the course with quite a bit of
 
 ---
 
-```{r, echo=FALSE}
+```{r mlknow, echo=FALSE, out.width = "50%", retina = 3}
 pretidy %>% 
   select(starts_with("ml_")) %>% 
   pivot_longer(everything(), names_to = "var", values_to = "val") %>% 
@@ -183,7 +171,7 @@ pretidy %>%
   coord_flip() + 
   labs(y = "Knowledge", x = "Count", 
        title = "Questions about Machine Learning Knowledge") +
-  theme_classic() +
+  theme_classic(base_size = 16) +
   theme(legend.position = "none")
 ```
 

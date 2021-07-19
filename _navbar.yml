@@ -6,8 +6,10 @@ left:
     menu:
        - text: "About the Course"
          href: about.html
-       - text: "Course Data"
-         href: data.html
+       - text: "Course Datasets"
+         href: datasets.html
+       - text: "Pre-Course Survey"
+         href: pre_survey.html
   - text: "Day 1 Materials"
     menu:
        - text: "Day 1-A Lecture"
