@@ -78,8 +78,78 @@ a {
   background-color: white;
 }
 </style>
+
 ---
+class: onecol
 ## Maximal margin classifier
+
+How do we separate these classes?
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("maxmargin1.png")
+```
+
+---
+class: onecol
+## Maximal margin classifier
+
+With one feature, we need to find a point that separates the classes
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("maxmargin2.png")
+```
+
+---
+class: onecol
+## Maximal margin classifier
+But there are many possible decision points, so which should we use?
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("maxmargin3.png")
+```
+
+---
+class: onecol
+## Maximal margin classifier
+One option is to find the point with the **maximal margin** between the classes
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("maxmargin4.png")
+```
+
+---
+class: onecol
+## Maximal margin classifier
+
+With two features (i.e., 2D), we need a decision **line** rather than a point
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("maxmargin5.png")
+```
+
+---
+class: onecol
+## Maximal margin classifier
+
+With three features (i.e., 3D), we need a decision **plane**
+
+```{r, echo=FALSE, out.width='50%'}
+include_graphics("3d_plane.gif")
+```
+
+---
+class: onecol
+## Maximal margin classifier
+
+With one feature, we need a 1D plot and a decision **point**
+
+With two features, we need a 2D plot and a decision **line**
+
+With three features, we need a 3D plot and a decision **plane**
+
+With four or more features, we can't plot it but we need a decision **hyperplane**
+
+.footnote[[1] Technically, all of these are hyperplanes of different sizes, but we usually reserve the term for 4+ dimensions.]
 
 ---
 ## Support vector classifier
