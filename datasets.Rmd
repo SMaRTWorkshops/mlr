@@ -13,6 +13,8 @@ Name | Description | Type | Link
 :--- | :---------- | :--- | :---
 titanic | Data on passengers of the Titanic | Real | https://bit.ly/amlr-titanic
 airsat | Data on Airline customer satisfaction | Real | https://bit.ly/amlr-airsat
+iris | Data on flower measurements | Real | https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/iris.html
+globalWarm | Data on emotions, ideology, and attitudes towards action on climate change | Real | https://rdrr.io/cran/psychTools/man/globalWarm.html
 
 ---
 
@@ -67,3 +69,41 @@ Variables
 read_csv("https://bit.ly/amlr-airsat", col_types = "fffdffdiiiiiiiiiiiiiidd")
 ```
 
+---
+
+## iris
+
+Real data on 150 iris flowers. 
+
+- Available from the base R {datasets} package. 
+
+Variables
+
+- `Sepal.Length`: length of flower sepal in cm (4.3, 7.9)
+- `Sepal.Width`: width of flower sepal in cm (2.0, 4.4)
+- `Petal.Length`: length of flower petal in cm (1.0, 6.9)
+- `Petal.Width`: width of flower petal in cm (0.1, 2.5)
+- `Species`: type of iris flower {setosa, versicolor, virginica}
+
+```{r, echo = FALSE}
+data(iris)
+iris %>% as_tibble()
+```
+
+---
+
+## globalWarm
+
+Real data on emotions, ideology, and party affiliation as predictors of attitudes towards government action on climate change. 
+
+- Available from the {psychTools} package. 
+
+Variables 
+
+- `govact`: attitudes towards government action on climate change (1, 7)
+- `posemot`: positive emotions about climate change (1, 6)
+- `negemot`: negative emotions about climate change (1, 6)
+- `ideology`: political ideology/conservatism (1, 7)
+- `age`: participant age (17, 87)
+- `sex`: participant sex {female, male}
+- `partyid`: political party {democrat, independent, republican}
