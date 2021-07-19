@@ -316,7 +316,7 @@ Often we want to read data into R from external files (e.g., CSV files)
 
 In this course, we will be importing data from files stored online (but this also works for local files)
 
-We can use the 'read.csv()' function from base R or the `read_csv()` function from {tidyverse} and give it a URL for the file.
+We can use `read.csv()` from base R or `read_csv()` from {tidyverse} and give it a URL for the file
 
 ```{r, message=FALSE}
 titanic <- read_csv("https://bit.ly/amlr-titanic")

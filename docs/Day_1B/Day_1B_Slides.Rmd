@@ -123,7 +123,7 @@ R packages give you extra features that aren't in R by default
 - To load the {caret} package from your library, use `library("caret")`
 
 The {tidyverse} is a collection of popular packages that work together
-- We will use several functions from {tidyverse} so install and load it to follow along
+- We will use several functions from {tidyverse} so please make sure to install and load it to follow along
 - We will try to minimize how much we use it but this may be hard (especially for Jeff)
 
 .footnote[
@@ -160,12 +160,11 @@ round(2/3, digits = 3)
 ```
 
 ---
-
 ## Pipes and Pipelines
 
-{tidyverse} gives us the pipe `%>%` which can be read as "AND THEN"
+{tidyverse} gives us the pipe `%>%` which can be read as "AND THEN".
 
-It takes an object and passes it to a function as the first argument
+It takes an ![:emphasize](object) and passes it to a function as the ![:emphasize](first argument).
 
 ```{r}
 library(tidyverse)
@@ -218,7 +217,7 @@ my_friends[c(1, 3)]
 
 ## Special Data Types
 
-If there are only a few values data could take on, we can tell R with `factor()`
+If a variable is categorical, we can tell R with `factor()`
 
 ```{r}
 genre_nums <- c(1, 1, 3, 2, 1, 2, 2, 2, 3)
@@ -317,7 +316,7 @@ Often we want to read data into R from external files (e.g., CSV files)
 
 In this course, we will be importing data from files stored online (but this also works for local files)
 
-We will use the `read_csv()` function from {tidyverse} and give it a URL (i.e., web address) for the file
+We can use `read.csv()` from base R or `read_csv()` from {tidyverse} and give it a URL for the file
 
 ```{r, message=FALSE}
 titanic <- read_csv("https://bit.ly/amlr-titanic")
