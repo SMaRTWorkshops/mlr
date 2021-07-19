@@ -31,3 +31,5 @@ Graduate student,Laptop computer,MacOS,1 small screen,3,2,2,3,3,3,2,2,1
 Professor/Faculty,Laptop computer,Windows,2 screens,3,3,3,4,4,4,1,1,1
 Graduate student,Laptop computer,Windows,1 large screen,4,3,3,3,3,3,1,,
 Postdoctoral scholar,Laptop computer,Windows,1 large screen,4,4,4,3,3,2,1,0,
+Professor/Faculty,Laptop computer,MacOS,2 screens,4,,4,4,4,4,2,1,1
+Graduate student,Laptop computer,MacOS,2 screens,4,3,2,2,2,2,1,0,0
