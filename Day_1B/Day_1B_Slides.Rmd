@@ -72,7 +72,10 @@ class: inverse, center, middle
 .remark-code {
   border: 1px solid grey;
 }
-.remark-code-line{
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
   background-color: white;
 }
 </style>
