@@ -108,6 +108,23 @@ Over what timescale are the features and labels expected to change? Over what ti
 ---
 class: onecol
 
+## Measurement 
+
+*"Throwing the same set of poorly measured variables that have been analyzed before into machine learning algorithms is highly unlikely to produce new insights or findings.&lt;sup&gt;1&lt;/sup&gt;"*
+
+![:emphasize](Questionable measurement practices)&lt;sup&gt;2&lt;/sup&gt; are vast and include things like unclear definitions of constructs, lack of reliability and validity of measures, and using scales in ways they were not intended.
+
+Measurement error can prevent ML algorithms from accurately capturing and ![:emphasize](modeling nonlinear relationships). 
+
+
+.footnote[
+[1] Jacobucci &amp; Grimm (2020); *Perspectives on Psychological Science* &lt;/br&gt;
+[2] Flake &amp; Fried (2020); *Advances in Methods and Practices in Psychological Science*
+]
+
+---
+class: onecol
+
 ## Sample Size
 
 One of the most common questions is "how much data do I need for ML"? 
@@ -166,36 +183,48 @@ class: onecol
 
 ## Group Discussion
 
-what's an ML study you would design in your area? 
+We will randomly assign you to a small breakout room.
 
-what complications/concerns do you forsee? 
+We will jump between rooms to join discussions and answer questions.
+
+**Introduce yourselves again and discuss the following topics:** 
+
+1. What types of ML studies are you interested in designing in your field? 
+
+2. What problems, concerns, or challenges do you forsee in designing ML studies (e.g., in causal thinking, sample size, measurement, bias)? 
+
+3. What are some potential solutions?
 
 ---
 class: inverse, center, middle
 # Modeling Decisions
 
+---
+
+## Choosing between algorithms 
+
+Algorithm&amp;emsp;&amp;emsp;&amp;emsp; | Benefits | Drawbacks 
+:------- | :-------- | :------- 
+Ridge | handles multicollinearity; shrinks correlated features towards each other | does not perform feature selection; does not model nonlinearity
+Lasso | handles multicollinearity; performs feature selection | tends to pick one correlated feature and reduce the other to zero; does not model nonlinearity 
+Elastic Net | Ridge-like regression with lasso-like feature selection | does not model nonlinearity 
+Decision Trees | easily interpretable; models nonlinearity | unstable; poor prediction in new datasets (not often used in practice) 
+Random Forests | models nonlinearity, good prediction in new data | not easily interpretable, requires larger sample sizes  
+Support Vector Machines | can handle `\(p&gt;n\)`; models nonlinearity  | not easily interpretable; can be difficult to choose a 'good' kernel function
 
 ---
-class:onecol 
+class: onecol
 
-## Modeling Decisions 
+## Reproducibility  
 
-choosing between algorithms 
-
-try in your train --&gt; pick one --&gt; do in your test 
-
-missing data handling 
-
-imbalanced classes handling
-
-one slide summary of pros/cons of ridge vs. lasso vs. trees vs. random forest vs. svm
-
+setting seeds internally 
 ---
 class: inverse, center, middle
 # Interpreting Results
 
 ---
 ## Data Quality 
+
 
 
 ---
