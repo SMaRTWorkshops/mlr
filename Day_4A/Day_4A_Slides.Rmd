@@ -83,7 +83,7 @@ a {
 class: onecol
 ## Maximal margin classifier
 
-How do we separate these classes?
+How do we predict the class of a new data point?
 
 ```{r, echo=FALSE, out.width='80%'}
 include_graphics("maxmargin1.png")
@@ -121,7 +121,7 @@ include_graphics("maxmargin4.png")
 class: onecol
 ## Maximal margin classifier
 
-With two features (i.e., 2D), we need a decision **line** rather than a point
+With two features, we need a 2D plot and a decision **line**
 
 ```{r, echo=FALSE, out.width='80%'}
 include_graphics("maxmargin5.png")
@@ -131,7 +131,7 @@ include_graphics("maxmargin5.png")
 class: onecol
 ## Maximal margin classifier
 
-With three features (i.e., 3D), we need a decision **plane**
+With three features, we need a 3D plot and a decision **plane**
 
 ```{r, echo=FALSE, out.width='50%'}
 include_graphics("3d_plane.gif")
@@ -141,18 +141,79 @@ include_graphics("3d_plane.gif")
 class: onecol
 ## Maximal margin classifier
 
-With one feature, we need a 1D plot and a decision **point**
-
-With two features, we need a 2D plot and a decision **line**
-
-With three features, we need a 3D plot and a decision **plane**
-
 With four or more features, we can't plot it but we need a decision **hyperplane**
 
-.footnote[[1] Technically, all of these are hyperplanes of different sizes, but we usually reserve the term for 4+ dimensions.]
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution:** You may hurt yourself if you try to imagine what a hyperplane looks like.
+]
+
+--
+
+.pt1[
+Margins still exist in higher-dimensional space and we still want to maximize them
+]
+
+- Our goal is thus to locate the class-separating hyperplane with the largest margin
+
+- The math behind this is beyond the scope of our workshop, but that's the idea
+
+--
+
+Once we have the hyperplane, new points are classified by which side of it they fall on
+
+- Since the dimensions of this space are determined by the features, we are exploring "feature space" and looking for regions occupied by each class
 
 ---
+class: onecol
+## Maximal margin classifier
+
+The maximal margin classifier doesn't actually use all the data points
+
+It only uses the subset of points that define the margin, called ![:emphasize](support vectors)
+
+In this way, it focuses on the most ambiguous/difficult examples
+
+```{r, echo=FALSE, out.width='67%'}
+include_graphics("maxmargin8.png")
+```
+
+---
+class: onecol
+## Maximal margin classifier
+
+This means that outliers close to the other class can be very problematic
+
+For instance, this margin is likely to misclassify examples in new data
+
+```{r, echo=FALSE, out.width='67%'}
+include_graphics("maxmargin9.png")
+```
+
+---
+class: onecol
 ## Support vector classifier
+
+To improve test set performance, we should actually ignore the outlier
+
+This will result in some training errors (bias) but help generalization (variance)
+
+This approach is called the **support vector classifier** (one step towards an SVM)
+
+```{r, echo=FALSE, out.width='67%'}
+include_graphics("svc1.png")
+```
+
+---
+class: onecol
+## Support vector classifier
+
+The main question then becomes... which potential support vectors should be ignored?
+
+In response, machine learning turns to its favorite answer... cross-validation and tuning!
+
+We can try classifiers with different support vectors and compare them
 
 ---
 ## Support vector machine

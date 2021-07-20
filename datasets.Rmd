@@ -110,6 +110,7 @@ Variables
 - `age`: participant age (17, 87)
 - `sex`: participant sex {female, male}
 - `partyid`: political party {democrat, independent, republican}
+<<<<<<< HEAD
 
 ---
 
@@ -151,4 +152,5 @@ Variables
 ```{r, echo = FALSE}
 read_csv("https://bit.ly/amlr-memory")
 ```
+
 
