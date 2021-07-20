@@ -184,12 +184,9 @@ We will take a **~10m break** after the first part
 ]
 --
 .pull-right[
-Course materials are on Github and OSF
+Course materials are the course website:
 
-- [osf.io/3qhc8](https://osf.io/3qhc8)
-
-- [github.com/ShirleyBWang/pittmethods_ml](https://github.com/ShirleyBWang/pittmethods_ml)
-
+https://pittmethods.github.io/appliedml/
 
 You can download and re-use the materials according to our "CC-By Attribution" license
 ]
