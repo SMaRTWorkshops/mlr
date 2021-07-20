@@ -15,6 +15,9 @@ titanic | Data on passengers of the Titanic | Real | https://bit.ly/amlr-titanic
 airsat | Data on Airline customer satisfaction | Real | https://bit.ly/amlr-airsat
 iris | Data on flower measurements | Real | https://bit.ly/amlr-iris
 globalWarm | Data on emotions, ideology, and attitudes towards action on climate change | Real | https://bit.ly/amlr-globalWarm
+heart | Data on heart disease predictions | Real | https://bit.ly/amlr-heart
+ahd | Data on Alzheimer's disease | Real | https://bit.ly/amlr-ahd
+hcp_memory | Neuroimaging data and memory tests | Modified from real | https://bit.ly/amlr-memory
 
 ---
 
@@ -107,3 +110,45 @@ Variables
 - `age`: participant age (17, 87)
 - `sex`: participant sex {female, male}
 - `partyid`: political party {democrat, independent, republican}
+
+---
+
+## heart 
+
+Real data on risk for heart disease. 
+
+- Short URL: https://bit.ly/amlr-heart
+- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/heart.csv
+
+```{r, echo = FALSE}
+read_csv("https://bit.ly/amlr-heart", col_types = "dffddffdfdiiif")
+```
+
+---
+
+## ahd 
+
+Real data on Alzheimer's Disease. 
+
+- Short URL: https://bit.ly/amlr-ahd
+- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/ahd.csv
+
+```{r, echo = FALSE}
+read_csv("https://bit.ly/amlr-ahd", col_types = list(male = "f", Genotype = "f", diagnosis = "f"))
+```
+
+---
+
+## hcp_memory
+
+Real neuroimaging data from the Human Connectome Project used to predict scores on a memory test. Note: artificially modified to increase predictive power and make activities more engaging.  
+
+- Short URL: https://bit.ly/amlr-memory
+- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/hcp_memory.csv
+
+Variables
+
+```{r, echo = FALSE}
+read_csv("https://bit.ly/amlr-memory")
+```
+

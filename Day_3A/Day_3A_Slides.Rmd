@@ -13,6 +13,7 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+    self_contained: true
 ---
 
 ```{r setup, include=FALSE}
@@ -136,7 +137,7 @@ where
 - $b_0$: estimated intercept 
 - $b_j$: estimated coefficient for the $j$th predictor
 - $x_{ij}$: value of the $j$th predictor for the $i$th observation
-- $e_i$: random error unexplained by the model
+- $e_i$: random error unexplained by the model for the $i$th observation
 
 --
 
@@ -191,7 +192,7 @@ $$SSE = \sum\limits_{i = 1}^n(y_i - \hat{y_i})^2$$
 
 where
 - $n$: number of observations 
-- $y_1$: $i$th observed response
+- $y_i$: $i$th observed response
 - $\hat{y_i}$: $i$th predicted response
 
 <br/>
@@ -231,7 +232,7 @@ class: inverse, center, middle
 # Regularization
 
 ---
-##Why regularize?
+##What is regularization, and why regularize?
 .left-column[
 <br />
 ```{r, echo=FALSE}
@@ -251,7 +252,7 @@ In essense, we make our model less sensitive to the data in the training set in 
 ]
 
 ---
-##Why regularize?
+##What is regularization, and why regularize?
 .left-column[
 <br />
 ```{r, echo=FALSE}
@@ -271,7 +272,7 @@ Thus, regularization models can simultaneously reduce overfitting and perform fe
 ]
 
 .footnote[
-[1] see Harrell (2015) for details and explanation: https://link.springer.com/book/10.1007/978-3-319-19425-7
+[1] see Harrell (2015), section 4.3, for details and explanation: https://link.springer.com/book/10.1007/978-3-319-19425-7
 ]
 
 ---
