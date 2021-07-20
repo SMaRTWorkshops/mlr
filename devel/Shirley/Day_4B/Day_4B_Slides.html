@@ -50,8 +50,8 @@ a {
 ---
 ## Lecture Topics
 
-&lt;/br&gt;
-&lt;img src="researchworkflow.png" width="100%" height="110%" /&gt;
+&lt;/br&gt;&lt;/br&gt;
+&lt;img src="researchworkflow.png" width="100%" height="115%" /&gt;
 
 ---
 class: inverse, center, middle
@@ -69,6 +69,7 @@ Features used to predict tend to be **cheaper or easier to measure** in new data
 Labels to be predicted tend to be **expensive or difficult to measure** in new data. 
 
 ML models can be used for ![:emphasize](regression) or ![:emphasize](classification) problems.
+
 
 ---
 class: onecol
@@ -109,20 +110,56 @@ class: onecol
 
 ## Sample Size
 
-how much data do you need? 
+One of the most common questions is "how much data do I need for ML"? 
 
-how much can you reasonably collect? 
+There's no straightforward or universal answer, and this is an active area of research.
+
+However, here are some important principles and ![:emphasize](general guidelines).
+
+--
+
+&lt;/br&gt;
+When working with ![:emphasize](smaller sample sizes), use ![:emphasize](simpler models).
+
+Use ![:emphasize](10-fold cross-validation) for smaller samples rather than a single, held-out test set.&lt;sup&gt;1&lt;/sup&gt;
+
+Aim for `\(N \geq p*10\)`,  with a minimum of 30 observations per test set.
+
+.footnote[
+[1] See Kuhn &amp; Johnson (2013), section 4.7 for more details. 
+]
 
 ---
 class: onecol
 
-## Representativeness 
+## Bias and Representativeness 
 
-bias, garbage in garbage out
+Though often heralded as 'objective', algorithms reflect the nature of the data used to train them, and can ![:emphasize](detect, learn, and perpetuate societal injustices).
 
-who is included in your data? 
+Recidivism algorithms are biased against Black defendants, chatbots trained on internet data produce sexist &amp; racist responses, facial recognition works better for White people, and STEM advertisements are less likely to be displayed to women than men.
 
-who is being left out?
+--
+.pull-left[
+&lt;img src="huggingface_man.png" width="62%" height="63%" style="display: block; margin: auto 0 auto auto;" /&gt;
+]
+.pull-right[
+&lt;img src="huggingface_woman.png" width="65%" height="65%" style="display: block; margin: auto auto auto 0;" /&gt;
+]
+
+---
+class: onecol
+
+## Bias and Representativeness
+
+Training a ML model with ![:emphasize](biased data) will produce ![:emphasize](biased predictions).
+
+When designing a study and collecting data, pay attention to who you are including in your sample, and who is being left out. 
+
+Critically evaluate the features and labels you're collecting. 
+
+Are they ![:emphasize](equally valid and reliable) for all groups of people? 
+
+Are they accurate and sensitive at assessing the label of interest for everyone?
 
 ---
 class: onecol
@@ -183,9 +220,11 @@ someone should be able to look at your methods and reproduce your model
 
 want to talk about: 
 
-feature engineering
+feature selection and preprocessing/feature engineering
 
 resampling methods (clear separation between train/test)! 
+
+which algorithms, why, and how many?
 
 hyperparameter tuning
 
@@ -195,8 +234,12 @@ variable importance
 
 model comparison
 
+clearly state sample size for each model
+
 ---
-## Writing Results
+## What to Include in Results
+
+
 
 
 ---
