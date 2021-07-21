@@ -59,7 +59,7 @@ print(dfSummary(heart_train), method = 'render')
 heart_recipe <- 
   heart_train %>% 
   recipe(output ~ .) %>%
-  step_num2factor(output, transform = function(x) x + 1, levels = c("low_risk", "high_risk")) %>%
+  step_mutate(output = factor(output, levels = c(0, 1), labels = c("low_risk", "high_risk"))) %>%
   step_normalize(all_numeric_predictors()) %>%
   step_dummy(all_nominal_predictors())
 
@@ -78,8 +78,7 @@ heart_test_baked <-
 heart_control <- trainControl(method = 'repeatedcv',
                               number = 5,
                               repeats = 3,
-                              classProbs = TRUE,
-                              summaryFunction = twoClassSummary)
+                              classProbs = TRUE)
 
 # set ridge tuning grid
 ridgegrid <- expand.grid(alpha = 0, lambda = seq(0, 1, 0.01))
@@ -93,27 +92,23 @@ lassogrid <- expand.grid(alpha = 1, lambda = seq(0, 1, 0.01))
 logfit <- train(heart_recipe, data = heart_train,
                 method = 'glm', 
                 family = "binomial",
-                metric = 'ROC',
                 trControl = heart_control)
 
 ridgefit <- train(heart_recipe, data = heart_train,
                   method = 'glmnet',
                   family = "binomial",
-                  metric = 'ROC',
                   tuneGrid = ridgegrid,
                   trControl = heart_control)
 
 lassofit <- train(heart_recipe, data = heart_train,
                   method = 'glmnet',
                   family = "binomial",
-                  metric = 'ROC',
                   tuneGrid = lassogrid,
                   trControl = heart_control)
 
 enfit <- train(heart_recipe, data = heart_train,
                method = 'glmnet',
                family = "binomial",
-               metric = 'ROC',
                tuneLength = 20,
                trControl = heart_control)
 ```

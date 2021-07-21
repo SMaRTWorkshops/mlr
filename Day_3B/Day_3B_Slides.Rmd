@@ -1,5 +1,5 @@
 ---
-title: '<span style="font-size:48pt;">Decision Trees</span>'
+title: '<span style="font-size:48pt;">Decision Trees and Random Forests </span>'
 subtitle: '.big[🤔 🌴 🍂️ ]'
 author: 'Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series'
 date: 'Lecture 3-B &emsp; &emsp; July 21, 2021'
@@ -73,8 +73,20 @@ class: inverse, center, middle
 # Overview
 
 <style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
 .remark-code {
   border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
 }
 </style>
 
@@ -321,8 +333,7 @@ Both terminal nodes (leaves) are **impure**, as they include people with high an
 
 To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
 
-$Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444$
-$Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375$
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
 ]
 
 .pull-right[
@@ -339,8 +350,31 @@ Both terminal nodes (leaves) are **impure**, as they include people with high an
 
 To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
 
-$Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444$
-$Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375$
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
+
+$Gini_{left} = 0.444$
+
+$Gini_{right} = 0.375$
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('stresstree.png')
+```
+]
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+
+To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
+
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
+
+$Gini_{left} = 0.444$
+
+$Gini_{right} = 0.375$
 
 We then calculate the total Gini index by taking the weighted average of the Gini leaf indices:
 
@@ -384,7 +418,7 @@ include_graphics('familytree.png')
 ---
 ## Choosing the Root Node
 
-Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all  splits. In this case, the lowest Gini index is for age < 14.5 (Gini = 0.343): 
+Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all splits. </br> </br> </br>
 
 .pull-left[
 Stressful Event&emsp; | Family History&emsp; | ![:emphasize](Age)&emsp;&emsp;&emsp; | ![:emphasize](Depression Risk)&emsp;
@@ -398,8 +432,24 @@ No | No | ![:emphasize](38) | ![:emphasize](Low)
 Yes | No | ![:emphasize](46) | ![:emphasize](Low)
 ]
 
---
+---
+## Choosing the Root Node
 
+Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all splits. 
+
+In this case, the lowest Gini index is for age < 14.5 (Gini = 0.343): 
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | ![:emphasize](Age)&emsp;&emsp;&emsp; | ![:emphasize](Depression Risk)&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | ![:emphasize](10) | ![:emphasize](Low) 
+No | No | ![:emphasize](13) | ![:emphasize](Low)
+Yes | Yes | ![:emphasize](16) | ![:emphasize](High)
+Yes | Yes | ![:emphasize](22) | ![:emphasize](High)
+No | Yes | ![:emphasize](30) | ![:emphasize](High) 
+No | No | ![:emphasize](38) | ![:emphasize](Low)
+Yes | No | ![:emphasize](46) | ![:emphasize](Low)
+]
 .pull-right[
 ```{r, echo = FALSE, out.width="90%"}
 include_graphics("agetree.png")
@@ -432,27 +482,6 @@ include_graphics("familytree2.png")
 ---
 class: inverse, center, middle
 # Regression Trees
-
-
----
-## Building a Regression Tree
-
-Similar to classification trees, the goal of regression trees are to partition data into homogeneous groups. The difference is that we're now predicting ![:emphasize](numerical values) at each terminal node (leaf), rather than classes.  
-
---
-
-In growing a regression tree, we start with the entire data set $S$ to find the optimal feature and splitting value that partitions the data into two groups $S_1$ and $S_2$ to minimize the sum of squared errors: 
-
-$$SSE = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2$$
-where
-- $\bar{y}_1$ = mean of training set outcomes in group $S_1$
-- $\bar{y}_2$ = mean of training set outcomes in group $S_2$
-
---
-
-Within each $S_1$ and $S_2$ group, we then repeat this ![:emphasize](recursive partitioning) process until the number of samples within each terminal node falls below some threshold (typically, $n=20$).
-
-The predicted value of the terminal node is then given as the ![:emphasize](mean) of all observations within that node. 
 
 ---
 ## Building a Regression Tree
@@ -558,6 +587,26 @@ ggplot(regtree, aes(x, y)) +
 include_graphics("regtree.png")
 ```
 ]
+
+---
+## Building a Regression Tree
+
+Similar to classification trees, the goal of regression trees are to partition data into homogeneous groups. The difference is that we're now predicting ![:emphasize](numerical values) at each terminal node (leaf), rather than classes.  
+
+--
+
+In growing a regression tree, we start with the entire data set $S$ to find the optimal feature and splitting value that partitions the data into two groups $S_1$ and $S_2$ to minimize the sum of squared errors: 
+
+$$SSE = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2$$
+where
+- $\bar{y}_1$ = mean of training set outcomes in group $S_1$
+- $\bar{y}_2$ = mean of training set outcomes in group $S_2$
+
+--
+
+Within each $S_1$ and $S_2$ group, we then repeat this ![:emphasize](recursive partitioning) process until the number of samples within each terminal node falls below some threshold (typically, $n=20$).
+
+The predicted value of the terminal node is then given as the ![:emphasize](mean) of all observations within that node. 
 
 ---
 ## Comprehension Check 
