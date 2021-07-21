@@ -81,6 +81,55 @@ a {
 
 ---
 class: onecol
+## Roadmap
+
+1. Maximal Margin Classifier 🚶
+
+1. Support Vector Classifier 🏃
+
+1. Support Vector Machine 🚴
+
+1. Applied Example
+
+1. Support Vector Regression
+
+1. Live Coding
+
+1. Hands-on Activity
+
+---
+class: onecol
+## Notices and Disclaimers
+
+The ideas underlying SVM are really *clever* and *interesting*! 😃
+
+--
+
+SVM is also a good algorithm for *smaller*, *messy* datasets!! 😍
+
+--
+
+However, there is a lot of *terminology* and *math* involved... 😱
+
+--
+
+<p style="padding-top:15px;">I will try to shield you from this and give only <b>the necessities</b></p>
+
+- That means there will be some things I need to "hand waive"
+
+- I may also need to skip questions that may confuse others
+
+--
+
+<p style="padding-top:15px;">But you should get a <b>strong intuition</b> and <b>applied knowledge</b></p>
+
+- You could then dive into a longer course or textbook
+
+---
+class: inverse, center, middle
+# SVM Intuitions
+---
+class: onecol
 ## Maximal Margin Classifier
 
 How do we predict the class of a new data point?
