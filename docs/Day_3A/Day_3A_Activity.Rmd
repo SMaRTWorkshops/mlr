@@ -9,6 +9,14 @@ editor_options:
   chunk_output_type: inline
 ---
 
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  df_print = "paged"
+)
+```
+
 # Live Coding 
 Goal: Classify likelihood of having a heart attack based on demographics (age, sex) and health variables (type of chest pain, resting blood pressure, cholesterol, fasting blood sugar, resting electrocardiographic results, maximum heart rate, exercise induced angina, etc.). Compare performance of standard logistic, ridge, lasso, and elastic net models. 
 
@@ -26,7 +34,7 @@ if (!require("pROC")) {install.packages("pROC"); require("pROC")}
 
 ## Read in data 
 ```{r}
-heart <- read.csv("heart.csv")
+heart <- read.csv("https://bit.ly/amlr-heart")
 ```
 
 ## Split into train/test sets 
@@ -148,7 +156,7 @@ roc(predictor = as.numeric(enpred_test), response = heart_test_baked$output)
 ```
 
 
-# Small Group Activity
+# Hands-On Activity
 
 The goal of this activity is to practice a full workflow of using machine learning models (ridge, lasso, and elastic net). 
 
@@ -167,7 +175,7 @@ Overview of this activity:
 7. Compare standard regression vs. elastic net
 
 ## Load data
-Read in the dataset "hcp_memory.csv". 
+Read in the dataset from "https://bit.ly/amlr-memory". 
 
 ```{r}
 
@@ -189,7 +197,7 @@ Normalize (standardize) features in your training and test sets.
 ```
 
 ## Training Methods
-Set your model training and tuning methods using trainControl(). Use 10-fold internal cross-validation (no repeats) and set seeds to use for resampling during the model training process so your results are fully reproducible.
+Set your model training and tuning methods using trainControl(). Use 10-fold internal cross-validation (no repeats).
 
 ```{r}
 
@@ -227,4 +235,87 @@ If you finish the above exercises with time remaining, use your training data to
 
 
 ```
+
+
+# Answer key
+
+<details><summary>Click here to view the answer key to the hands-on activity</summary>
+
+## Load data
+Read in the dataset from "https://bit.ly/amlr-memory". 
+
+```{r}
+memory <- read.csv("https://bit.ly/amlr-memory")
+```
+
+## Split into training and testing datasets
+Your training set should contain 80% of your data; your testing set should contain 20%.
+(remember to set a seed so your results are reproducible!)
+
+```{r}
+index <- createDataPartition(memory$memory_score, p = 0.8, list = FALSE, times = 1)
+memory_train <- memory[index, ]
+memory_test <- memory[-index, ]
+dim(memory_train)
+dim(memory_test)
+```
+
+## Feature Engineering
+Normalize (standardize) features in your training and test sets. 
+
+```{r}
+memory_recipe <- 
+  memory_train %>%
+  recipe(memory_score ~ .) %>% 
+  step_normalize(all_numeric_predictors())
+
+# normalize test dataset too 
+memory_test_baked <-
+  memory_recipe %>%
+  prep(training = memory_train) %>%
+  bake(new_data = memory_test)
+```
+
+## Training Methods
+Set your model training and tuning methods using trainControl(). Use 10-fold internal cross-validation (no repeats).
+
+```{r}
+# set train control
+memory_control <- trainControl(method = 'cv',
+                               number = 10,
+                               summaryFunction = defaultSummary)
+```
+
+## Fit Linear Regression 
+Use train() to fit a linear regression and examine the results of internal cross-validation. Examine variable importance. 
+
+```{r}
+linfit_memory <- train(memory_recipe, data = memory_train,
+                       method = 'lm', 
+                       trControl = memory_control)
+```
+
+## Fit Elastic Net
+Use train() to fit an elastic net model with a tune length of 20, and examine the results of internal cross-validation. Examine the effect of tuning parameters on accuracy and coefficient values, as well as variable importance. 
+
+```{r}
+enfit_memory <- train(memory_recipe, data = memory_train,
+                      method = 'glmnet',
+                      tuneLength = 20,
+                      trControl = memory_control)
+```
+
+## Evaluate Models
+Use the standard linear regression and the elastic net model to predict your held-out test set. 
+Which model does better? Why? 
+
+```{r}
+linpred_test_memory <- predict(linfit_memory, newdata = memory_test)
+enpred_test_memory <- predict(enfit_memory, newdata = memory_test)
+
+postResample(pred = linpred_test_memory, obs = memory_test_baked$memory_score)
+postResample(pred = enpred_test_memory, obs = memory_test_baked$memory_score)
+```
+
+</details>
 
