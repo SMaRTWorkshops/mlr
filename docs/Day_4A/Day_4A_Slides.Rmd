@@ -81,9 +81,58 @@ a {
 
 ---
 class: onecol
-## Maximal Margin Classifier
+## Roadmap
 
-How do we predict the class of a new data point?
+1. Maximal Margin Classifier 🚶
+
+1. Support Vector Classifier 🏃
+
+1. Support Vector Machine 🚴
+
+1. Applied Example
+
+1. Support Vector Regression
+
+1. Live Coding
+
+1. Hands-on Activity
+
+---
+class: onecol
+## Notices and Disclaimers
+
+The ideas underlying SVM are really *clever* and *interesting*! 😃
+
+--
+
+SVM is also a good algorithm for *smaller*, *messy* datasets!! 😍
+
+--
+
+However, there is a lot of *terminology* and *math* involved... 😱
+
+--
+
+<p style="padding-top:15px;">I will try to shield you from this and give only <b>the necessities</b></p>
+
+- That means there will be some things I need to "hand waive"
+
+- I may also need to skip questions with very technical answers
+
+--
+
+<p style="padding-top:15px;">But you should get a <b>strong intuition</b> and <b>applied knowledge</b></p>
+
+- This will prepare you nicely to dive into a longer course on the topic
+
+---
+class: inverse, center, middle
+# SVM Intuitions
+---
+class: onecol
+## A Tale of Two Classes
+
+If this is our training data, how do we **predict the class** (i.e., shape) of new data?
 
 ```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin1.png")
@@ -91,9 +140,9 @@ include_graphics("maxmargin1.png")
 
 ---
 class: onecol
-## Maximal Margin Classifier
+## Drawing a Line in the Sand
 
-With one feature, we need to find a point that separates the classes
+With one feature, we could find a **point** that separates the classes (as higher or lower)
 
 ```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin2.png")
@@ -101,8 +150,8 @@ include_graphics("maxmargin2.png")
 
 ---
 class: onecol
-## Maximal Margin Classifier
-But there are many possible decision points, so which should we use?
+## Analysis Paralysis
+But there are many possible decision points, so **which should we use?**
 
 ```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin3.png")
@@ -110,8 +159,8 @@ include_graphics("maxmargin3.png")
 
 ---
 class: onecol
-## Maximal Margin Classifier
-One option is to find the point with the **maximal margin** between the classes
+## Maximal Margin Classifier (MMC)
+The MMC algorithm finds and uses the point with the **largest** (i.e., maximal) ![:emphasize](margin)
 
 ```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin4.png")
@@ -121,7 +170,7 @@ include_graphics("maxmargin4.png")
 class: onecol
 ## Maximal Margin Classifier
 
-With two features, we need a 2D plot and a decision **line**
+If we have two features, we can extend this idea using a 2D plot and a decision **line**
 
 ```{r, echo=FALSE, out.width='80%'}
 include_graphics("maxmargin5.png")
@@ -131,22 +180,27 @@ include_graphics("maxmargin5.png")
 class: onecol
 ## Maximal Margin Classifier
 
-With three features, we need a 3D plot and a decision **plane**
+If we have three features, we will need a 3D plot and a decision **plane** (i.e., flat surface)
 
-```{r, echo=FALSE, out.width='50%'}
+```{r, echo=FALSE, out.width='45%'}
 include_graphics("3d_plane.gif")
 ```
+
+.footnote[[1] Credit to [Zahra Elhamraoui](https://medium.datadriveninvestor.com/support-vector-machine-svm-algorithm-in-a-fun-easy-way-fc23a008c22) for this visualization.]
 
 ---
 class: onecol
 ## Maximal Margin Classifier
 
-With four or more features, we can't plot it but we need a decision **hyperplane**
+If we have four or more features, we will need a decision **hyperplane**
 
 --
 
 .bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
-**Caution:** You may hurt yourself if you try to imagine what a hyperplane looks like.
+**Caution:** You may hurt yourself if you try to imagine what a hyperplane looks like. 
+.tr.pr4[
+But here is a hint: 🍫✈️
+]
 ]
 
 --
@@ -161,9 +215,9 @@ With four or more features, we can't plot it but we need a decision **hyperplane
 
 --
 
-The hyperplane allows us to **classify new observations** (which side of it do they fall on?)
-
-- Since the dimensions of this space are determined by the features, we are exploring "feature space" and looking for regions occupied by each class
+.pt1[
+We can still **classify new observations**: which side of the hyperplane do they fall on?
+]
 
 ---
 class: onecol
@@ -191,9 +245,9 @@ include_graphics("maxmargin9.png")
 
 ---
 class: onecol
-## Support Vector Classifier
+## Support Vector Classifier (SVC)
 
-The ![:emphasize](Support Vector Classifier) (SVC) innovates by allowing the outlier to be misclassified
+The SVC algorithm is like MMC but it **allows examples to be misclassified** (i.e., wrong)
 
 This will **increase bias** (training errors) but hopefully **decrease variance** (testing errors)
 
@@ -205,9 +259,9 @@ include_graphics("svc1.png")
 class: onecol
 ## Support Vector Classifier
 
-SVCs also work better than MMCs when the classes are **not perfectly separable**
+SVCs also enable a model to be trained when the classes are **not perfectly separable**
 
-An MMC's hyperplane is never going to separate these classes without errors
+A straight line is never going to separate these classes without errors (sorry MMC...)
 
 ```{r, echo=FALSE, out.width='80%'}
 include_graphics("svc2.png")
@@ -231,21 +285,21 @@ class: onecol
 
 When points are on the wrong side of the margin, they are called "violations"
 
-A **soft margin** allows violations, whereas a **hard margin** does not (as in MMC)
+A **softer margin** allows more violations, whereas a **harder margin** allows fewer
 
-SVCs have a hyperparameter $C$ that controls margin "softness" on a continuum
+SVCs have a hyperparameter $C$ that controls how soft vs. hard the margin is
 
 --
 
-<p style="padding-top:10px;">This hyperparameter controls the number and magnitude of violations allowed</p>
-
-- A **lower $C$ value** makes the margin harder (allows fewer violations)
+- A **lower $C$ value** makes the margin harder (allows fewer violations)<sup>1</sup>
   
   As a result, the model has **lower bias** but is more likely to overfit for higher variance
 
 - A **higher $C$ value** makes the margin softer (allows more violations)
 
   As a result, the model has more bias but is less likely to overfit for **lower variance**
+
+.footnote[[1] If you set `\\(C=0\\)` (i.e., a fully hard margin) SVC will allow no violations  and behave the same as MMC.]
 
 ---
 class: onecol
@@ -286,57 +340,91 @@ include_graphics("svm3.png")
 ---
 class: onecol
 ## Support Vector Machine
+
+Here is a more complex example of a nonliner (and non polynomial) expansion
+
+```{r, echo=FALSE, out.width='75%'}
+include_graphics("svm4.png")
+```
+
+.footnote[[1] Credit to [Erik Kim](https://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html) for this example and visualization.]
+
+---
+class: onecol
+## Support Vector Machine
+
+And here is the hyperplane (linear in 3D but nonlinear when "projected" back in 2D)
+
+```{r, echo=FALSE, out.width='75%'}
+include_graphics("svm5.png")
+```
+
+.footnote[[1] Credit to [Erik Kim](https://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html) for this example and visualization.]
+
+---
+class: onecol
+## Support Vector Machine
 The ![:emphasize](Support Vector Machine) (SVM) allows us to efficiently enlarge the feature space
 
 - Part of what makes SVMs efficient is they **only consider the support vectors**
 
 - They also use **kernel functions** to quantify the similarity of pairs of support vectors<sup>1</sup>
 
+.footnote[[1] These similarity estimates are used to efficiently find the optimal hyperplane but that process is complex.]
+
+--
+
 <p style="padding-top:15px;">The SVC can actually be considered a simple version of the SVM with a <b>linear kernel</b></p>
 
 - A linear kernel essentially quantifies similarity using the Pearson correlation
 
-$$K(x_i, x_{i'}) = \sum_{j=1}^p x_{ij}x_{i'j}$$
+$$k(x, x') = \langle x, x'\rangle$$
 
-.footnote[[1] These similarity estimates are used to efficiently find the optimal hyperplane but that process is complex.]
+--
+
+<p style="padding-top:15px;">Linear kernels are efficient but <b>nonlinear kernels</b> may provide better performance</b></p>
+
 
 ---
+exclude: true
 class: onecol
 ## Support Vector Machine
 
 It is common to also use **nonlinear** kernels, such as the ![:emphasize](polynomial kernel)
 
-$$K(x_i, x_{i'}) = (1 + \sum_{j=1}^p x_{ij} x_{i'j})^d$$
+$$k(x, x')=(\text{scale} \cdot \langle x, x' \rangle + \text{offset})^\text{degree}$$
 
-With larger values of $d$, the decision boundary can become more flexible/complex
+With larger values of $\text{degree}$, the decision boundary can become more complex
 
-- You are essentially adding polynomial expansions of degree $d$ to each predictor
+- You are essentially adding polynomial expansions of $\text{degree}$ to each predictor
 
 - You have expanded the feature space and may now have linear separation
 
 - This is the same idea we just used in fitting a hyperplane in the $x\text{-by-}x^2$ space!
 
-.footnote[[1] When `\\(d=1\\)`, the polynomial kernel reduces to the linear kernel and SVM becomes SVC again.]
+If you center or normalize all your predictors, you can drop the $\text{offset}$ term
+
+.footnote[[1] When `\\(\text{degree}=1\\)`, the polynomial kernel reduces to the linear kernel and SVM becomes SVC again.]
 
 ---
 class: onecol
 ## Support Vector Machine
 
-Perhaps the most common kernel is the ![:emphasize](radial basis function) (RBF) or radial kernel
+Perhaps the most common nonlinear kernel is the ![:emphasize](radial basis function) (RBF)
 
-$$K(x_i,x_{i'})=\exp\left(-\gamma\sum_{j=1}^p(x_{ij}-x_{i'j})^2\right)$$
+$$k(x, x') = \exp\left(-\sigma \|x-y\|^2\right)$$
 
 --
 
-The intuition here is that similarity is weighted by how close the observations are
+The intuition here is that similarity is weighted by how *close* the observations are
 
 - Only support vectors near new observations influence classification strongly
 
-The RBF kernel actually computes similarity between points in *infinite* dimensions<sup>1</sup>
+As the $\sigma$ hyperparameter increases, the more nonlinear, local, and complex fit becomes (more complex)
 
-As the $\gamma$ hyperparameter increases, the more nonlinear and complex fit becomes
+The RBF kernel actually computes similarity between points in *infinite* dimensions
 
-.footnote[[1] This is part of why RBF is so popular: who needs more than infinite dimensions?!]
+.footnote[[1] Note that `\\(\sigma\\)` is also sometimes called `\\(\gamma\\)` or the "scale" hyperparameter.]
 
 ---
 ## Support vector regression

@@ -89,8 +89,20 @@ class: inverse, center, middle
 # Overview
 
 <style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
 .remark-code {
   border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
 }
 </style>
 
@@ -156,7 +168,7 @@ Nonlinear *variables* (e.g., $x_1^2$) can still be included in linear regression
 In ordinary least squares regression, the parameters (e.g., $b_1$, $b_2$, etc.) are estimated to ![:emphasize](minimize model bias at the expense of increasing model variance).
 
 </br>
-```{r complexity, echo=FALSE, out.width="90%"}
+```{r complexity, echo=FALSE, out.width="90%", fig.showtext = TRUE}
 set.seed(2021)
 signal <- function(x) {sin(2*pi*x)}
 x_linspace <- seq(0, 1, by = 0.02)
@@ -284,7 +296,7 @@ Thus, regularization models can simultaneously reduce overfitting and perform fe
 ## Comprehension check
 .pull-left[
 ### Question 1
-**Determine if each of the following models are linear or nonlinear.**
+**Determine which of the following models are nonlinear.**
 
 a) $y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \epsilon$
 
@@ -345,7 +357,7 @@ Whereas OLS regression minimizes the difference between the observed and predict
 
 Thus, parameter estimates in ridge regression are only able to become large if there is a proportional reduction in $SSE_{L2}$. 
 
-The $\lambda$ parameter is a ![:emphasize](hyperparameter) controlling the degree of regularization that ranges from [0, inf].
+The $\lambda$ parameter is a ![:emphasize](hyperparameter) controlling the degree of regularization that ranges from [0, inf]. Higher values of $\lambda$ will shrink parameters closer to zero and 
 
 At higher values of $\lambda$, parameters will be shrunk closer to zero.
 
@@ -369,7 +381,9 @@ include_graphics("hyperparameter_tuning2.png")
 ---
 ## Dataset 
 
-Today, we'll work with a simulated dataset examining predictors of eating disorder severity<sup>1</sup>. Simulated variables include  theoretically *related* and theoretically *unrelated* to eating disorders severity:
+Today, we'll work with a simulated dataset of 500 'people' examining predictors of eating disorder severity<sup>1</sup>. Simulated variables include  theoretically *related* and theoretically *unrelated* to eating disorders severity:
+
+--
 
 .pull-left[
 - Emotion regulation
@@ -384,6 +398,8 @@ Today, we'll work with a simulated dataset examining predictors of eating disord
 - Length of time being in treatment
 - Perfectionism
 ]
+
+--
 
 .pull-right[
 - Temperature that day
@@ -464,13 +480,14 @@ for (i in 1:ncol(dat1)){
 cor(as.data.frame(dat1))
 
 EDsim <- as.data.frame(dat1)
-varnames <- c("ED_severity", "ED_diagnosis", 
+EDsim <- EDsim[, -2]
+varnames <- c("ED_severity", 
               "emo_reg", "depression", "impulsivity", "self_crit", "anxiety",
               "race", "age", "family_history", "prior_treatment", "perfectionism",
               "day_temperature", "rainfall", "num_siblings", "num_cellphones", "time_news", "time_tv", "num_pets",
               "treatment_length")
 names(EDsim) <- varnames
-EDsim <- EDsim %>% mutate(ED_diagnosis = factor(ED_diagnosis, labels = c("no_ED", "ED")), race = as.factor(floor(race)), age = age + 14, num_siblings = floor(num_siblings), num_cellphones = floor(num_cellphones), num_pets = floor(num_pets))
+EDsim <- EDsim %>% dplyr::mutate(race = as.factor(floor(race)), age = age + 14, num_siblings = floor(num_siblings), num_cellphones = floor(num_cellphones), num_pets = floor(num_pets)) 
 ```
 **Step 0: Split into a training (including cross-validation) and held-out test set.**
 
@@ -478,7 +495,7 @@ EDsim <- EDsim %>% mutate(ED_diagnosis = factor(ED_diagnosis, labels = c("no_ED"
 # use caret for simple data split
 library(caret)
 set.seed(2021)
-trainIndex <- createDataPartition(EDsim$ED_severity, p = 0.8, list = FALSE, times = 1)
+trainIndex <- createDataPartition(EDsim$ED_severity, p = 0.8, list = FALSE)
 EDsim_train <- EDsim[trainIndex, ]
 EDsim_test <- EDsim[-trainIndex, ]
 ```
@@ -524,7 +541,6 @@ Normalizing (standardizing) features before regularization is important to ensur
 EDsim_recipe <- 
   EDsim_train %>% 
   recipe(ED_severity ~ .) %>%
-  step_rm(ED_diagnosis) %>%
   step_normalize(all_numeric_predictors()) %>% #<<
   step_dummy(all_nominal_predictors()) 
 ```
@@ -541,9 +557,7 @@ EDsim_recipe <-
 ```{r}
 EDsim_control <- trainControl(method = 'repeatedcv',
                               number = 10,
-                              repeats = 3, 
-                              classProbs = FALSE,
-                              summaryFunction = defaultSummary)
+                              repeats = 3)
 ```
 
 <br/>
@@ -551,7 +565,6 @@ This sets our up training procedure with the following specifications:
 
 - 10-fold cross-validation, repeated 3 times
 - Other commonly used options include `method = 'cv'` for a single (non-repeated) cross-validation and `method = 'boot'` for bootstrapping
-- For classification, set `classProbs = TRUE` and `summaryFunction = twoClassSummary` or `summaryFunction = prSummary`
 
 ---
 ## Ridge Regression in R 
@@ -560,25 +573,51 @@ This sets our up training procedure with the following specifications:
 
 There are several ways to set a tuning grid in `caret`. 
 
-The first option is to do nothing, as `caret` will automatically create a tuning grid if one is not specified. By default, `caret::train()` creates a tuning grid of size $3^P$, where $P$is the number of tuning parameters. 
+The first option is to do nothing, as `caret` will automatically create a tuning grid if one is not specified. By default, `caret::train()` creates a tuning grid of size $3^P$, where $P$ is the number of tuning parameters. 
 
 --
 
+</br> 
 The second option is to specify the length of the tuning grid in the `caret::train()` function: 
 
 ```{r, eval = FALSE}
 train(Y ~ X, method = 'glmnet', tuneLength = 10)
 ```
 
---
+---
+## Ridge Regression in R 
+
+**Step 4: Set a tuning grid** (optional)
 
 The third option is to specify the grid yourself to call in `caret::train()`:
 
 ```{r}
-ridgegrid <- expand.grid(alpha = 0, lambda = seq(0, 1, 0.01))
+ridgegrid <- c(0, 0.2, 0.4, 0.6, 0.8, 1.0)
+ridgegrid
 ```
 
-This option is useful for training ridge regression models within the `glmnet` method in `caret`, which allows for nice data visualizations. However, `caret` will automatically create a grid of both $\alpha$ and $\lambda$ values for `method = 'glmnet'`, but we can avoid that by setting the tuning grid ourselves. 
+--
+
+The `seq()` function is a useful shortcut for creating a sequence of numbers:
+
+```{r}
+ridgegrid <- seq(0, 1, 0.2)
+ridgegrid
+```
+
+---
+## Ridge Regression in R 
+
+**Step 4: Set a tuning grid** (optional)
+
+When using `method = glmnet` in {caret}, we need to create a grid of $\lambda$ *and* $\alpha$ values, holding $\alpha$ constant at 0 for ridge regression. The `expand.grid()` function is useful for doing so. 
+
+.scroll-output[
+```{r}
+ridgegrid <- expand.grid(alpha = 0, lambda = seq(0, 1, 0.01))
+ridgegrid
+```
+]
 
 ---
 ## Ridge Regression in R
@@ -602,17 +641,6 @@ ridgefit
 ]
 
 ---
-## Ridge Regression in R 
-
-Examine results of internal cross-validation: 
-
-.scroll-output[
-```{r}
-ridgefit$results
-```
-]
-
----
 ## Ridge Regression in R
 
 **Step 6: Predict on held-out test set**
@@ -631,13 +659,13 @@ postResample(pred = ridgepred_test, obs = EDsim_test_baked$ED_severity)
 ---
 ## Ridge Regression in R
 
-Examine accuracy as a function of $\lambda$. 
+Accuracy as a function of $\lambda$: as $\lambda$ increases to a certain point there's a small (nearly undetectable) drop in RMSE, but then RMSE starts increasing past a certain point.
 
 ```{r, eval = FALSE}
 ggplot(ridgefit)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, out.width="95%"}
 ggplot(ridgefit) +
   theme_xaringan(text_font_size = 14, title_font_size = 18) +
   theme(panel.grid.minor = element_blank(), panel.background = element_rect(fill = "white"))
@@ -646,7 +674,7 @@ ggplot(ridgefit) +
 ---
 ## Ridge Regression in R
 
-Examine coefficients as a function of $\lambda$.
+Coefficients as a function of $\lambda$: all coefficients shrink towards 0 as $\lambda$ increases, but never actually reach 0. 
 
 ```{r}
 library(coefplot)
@@ -656,7 +684,7 @@ coefpath(ridgefit$finalModel)
 ---
 ## Ridge Regression in R
 
-Examine variable importance.
+Variable importance: highly correlated predictors (e.g., self-criticism, depression, emotion regulation) have similar importance, and all predictors (regardless of actual relationship to eating disorder severity) remain in the model. 
 
 ```{r, eval = FALSE}
 ggplot(varImp(ridgefit, scale = FALSE))
@@ -730,17 +758,7 @@ lassofit
 ]
 
 ---
-## Lasso Regression in R 
-
-Examine results of internal cross-validation: 
-
-.scroll-output[
-```{r}
-lassofit$results
-```
-]
-
---
+## Lasso Regression in R
 
 **Predict on held-out test set**
 
@@ -752,6 +770,8 @@ postResample(pred = lassopred_test, obs = EDsim_test_baked$ED_severity)
 ---
 ## Lasso Regression in R
 
+As $\lambda$ increases to a certain point there's a small drop in RMSE, but then RMSE starts increasing past a certain point.
+ 
 ```{r, eval = FALSE}
 ggplot(lassofit) 
 ```
@@ -765,12 +785,17 @@ ggplot(lassofit) +
 ---
 ## Lasso Regression in R
 
+All coefficients shrink towards 0 as $\lambda$ increases, with some actually becomming 0.
+
 ```{r}
 coefpath(lassofit$finalModel)
 ```
 
 ---
 ## Lasso Regression in R
+
+Variable importance: Lasso has picked some highly correlated predictors to stay in the model (e.g., self-criticism) and set others (e.g., depression) to zero. Unimportant predictors have been removed from the model.
+
 
 ```{r, eval = FALSE}
 ggplot(varImp(lassofit, scale = FALSE))
@@ -844,17 +869,7 @@ enfit
 ]
 
 ---
-## Elastic Net in R 
-
-Examine results of internal cross-validation: 
-
-.scroll-output[
-```{r}
-enfit$results
-```
-]
-
---
+## Elastic Net in R
 
 **Predict on held-out test set**
 
@@ -929,16 +944,14 @@ class: inverse, center, middle
 # Live Coding
 
 ---
+class:onecol
+
 ## Live Coding Activity
 
 **Live Coding**: I will walk through examples of ridge, lasso, and elastic net for classification in RStudio. 
 
-- You can follow along in your own RStudio (easiest with 1 large or 2+ monitors)
-- Or you can download `Day_3A_Activity.Rmd` and follow along
-- In either case, please download the `heart.csv` and `hcp_memory.csv` files. 
-
 .footnote[
-All files are on the workshop OSF page: https://osf.io/3qhc8/. 
+All files are on the course website: https://pittmethods.github.io/appliedml/. 
 ]
 
 --
