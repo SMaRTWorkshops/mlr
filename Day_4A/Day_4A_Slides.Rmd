@@ -132,7 +132,7 @@ class: inverse, center, middle
 class: onecol
 ## A Tale of Two Classes
 
-If this is our training data, how do we **predict the class** (i.e., shape) of new data?
+If this is our training data, how do we **predict the class** of new data?
 
 ```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin1.png")
@@ -225,7 +225,7 @@ class: onecol
 
 Only the observations that define the margin, called ![:emphasize](support vectors), are used
 
-Thus, it (and related methods) focus on the most ambiguous/difficult examples
+Because it only uses a subset of data anyway, MMC does well with smaller datasets
 
 ```{r, echo=FALSE, out.width='80%'}
 include_graphics("maxmargin8.png")
@@ -293,11 +293,11 @@ SVCs have a hyperparameter $C$ that controls how soft vs. hard the margin is
 
 - A **lower $C$ value** makes the margin harder (allows fewer violations)<sup>1</sup>
   
-  As a result, the model has **lower bias** but is more likely to overfit for higher variance
+  As a result, the model has **lower bias** and more flexibility but may overfit
 
 - A **higher $C$ value** makes the margin softer (allows more violations)
 
-  As a result, the model has more bias but is less likely to overfit for **lower variance**
+  As a result, the model has less flexibility but may also have **lower variance**
 
 .footnote[[1] If you set `\\(C=0\\)` (i.e., a fully hard margin) SVC will allow no violations  and behave the same as MMC.]
 
@@ -420,17 +420,26 @@ The intuition here is that similarity is weighted by how *close* the observation
 
 - Only support vectors near new observations influence classification strongly
 
-As the $\sigma$ hyperparameter increases, the more nonlinear, local, and complex fit becomes (more complex)
+- As the $\sigma$ hyperparameter<sup>1</sup> increases, the more *local* and complex fit becomes
 
-The RBF kernel actually computes similarity between points in *infinite* dimensions
+The RBF kernel computes similarity between points in *infinite* dimensions 🤯
 
-.footnote[[1] Note that `\\(\sigma\\)` is also sometimes called `\\(\gamma\\)` or the "scale" hyperparameter.]
+- It is considered an ideal "general purpose" nonlinear kernel<sup>2</sup> 
+
+.footnote[
+[1] Note that $\sigma$ is also sometimes called $\gamma$ or the "scale" hyperparameter.<br />
+[2] Other nonlinear kernels are popular for special purposes and in specialized subfields.
+]
 
 ---
 ## Support vector regression
 
+
 ---
 ## Applied Example
+
+
+
 
 ---
 ## Live Coding Activity
