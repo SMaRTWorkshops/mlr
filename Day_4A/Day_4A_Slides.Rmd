@@ -81,45 +81,45 @@ a {
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 
 How do we predict the class of a new data point?
 
-```{r, echo=FALSE, out.width='80%'}
+```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin1.png")
 ```
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 
 With one feature, we need to find a point that separates the classes
 
-```{r, echo=FALSE, out.width='80%'}
+```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin2.png")
 ```
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 But there are many possible decision points, so which should we use?
 
-```{r, echo=FALSE, out.width='80%'}
+```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin3.png")
 ```
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 One option is to find the point with the **maximal margin** between the classes
 
-```{r, echo=FALSE, out.width='80%'}
+```{r, echo=FALSE, out.width='100%'}
 include_graphics("maxmargin4.png")
 ```
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 
 With two features, we need a 2D plot and a decision **line**
 
@@ -129,7 +129,7 @@ include_graphics("maxmargin5.png")
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 
 With three features, we need a 3D plot and a decision **plane**
 
@@ -139,7 +139,7 @@ include_graphics("3d_plane.gif")
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 
 With four or more features, we can't plot it but we need a decision **hyperplane**
 
@@ -152,7 +152,7 @@ With four or more features, we can't plot it but we need a decision **hyperplane
 --
 
 .pt1[
-Margins still exist in higher-dimensional space and we still want to maximize them
+**Margins still exist** in higher-dimensional space and we still want to maximize them
 ]
 
 - Our goal is thus to locate the class-separating hyperplane with the largest margin
@@ -161,80 +161,185 @@ Margins still exist in higher-dimensional space and we still want to maximize th
 
 --
 
-Once we have the hyperplane, new points are classified by which side of it they fall on
+The hyperplane allows us to **classify new observations** (which side of it do they fall on?)
 
 - Since the dimensions of this space are determined by the features, we are exploring "feature space" and looking for regions occupied by each class
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 
-The maximal margin classifier doesn't actually use all the data points
+Only the observations that define the margin, called ![:emphasize](support vectors), are used
 
-It only uses the subset of points that define the margin, called ![:emphasize](support vectors)
+Thus, it (and related methods) focus on the most ambiguous/difficult examples
 
-In this way, it focuses on the most ambiguous/difficult examples
-
-```{r, echo=FALSE, out.width='67%'}
+```{r, echo=FALSE, out.width='80%'}
 include_graphics("maxmargin8.png")
 ```
 
 ---
 class: onecol
-## Maximal margin classifier
+## Maximal Margin Classifier
 
-This means that outliers close to the other class can be very problematic
+This means that **outliers can have an outsized impact** on what is learned
 
 For instance, this margin is likely to misclassify examples in new data
 
-```{r, echo=FALSE, out.width='67%'}
+```{r, echo=FALSE, out.width='80%'}
 include_graphics("maxmargin9.png")
 ```
 
 ---
 class: onecol
-## Support vector classifier
+## Support Vector Classifier
 
-To improve test set performance, we should actually ignore the outlier
+The ![:emphasize](Support Vector Classifier) (SVC) innovates by allowing the outlier to be misclassified
 
-This will result in some training errors (bias) but help generalization (variance)
+This will **increase bias** (training errors) but hopefully **decrease variance** (testing errors)
 
-This approach is called the **support vector classifier** (one step towards an SVM)
-
-```{r, echo=FALSE, out.width='67%'}
+```{r, echo=FALSE, out.width='80%'}
 include_graphics("svc1.png")
 ```
 
 ---
 class: onecol
-## Support vector classifier
+## Support Vector Classifier
 
-The main question then becomes... which potential support vectors should be ignored?
+SVCs also work better than MMCs when the classes are **not perfectly separable**
 
-In response, machine learning turns to its favorite answer... cross-validation and tuning!
+An MMC's hyperplane is never going to separate these classes without errors
 
-We can try classifiers with different support vectors and compare them
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("svc2.png")
+```
 
 ---
-## Support vector machine
+class: onecol
+## Support Vector Classifier
+
+But if we allow a few errors and points within the margin...
+
+...we may be able to find a hyperplane that generalizes pretty well
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("svc3.png")
+```
+
+---
+class: onecol
+## Support Vector Classifier
+
+When points are on the wrong side of the margin, they are called "violations"
+
+A **soft margin** allows violations, whereas a **hard margin** does not (as in MMC)
+
+SVCs have a hyperparameter $C$ that controls margin "softness" on a continuum
+
+--
+
+<p style="padding-top:10px;">This hyperparameter controls the number and magnitude of violations allowed</p>
+
+- A **lower $C$ value** makes the margin harder (allows fewer violations)
+  
+  As a result, the model has **lower bias** but is more likely to overfit for higher variance
+
+- A **higher $C$ value** makes the margin softer (allows more violations)
+
+  As a result, the model has more bias but is less likely to overfit for **lower variance**
+
+---
+class: onecol
+## Support Vector Machine
+
+So far, MMC and SVCs have both used linear (e.g., flat) hyperplanes
+
+But there are many times when the classes are not **linearly separable**
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("svm1.png")
+```
+
+.footnote[[1] Good luck separating these classes with a single decision point...]
+
+---
+class: onecol
+## Support Vector Machine
+
+But if we enlarge the feature space, the classes might then become linearly separable
+
+There are many ways to do this enlarging, but one is to add polynomial expansions
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("svm2.png")
+```
+
+---
+class: onecol
+## Support Vector Machine
+
+The classes are now linearly separable in this new enlarged feature space!
+
+```{r, echo=FALSE, out.width='80%'}
+include_graphics("svm3.png")
+```
+
+---
+class: onecol
+## Support Vector Machine
+The ![:emphasize](Support Vector Machine) (SVM) allows us to efficiently enlarge the feature space
+
+- Part of what makes SVMs efficient is they **only consider the support vectors**
+
+- They also use **kernel functions** to quantify the similarity of pairs of support vectors<sup>1</sup>
+
+<p style="padding-top:15px;">The SVC can actually be considered a simple version of the SVM with a <b>linear kernel</b></p>
+
+- A linear kernel essentially quantifies similarity using the Pearson correlation
+
+$$K(x_i, x_{i'}) = \sum_{j=1}^p x_{ij}x_{i'j}$$
+
+.footnote[[1] These similarity estimates are used to efficiently find the optimal hyperplane but that process is complex.]
+
+---
+class: onecol
+## Support Vector Machine
+
+It is common to also use **nonlinear** kernels, such as the ![:emphasize](polynomial kernel)
+
+$$K(x_i, x_{i'}) = (1 + \sum_{j=1}^p x_{ij} x_{i'j})^d$$
+
+With larger values of $d$, the decision boundary can become more flexible/complex
+
+- You are essentially adding polynomial expansions of degree $d$ to each predictor
+
+- You have expanded the feature space and may now have linear separation
+
+- This is the same idea we just used in fitting a hyperplane in the $x\text{-by-}x^2$ space!
+
+.footnote[[1] When `\\(d=1\\)`, the polynomial kernel reduces to the linear kernel and SVM becomes SVC again.]
+
+---
+class: onecol
+## Support Vector Machine
+
+Perhaps the most common kernel is the ![:emphasize](radial basis function) (RBF) or radial kernel
+
+$$K(x_i,x_{i'})=\exp\left(-\gamma\sum_{j=1}^p(x_{ij}-x_{i'j})^2\right)$$
+
+--
+
+The intuition here is that similarity is weighted by how close the observations are
+
+- Only support vectors near new observations influence classification strongly
+
+The RBF kernel actually computes similarity between points in *infinite* dimensions<sup>1</sup>
+
+As the $\gamma$ hyperparameter increases, the more nonlinear and complex fit becomes
+
+.footnote[[1] This is part of why RBF is so popular: who needs more than infinite dimensions?!]
 
 ---
 ## Support vector regression
-
----
-# Kernels
-
----
-## Overview of kernerls
-
----
-## Polynomial kernel
-
----
-## Radial basis function (RBF) kernel
-
----
-## Hyperparameters for SVM
 
 ---
 ## Applied Example
