@@ -1,5 +1,5 @@
 ---
-title: '<span style="font-size:48pt;">Decision Trees</span>'
+title: '<span style="font-size:48pt;">Decision Trees and Random Forests </span>'
 subtitle: '.big[🤔 🌴 🍂️ ]'
 author: 'Applied Machine Learning in R </br> Pittsburgh Summer Methodology Series'
 date: 'Lecture 3-B &emsp; &emsp; July 21, 2021'
@@ -73,8 +73,20 @@ class: inverse, center, middle
 # Overview
 
 <style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
 .remark-code {
   border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
 }
 </style>
 
@@ -321,8 +333,7 @@ Both terminal nodes (leaves) are **impure**, as they include people with high an
 
 To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
 
-$Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444$
-$Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375$
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
 ]
 
 .pull-right[
@@ -339,8 +350,31 @@ Both terminal nodes (leaves) are **impure**, as they include people with high an
 
 To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
 
-$Gini_{left} = 1 - P(High)^2 - P (Low)^2 = 0.444$
-$Gini_{right} = 1 - P(High)^2 - P (Low)^2 = 0.375$
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
+
+$Gini_{left} = 0.444$
+
+$Gini_{right} = 0.375$
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('stresstree.png')
+```
+]
+
+---
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes (leaves) are **impure**, as they include people with high and low depression risk. 
+
+To quantify this impurity, we first calculate the **Gini impurity** of each leaf: 
+
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
+
+$Gini_{left} = 0.444$
+
+$Gini_{right} = 0.375$
 
 We then calculate the total Gini index by taking the weighted average of the Gini leaf indices:
 
@@ -384,7 +418,7 @@ include_graphics('familytree.png')
 ---
 ## Choosing the Root Node
 
-Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all  splits. In this case, the lowest Gini index is for age < 14.5 (Gini = 0.343): 
+Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all splits. </br> </br> </br>
 
 .pull-left[
 Stressful Event&emsp; | Family History&emsp; | ![:emphasize](Age)&emsp;&emsp;&emsp; | ![:emphasize](Depression Risk)&emsp;
@@ -398,8 +432,24 @@ No | No | ![:emphasize](38) | ![:emphasize](Low)
 Yes | No | ![:emphasize](46) | ![:emphasize](Low)
 ]
 
---
+---
+## Choosing the Root Node
 
+Calculating the Gini index for **numerical features** is slightly more complicated. We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index for all splits. 
+
+In this case, the lowest Gini index is for age < 14.5 (Gini = 0.343): 
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | ![:emphasize](Age)&emsp;&emsp;&emsp; | ![:emphasize](Depression Risk)&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | ![:emphasize](10) | ![:emphasize](Low) 
+No | No | ![:emphasize](13) | ![:emphasize](Low)
+Yes | Yes | ![:emphasize](16) | ![:emphasize](High)
+Yes | Yes | ![:emphasize](22) | ![:emphasize](High)
+No | Yes | ![:emphasize](30) | ![:emphasize](High) 
+No | No | ![:emphasize](38) | ![:emphasize](Low)
+Yes | No | ![:emphasize](46) | ![:emphasize](Low)
+]
 .pull-right[
 ```{r, echo = FALSE, out.width="90%"}
 include_graphics("agetree.png")
@@ -432,27 +482,6 @@ include_graphics("familytree2.png")
 ---
 class: inverse, center, middle
 # Regression Trees
-
-
----
-## Building a Regression Tree
-
-Similar to classification trees, the goal of regression trees are to partition data into homogeneous groups. The difference is that we're now predicting ![:emphasize](numerical values) at each terminal node (leaf), rather than classes.  
-
---
-
-In growing a regression tree, we start with the entire data set $S$ to find the optimal feature and splitting value that partitions the data into two groups $S_1$ and $S_2$ to minimize the sum of squared errors: 
-
-$$SSE = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2$$
-where
-- $\bar{y}_1$ = mean of training set outcomes in group $S_1$
-- $\bar{y}_2$ = mean of training set outcomes in group $S_2$
-
---
-
-Within each $S_1$ and $S_2$ group, we then repeat this ![:emphasize](recursive partitioning) process until the number of samples within each terminal node falls below some threshold (typically, $n=20$).
-
-The predicted value of the terminal node is then given as the ![:emphasize](mean) of all observations within that node. 
 
 ---
 ## Building a Regression Tree
@@ -560,6 +589,26 @@ include_graphics("regtree.png")
 ]
 
 ---
+## Building a Regression Tree
+
+Similar to classification trees, the goal of regression trees are to partition data into homogeneous groups. The difference is that we're now predicting ![:emphasize](numerical values) at each terminal node (leaf), rather than classes.  
+
+--
+
+In growing a regression tree, we start with the entire data set $S$ to find the optimal feature and splitting value that partitions the data into two groups $S_1$ and $S_2$ to minimize the sum of squared errors: 
+
+$$SSE = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2$$
+where
+- $\bar{y}_1$ = mean of training set outcomes in group $S_1$
+- $\bar{y}_2$ = mean of training set outcomes in group $S_2$
+
+--
+
+Within each $S_1$ and $S_2$ group, we then repeat this ![:emphasize](recursive partitioning) process until the number of samples within each terminal node falls below some threshold (typically, $n=20$).
+
+The predicted value of the terminal node is then given as the ![:emphasize](mean) of all observations within that node. 
+
+---
 ## Comprehension Check 
 
 <span style="font-size:24px;">**Let's say we continued this recursive partioning process until we were left only with pure nodes (classification tree) or minimal SSE (regression tree). </br> </br> What are some problems that could arise?**</span>
@@ -642,7 +691,7 @@ While stopping criteria prevent us from overfitting a full tree,
 ```{r}
 heart <- read.csv("heart.csv")
 set.seed(2021)
-trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE, times = 1)
+trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE)
 heart_train <- heart[trainIndex, ]
 heart_test <- heart[-trainIndex, ]
 
@@ -743,14 +792,47 @@ include_graphics("randomforest.png")
 .right-column[
 The goal of random forests is to combine the simplicity of a single decision tree with greater model **flexibility**. 
 
-Random forests use **bootstrapped aggregation** (i.e., ![:emphasize](bagging)) to combine predictions from multiple decision trees together. 
+We do this by building **multiple decision trees** and aggregating their predictions together to make one final prediction. 
 
-Random forests also use methods to **decorrelate** trees for more reliable and less variable predictions.
+This is called an **ensemble method**. 
 
-Taken together, this **ensemble method** allows for greater **predictive accuracy** in new datasets than any single classification or regression tree. 
+By using multiple trees (rather than just one), we can achieve greater **predictive accuracy** in new datasets.
 
 However, this comes at the cost of **lower interpretability**.
 ]
+
+---
+## Random Forests
+
+Random forests use **bootstrapped aggregation** (i.e., ![:emphasize](bagging)) to combine predictions from multiple decision trees together. Each tree is fit with a bootstrapped dataset and then predictions are aggregated. 
+
+</br>
+
+```{r, echo = FALSE, out.width = "70%"}
+include_graphics("bagging.png")
+```
+
+---
+## Random Forests
+
+Random forests also use methods to **decorrelate** trees for more reliable and less variable predictions. 
+
+```{r, echo = FALSE, out.width = "50%"}
+include_graphics("decorrelate_1.png")
+```
+
+---
+## Random Forests
+
+Random forests also use methods to **decorrelate** trees for more reliable and less variable predictions. 
+
+```{r, echo = FALSE, out.width = "50%"}
+include_graphics("decorrelate_2.png")
+```
+
+--
+
+The number of *m* features chosen at each split is the $m_{try}$ hyperparameter. We use internal cross-validation to tune for the optimal $m_{try}$.
 
 ---
 ## Building a Random Forest
@@ -845,27 +927,45 @@ include_graphics("manytrees.png")
 ```
 
 ---
-## Random Forests 
+## Building a Random Forest
 
-**Hyperparameter Tuning**: We can tune the hyperparameter `mtry` to find the ![:emphasize](optional number of random features) to select at each split using `method = rf` in {caret}.
-
---
-
-**Evaluation**: Evaluate accuracy of our random forest based on the proportion of ![:emphasize](out-of-bag) samples that were correctly classified. 
+**Step 4**: Evaluate accuracy based on the proportion of ![:emphasize](out-of-bag) samples that were correctly classified. 
 
 --
 
-**Prediction**: When making predictions for new data, use the outcome with the ![:emphasize](most votes) from all trees. 
+These were the two observations from our toy dataset that were **not** selected for first the bootstrapped dataset. We can run these ![:emphasize](out-of-bag) observations through **all** the trees that were built without it, and see whether they were correctly classified.
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+Yes | No | 46 | Low
+]
 
 --
 
-**Summary**: By only using a ![:emphasize](random subset) of features at each decision tree split, our trees are ![:emphasize](decorrelated). 
+.pull-right[
+```{r, echo = FALSE}
+include_graphics("manytrees.png")
+```
+]
+
+--
+
+We do this for all the other out-of-bag observations for all the trees in our random forest and examine the proportion of correctly classified out-of-bag observations.
+
+---
+class: onecol
+
+## Random Forests Summary
+
+By only using a ![:emphasize](random subset) of features at each decision tree split, our trees are ![:emphasize](decorrelated). 
 
 Even if one feature has a very strong relationship with the outcome, it will not have an outsized influence in building our trees. 
 
-Averaging the output of many uncorrelated trees is particularly effective at ![:emphasize](reducing variance).
+Averaging the output of many bootstrapped and uncorrelated trees is particularly effective at ![:emphasize](reducing variance).
 
-Thus, random forests typically produce more ![:emphasize](accurate predictions) than single decision trees.
+Thus, random forests typically produce more ![:emphasize](accurate predictions) for new datasets than single regression or classification trees.
 
 
 ---
@@ -873,21 +973,23 @@ class: inverse, center, middle
 # Live Coding
 
 ---
+class:onecol
+
 ## Live Coding Activity
 
-**Live Coding**: I will walk through examples of decision trees and random forests in RStudio. 
+**Live Coding**:
 
-- You can follow along in your own RStudio (easiest with 1 large or 2+ monitors)
-- Or you can download `Day_3B_Activity.Rmd` and follow along
+I will walk through examples of decision trees and random forests in RStudio. 
 
 .footnote[
-All files are on the workshop OSF page: https://osf.io/3qhc8/. 
+All files are on the course website: https://pittmethods.github.io/appliedml/. 
 ]
 
 --
-</br>
 
-**Small Group Activity**: Afterwards, we will split you into small breakout room groups to practice building decision trees and random forests with a new dataset. 
+**Small Group Activity**: 
+
+Afterwards, we will split you into small breakout room groups to practice building decision trees and random forests with a new dataset. 
 
 If you have any questions, please post them in the chat or workshop Slack channel. 
 
