@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 ```
 
 # Live Coding 
-Goal: Classify likelihood of having a heart attack based on demographics (age, sex) and health variables (type of chest pain, resting blood pressure, cholesterol, fasting blood sugar, resting electrocardiographic results, maximum heart rate, exercise induced angina, etc.). Compare performance of standard logistic, ridge, lasso, and elastic net models. 
+Goal: Classify likelihood of having a heart attack based on demographics (age, sex) and health variables (type of chest pain, resting blood pressure, cholesterol, fasting blood sugar, resting electrocardiographic results, maximum heart rate, exercise induced angina, etc.). Compare performance of ridge, lasso, and elastic net models. 
 
 ## Load Packages
 
@@ -34,13 +34,13 @@ if (!require("pROC")) {install.packages("pROC"); require("pROC")}
 
 ## Read in data 
 ```{r}
-heart <- read.csv("https://bit.ly/amlr-heart")
+heart <- read_csv("https://bit.ly/amlr-heart", col_types = "dffddffdfdiiif")
 ```
 
 ## Split into train/test sets 
 ```{r}
 set.seed(2021)
-trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE, times = 1)
+trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE)
 heart_train <- heart[trainIndex, ]
 heart_test <- heart[-trainIndex, ]
 
@@ -61,7 +61,8 @@ heart_recipe <-
   recipe(output ~ .) %>%
   step_mutate(output = factor(output, levels = c(0, 1), labels = c("low_risk", "high_risk"))) %>%
   step_normalize(all_numeric_predictors()) %>%
-  step_dummy(all_nominal_predictors())
+  step_dummy(all_nominal_predictors()) %>%
+  step_nzv(all_predictors())
 
 # normalize test dataset too 
 heart_test_baked <- 
@@ -70,7 +71,7 @@ heart_test_baked <-
   bake(new_data = heart_test)
 ```
 
-## Set up Training and Tuning Methods
+## Set up Resampling Methods
 ```{r}
 # let's use 5-fold cross-validation, repeated 3 times 
 
@@ -89,11 +90,6 @@ lassogrid <- expand.grid(alpha = 1, lambda = seq(0, 1, 0.01))
 
 ## Fit Models
 ```{r}
-logfit <- train(heart_recipe, data = heart_train,
-                method = 'glm', 
-                family = "binomial",
-                trControl = heart_control)
-
 ridgefit <- train(heart_recipe, data = heart_train,
                   method = 'glmnet',
                   family = "binomial",
@@ -116,7 +112,6 @@ enfit <- train(heart_recipe, data = heart_train,
 ## Examine Models 
 
 ```{r}
-describe(logfit$results)
 describe(ridgefit$results)
 describe(lassofit$results)
 describe(enfit$results)
@@ -137,17 +132,49 @@ coefpath(enfit$finalModel)
 ```
 
 
-## Make Predictions
+## Evaluate Classification Accuracy
 ```{r}
-logpred_test <- predict(logfit, newdata = heart_test)
-ridgepred_test <- predict(ridgefit, newdata = heart_test)
-lassopred_test <- predict(lassofit, newdata = heart_test)
-enpred_test <- predict(enfit, newdata = heart_test)
+## Ridge
+ridge_preds <- predict(ridgefit, newdata = heart_test)
+ridge_prob <- predict(ridgefit, newdata = heart_test, type = "prob")
 
-roc(predictor = as.numeric(logpred_test), response = heart_test_baked$output)
-roc(predictor = as.numeric(ridgepred_test), response = heart_test_baked$output)
-roc(predictor = as.numeric(lassopred_test), response = heart_test_baked$output)
-roc(predictor = as.numeric(enpred_test), response = heart_test_baked$output)
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels_ridge <- bind_cols(
+  ridge_prob,
+  true = heart_test_baked$output, 
+  pred = ridge_preds)
+
+cm_log <- conf_mat(collected_labels_ridge, truth = true, estimate = pred)
+summary(cm_log)
+roc_auc(collected_labels_ridge, truth = true, high_risk, event_level = "second")
+
+## Lasso
+lasso_preds <- predict(lassofit, newdata = heart_test)
+lasso_prob <- predict(lassofit, newdata = heart_test, type = "prob")
+
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels_lasso <- bind_cols(
+  lasso_prob,
+  true = heart_test_baked$output, 
+  pred = lasso_preds)
+
+cm_lasso <- conf_mat(collected_labels_lasso, truth = true, estimate = pred)
+summary(cm_lasso)
+roc_auc(collected_labels_lasso, truth = true, high_risk, event_level = "second")
+
+## Elastic Net
+en_preds <- predict(enfit, newdata = heart_test)
+en_prob <- predict(enfit, newdata = heart_test, type = "prob")
+
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels_en <- bind_cols(
+  en_prob,
+  true = heart_test_baked$output, 
+  pred = en_preds)
+
+cm_en <- conf_mat(collected_labels_en, truth = true, estimate = pred)
+summary(cm_en)
+roc_auc(collected_labels_en, truth = true, high_risk, event_level = "second")
 ```
 
 
@@ -248,7 +275,8 @@ Your training set should contain 80% of your data; your testing set should conta
 (remember to set a seed so your results are reproducible!)
 
 ```{r}
-index <- createDataPartition(memory$memory_score, p = 0.8, list = FALSE, times = 1)
+set.seed(2021)
+index <- createDataPartition(memory$memory_score, p = 0.8, list = FALSE)
 memory_train <- memory[index, ]
 memory_test <- memory[-index, ]
 dim(memory_train)
@@ -277,8 +305,7 @@ Set your model training and tuning methods using trainControl(). Use 10-fold int
 ```{r}
 # set train control
 memory_control <- trainControl(method = 'cv',
-                               number = 10,
-                               summaryFunction = defaultSummary)
+                               number = 10)
 ```
 
 ## Fit Linear Regression 

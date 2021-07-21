@@ -30,13 +30,13 @@ if (!require("AppliedPredictiveModeling")) {install.packages("AppliedPredictiveM
 
 ## Load data
 ```{r}
-heart <- read.csv("heart.csv")
+heart <- read_csv("https://bit.ly/amlr-heart", col_types = "dffddffdfdiiif")
 ```
 
 ## Split into train/test sets 
 ```{r}
 set.seed(2021)
-trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE, times = 1)
+trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE)
 heart_train <- heart[trainIndex, ]
 heart_test <- heart[-trainIndex, ]
 
@@ -45,19 +45,53 @@ dim(heart_train)
 dim(heart_test)
 ```
 
-## Fit full decision tree on training set
+## Create Training Recipe
+```{r}
+heart_recipe <- 
+  heart_train %>% 
+  recipe(output ~ .) %>%
+  step_mutate(output = factor(output, levels = c(0, 1), labels = c("low_risk", "high_risk"))) %>%
+  step_dummy(all_nominal_predictors(), one_hot = TRUE)
 
-We'll step outside of the caret world for a second to fit this tree. It's something you wouldn't typically do (you'll see why in a minute), which is why it's harder to implement in caret this way.
+# prep and bake training and test data for later (model evaluation)
+heart_train_baked <- 
+  heart_recipe %>%
+  prep(training = heart_train) %>%
+  bake(new_data = heart_train)
+
+heart_test_baked <- 
+  heart_recipe %>%
+  prep(training = heart_train) %>%
+  bake(new_data = heart_test)
+```
+
+## Set up Resampling Methods
+```{r}
+# let's use 5-fold cross-validation, repeated 3 times 
+
+# set train control
+heart_control <- trainControl(method = 'repeatedcv',
+                              number = 5,
+                              repeats = 3)
+```
+
+
+## Full Tree Fit 
+
+To illustrate overfitting (if we don't stop trees from growing), we'll fit an un-pruned tree with no stopping criteria, with a minsplit of 2 (minimum 2 observations needed to create a split) and minbucket of 1 (minimum number observations per node). Note that we would never want to do this in practice; this is just for teaching illustration! 
 
 ```{r}
-fullTreeFit <- rpart(output ~ ., data = heart_train,
-                     control = rpart.control(minsplit = 2, # minimum number of items in a node, in order to try to split
-                                             minbucket = 1, # minimum number of items in the terminal leaf
-                                             cp = 0.00 #complexity parameter. Any split that does not decrease the overall lack of fit by a factor of cp is not attempted. set to 0 so that it splits all the way down
-                                             ))
+cpgrid_full <- expand.grid(cp = 0)
+full_tree <- train(heart_recipe, data = heart_train,
+                   method = 'rpart',
+                   trControl = heart_control,
+                   tuneGrid = cpgrid_full,
+                   control = rpart.control(minsplit = 2, minbucket = 1)) 
 
-plot(fullTreeFit)
-text(fullTreeFit, use.n = TRUE, all = TRUE)
+full_tree
+
+plot(full_tree$finalModel)
+text(full_tree$finalModel)
 ```
 
 ## Classification Accuracy: Fully Grown Trees
@@ -65,90 +99,88 @@ text(fullTreeFit, use.n = TRUE, all = TRUE)
 Let's calculate how well it does on the training set, relative to the test set. This gives us a sense of how over-fit the data is on our training set
 
 ```{r}
-full_tree_train_preds <- predict(fullTreeFit, newdata = heart_train)
-full_tree_test_preds <- predict(fullTreeFit, newdata = heart_test)
+full_tree_train_preds <- predict(full_tree, newdata = heart_train)
+full_tree_test_preds <- predict(full_tree, newdata = heart_test)
+full_tree_train_prob <- predict(full_tree, newdata = heart_train, type = "prob")
+full_tree_test_prob <- predict(full_tree, newdata = heart_test, type = "prob")
 
-head(full_tree_train_preds) 
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels_train <- bind_cols(
+  full_tree_train_prob,
+  true = heart_train_baked$output, 
+  pred = full_tree_train_preds)
 
-roc(predictor = full_tree_train_preds, response = heart_train$output)
-roc(predictor = full_tree_test_preds, response = heart_test$output)
+collected_labels_test <- bind_cols(
+  full_tree_test_prob,
+  true = heart_test_baked$output, 
+  pred = full_tree_test_preds)  
+
+cm_train <- conf_mat(collected_labels_train, truth = true, estimate = pred)
+cm_test <- conf_mat(collected_labels_test, truth = true, estimate = pred)
+summary(cm_train)
+summary(cm_test)
+
+roc_auc(collected_labels_train, truth = true, high_risk, event_level = "second")
+roc_auc(collected_labels_test, truth = true, high_risk, event_level = "second")
 ```
-
 We are definitely overfitting with perfect prediction on our training set! Our AUC drops on our test set ~ .7. Let's see if we can improve on this by having modifying our approach.
 
-## Create Training Recipe
-```{r}
-heart_recipe <- 
-  heart_train %>% 
-  recipe(output ~ .) %>%
-  step_num2factor(output, transform = function(x) x + 1, levels = c("low_risk", "high_risk")) %>%
-  step_dummy(all_nominal_predictors())
-
-# normalize test dataset too 
-heart_test_baked <- 
-  heart_recipe %>%
-  prep(training = heart_train) %>%
-  bake(new_data = heart_test)
-```
-
-## Set up Training and Tuning Methods
-```{r}
-# let's use 5-fold cross-validation, repeated 3 times 
-
-# set train control
-heart_control <- trainControl(method = 'repeatedcv',
-                              number = 5,
-                              repeats = 3,
-                              classProbs = TRUE,
-                              summaryFunction = twoClassSummary)
-```
 
 ## Reduce Overfitting by Pruning the Tree
 ```{r}
-pruned_tree_model <- train(heart_recipe, data = heart_train, 
-                           method = "rpart",
-                           metric = 'ROC',
-                           tuneLength = 20,
-                           trControl = heart_control)
+pruned_tree <- train(heart_recipe, data = heart_train, 
+                     method = "rpart",
+                     tuneLength = 20,
+                     trControl = heart_control)
 
-plot(pruned_tree_model)
+pruned_tree
 
-plot(pruned_tree_model$finalModel)
-text(pruned_tree_model$finalModel)
+plot(pruned_tree)
+
+plot(pruned_tree$finalModel)
+text(pruned_tree$finalModel)
 ```
-
-If we wanted to make sure we got the best possible model, what could we do now?
-
-We could create our own array of values that the complexitiy parameter could take on. Let's say .001 to .05, in steps of .001.
-We could then run the above again.
 
 ## Reduce Overfitting with Stopping Criteria
 
 ```{r}
-early_stopped_tree_model <- train(heart_recipe, data = heart_train, 
-                                  method = "rpart2",
-                                  metric = 'ROC',
-                                  tuneLength = 20,
-                                  trControl = heart_control)
+early_stopped_tree <- train(heart_recipe, data = heart_train, 
+                            method = "rpart2",
+                            tuneLength = 20,
+                            trControl = heart_control)
 
-plot(early_stopped_tree_model)
+plot(early_stopped_tree)
 
-plot(early_stopped_tree_model$finalModel)
-text(early_stopped_tree_model$finalModel)
+plot(early_stopped_tree$finalModel)
+text(early_stopped_tree$finalModel)
 ```
 
 ## Classification Accuracy: Pruning and Stopping Criteria
 
-Let's calculate how well it does on the training set, relative to the test set. This gives us a sense of how over-fit the data is on our training set
-
 ```{r}
-full_tree_test_preds <- predict(fullTreeFit, newdata = heart_test)
-pruned_tree_test_preds <- predict(pruned_tree_model, newdata = heart_test)
-early_stopped_tree_test_preds <- predict(early_stopped_tree_model, newdata = heart_test)
+pruned_tree_preds <- predict(pruned_tree, newdata = heart_test)
+stopped_tree_preds <- predict(early_stopped_tree, newdata = heart_test)
+pruned_tree_prob <- predict(pruned_tree, newdata = heart_test, type = "prob")
+stopped_tree_prob <- predict(early_stopped_tree, newdata = heart_test, type = "prob")
 
-roc(predictor = full_tree_test_preds, response = heart_test$output)
-roc(predictor = as.numeric(pruned_tree_test_preds), response = heart_test$output)
-roc(predictor = as.numeric(early_stopped_tree_test_preds), response = heart_test$output)
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels_pruned <- bind_cols(
+  pruned_tree_prob,
+  true = heart_test_baked$output, 
+  pred = pruned_tree_preds)
+
+collected_labels_stopped <- bind_cols(
+  stopped_tree_prob,
+  true = heart_test_baked$output, 
+  pred = stopped_tree_preds)  
+
+cm_prune <- conf_mat(collected_labels_pruned, truth = true, estimate = pred)
+cm_stop <- conf_mat(collected_labels_stopped, truth = true, estimate = pred)
+summary(cm_prune)
+summary(cm_stop)
+
+roc_auc(collected_labels_pruned, truth = true, high_risk, event_level = "second")
+roc_auc(collected_labels_stopped, truth = true, high_risk, event_level = "second")
 ```
 
 A bit better, but not by too much. In other datasets you might see a bigger effect. How can we improve more? 
@@ -157,25 +189,34 @@ A bit better, but not by too much. In other datasets you might see a bigger effe
 ```{r}
 rf_fit <- train(heart_recipe, data = heart_train, 
                 method = "rf",
-                metric = 'ROC',
                 tuneLength = 20,
                 trControl = heart_control)
 
 plot(rf_fit)
 
 ```
-It looks like randomly selecting two predictors at each step leads to the best predictions. We can verify that below:
+It looks like randomly selecting four predictors at each step leads to the best predictions. We can verify that below:
 
 ```{r}
 #what was the best tuning parameter ?
 rf_fit$bestTune
 ```
 
+## Random Forests Accuracy
 
 ```{r}
-rf_test_preds <- predict(rf_fit, newdata = heart_test)
-roc(predictor = as.numeric(rf_test_preds), response = heart_test$output)
-roc(predictor = full_tree_test_preds, response = heart_test$output)
+rf_preds <- predict(rf_fit, newdata = heart_test)
+rf_prob <- predict(rf_fit, newdata = heart_test, type = "prob")
+
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels_rf <- bind_cols(
+  rf_prob,
+  true = heart_test_baked$output, 
+  pred = rf_preds)
+
+cm_rf <- conf_mat(collected_labels_rf, truth = true, estimate = pred)
+summary(cm_rf)
+roc_auc(collected_labels_rf, truth = true, high_risk, event_level = "second")
 ```
 
 Random forests do much better than the original full tree!
@@ -190,39 +231,84 @@ ggplot(varImp(rf_fit))
 
 ## Hands-On Activity
 
-Washington University conducted a clinical study to determine if biological measurements made from cerebrospinal fluid (CSF) can be used to diagnose or predict Alzheimer's disease (Craig-Schapiro et al. 2011). These data are a modified version of the values used for the publication.
+Washington University conducted a clinical study to determine if biological measurements made from cerebrospinal fluid (CSF) can be used to diagnose or predict Alzheimer's disease (Craig-Schapiro et al. 2011). These data include measurements from 333 participants (a modified version of the values used for the publication).
 
-The R factor vector diagnosis contains the outcome data for 333 of the subjects. The demographic and laboratory results are collected in the data frame predictors.
+The first 128 columns in the dataframe represent numerical biological measurements (to be used as features). The next two columns `ahd[, 129:130]` are nominal features (male sex {yes, no}; genotype {E2E2, E2E3, E2E4, E3E3, E3E4, E4E4}). The last column `ahd[, 131]` is the categorical label representing presence/absense of Alzheimer's Disease (diagnosis {control, impaired}).
+
+1. Split your data into 80% training and 20% test
+2. Create your training recipe, using one-hot encoding for categorical variables. 
+3. Fit a random forest model with 5-fold cross-validation. Use a tuning grid with 10 values.
+4. Estimate Accuracy and Kappa in the training and testing sets
+5. Examine and plot the model’s variable importance.
+
+**BONUS 1**: Construct a confusion matrix and ROC curve for the model.
+**BONUS 2**: Fit a pruned decision tree on the data with 5-fold cross-validation. Compare classification metrics (accuracy, kappa, AUROC) between the random forests and pruned tree models in the training and testing sets. Which performs better, and why?
 
 ```{r}
 ahd <- read.csv("https://bit.ly/amlr-ahd", stringsAsFactors = TRUE)
 ```
 
-Perform data splitting: use 80% in your training set, 20% in your testing set
+# Answer key
+
+<details><summary>Click here to view the answer key to the hands-on activity</summary>
+
+## 1. Split your data into 80% training and 20% test
 
 ```{r}
+set.seed(2021)
+trainIndex <- createDataPartition(ahd$diagnosis, p = 0.8, list = FALSE)
+ahd_train <- ahd[trainIndex, ]
+ahd_test <- ahd[-trainIndex, ]
 
+# check to see that data splits were correct
+dim(ahd_train)
+dim(ahd_test)
 ```
 
-# train random forests. 
-```{r}
-
-```
-
-# evaluate performance on the test set
-
-```{r}
-
-```
-
-# determine which variables were important in this prediction
+## Create your training recipe, using one-hot encoding for categorical variables.
 
 ```{r}
+ahd_recipe <- 
+  ahd_train %>% 
+  recipe(diagnosis ~ .) %>%
+  step_dummy(all_nominal_predictors(), one_hot = TRUE)
 
+ahd_test_baked <- 
+  ahd_recipe %>%
+  prep(training = ahd_train) %>%
+  bake(new_data = ahd_test)
 ```
 
-  
+## Fit a random forest model with 10-fold cross-validation. Use a tuning grid with 10 values.
 
+```{r}
+ahd_control <- trainControl(method = 'cv',
+                            number = 5)
+
+rf_fit_ahd <- train(ahd_recipe, data = ahd_train, 
+                    method = "rf",
+                    tuneLength = 10,
+                    trControl = ahd_control)
+
+plot(rf_fit_ahd)
+```
+
+## Estimate Accuracy and Kappa in the training and testing sets
+
+```{r}
+rf_fit_ahd$results %>% print()
+
+ahd_pred <- predict(rf_fit_ahd, newdata = ahd_test)
+postResample(pred = ahd_pred, obs = ahd_test_baked$diagnosis)
+```
+
+## Examine and plot the model’s variable importance.
+
+```{r}
+ggplot(varImp(rf_fit_ahd), top = 20)
+```
+
+</details>
 
 
 

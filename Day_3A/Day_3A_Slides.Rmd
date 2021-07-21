@@ -296,7 +296,7 @@ Thus, regularization models can simultaneously reduce overfitting and perform fe
 ## Comprehension check
 .pull-left[
 ### Question 1
-**Determine if each of the following models are linear or nonlinear.**
+**Determine which of the following models are nonlinear.**
 
 a) $y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \epsilon$
 
@@ -495,7 +495,7 @@ EDsim <- EDsim %>% dplyr::mutate(race = as.factor(floor(race)), age = age + 14, 
 # use caret for simple data split
 library(caret)
 set.seed(2021)
-trainIndex <- createDataPartition(EDsim$ED_severity, p = 0.8, list = FALSE, times = 1)
+trainIndex <- createDataPartition(EDsim$ED_severity, p = 0.8, list = FALSE)
 EDsim_train <- EDsim[trainIndex, ]
 EDsim_test <- EDsim[-trainIndex, ]
 ```
@@ -557,9 +557,7 @@ EDsim_recipe <-
 ```{r}
 EDsim_control <- trainControl(method = 'repeatedcv',
                               number = 10,
-                              repeats = 3, 
-                              classProbs = FALSE,
-                              summaryFunction = defaultSummary)
+                              repeats = 3)
 ```
 
 <br/>
@@ -567,7 +565,6 @@ This sets our up training procedure with the following specifications:
 
 - 10-fold cross-validation, repeated 3 times
 - Other commonly used options include `method = 'cv'` for a single (non-repeated) cross-validation and `method = 'boot'` for bootstrapping
-- For classification, set `classProbs = TRUE` and `summaryFunction = twoClassSummary` or `summaryFunction = prSummary`
 
 ---
 ## Ridge Regression in R 

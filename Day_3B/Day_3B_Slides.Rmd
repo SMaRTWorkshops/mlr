@@ -691,7 +691,7 @@ While stopping criteria prevent us from overfitting a full tree,
 ```{r}
 heart <- read.csv("heart.csv")
 set.seed(2021)
-trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE, times = 1)
+trainIndex <- createDataPartition(heart$output, p = 0.8, list = FALSE)
 heart_train <- heart[trainIndex, ]
 heart_test <- heart[-trainIndex, ]
 
@@ -792,14 +792,47 @@ include_graphics("randomforest.png")
 .right-column[
 The goal of random forests is to combine the simplicity of a single decision tree with greater model **flexibility**. 
 
-Random forests use **bootstrapped aggregation** (i.e., ![:emphasize](bagging)) to combine predictions from multiple decision trees together. 
+We do this by building **multiple decision trees** and aggregating their predictions together to make one final prediction. 
 
-Random forests also use methods to **decorrelate** trees for more reliable and less variable predictions.
+This is called an **ensemble method**. 
 
-Taken together, this **ensemble method** allows for greater **predictive accuracy** in new datasets than any single classification or regression tree. 
+By using multiple trees (rather than just one), we can achieve greater **predictive accuracy** in new datasets.
 
 However, this comes at the cost of **lower interpretability**.
 ]
+
+---
+## Random Forests
+
+Random forests use **bootstrapped aggregation** (i.e., ![:emphasize](bagging)) to combine predictions from multiple decision trees together. Each tree is fit with a bootstrapped dataset and then predictions are aggregated. 
+
+</br>
+
+```{r, echo = FALSE, out.width = "70%"}
+include_graphics("bagging.png")
+```
+
+---
+## Random Forests
+
+Random forests also use methods to **decorrelate** trees for more reliable and less variable predictions. 
+
+```{r, echo = FALSE, out.width = "50%"}
+include_graphics("decorrelate_1.png")
+```
+
+---
+## Random Forests
+
+Random forests also use methods to **decorrelate** trees for more reliable and less variable predictions. 
+
+```{r, echo = FALSE, out.width = "50%"}
+include_graphics("decorrelate_2.png")
+```
+
+--
+
+The number of *m* features chosen at each split is the $m_{try}$ hyperparameter. We use internal cross-validation to tune for the optimal $m_{try}$.
 
 ---
 ## Building a Random Forest
@@ -894,27 +927,45 @@ include_graphics("manytrees.png")
 ```
 
 ---
-## Random Forests 
+## Building a Random Forest
 
-**Hyperparameter Tuning**: We can tune the hyperparameter `mtry` to find the ![:emphasize](optional number of random features) to select at each split using `method = rf` in {caret}.
-
---
-
-**Evaluation**: Evaluate accuracy of our random forest based on the proportion of ![:emphasize](out-of-bag) samples that were correctly classified. 
+**Step 4**: Evaluate accuracy based on the proportion of ![:emphasize](out-of-bag) samples that were correctly classified. 
 
 --
 
-**Prediction**: When making predictions for new data, use the outcome with the ![:emphasize](most votes) from all trees. 
+These were the two observations from our toy dataset that were **not** selected for first the bootstrapped dataset. We can run these ![:emphasize](out-of-bag) observations through **all** the trees that were built without it, and see whether they were correctly classified.
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+Yes | No | 46 | Low
+]
 
 --
 
-**Summary**: By only using a ![:emphasize](random subset) of features at each decision tree split, our trees are ![:emphasize](decorrelated). 
+.pull-right[
+```{r, echo = FALSE}
+include_graphics("manytrees.png")
+```
+]
+
+--
+
+We do this for all the other out-of-bag observations for all the trees in our random forest and examine the proportion of correctly classified out-of-bag observations.
+
+---
+class: onecol
+
+## Random Forests Summary
+
+By only using a ![:emphasize](random subset) of features at each decision tree split, our trees are ![:emphasize](decorrelated). 
 
 Even if one feature has a very strong relationship with the outcome, it will not have an outsized influence in building our trees. 
 
-Averaging the output of many uncorrelated trees is particularly effective at ![:emphasize](reducing variance).
+Averaging the output of many bootstrapped and uncorrelated trees is particularly effective at ![:emphasize](reducing variance).
 
-Thus, random forests typically produce more ![:emphasize](accurate predictions) than single decision trees.
+Thus, random forests typically produce more ![:emphasize](accurate predictions) for new datasets than single regression or classification trees.
 
 
 ---
@@ -922,21 +973,23 @@ class: inverse, center, middle
 # Live Coding
 
 ---
+class:onecol
+
 ## Live Coding Activity
 
-**Live Coding**: I will walk through examples of decision trees and random forests in RStudio. 
+**Live Coding**:
 
-- You can follow along in your own RStudio (easiest with 1 large or 2+ monitors)
-- Or you can download `Day_3B_Activity.Rmd` and follow along
+I will walk through examples of decision trees and random forests in RStudio. 
 
 .footnote[
-All files are on the workshop OSF page: https://osf.io/3qhc8/. 
+All files are on the course website: https://pittmethods.github.io/appliedml/. 
 ]
 
 --
-</br>
 
-**Small Group Activity**: Afterwards, we will split you into small breakout room groups to practice building decision trees and random forests with a new dataset. 
+**Small Group Activity**: 
+
+Afterwards, we will split you into small breakout room groups to practice building decision trees and random forests with a new dataset. 
 
 If you have any questions, please post them in the chat or workshop Slack channel. 
 
