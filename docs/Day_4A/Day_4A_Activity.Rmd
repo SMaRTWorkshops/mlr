@@ -15,13 +15,16 @@ knitr::opts_chunk$set(
 )
 ```
 
+Let's try to predict whether it is safe or unsafe for humans to drink from a water source based on its chemical properties (e.g., pH, hardness, sulfate content).
+
 # Load packages
 
-Note that {caret} will ask to install {kernlab} to train the SVM models 
+Note that {caret} may ask you to install the {kernlab} package
 
 ```{r, message=FALSE}
 library(tidyverse)
 library(caret)
+library(skimr)
 library(recipes)
 library(yardstick)
 ```
@@ -30,8 +33,8 @@ library(yardstick)
 
 ## Read in the data
 
-```{r}
-water <- read_csv("../data/water.csv")
+```{r, message=FALSE}
+water <- read_csv("https://bit.ly/amlr-water")
 water
 ```
 
@@ -41,97 +44,153 @@ water
 skim(water)
 ```
 
-```{r}
-correlation::correlation(water)
-```
-
-## Create data split
-
-```{r}
-set.seed(2021)
-index <- createDataPartition(water$Potability, p = 0.8, list = FALSE)
-water_train <- water[index, ]
-water_test <- water[-index, ]
-dim(water_train)
-dim(water_test)
-```
-
-## Create recipe (including imputation)
+## Create recipe (including imputation of missing predictor values!)
 
 ```{r}
 water_recipe <- 
   water %>% 
   recipe(Potability ~ .) %>% 
   step_nzv(all_predictors()) %>% 
-  step_impute_knn(ph, Sulfate, Trihalomethanes) %>% 
+  step_impute_knn(all_predictors()) %>% 
   step_normalize(all_numeric_predictors()) %>% 
   step_corr(all_predictors())
 ```
 
 ## Set up a shared configuration for resampling
 
-Let's use 5-fold CV to save a little time
-
 ```{r}
 water_tc <- trainControl(method = "cv", number = 5)
 ```
 
-## Fit a linear SVM to predict Potability
+## Let {kernlab} estimate sigma automatically
 
-```{r linsvm, cache=TRUE}
+```{r autosigma, message=FALSE, cache=TRUE}
 set.seed(2021)
-water_linsvm <- train(
+water_autosig <- train(
   water_recipe,
-  data = water_train,
-  method = "svmLinear",
+  data = water,
+  method = "svmRadial",
+  tuneLength = 5, # try 5 values of C only (estimate just one sigma)
   trControl = water_tc
 )
-water_linsvm
+water_autosig
 ```
 
-## Fit an RBF SVM to predict Potability
+## Use gridsearch to tune sigma
+
+Note that this may take a few minutes... 
 
 ```{r rbfsvm, cache=TRUE}
 set.seed(2021)
-water_rbfsvm <- train(
+water_tunesig <- train(
   water_recipe,
-  data = water_train,
-  method = "svmRadial",
+  data = water,
+  method = "svmRadialSigma", # try 5 values of C and 5 values of sigma
   tuneLength = 5,
   trControl = water_tc
 )
-water_rbfsvm
+water_tunesig
 ```
 
-## Try again with a more fine-grained grid
+# Collect and compare resample results
 
 ```{r}
-set.seed(2021)
-fine_grid <- expand.grid(
-  sigma = .02289653, 
-  C = seq(from = 1, to = 4, length.out = 5)
-)
-
-water_rbfsvm2 <- train(
-  water_recipe,
-  data = water_train,
-  method = "svmRadial",
-  tuneGrid = fine_grid,
-  trControl = water_tc
-)
-water_rbfsvm2
+water_res <- resamples(list(Auto = water_autosig, Tune = water_tunesig))
+summary(water_res)
+bwplot(water_res)
 ```
-
 
 ---
 
 # Hands-on Activity
 
+Let's try to predict whether an employee with quit their job based on various measures.
+
+1. Load the `attrition` dataset from the {modeldata} package (Hint: use `data(...)`)
+1. Explore the data and create a recipe that includes at least normalization and dummy coding
+1. Configure your resampling to be a single 10-fold cross-validation (or 5-fold if your computer is slow)
+1. Train models using the following algorithms and settings to classify the `Potability` variable
+    + GLMNET with a `tuneLength` of 5 for $\alpha$ and $\lambda$
+    + SVM with RBF kernel with a `tuneLength` of 5 for $C$ (let {kernlab} estimate $\sigma$)
+1. Collect the two sets of resampling results using `resamples()` and plot them using `bwplot()`
 
 ---
 
 ## Answer Key
 
 <details><summary>Click here to see the answer key for the hands-on activity</summary>
+
+### Load and examine data
+
+```{r}
+data("attrition", package = "modeldata")
+attrition
+```
+
+### Configure recipe
+
+```{r}
+attr_recipe <- 
+  attrition %>% 
+  recipe(Attrition ~ .) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_corr(all_predictors()) %>% 
+  step_lincomb(all_predictors())
+```
+
+### Configure resampling
+
+```{r}
+attr_tc <- trainControl(method = "cv", number = 10)
+```
+
+### Train GLMNET
+
+```{r ho_glmnet, cache=TRUE}
+set.seed(2021)
+attr_glmnet <- train(
+  attr_recipe,
+  data = attrition,
+  method = "glmnet",
+  tuneLength = 5,
+  trControl = attr_tc
+)
+attr_glmnet
+```
+
+### Train SVM with RBF, letting kernlab estimate sigma
+
+```{r, ho_rbfsvm, cache=TRUE}
+set.seed(2021)
+attr_rbfsvm <- train(
+  attr_recipe,
+  data = attrition,
+  method = "svmRadial",
+  tuneLength = 5,
+  trControl = attr_tc
+)
+attr_rbfsvm
+```
+
+### Collect and compare resampling results
+
+```{r}
+attr_res <- resamples(list(GLMNET = attr_glmnet, RadialSVM = attr_rbfsvm))
+summary(attr_res)
+bwplot(attr_res)
+```
+
+</details>
+
+---
+
+## Session Info
+
+<details><summary>Click here to view session info</summary>
+```{r}
+sessionInfo()
+```
 
 </details>

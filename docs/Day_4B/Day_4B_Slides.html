@@ -6,6 +6,7 @@
     <meta name="author" content="Applied Machine Learning in R  Pittsburgh Summer Methodology Series" />
     <script src="Day_4B_Slides_files/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="extras.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -64,12 +65,43 @@ class: onecol
 
 The goal of **supervised machine learning** is to ![:emphasize](predict) unknown values of important variables in new data.
 
+We are less concerned about statistical **inference** (e.g., which features are significantly related to the outcome).
+
 Features used to predict tend to be **cheaper or easier to measure** in new data.
 
 Labels to be predicted tend to be **expensive or difficult to measure** in new data. 
 
 ML models can be used for ![:emphasize](regression) or ![:emphasize](classification) problems.
 
+---
+class: onecol
+
+## Asking Predictive Questions
+
+As psychologists (and other social and behavioral scientists), we want to **explain** and **predict** behavior. 
+
+An implicit assumption is that better explanation will lead to better prediction. 
+
+However, statistically, this is not always the case (e.g., due to ![:emphasize](overfitting)). 
+
+Shifting from an explanatory/inferential mindset ("what are the causal mechanisms underlying these behaviors?") to a predictive mindset ("how can we best forecast future behaviors we haven't observed?") isn't easy! 
+
+.footnote[
+I highly recommend reading Yarkoni &amp; Westfall (2017), Choosing Prediction over Explanation in Psychology: Lessons from Machine Learning. https://journals.sagepub.com/doi/10.1177/1745691617693393
+]
+
+---
+class: twocol
+
+## Asking Predictive Questions
+
+Question: Can we infer people's personalities from their social media usage? 
+- **Inferential mindset**: test for statistically significant relationships between personality dimensions and other variables (e.g., ratings of someone's Facebook profile).
+- **Predictive mindset**: build a ML model with the primary goal of predicting someone's scores on a personality questionnaire from social media data.
+
+Question: Can we understand how likely someone is to recover from an anxiety disorder?
+- **Inferential mindset**: identify variables at time 1 that have a statistically significant relationship with recovery at time 2.
+- **Predictive mindset**: build an ML model with the goal of using time 1 data to accurately predict anxiety scores at time 2.
 
 ---
 class: onecol
@@ -125,9 +157,19 @@ Measurement error can prevent ML algorithms from accurately capturing and ![:emp
 ---
 class: onecol
 
+## Measurement 
+
+&lt;img src="qmps.png" width="85%" /&gt;
+
+.footnote[
+Flake &amp; Fried (2020); *Advances in Methods and Practices in Psychological Science*
+]
+---
+class: onecol
+
 ## Sample Size
 
-One of the most common questions is "how much data do I need for ML"? 
+One of the most common questions we hear is "how much data do I need for ML"? 
 
 There's no straightforward or universal answer, and this is an active area of research.
 
@@ -138,7 +180,7 @@ However, here are some important principles and ![:emphasize](general guidelines
 &lt;/br&gt;
 When working with ![:emphasize](smaller sample sizes), use ![:emphasize](simpler models).
 
-Use ![:emphasize](10-fold cross-validation) for smaller samples rather than a single, held-out test set.&lt;sup&gt;1&lt;/sup&gt;
+Use ![:emphasize](nested 10-fold cross-validation) with inner and outer loops for smaller samples rather than a single, held-out test set.&lt;sup&gt;1&lt;/sup&gt;
 
 Aim for `\(N \geq p*10\)`,  with a minimum of 30 observations per test set.
 
@@ -189,7 +231,7 @@ We will jump between rooms to join discussions and answer questions.
 
 **Introduce yourselves again and discuss the following topics:** 
 
-1. What types of ML studies are you interested in designing in your field? 
+1. What types of ML studies are you interested in designing in your field? How will you shift from an inferrential to a predictive mindset?
 
 2. What problems, concerns, or challenges do you forsee in designing ML studies (e.g., in causal thinking, sample size, measurement, bias)? 
 
@@ -213,11 +255,183 @@ Random Forests | models nonlinearity, good prediction in new data | not easily i
 Support Vector Machines | can handle `\(p&gt;n\)`; models nonlinearity  | not easily interpretable; can be difficult to choose a 'good' kernel function
 
 ---
+class: twocol
+
+## Algorithm assumptions
+
+Algorithm&amp;emsp;&amp;emsp;&amp;emsp; | Assumptions 
+:------- | :-------- 
+Regularized regression (ridge, lasso, elastic net) | Linear relationship between features and outcome. Features should be on the same scale (normalize!). Dummy code nominal features.
+Decision Trees and Random Forests | No formal assumptions; decision trees and random forests are non-parametric. Features do not have to be on the same scale. One-hot encoding of nominal features. 
+Support Vector Machines | Features should be on the same scale (normalize!). Dummy code nominal features. 
+
+&lt;/br&gt; 
+Note: unlike familiar statistical methods (e.g., linear regression models), these methods have no distributional assumptions about error terms. 
+
+---
 class: onecol
 
 ## Reproducibility  
 
-setting seeds internally 
+In order to have **fully reproducible** models, you often need to set ![:emphasize](internal seeds) within {caret}'s `trainControl()` function. 
+
+The number of seeds to produce is `\(B+1\)`, where `\(B\)` is the number of resamples. E.g., for 10-fold cross-validation repeated 3 times, you will need 31 seeds.
+
+.scroll-output[
+
+```r
+set.seed(2021)
+seeds &lt;- vector(mode = "list", length = 30) # length = n data splits
+for(i in 1:30) seeds[[i]] &lt;- sample.int(1000, 6) # 6 = tune length
+seeds[[31]] &lt;- sample.int(1000, 1) # for the last model
+seeds
+```
+
+```
+## [[1]]
+## [1] 903 166 430 442 743 908
+## 
+## [[2]]
+## [1]  70 192 934 763 614 622
+## 
+## [[3]]
+## [1] 325 495 103 361 535 332
+## 
+## [[4]]
+## [1] 947 956 146 123 188 637
+## 
+## [[5]]
+## [1] 387 814 360 538 164 101
+## 
+## [[6]]
+## [1] 342 671 752 354 403 580
+## 
+## [[7]]
+## [1] 373 854 645  73 191 294
+## 
+## [[8]]
+## [1] 274 683 827 754  70 342
+## 
+## [[9]]
+## [1] 710 703  79 674 150 626
+## 
+## [[10]]
+## [1] 400 335 881 600 529 742
+## 
+## [[11]]
+## [1] 357 148 452 990 456 467
+## 
+## [[12]]
+## [1]  67 642 785 360 681 121
+## 
+## [[13]]
+## [1] 799 511 369 713 989 155
+## 
+## [[14]]
+## [1] 504 395 369 932 934 622
+## 
+## [[15]]
+## [1] 126 463 722 585 531 528
+## 
+## [[16]]
+## [1] 482 869 639 362 510 758
+## 
+## [[17]]
+## [1] 300 790 550 120  27 812
+## 
+## [[18]]
+## [1] 781 801 430 661 883 601
+## 
+## [[19]]
+## [1]  95 685  75 905 535 235
+## 
+## [[20]]
+## [1] 982 420 606 302 432 775
+## 
+## [[21]]
+## [1] 285 385 659 877 625 420
+## 
+## [[22]]
+## [1] 894 713 115 625 329 650
+## 
+## [[23]]
+## [1] 632 321 123 293 427 925
+## 
+## [[24]]
+## [1] 848 197 187 659 844 570
+## 
+## [[25]]
+## [1] 669   7 320 172 569 247
+## 
+## [[26]]
+## [1] 139 579 302  20 663 557
+## 
+## [[27]]
+## [1] 513 655 373 992 215 155
+## 
+## [[28]]
+## [1] 109 321 371 900 961  13
+## 
+## [[29]]
+## [1] 710 606  85 302 551 896
+## 
+## [[30]]
+## [1] 446 653 165 624 458 651
+## 
+## [[31]]
+## [1] 501
+```
+]
+
+---
+class:onecol 
+
+## Reproducibility
+
+This `seeds` object can be included in the `trainControl()` function to obtain the same resampling seeds each time the code is run, for fully reproducible results. 
+
+
+```r
+model_control &lt;- trainControl(method = 'repeatedcv', 
+                              number = 10,
+                              repeats = 3,
+                              seeds = seeds)
+```
+
+---
+class: onecol
+
+## Resampling Methods
+
+There are many resampling methods available: held-out validation set, cross-validation, repeated cross-validation, leave-one-out cross-validation, and bootstrapping. 
+
+Which approach is best? 
+
+--
+
+There is no one-size-fits-all answer, but in *general*, 5-fold and 10-fold cross-validation have been shown to provide a good compromise for the bias-variance tradeoff problem.
+
+Using a single held-out validation set -- or LOOCV at the other extreme -- can suffer from high ![:emphasize](variance). LOOCV also becomes computationally infeasible with large datasets.
+
+Bootstrapping tends to have significant pessimistic ![:emphasize](bias). 
+
+When sample sizes are small, ![:emphasize](nested cross-validation) is a good option.
+
+---
+class: onecol
+
+## Nested Cross-Validation
+
+&lt;img src="nestedcv1.png" width="72%" /&gt;
+
+
+---
+class: onecol
+
+## Nested Cross-Validation
+
+&lt;img src="nestedcv2.png" width="72%" /&gt;
+
 ---
 class: inverse, center, middle
 # Interpreting Results
@@ -228,48 +442,145 @@ class: inverse, center, middle
 
 
 ---
+class: onecol
+
 ## What's "good" accuracy? 
 
-what metric matters most? 
+Not all performance metrics are equally informative for all prediction problems.
 
-example: AUC vs PPV debate in suicide prediction
+E.g., is it more important to detect true positives (sensitivity/recall) than avoid false negatives (specificity)? This may differ across different modeling problems.
+
+--
+
+&lt;img src="ppv_suicide.png" width="50%" /&gt;
 
 ---
+class: onecol
+
 ## Can you trust your model? 
 
+The predictive modeling process assumes that the same underlying ![:emphasize](data-generating mechanisms) that generated the current features and outcomes will continue to generate data from the same mechanisms. 
+
+If new data are generated by different mechanisms (or if your training dataset was too small), your model may not perform well in the future.
+
+It's difficult to know whether this will be the case during the ML model training and tuning process. 
+
+External validation is always desirable, whenever possible. 
+
+---
+class: onecol
+
+## Importance of External Validation
+
+ML models have been very popular in predicting COVID-19 outcomes. 
+
+However, when submitting 22 published ML models to external validation, *none* beat simple univariate predictors.
+
+&lt;img src="covid.png" width="50%" /&gt;
 
 ---
 class: inverse, center, middle
 # Writing  
 
 ---
+class: onecol
+
 ## What to Include in Methods 
 
-someone should be able to look at your methods and reproduce your model 
+Writing methods sections for ML papers can feel different than "traditional" studies with an inferential statistics framework. 
 
-want to talk about: 
+ML is a relatively new method in the social and behavioral sciences, so the Methods section may require more detail/explanation/elaboration of model training, tuning, resampling, and evaluation processes&lt;sup&gt;1&lt;/sup&gt;. 
 
-feature selection and preprocessing/feature engineering
+Ideally, an informed reader and ML practitioner (a.k.a. all of you!) should be able to ![:emphasize](read and reproduce) models in papers from their Methods section. 
 
-resampling methods (clear separation between train/test)! 
-
-which algorithms, why, and how many?
-
-hyperparameter tuning
-
-evaluation metrics
-
-variable importance
-
-model comparison
-
-clearly state sample size for each model
+.footnote[
+[1] This can differ in degree based on your specific field/subfield and which journals you submit to.
+]
 
 ---
-## What to Include in Results
+class: onecol
 
+## What to Include in Methods
 
+Here's a non-exhaustive list of steps to describe:
+- Feature selection
+- Feature engineering/preprocessing
+- Resampling methods (e.g., 10-fold cross-validation)
+- Specific algorithm(s) used and why
+- Evaluation metric(s) used and why
+- Model comparison
+- Variable importance 
+- External validation (if applicable)
 
+---
+class: twocol 
+
+## Methods Example: Setting the Stage
+
+It's common to use both inferential statistics and predictive modeling in the same paper. Clearly distinguishing between the two is helpful: 
+
+&lt;img src="girard1.png" width="75%" /&gt;
+
+&lt;img src="girard2.png" width="75%" /&gt;
+
+.footnote[
+From Girard et al. (2021): https://psyarxiv.com/zc47p
+]
+
+---
+class: twocol 
+
+## Methods Example: Algorithm
+
+Providing some justification and (brief) explanation of each algorithm is useful. 
+.pull-left[
+&lt;img src="girard3.png" width="100%" /&gt;
+]
+.pull-right[
+&lt;img src="wang_psychmed.png" width="80%" /&gt;
+]
+
+.footnote[
+From Girard et al. (2021): https://psyarxiv.com/zc47p and Haynos et al. (2020): https://doi.org/10.1017/S0033291720000227
+]
+
+---
+class: twocol
+
+## Methods Example: Resampling
+
+State (in precise terms) your resampling methods, making sure to clearly describe the separation of model training and testing. 
+
+&lt;img src="girard4.png" width="75%" /&gt;
+
+.footnote[
+From Girard et al. (2021): https://psyarxiv.com/zc47p 
+]
+
+---
+class: twocol
+
+## Methods Example: Performance Metrics
+
+Describe your performance metrics, including your primary model evaluation metric used during hyperparameter tuning. Provide some information about how to interpret these metrics, as they may be unfamiliar to your audience. 
+
+&lt;img src="wang2021.png" width="75%" /&gt;
+
+.footnote[
+From Wang et al. (2021): doi:10.1001/jamanetworkopen.2021.0591
+]
+
+---
+class: onecol
+
+## What to Include in Results 
+
+Writing results sections for ML papers can also feel different and confusing compared to traditional inferential statistical models!
+
+Here's a non-exhaustive list of results to include:
+- Sample size for each model
+- Accuracy for each model 
+- Comparison between models (or to a baseline/chance prediction)
 
 ---
 class: inverse, center, middle
@@ -318,8 +629,6 @@ class: twocol
 &lt;table style='width:10%;'&gt;
  &lt;thead&gt;
   &lt;tr&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Width &lt;/th&gt;
    &lt;th style="text-align:right;"&gt; Petal.Length &lt;/th&gt;
    &lt;th style="text-align:right;"&gt; Petal.Width &lt;/th&gt;
    &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
@@ -327,1051 +636,751 @@ class: twocol
  &lt;/thead&gt;
 &lt;tbody&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.6 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; versicolor &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.9 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.9 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.6 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.9 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 7.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 6.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 4.8 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.6 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.4 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.9 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.8 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.9 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.3 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.7 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.5 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.9 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.2 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 6.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 2.3 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 1.8 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; virginica &lt;/td&gt;
@@ -1379,6 +1388,23 @@ class: twocol
 &lt;/tbody&gt;
 &lt;/table&gt;
 ]
+
+---
+class: onecol
+
+## Group Discussion
+
+We will randomly assign you to a small breakout room.
+
+We will jump between rooms to join discussions and answer questions.
+
+**Discuss the following topics:** 
+
+1. Which ML algorithms are you most interested in applying to your data, and why? Do you anticipate any challenges? 
+
+2. Have you written any ML papers (or are you planning to)? What information do you find helpful to include in the methods and results?
+
+3. Have you peer-reviewed (or read) any ML papers in your field? What do you typically pay attention to? What elements do you enjoy, and what concerns do you have?
 
 ---
 class: inverse, center, middle
