@@ -255,6 +255,35 @@ include_graphics("../figs/maxmargin9.png")
 ```
 
 ---
+## Comprehension Check \#1
+
+.pull-left[
+### Question 1
+**What is the maximum number of features you can use with the MMC algorithm?**
+
+a) 1 feature
+
+b) 2 features
+
+c) 3 features
+
+d) Any number (no maximum)
+]
+
+.pull-right[
+### Question 2
+**Which observations does the MMC algorithm learn from?**
+
+a) The most ambiguous/difficult ones
+
+b) The most obvious/easy ones
+
+c) A random selection of observations
+
+d) All of the observations
+]
+
+---
 class: onecol
 ## Support Vector Classifier (SVC)
 
@@ -312,6 +341,35 @@ SVCs have a hyperparameter $C$ that controls how soft vs. hard the margin is
 
 .footnote[
 [1] If you set $C=0$ (i.e., a fully hard margin) SVC will allow no violations  and behave the same as MMC.]
+
+---
+## Comprehension Check \#2
+
+.pull-left[
+### Question 1
+**What is the main difference between the MMC and SVC algorithms?**
+
+a) The MMC algorithm uses hyperplanes
+
+b) The SVC algorithm allows training errors
+
+c) The MMC algorithm uses a softer margin
+
+d) The SVC algorithm prevents "violations"
+]
+
+.pull-right[
+### Question 2
+**Which value of $C$ would be least likely to overfit?**
+
+a) $C=-1$
+
+b) $C=0$
+
+c) $C=1$
+
+d) $C=10$
+]
 
 ---
 class: onecol
@@ -447,6 +505,35 @@ The RBF kernel computes similarity between points in *infinite* dimensions 🤯
 .footnote[
 [1] Note that $\sigma$ is also sometimes called $\gamma$ or the "scale" hyperparameter.<br />
 [2] Other nonlinear kernels are popular for special purposes and in specialized subfields.
+]
+
+---
+## Comprehension Check \#3
+
+.pull-left[
+### Question 1
+**What is the main difference between the SVM and SVC algorithms?**
+
+a) The SVM algorithm uses kernel functions
+
+b) SVM will automatically square your features
+
+c) SVC is just the SVM with an RBF kernel
+
+d) They are the same exact thing, silly!
+]
+
+.pull-right[
+### Question 2
+**What are the hyperparameters for an SVM with a Radial kernel?**
+
+a) $\sigma$ and $\gamma$
+
+b) $C$ and $\sigma$
+
+c) $\alpha$ and $\lambda$
+
+d) $C$ and $\Delta$
 ]
 
 ---
