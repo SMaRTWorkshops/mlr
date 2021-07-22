@@ -1,5 +1,5 @@
 ---
-title: "Day 3_A Activity <br /> (Regularized Regression)"
+title: "Day 3-A Activity <br /> (Regularized Regression)"
 output:
   prettydoc::html_pretty:
     theme: cayman
