@@ -54,7 +54,8 @@ library(kableExtra)
 library(countdown)
 library(patchwork)
 library(caret)
-library(recipes)
+library(skimr)
+library(tidymodels)
 ```
 
 class: inverse, center, middle
@@ -481,10 +482,188 @@ We can use the same {caret} `method` and hyperparameters for SVM and SVR
 - If we use an RBF kernel, we will use $\sigma$ to control the kernel scaling
 
 ---
+class: onecol
 ## Applied Example
 
+Let's train three classification models to predict Titanic survival
+
+1. A logistic regression (using "glm")
+
+1. A linear SVM (using "svmLinear")
+
+1. A radial SVM (using "svmRadial")
+
+We can practice setting up tuning grids and also learn to compare models
+
+.footnote[Note that this is a relatively small dataset with few predictors, so we may not really need the power of SVM.]
+
+---
+class: onecol
+## Applied Example
+
+```{r, message=FALSE}
+titanic <- read_csv("https://bit.ly/amlr-titanic")
+
+# Create a training and testing set (stratified by fare)
+set.seed(2021)
+index <- createDataPartition(titanic$survived, p = 0.75, list = FALSE)
+surv_train <- titanic[index, ]
+surv_test <- titanic[-index, ]
+```
+
+--
+
+```{r}
+# Create the recipe and configure resampling
+surv_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_dummy(all_nominal_predictors())
+
+surv_tc <- trainControl(method = "cv", number = 10)
+```
+
+---
+class: onecol
+## Training the Logistic Regression
+
+```{r glm, cache=TRUE}
+set.seed(2021)
+
+# glm has no hyperparameters
+surv_glm <- train(
+  surv_recipe, 
+  data = surv_train,
+  method = "glm",
+  trControl = surv_tc
+)
+```
+
+```{r, eval=FALSE}
+surv_glm$results
+```
+
+```{r, echo=FALSE}
+surv_glm$results %>% kable(digits = 3)
+```
+
+---
+class: onecol
+## Training the Linear SVM
+
+```{r linsvm, cache=TRUE}
+set.seed(2021)
+
+# Let's create a tuning grid manually
+surv_linsvm <- train(
+  surv_recipe, 
+  data = surv_train,
+  method = "svmLinear", #<<
+  tuneGrid = expand.grid(C = c(1/4, 1/2, 1, 2, 4)), #<<
+  trControl = surv_tc
+)
+```
+
+---
+class: onecol
+## Training Performance of the Linear SVM
+
+```{r, eval=FALSE}
+surv_linsvm$results
+```
+
+```{r, echo=FALSE}
+surv_linsvm$results %>% kable(digits = 3)
+```
+
+---
+class: onecol
+## Training the Radial SVM
+```{r rbfsvm, cache=TRUE}
+set.seed(2021)
+
+# Let's let caret set up the tuning grid on this one
+surv_rbfsvm <- train(
+  surv_recipe, 
+  data = surv_train,
+  method = "svmRadial", #<<
+  tuneLength = 8, #<<
+  trControl = surv_tc
+)
+```
 
 
+---
+class: onecol
+## Training Performance of the Radial SVM
+
+```{r, eval=FALSE}
+surv_rbfsvm$results
+```
+
+```{r, echo=FALSE}
+surv_rbfsvm$results %>% kable(digits = 3)
+```
+
+---
+class: onecol
+## Plotting Accuracy Against $C$ Values
+
+```{r rbfhp, out.width='90%'}
+ggplot(surv_rbfsvm)
+```
+
+---
+class: onecol
+## Comparing the Algorithms' Training Performance
+
+```{r resamples, out.width='80%'}
+resamples(list(LogisticGLM = surv_glm, 
+               LinearSVM = surv_linsvm, 
+               RadialSVM = surv_rbfsvm)) %>% bwplot()
+```
+
+---
+class: onecol
+## Performance in the Test Set
+
+```{r}
+# Collect predictions for each model
+glm_pred <- predict(surv_glm, newdata = surv_test)
+linsvm_pred <- predict(surv_linsvm, newdata = surv_test)
+rbfsvm_pred <- predict(surv_rbfsvm, newdata = surv_test)
+
+# Collect true labels
+surv_test_baked <- 
+  surv_recipe %>% 
+  prep(training = surv_train) %>% 
+  bake(new_data = surv_test)
+surv_true <- surv_test_baked$survived
+```
+
+---
+class: onecol
+## Performance in the Test Set
+
+```{r}
+# Logistic Regression
+postResample(pred = glm_pred, obs = surv_true)
+```
+
+--
+
+```{r}
+# Linear SVM
+postResample(pred = linsvm_pred, obs = surv_true)
+```
+
+--
+
+```{r}
+# Radial SVM
+postResample(pred = rbfsvm_pred, obs = surv_true)
+```
 
 ---
 ## Live Coding Activity

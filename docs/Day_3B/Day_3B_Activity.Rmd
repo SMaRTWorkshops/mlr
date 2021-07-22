@@ -195,12 +195,6 @@ rf_fit <- train(heart_recipe, data = heart_train,
 plot(rf_fit)
 
 ```
-It looks like randomly selecting four predictors at each step leads to the best predictions. We can verify that below:
-
-```{r}
-#what was the best tuning parameter ?
-rf_fit$bestTune
-```
 
 ## Random Forests Accuracy
 
@@ -242,7 +236,8 @@ The first 128 columns in the dataframe represent numerical biological measuremen
 5. Examine and plot the model’s variable importance.
 
 **BONUS 1**: Construct a confusion matrix and ROC curve for the model.
-**BONUS 2**: Fit a pruned decision tree on the data with 5-fold cross-validation. Compare classification metrics (accuracy, kappa, AUROC) between the random forests and pruned tree models in the training and testing sets. Which performs better, and why?
+
+**BONUS 2**: Fit a pruned decision tree on the data with 5-fold cross-validation. Compare classification metrics (accuracy, kappa, AUROC) between the random forests and pruned tree models in the testing sets. Which performs better, and why?
 
 ```{r}
 ahd <- read.csv("https://bit.ly/amlr-ahd", stringsAsFactors = TRUE)
@@ -307,6 +302,54 @@ postResample(pred = ahd_pred, obs = ahd_test_baked$diagnosis)
 ```{r}
 ggplot(varImp(rf_fit_ahd), top = 20)
 ```
+
+## **BONUS 1**: Construct a confusion matrix and ROC curve for the model.
+
+```{r}
+rf_ahd_preds <- predict(rf_fit_ahd, newdata = ahd_test)
+rf_ahd_prob <- predict(rf_fit_ahd, newdata = ahd_test, type = "prob")
+
+# Collect all predicted and trusted labels in a dataframe (for {yardstick})
+collected_labels_rf_ahd <- bind_cols(
+  rf_ahd_prob,
+  true = ahd_test$diagnosis, 
+  pred = rf_ahd_preds)
+
+cm_rf_ahd <- conf_mat(collected_labels_rf_ahd, truth = true, estimate = pred)
+cm_rf_ahd
+roc_curve(collected_labels_rf_ahd, truth = true, Impaired, event_level = "second") %>% 
+  autoplot()
+```
+
+## **BONUS 2**: Fit a pruned decision tree on the data with 5-fold cross-validation. Compare classification metrics (accuracy, kappa, AUROC) between the random forests and pruned tree models in the training and testing sets. Which performs better, and why?
+
+```{r}
+pruned_fit_ahd <- train(ahd_recipe, data = ahd_train, 
+                        method = "rpart",
+                        tuneLength = 10,
+                        trControl = ahd_control)
+
+plot(pruned_fit_ahd)
+```
+
+```{r}
+# pruned tree training accuracy
+pruned_ahd_preds <- predict(pruned_fit_ahd, newdata = ahd_test)
+pruned_ahd_prob <- predict(pruned_fit_ahd, newdata = ahd_test, type = "prob")
+
+collected_labels_pruned_ahd <- bind_cols(
+  pruned_ahd_prob,
+  true = ahd_test$diagnosis, 
+  pred = pruned_ahd_preds)
+cm_pruned_ahd <- conf_mat(collected_labels_pruned_ahd, truth = true, estimate = pred)
+summary(cm_pruned_ahd)
+roc_auc(collected_labels_pruned_ahd, truth = true, Impaired, event_level = "second")
+
+## rf testing accuracy
+summary(cm_rf_ahd) # random forest gives higher accuracy
+roc_auc(collected_labels_rf_ahd, truth = true, Impaired, event_level = "second") # random forest also gives higher AUC
+```
+
 
 </details>
 

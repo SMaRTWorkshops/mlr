@@ -1,0 +1,137 @@
+---
+title: "Day 4-A Activity<br />(Support Vector Machines)"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    df_print: paged
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  df_print = "paged"
+)
+```
+
+# Load packages
+
+Note that {caret} will ask to install {kernlab} to train the SVM models 
+
+```{r, message=FALSE}
+library(tidyverse)
+library(caret)
+library(recipes)
+library(yardstick)
+```
+
+---
+
+## Read in the data
+
+```{r}
+water <- read_csv("../data/water.csv")
+water
+```
+
+## Explore the data
+
+```{r}
+skim(water)
+```
+
+```{r}
+correlation::correlation(water)
+```
+
+## Create data split
+
+```{r}
+set.seed(2021)
+index <- createDataPartition(water$Potability, p = 0.8, list = FALSE)
+water_train <- water[index, ]
+water_test <- water[-index, ]
+dim(water_train)
+dim(water_test)
+```
+
+## Create recipe (including imputation)
+
+```{r}
+water_recipe <- 
+  water %>% 
+  recipe(Potability ~ .) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_impute_knn(ph, Sulfate, Trihalomethanes) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_corr(all_predictors())
+```
+
+## Set up a shared configuration for resampling
+
+Let's use 5-fold CV to save a little time
+
+```{r}
+water_tc <- trainControl(method = "cv", number = 5)
+```
+
+## Fit a linear SVM to predict Potability
+
+```{r linsvm, cache=TRUE}
+set.seed(2021)
+water_linsvm <- train(
+  water_recipe,
+  data = water_train,
+  method = "svmLinear",
+  trControl = water_tc
+)
+water_linsvm
+```
+
+## Fit an RBF SVM to predict Potability
+
+```{r rbfsvm, cache=TRUE}
+set.seed(2021)
+water_rbfsvm <- train(
+  water_recipe,
+  data = water_train,
+  method = "svmRadial",
+  tuneLength = 5,
+  trControl = water_tc
+)
+water_rbfsvm
+```
+
+## Try again with a more fine-grained grid
+
+```{r}
+set.seed(2021)
+fine_grid <- expand.grid(
+  sigma = .02289653, 
+  C = seq(from = 1, to = 4, length.out = 5)
+)
+
+water_rbfsvm2 <- train(
+  water_recipe,
+  data = water_train,
+  method = "svmRadial",
+  tuneGrid = fine_grid,
+  trControl = water_tc
+)
+water_rbfsvm2
+```
+
+
+---
+
+# Hands-on Activity
+
+
+---
+
+## Answer Key
+
+<details><summary>Click here to see the answer key for the hands-on activity</summary>
+
+</details>
