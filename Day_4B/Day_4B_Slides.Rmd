@@ -528,7 +528,7 @@ include_graphics("wang2021.png")
 ```
 
 .footnote[
-From Wang et al. (2021): doi:10.1001/jamanetworkopen.2021.0591
+From Wang et al. (2021): https://doi.org/10.1001/jamanetworkopen.2021.0591
 ]
 
 ---
@@ -572,7 +572,7 @@ include_graphics("wang_results.png")
 ```
 
 .footnote[
-From Wang et al. (2021): doi:10.1001/jamanetworkopen.2021.0591
+From Wang et al. (2021): https://doi.org/10.1001/jamanetworkopen.2021.0591
 ]
 
 ---
@@ -587,7 +587,7 @@ include_graphics("wang_cvplot.png")
 ```
 
 .footnote[
-From Wang et al. (2021): doi:10.1001/jamanetworkopen.2021.0591
+From Wang et al. (2021): https://doi.org/10.1001/jamanetworkopen.2021.0591
 ]
 
 ---
@@ -939,6 +939,41 @@ include_graphics("eval.png")
 - Not overstating performance 
 - Limitations adequately stated 
 ]
+
+---
+## Comprehension check
+
+<font size="5">**Identify the problems with each sentence in a paper you're reviewing.**<font size="5">
+.pull-left[
+<font size="5">**Question 1**<font size="5">
+
+"*We used ridge regularization to detect and model complex nonlinear relationships*"
+
+a) Ridge is not a useful predictive algorithm.
+
+b) Ridge cannot include any nonlinear terms.
+
+c) Ridge isn't well-suited for modeling non-linearities; other algorithms are better.
+
+d) Ridge is not a machine learning method.
+
+]
+
+.pull-right[
+<font size="5">**Question 2**<font size="5">
+
+"*Our model provided excellent predictions, with an AUC of 0.68.*"
+
+a) AUC is not a good performance metric.
+
+b) An AUC of 0.68 isn't very good.
+
+c) An AUC of 0.68 is not within the range of possible AUC values. 
+
+c) AUC does not provide useful information about predictive accuracy.
+
+]
+
 
 ---
 class: onecol
