@@ -3,7 +3,6 @@ title: "Pre-Course Survey"
 output: 
   html_document:
     toc: FALSE
-    self-contained: true
 ---
 
 ```{r, message=FALSE, echo=FALSE}
