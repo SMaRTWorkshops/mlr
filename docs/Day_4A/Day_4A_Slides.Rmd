@@ -212,9 +212,6 @@ If we have four or more features, we will need a decision **hyperplane**
 
 .bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
 **Caution:** You may hurt yourself if you try to imagine what a hyperplane looks like. 
-.tr.pr4[
-But here is a hint: 🍫✈️
-]
 ]
 
 --

@@ -9,16 +9,6 @@ output:
 
 The following datasets will be used in the course:
 
-Name | Description | Type | Link
-:--- | :---------- | :--- | :---
-titanic | Data on passengers of the Titanic | Real | https://bit.ly/amlr-titanic
-airsat | Data on Airline customer satisfaction | Real | https://bit.ly/amlr-airsat
-iris | Data on flower measurements | Real | https://bit.ly/amlr-iris
-globalWarm | Data on emotions, ideology, and attitudes towards action on climate change | Real | https://bit.ly/amlr-globalWarm
-heart | Data on heart disease predictions | Real | https://bit.ly/amlr-heart
-ahd | Data on Alzheimer's disease | Real | https://bit.ly/amlr-ahd
-hcp_memory | Neuroimaging data and memory tests | Modified from real | https://bit.ly/amlr-memory
-
 ---
 
 ```{r, echo=FALSE, message=FALSE}
@@ -32,17 +22,7 @@ Real data on 963 passengers on the Titanic
 - Short URL: https://bit.ly/amlr-titanic
 - Long URL: https://github.com/PittMethods/appliedml/blob/main/data/titanic.csv
 
-Variables
-
-- `survived`: Did the passenger survive the disaster? {no, yes}
-- `pclass`: Which class did the passenger travel in? {1st, 2nd, 3rd}
-- `sex`: What was the passenger's sex? {female, male}
-- `age`: What was the passenger's age in years? (0.1667, 80.0000)
-- `sibsp`: How many of the passenger's siblings and spouses were aboard? (0, 8)
-- `parch`: How many of the passenger's parents or children were aboard? (0, 6)
-- `fare`: How much did the passenger pay for transportation in dollars? (4.0125, 512.3292)
-
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 read_csv("https://bit.ly/amlr-titanic", col_types = "fffdiid")
 ```
 
@@ -55,20 +35,7 @@ Real data on 10,000 customers of an airline
 - Short URL: https://bit.ly/amlr-airsat
 - Long URL: https://github.com/PittMethods/appliedml/blob/main/data/airsatisfaction.csv
 
-Variables
-
-- `satisfaction`: Was the customer satisfied? {dissatisfied, satisfied}
-- `sex`: What was the customer's sex? {Female, Male}
-- `customer_type`: What type of customer are they? {disloyal, loyal}
-- `age`: How old is the customer in years? (7, 85)
-- `travel_type`: What type of trip was this? {Business, Personal}
-- `class`: What class did the customer travel in? {Business, Eco, Eco Plus}
-- `flight_distance`: How far was the flight in kilometers? (50, 6907)
-- `seat_comfort`:`online_boarding`: Level of satisfaction with aspects of trip {1, 2, 3, 4, 5} (0=NA)
-- `departure_delay`: How many minutes was departure delayed? (0, 569)
-- `arrival_delay`: How many minutes was arrival delayed? (0, 543)
-
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 read_csv("https://bit.ly/amlr-airsat", col_types = "fffdffdiiiiiiiiiiiiiidd")
 ```
 
@@ -80,15 +47,7 @@ Real data on 150 iris flowers.
 
 - Available from the base R {datasets} package. 
 
-Variables
-
-- `Sepal.Length`: length of flower sepal in cm (4.3, 7.9)
-- `Sepal.Width`: width of flower sepal in cm (2.0, 4.4)
-- `Petal.Length`: length of flower petal in cm (1.0, 6.9)
-- `Petal.Width`: width of flower petal in cm (0.1, 2.5)
-- `Species`: type of iris flower {setosa, versicolor, virginica}
-
-```{r, echo = FALSE}
+```{r, echo = FALSE, message=FALSE}
 data(iris)
 iris %>% as_tibble()
 ```
@@ -101,15 +60,11 @@ Real data on emotions, ideology, and party affiliation as predictors of attitude
 
 - Available from the {psychTools} package. 
 
-Variables 
+```{r, echo=FALSE, message=FALSE}
+data("globalWarm", package = "psychTools")
+globalWarm
+```
 
-- `govact`: attitudes towards government action on climate change (1, 7)
-- `posemot`: positive emotions about climate change (1, 6)
-- `negemot`: negative emotions about climate change (1, 6)
-- `ideology`: political ideology/conservatism (1, 7)
-- `age`: participant age (17, 87)
-- `sex`: participant sex {female, male}
-- `partyid`: political party {democrat, independent, republican}
 
 ---
 
@@ -120,7 +75,7 @@ Real data on risk for heart disease.
 - Short URL: https://bit.ly/amlr-heart
 - Long URL: https://github.com/PittMethods/appliedml/blob/main/data/heart.csv
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message=FALSE}
 read_csv("https://bit.ly/amlr-heart", col_types = "dffddffdfdiiif")
 ```
 
@@ -133,7 +88,7 @@ Real data on Alzheimer's Disease.
 - Short URL: https://bit.ly/amlr-ahd
 - Long URL: https://github.com/PittMethods/appliedml/blob/main/data/ahd.csv
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message=FALSE}
 read_csv("https://bit.ly/amlr-ahd", col_types = list(male = "f", Genotype = "f", diagnosis = "f"))
 ```
 
@@ -146,10 +101,34 @@ Real neuroimaging data from the Human Connectome Project used to predict scores 
 - Short URL: https://bit.ly/amlr-memory
 - Long URL: https://github.com/PittMethods/appliedml/blob/main/data/hcp_memory.csv
 
-Variables
-
-```{r, echo = FALSE}
+```{r, echo = FALSE, message=FALSE}
 read_csv("https://bit.ly/amlr-memory")
 ```
 
+---
+
+## water
+
+Real data on 3276 different water bodies. Modified to turn `Potability` from a numeric variable (dummy code) into a character variable.
+
+- Short URL: https://bit.ly/amlr-water
+- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/water.csv
+- Original Source: https://www.kaggle.com/adityakadiwal/water-potability
+
+```{r, echo=FALSE, message=FALSE}
+read_csv("https://bit.ly/amlr-water")
+```
+
+---
+
+## attrition
+
+Simulated data on 1470 fictional employees who either quit their job (attrition = yes) or did not (attrition = no).
+
+- Available from the {modeldata} package
+
+```{r, echo=FALSE, message=FALSE}
+data("attrition", package = "modeldata")
+attrition
+```
 
