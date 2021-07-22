@@ -83,19 +83,30 @@ a {
 class: onecol
 ## Roadmap
 
+.left-column[
+.pt4[
+```{r, echo=FALSE}
+include_graphics("../figs/map.jpg")
+```
+]
+]
+
+.right-column[
 1. Maximal Margin Classifier 🚶
 
 1. Support Vector Classifier 🏃
 
 1. Support Vector Machine 🚴
 
-1. Applied Example
+1. Support Vector Regression 🚵
 
-1. Support Vector Regression
+1. Applied Example
 
 1. Live Coding
 
 1. Hands-on Activity
+]
+
 
 ---
 class: onecol
@@ -135,7 +146,7 @@ class: onecol
 If this is our training data, how do we **predict the class** of new data?
 
 ```{r, echo=FALSE, out.width='100%'}
-include_graphics("maxmargin1.png")
+include_graphics("../figs/maxmargin1.png")
 ```
 
 ---
@@ -145,7 +156,7 @@ class: onecol
 With one feature, we could find a **point** that separates the classes (as higher or lower)
 
 ```{r, echo=FALSE, out.width='100%'}
-include_graphics("maxmargin2.png")
+include_graphics("../figs/maxmargin2.png")
 ```
 
 ---
@@ -154,7 +165,7 @@ class: onecol
 But there are many possible decision points, so **which should we use?**
 
 ```{r, echo=FALSE, out.width='100%'}
-include_graphics("maxmargin3.png")
+include_graphics("../figs/maxmargin3.png")
 ```
 
 ---
@@ -163,7 +174,7 @@ class: onecol
 The MMC algorithm finds and uses the point with the **largest** (i.e., maximal) ![:emphasize](margin)
 
 ```{r, echo=FALSE, out.width='100%'}
-include_graphics("maxmargin4.png")
+include_graphics("../figs/maxmargin4.png")
 ```
 
 ---
@@ -173,7 +184,7 @@ class: onecol
 If we have two features, we can extend this idea using a 2D plot and a decision **line**
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("maxmargin5.png")
+include_graphics("../figs/maxmargin5.png")
 ```
 
 ---
@@ -183,7 +194,7 @@ class: onecol
 If we have three features, we will need a 3D plot and a decision **plane** (i.e., flat surface)
 
 ```{r, echo=FALSE, out.width='45%'}
-include_graphics("3d_plane.gif")
+include_graphics("../figs/3d_plane.gif")
 ```
 
 .footnote[[1] Credit to [Zahra Elhamraoui](https://medium.datadriveninvestor.com/support-vector-machine-svm-algorithm-in-a-fun-easy-way-fc23a008c22) for this visualization.]
@@ -228,7 +239,7 @@ Only the observations that define the margin, called ![:emphasize](support vecto
 Because it only uses a subset of data anyway, MMC does well with smaller datasets
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("maxmargin8.png")
+include_graphics("../figs/maxmargin8.png")
 ```
 
 ---
@@ -240,7 +251,7 @@ This means that **outliers can have an outsized impact** on what is learned
 For instance, this margin is likely to misclassify examples in new data
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("maxmargin9.png")
+include_graphics("../figs/maxmargin9.png")
 ```
 
 ---
@@ -252,7 +263,7 @@ The SVC algorithm is like MMC but it **allows examples to be misclassified** (i.
 This will **increase bias** (training errors) but hopefully **decrease variance** (testing errors)
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("svc1.png")
+include_graphics("../figs/svc1.png")
 ```
 
 ---
@@ -264,7 +275,7 @@ SVCs also enable a model to be trained when the classes are **not perfectly sepa
 A straight line is never going to separate these classes without errors (sorry MMC...)
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("svc2.png")
+include_graphics("../figs/svc2.png")
 ```
 
 ---
@@ -276,7 +287,7 @@ But if we allow a few errors and points within the margin...
 ...we may be able to find a hyperplane that generalizes pretty well
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("svc3.png")
+include_graphics("../figs/svc3.png")
 ```
 
 ---
@@ -299,7 +310,8 @@ SVCs have a hyperparameter $C$ that controls how soft vs. hard the margin is
 
   As a result, the model has less flexibility but may also have **lower variance**
 
-.footnote[[1] If you set `\\(C=0\\)` (i.e., a fully hard margin) SVC will allow no violations  and behave the same as MMC.]
+.footnote[
+[1] If you set $C=0$ (i.e., a fully hard margin) SVC will allow no violations  and behave the same as MMC.]
 
 ---
 class: onecol
@@ -310,10 +322,10 @@ So far, MMC and SVCs have both used linear (e.g., flat) hyperplanes
 But there are many times when the classes are not **linearly separable**
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("svm1.png")
+include_graphics("../figs/svm1.png")
 ```
 
-.footnote[[1] Good luck separating these classes with a single decision point...]
+.footnote[[1] These classes seem separable, but not with a single decision point...]
 
 ---
 class: onecol
@@ -324,7 +336,7 @@ But if we enlarge the feature space, the classes might then become linearly sepa
 There are many ways to do this enlarging, but one is to add polynomial expansions
 
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("svm2.png")
+include_graphics("../figs/svm2.png")
 ```
 
 ---
@@ -333,18 +345,20 @@ class: onecol
 
 The classes are now linearly separable in this new enlarged feature space!
 
+The hyperplane is flat in this new space, but would not look so in the original space
+
 ```{r, echo=FALSE, out.width='80%'}
-include_graphics("svm3.png")
+include_graphics("../figs/svm3.png")
 ```
 
 ---
 class: onecol
 ## Support Vector Machine
 
-Here is a more complex example of a nonliner (and non polynomial) expansion
+Here is a more complex example of a nonlinear (and non-polynomial) expansion
 
 ```{r, echo=FALSE, out.width='75%'}
-include_graphics("svm4.png")
+include_graphics("../figs/svm4.png")
 ```
 
 .footnote[[1] Credit to [Erik Kim](https://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html) for this example and visualization.]
@@ -353,10 +367,10 @@ include_graphics("svm4.png")
 class: onecol
 ## Support Vector Machine
 
-And here is the hyperplane (linear in 3D but nonlinear when "projected" back in 2D)
+And here is the hyperplane: it is linear in 3D but not when "projected" back into 2D
 
 ```{r, echo=FALSE, out.width='75%'}
-include_graphics("svm5.png")
+include_graphics("../figs/svm5.png")
 ```
 
 .footnote[[1] Credit to [Erik Kim](https://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html) for this example and visualization.]
@@ -422,9 +436,13 @@ The intuition here is that similarity is weighted by how *close* the observation
 
 - As the $\sigma$ hyperparameter<sup>1</sup> increases, the more *local* and complex fit becomes
 
+--
+
 The RBF kernel computes similarity between points in *infinite* dimensions 🤯
 
 - It is considered an ideal "general purpose" nonlinear kernel<sup>2</sup> 
+
+--
 
 .footnote[
 [1] Note that $\sigma$ is also sometimes called $\gamma$ or the "scale" hyperparameter.<br />
@@ -432,11 +450,40 @@ The RBF kernel computes similarity between points in *infinite* dimensions 🤯
 ]
 
 ---
+class: onecol
+## Support Vector Regression Machine (SVR)
+
+So far we have been concerned only with classification, but what about regression?
+
+In another very clever turn, you can **adapt SVM for regression** by reversing its goal
+
+- Instead of trying to separate classes and keep data points outside of the margin...
+
+- ...SVR instead tries to **keep all the data points** ![:emphasize](inside the margin) (with no classes)
+
+---
+class: onecol
+## Support Vector Regression Machine
+
+
+All the benefits of the SVM algorithm can be applied to the regression problem
+
+- Using a subset of the data points to define the margin, i.e., **support vectors**
+
+- Allowing violations (now points *outside* the margin) with a **soft margin**
+
+- Efficiently expanding the feature space through the use of **various kernels**
+
+We can use the same {caret} `method` and hyperparameters for SVM and SVR
+
+- We will use $C$ to control the softness vs. hardness of the margin
+
+- If we use an RBF kernel, we will use $\sigma$ to control the kernel scaling
+
+---
 ## Applied Example
 
 
----
-## Support vector regression
 
 
 ---

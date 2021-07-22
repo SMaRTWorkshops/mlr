@@ -54,7 +54,8 @@ library(kableExtra)
 library(countdown)
 library(patchwork)
 library(caret)
-library(recipes)
+library(skimr)
+library(tidymodels)
 ```
 
 class: inverse, center, middle
@@ -483,8 +484,49 @@ We can use the same {caret} `method` and hyperparameters for SVM and SVR
 ---
 ## Applied Example
 
+```{r}
+water <- read_csv("../data/water.csv")
+water
+```
 
+```{r}
+skim(water)
+```
 
+```{r}
+index <- createDataPartition(water$Potability, p = 0.8, list = FALSE)
+water_train <- water[index, ]
+water_test <- water[-index, ]
+dim(water_train)
+dim(water_test)
+```
+
+```{r}
+water_recipe <- 
+  water %>% 
+  recipe(Potability ~ .) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_impute_knn(ph, Sulfate, Trihalomethanes) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
+  step_corr(all_predictors())
+```
+
+```{r}
+water_tc <- trainControl(method = "cv", number = 10)
+```
+
+```{r}
+# Maximal Margin Classifier when C = 0
+mmc_grid <- expand.grid(C = 0)
+water_mmc <- train(
+  water_recipe,
+  data = water_train,
+  method = "svmLinear",
+  tuneGrid = mmc_grid,
+  trControl = water_tc
+)
+water_mmc
+```
 
 ---
 ## Live Coding Activity

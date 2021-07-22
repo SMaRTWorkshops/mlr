@@ -339,5 +339,9 @@ postResample(pred = linpred_test_memory, obs = memory_test_baked$memory_score)
 postResample(pred = enpred_test_memory, obs = memory_test_baked$memory_score)
 ```
 
+```{r}
+ggplot(enfit_memory)
+```
+
 </details>
 
