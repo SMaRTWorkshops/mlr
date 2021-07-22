@@ -43,9 +43,9 @@ left:
   - text: "Day 4 Materials"
     menu:
        - text: "Day 4-A Lecture"
-         href: wip.html
+         href: ./Day_4A/Day_4A_Slides.html
        - text: "Day 4-A Activity"
-         href: wip.html
+         href: ./Day_4A/Day_4A_Activity.html
        - text: "Day 4-B Lecture"
          href: wip.html
        - text: "Day 4-B Activity"

@@ -131,6 +131,8 @@ However, there is a lot of *terminology* and *math* involved... 😱
 
 - I may also need to skip questions with very technical answers
 
+- Finally, it may be tough to follow along since training takes a while
+
 --
 
 <p style="padding-top:15px;">But you should get a <b>strong intuition</b> and <b>applied knowledge</b></p>
@@ -210,9 +212,6 @@ If we have four or more features, we will need a decision **hyperplane**
 
 .bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
 **Caution:** You may hurt yourself if you try to imagine what a hyperplane looks like. 
-.tr.pr4[
-But here is a hint: 🍫✈️
-]
 ]
 
 --
@@ -462,6 +461,13 @@ In another very clever turn, you can **adapt SVM for regression** by reversing i
 
 - ...SVR instead tries to **keep all the data points** ![:emphasize](inside the margin) (with no classes)
 
+.center[
+```{r, echo=FALSE, out.width='50%'}
+include_graphics("../figs/svr.png")
+```
+
+]
+
 ---
 class: onecol
 ## Support Vector Regression Machine
@@ -481,6 +487,18 @@ We can use the same {caret} `method` and hyperparameters for SVM and SVR
 
 - If we use an RBF kernel, we will use $\sigma$ to control the kernel scaling
 
+- Optionally, we can tune the $\varepsilon$ hyperparameter to control the margin size
+
+---
+class: onecol
+## Support Vector Regression Machine
+
+```{r, echo=FALSE, out.width='90%'}
+include_graphics("../figs/epsilonsvr.png")
+```
+
+
+
 ---
 class: onecol
 ## Applied Example
@@ -493,9 +511,15 @@ Let's train three classification models to predict Titanic survival
 
 1. A radial SVM (using "svmRadial")
 
-We can practice setting up tuning grids and also learn to compare models
+We can practice setting up tuning grids and also learn to compare models<sup>1</sup>
 
-.footnote[Note that this is a relatively small dataset with few predictors, so we may not really need the power of SVM.]
+We will also show using CV only (and not nesting it inside of a holdout CV)<sup>2</sup>
+
+Finally, we will train an SVR regression model to predict Titanic fare
+
+.footnote[
+[1] Note that this is a relatively small dataset with few predictors, so we may not really need the power of SVM.<br />
+[2] Note that nesting a $k$-fold CV inside another $k$-fold CV would give better estimates (but take even longer).]
 
 ---
 class: onecol
@@ -503,12 +527,6 @@ class: onecol
 
 ```{r, message=FALSE}
 titanic <- read_csv("https://bit.ly/amlr-titanic")
-
-# Create a training and testing set (stratified by fare)
-set.seed(2021)
-index <- createDataPartition(titanic$survived, p = 0.75, list = FALSE)
-surv_train <- titanic[index, ]
-surv_test <- titanic[-index, ]
 ```
 
 --
@@ -526,7 +544,7 @@ surv_tc <- trainControl(method = "cv", number = 10)
 
 ---
 class: onecol
-## Training the Logistic Regression
+## Training the Logistic Regression and CV Performance
 
 ```{r glm, cache=TRUE}
 set.seed(2021)
@@ -534,7 +552,7 @@ set.seed(2021)
 # glm has no hyperparameters
 surv_glm <- train(
   surv_recipe, 
-  data = surv_train,
+  data = titanic, #<<
   method = "glm",
   trControl = surv_tc
 )
@@ -558,7 +576,7 @@ set.seed(2021)
 # Let's create a tuning grid manually
 surv_linsvm <- train(
   surv_recipe, 
-  data = surv_train,
+  data = titanic,
   method = "svmLinear", #<<
   tuneGrid = expand.grid(C = c(1/4, 1/2, 1, 2, 4)), #<<
   trControl = surv_tc
@@ -567,7 +585,7 @@ surv_linsvm <- train(
 
 ---
 class: onecol
-## Training Performance of the Linear SVM
+## CV Performance of the Linear SVM
 
 ```{r, eval=FALSE}
 surv_linsvm$results
@@ -586,9 +604,9 @@ set.seed(2021)
 # Let's let caret set up the tuning grid on this one
 surv_rbfsvm <- train(
   surv_recipe, 
-  data = surv_train,
-  method = "svmRadial", #<<
-  tuneLength = 8, #<<
+  data = titanic,
+  method = "svmRadialSigma", #<<
+  tuneLength = 5, #<<
   trControl = surv_tc
 )
 ```
@@ -596,80 +614,147 @@ surv_rbfsvm <- train(
 
 ---
 class: onecol
-## Training Performance of the Radial SVM
+## CV Performance of the Radial SVM
 
 ```{r, eval=FALSE}
 surv_rbfsvm$results
 ```
 
 ```{r, echo=FALSE}
-surv_rbfsvm$results %>% kable(digits = 3)
+surv_rbfsvm$results %>% kable(digits = 3) %>% scroll_box(height = '400px')
 ```
 
 ---
 class: onecol
-## Plotting Accuracy Against $C$ Values
+## Plotting Accuracy Against $C$ and $\sigma$ Values
 
 ```{r rbfhp, out.width='90%'}
 ggplot(surv_rbfsvm)
 ```
 
 ---
-class: onecol
-## Comparing the Algorithms' Training Performance
+## Comparing the Algorithms' CV Performance
 
-```{r resamples, out.width='80%'}
-resamples(list(LogisticGLM = surv_glm, 
-               LinearSVM = surv_linsvm, 
-               RadialSVM = surv_rbfsvm)) %>% bwplot()
+```{r, echo=FALSE}
+summary.resamples <- function(x, metric) {
+  output <- caret:::summary.resamples(x, metric = metric)
+  output$statistics$Accuracy <- round(output$statistics$Accuracy, digits = 3)
+  output
+}
 ```
+
+```{r}
+surv_res <- resamples(list(LogisticGLM = surv_glm, 
+                           LinearSVM = surv_linsvm, 
+                           RadialSVM = surv_rbfsvm))
+summary(surv_res, metric = "Accuracy")
+```
+
+---
+## Comparing the Algorithms' CV Performance
+
+```{r}
+bwplot(surv_res)
+```
+
 
 ---
 class: onecol
-## Performance in the Test Set
+## Quick SVR Example
 
 ```{r}
-# Collect predictions for each model
-glm_pred <- predict(surv_glm, newdata = surv_test)
-linsvm_pred <- predict(surv_linsvm, newdata = surv_test)
-rbfsvm_pred <- predict(surv_rbfsvm, newdata = surv_test)
+svr_recipe <- 
+  titanic %>% 
+  recipe(fare ~ .) %>% 
+  step_rm(survived) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_normalize(all_numeric_predictors())
+```
 
-# Collect true labels
-surv_test_baked <- 
-  surv_recipe %>% 
-  prep(training = surv_train) %>% 
-  bake(new_data = surv_test)
-surv_true <- surv_test_baked$survived
+---
+## Quick SVR Example
+
+```{r, eval=FALSE}
+fare_svr <- train(
+  svr_recipe,
+  data = titanic,
+  method = "svmRadial",
+  tuneLength = 5,
+  trControl = surv_tc
+)
+fare_svr$results
+```
+
+```{r svr, cache=TRUE, echo=FALSE}
+fare_svr <- train(
+  svr_recipe,
+  data = titanic,
+  method = "svmRadial",
+  tuneLength = 5,
+  trControl = surv_tc
+)
+fare_svr$results %>% kable(digits = 3)
+```
+
+---
+## Quick SVR Example
+
+```{r}
+densityplot(fare_svr, metric = "Rsquared")
 ```
 
 ---
 class: onecol
-## Performance in the Test Set
+## Live Coding
 
-```{r}
-# Logistic Regression
-postResample(pred = glm_pred, obs = surv_true)
-```
+Let's try to predict whether it is safe or unsafe for humans to drink from a water source based on its chemical properties (e.g., pH, hardness, sulfate content).
 
---
+We will recap how to **train SVM classifiers** with RBF kernels
 
-```{r}
-# Linear SVM
-postResample(pred = linsvm_pred, obs = surv_true)
-```
+We will also compare **two approaches** to selecting the $\sigma$ hyperparameter:
 
---
-
-```{r}
-# Radial SVM
-postResample(pred = rbfsvm_pred, obs = surv_true)
-```
+ 1. Tuning it via grid search (i.e., trying and comparing many values)
+ 
+ 1. Letting the {kernlab} package automatically estimate it
+ 
+Finally, I can also show you an example of **imputing missing values** with {recipes}
 
 ---
-## Live Coding Activity
-
----
+class: onecol
 ## Hands-on Activity
 
+Let's try to predict whether an employee with quit their job based on various measures.
+
+1. Load the `attrition` dataset<sup>1</sup> from the {modeldata} package (Hint: use `data(...)`)
+
+1. Explore the data and create a recipe that includes normalization and dummy coding
+
+1. Configure your resampling to be a single 10-fold cross-validation
+
+1. Train models using the following algorithms and settings to classify `Potability`
+
+    + GLMNET with a `tuneLength` of 5 for $\alpha$ and $\lambda$
+    
+    + SVM with RBF kernel with a `tuneLength` of 5 for $C$ (let {kernlab} estimate $\sigma$)
+    
+1. Collect the resampling results using `resamples()` and plot them using `bwplot()`
+
+.footnote[[1] Note that this is simulated (i.e., not real) data from the IBM Watson group.]
+
 ---
-## Break and timer
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```
