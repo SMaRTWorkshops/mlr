@@ -11,38 +11,20 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 
 ## Course Schedule
 
-Day | Part | Topic | Lead
-:-: | :--: | :---- | :---
-1 | A | Conceptual introductions | Girard
-1 | B | Logistics and data exploration | Wang
-2 | A | Feature engineering | Girard
-2 | B | Predictive modeling basics | Girard
-3 | A | Regularized regression | Wang
-3 | B | Decision trees and random forests | Wang
-4 | A | Support vector machines | Girard
-4 | B | Practical matters and advice | Wang
-5 | A | Panel Q&A and discussion | Both
-5 | B | Hackathon and consultation | Both
+Day | Part | Topic | Lead | Video Link
+:-: | :--: | :---- | :--- | :---------
+1 | A | Conceptual introductions | Girard | https://youtu.be/vD3w54Y4OCI
+1 | B | Logistics and data exploration | Wang | https://youtu.be/MMsf544NsH8
+2 | A | Feature engineering | Girard | https://youtu.be/CPVy1Mxqzu4
+2 | B | Predictive modeling basics | Girard | https://youtu.be/0HaLHcPSPVk
+3 | A | Regularized regression | Wang | https://youtu.be/nTpVaUnsjfk
+3 | B | Decision trees and random forests | Wang | https://youtu.be/tEpudktDIac
+4 | A | Support vector machines | Girard | https://youtu.be/Ydzxe1NDfiw
+4 | B | Practical matters and advice | Wang | https://youtu.be/zM4Ebex9KW8
+5 | A | Panel Q&A and discussion | Both | https://youtu.be/00g3ZvASlUQ
+5 | B | Hackathon and consultation | Both | 
 
-- The non-lead instructor will be available during lectures to provide assistance.
-
----
-
-## Accessing the Meetings
-
-The synchronous course meetings will take place on Zoom via the following links:
-
-Day | Zoom Link | Passcode
-:-- | :-------- | :-------
-1 | https://kansas.zoom.us/j/94332907492 | 2021
-2 | https://kansas.zoom.us/j/98069536426 | 2021
-3 | https://kansas.zoom.us/j/99076471674 | 2021
-4 | https://kansas.zoom.us/j/98855216301 | 2021
-5 | https://kansas.zoom.us/j/98754765145 | 2021
-
-- You will be put in a waiting room upon joining and only accounts with names that match the name of a registered attendee will be let into the meeting. So please make sure that your name in Zoom matches the name you registered with (or alert us to the change).
-
-- If you are new to Zoom, [click here to view an introductory guide ](https://support.zoom.us/hc/en-us/articles/360034967471-Getting-started-guide-for-new-users)
+Video recordings of the course meetings have been posted as private YouTube videos (see the links in the table above). In order to access them, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know.
 
 ---
 
