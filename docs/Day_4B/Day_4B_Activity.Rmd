@@ -1,0 +1,51 @@
+---
+title: "Day 4-B Activity <br /> (Practical Issues)"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  df_print = "paged"
+)
+```
+
+# Group Discussion 1
+
+We will randomly assign you to a small breakout room.
+
+We will jump between rooms to join discussions and answer questions.
+
+**Introduce yourselves again and discuss the following topics:** 
+
+1. What types of ML studies are you interested in designing in your field? How will you shift from an inferrential to a predictive mindset?
+
+2. What problems, concerns, or challenges do you forsee in designing ML studies (e.g., in causal thinking, sample size, measurement, bias)? 
+
+3. What are some potential solutions?
+
+</br> </br> </br>
+
+
+---
+
+# Group Discussion 2
+
+We will randomly assign you to a small breakout room.
+
+We will jump between rooms to join discussions and answer questions.
+
+**Discuss the following topics:** 
+
+1. Which ML algorithms are you most interested in applying to your data, and why? Do you anticipate any challenges? 
+
+2. Have you written any ML papers (or are you planning to)? What information do you find helpful to include in the methods and results?
+
+3. Have you peer-reviewed (or read) any ML papers in your field? What do you typically pay attention to? What elements do you enjoy, and what concerns do you have?

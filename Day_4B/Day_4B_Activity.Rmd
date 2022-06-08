@@ -1,5 +1,5 @@
 ---
-title: "Day 4_B Activity <br /> (Practical Issues)"
+title: "Day 4-B Activity <br /> (Practical Issues)"
 output:
   prettydoc::html_pretty:
     theme: cayman
@@ -31,7 +31,7 @@ We will jump between rooms to join discussions and answer questions.
 
 3. What are some potential solutions?
 
-</br> </br> </br> </br> </br> 
+</br> </br> </br>
 
 
 ---

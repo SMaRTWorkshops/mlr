@@ -71,7 +71,6 @@ class: inverse, center, middle
   font-size: 24px;
 }
 .remark-code {
-  font-size: 24px;
   border: 1px solid grey;
 }
 a {
@@ -388,11 +387,6 @@ class: inverse, center, middle
 # Interpreting Results
 
 ---
-## Data Quality 
-
-
-
----
 class: onecol
 
 ## What's "good" accuracy? 
@@ -534,7 +528,7 @@ include_graphics("wang2021.png")
 ```
 
 .footnote[
-From Wang et al. (2021): doi:10.1001/jamanetworkopen.2021.0591
+From Wang et al. (2021): https://doi.org/10.1001/jamanetworkopen.2021.0591
 ]
 
 ---
@@ -546,23 +540,78 @@ Writing results sections for ML papers can also feel different and confusing com
 
 Here's a non-exhaustive list of results to include:
 - Sample size for each model
-- Accuracy for each model 
+- Performance of each model 
+- Some measure of uncertainty/variance around model accuracy
 - Comparison between models (or to a baseline/chance prediction)
+- Variable importance
 
 ---
-class: inverse, center, middle
-# Publication-Ready Figures
+class:  twocol
+
+## Results Example: Model Performance and Comparison
+
+State results from each model and comparisons (if applicable).
+
+```{r, echo = FALSE, out.width="75%"}
+include_graphics("girard5.png")
+```
+
+.footnote[
+From Girard et al. (2021): https://psyarxiv.com/zc47p 
+]
+
+---
+class:  twocol
+
+## Results Example: Model Performance and Comparison
+
+State results from each model and comparisons (if applicable).
+
+```{r, echo = FALSE, out.width="50%"}
+include_graphics("wang_results.png")
+```
+
+.footnote[
+From Wang et al. (2021): https://doi.org/10.1001/jamanetworkopen.2021.0591
+]
+
+---
+class: twocol
+
+## Results Example: Uncertainty/Variance 
+
+Plotting results from each CV fold can help show variance around model performance metrics.
+
+```{r,echo = FALSE, out.width="48%"}
+include_graphics("wang_cvplot.png")
+```
+
+.footnote[
+From Wang et al. (2021): https://doi.org/10.1001/jamanetworkopen.2021.0591
+]
 
 ---
 class: onecol
 
-## {ggplot2}
+## Publication-Ready Figures
 
+.left-column[
+</br>
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("ggplot.png")
+```
+]
+
+.right-column[
 We strongly recommend {ggplot2} for making publication-ready figures. 
 
+The `qplot()` function is a convenient shortcut for making ggplots for folks who are used to base `plot()` in R.
+
+But in the long run, learning {ggplot2} is really useful for allowing you to make more complex, customizable, publication-ready figures. 
+]
 
 ---
-class: onecol
+class: twocol
 
 ## The Grammar of Graphics: Basic Elements
 
@@ -595,9 +644,336 @@ class: twocol
 .pull-right[
 ```{r, echo = FALSE, out.width="50%"}
 data(iris)
-tibble(iris[, 3:5]) %>% kable(format = "html", table.attr = "style='width:10%;'")
+tibble(iris[1:8, c(1, 2, 5)]) %>% kable(format = "html", table.attr = "style='width:10%;'")
 ```
 ]
+
+---
+class: twocol
+
+## The Grammar of Graphics: Basic Elements
+
+.pull-left[
+**Data** </br><font size="5">describe observations with variables</font>
+
+![:emphasize](Aesthetic Mappings) </br><font size="5">map data variables to visual qualities</font>
+
+**Scales** </br><font size="5">map values in data space to values in aesthetic space (create axes and legends)
+</font>
+
+**Geometric Objects** </br><font size="5">constitute the objects seen on a plot</font>
+]
+.pull-right[
+</br>
+```{r, echo = FALSE}
+include_graphics("aesggplot.png")
+```
+]
+
+---
+class: twocol
+
+## The Grammar of Graphics: Basic Elements
+
+.pull-left[
+**Data** </br><font size="5">describe observations with variables</font>
+
+**Aesthetic Mappings** </br><font size="5">map data variables to visual qualities</font>
+
+![:emphasize](Scales) </br><font size="5">map values in data space to values in aesthetic space (create axes and legends)
+</font>
+
+**Geometric Objects** </br><font size="5">constitute the objects seen on a plot</font>
+]
+.pull-right[
+```{r, fig.height=6}
+ggplot()
+```
+]
+
+---
+class: twocol
+
+## The Grammar of Graphics: Basic Elements
+
+.pull-left[
+**Data** </br><font size="5">describe observations with variables</font>
+
+**Aesthetic Mappings** </br><font size="5">map data variables to visual qualities</font>
+
+![:emphasize](Scales) </br><font size="5">map values in data space to values in aesthetic space (create axes and legends)
+</font>
+
+**Geometric Objects** </br><font size="5">constitute the objects seen on a plot</font>
+]
+.pull-right[
+```{r, fig.height=6}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width))
+```
+]
+
+---
+class: twocol
+
+## The Grammar of Graphics: Basic Elements
+
+.pull-left[
+**Data** </br><font size="5">describe observations with variables</font>
+
+**Aesthetic Mappings** </br><font size="5">map data variables to visual qualities</font>
+
+**Scales** </br><font size="5">map values in data space to values in aesthetic space (create axes and legends)
+</font>
+
+![:emphasize](Geometric Objects) </br><font size="5">constitute the objects seen on a plot</font>
+]
+.pull-right[
+```{r, fig.height=6}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_point()
+```
+]
+
+---
+class: twocol
+
+## The Grammar of Graphics: Basic Elements
+
+.pull-left[
+**Data** </br><font size="5">describe observations with variables</font>
+
+**Aesthetic Mappings** </br><font size="5">map data variables to visual qualities</font>
+
+**Scales** </br><font size="5">map values in data space to values in aesthetic space (create axes and legends)
+</font>
+
+![:emphasize](Geometric Objects) </br><font size="5">constitute the objects seen on a plot</font>
+]
+
+.pull-right[
+```{r, fig.height=6}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point(aes(shape=Species)) + 
+  geom_smooth(method = "lm")
+```
+]
+
+.footnote[
+Geoms can be combined and layered in interesting ways.
+]
+
+---
+class: twocol
+
+## The Grammar of Graphics: Basic Elements
+
+.pull-left[
+**Data** </br><font size="5">describe observations with variables</font>
+
+**Aesthetic Mappings** </br><font size="5">map data variables to visual qualities</font>
+
+**Scales** </br><font size="5">map values in data space to values in aesthetic space (create axes and legends)
+</font>
+
+**Geometric Objects** </br><font size="5">constitute the objects seen on a plot</font>
+
+**Themes**</br> <font size="5">control non-data elements of a graphic</font> 
+]
+
+.pull-right[
+```{r, fig.height=6}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point(aes(shape=Species)) + 
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+]
+
+---
+class: twocol
+
+## The Grammar of Graphics: Basic Elements
+
+.pull-left[
+**Data** </br><font size="5">describe observations with variables</font>
+
+**Aesthetic Mappings** </br><font size="5">map data variables to visual qualities</font>
+
+**Scales** </br><font size="5">map values in data space to values in aesthetic space (create axes and legends)
+</font>
+
+**Geometric Objects** </br><font size="5">constitute the objects seen on a plot</font>
+
+**Themes**</br> <font size="5">control non-data elements of a graphic</font> 
+]
+
+.pull-right[
+```{r, fig.height=6}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point(aes(shape=Species)) + 
+  geom_smooth(method = "lm") +
+  theme_dark()
+```
+]
+
+---
+class: onecol 
+
+## {ggplot}
+
+To learn more about {ggplot}, check out some of these free resources online (there are many more tutorials/materials too)!
+
+.left-column[
+```{r, echo = FALSE}
+include_graphics("ggplotbook.jpg")
+```
+]
+.right-column[
+- https://ggplot2.tidyverse.org/
+- https://ggplot2-book.org/index.html
+- https://r-graphics.org/index.html
+- https://jmgirard.com/data-viz/
+- https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf
+]
+
+---
+class: inverse, center, middle
+# Peer-Reviewing ML Papers
+
+
+---
+class: onecol
+
+## Peer-Reviewing ML Papers
+
+The machine learning literature in psychology and other social and behavioral sciences is ![:emphasize](quickly increasing).
+
+This can feel like a double-edged sword. On the one hand, an increased focus on prediction is so important for solving many problems we care about. 
+
+On the other, some published papers may not be high-quality, or people may rush to publish before fully understanding their models. 
+
+Either way, this means there are ![:emphasize](many papers that need to be reviewed!)
+
+As responsible practitioners of ML, you should be well-equipped to review such papers with a focus on methods and results (and interpretation of results).
+
+---
+class: onecol
+
+## Is the Sample Appropriate? 
+
+.left-column[
+</br>
+```{r, echo = FALSE}
+include_graphics("sample.png")
+```
+]
+
+.right-column[
+- Population to sample match
+- Representativeness of the sample
+- Who is included? 
+- Who is left out? 
+- Adequate sample size (for the specific modeling approaches/algorithms employed)
+- Match between sample and research question
+- Generalizable to future use cases
+]
+---
+class: onecol
+
+## Measurement and Feature Engineering
+
+.left-column[
+</br>
+```{r, echo = FALSE}
+include_graphics("engineer.jpg")
+```
+]
+
+.right-column[
+- How were features and outcomes measured? 
+- Justification of measurement decisions
+- Rationale for feature engineering
+- Clear description of feature engineering (e.g., one-hot vs dummy coding for categorical features)
+- Appropriate feature engineering to match specific algorithms (e.g., normalizing features for regularized regression)
+- Clear description of missing data and missing data handling (e.g., listwise deletion vs imputation)
+]
+
+---
+class: onecol 
+
+## Resampling and Data Leakage
+
+.left-column[
+</br>
+```{r, echo = FALSE}
+include_graphics("leak.png")
+```
+]
+
+.right-column[
+- Clear separation between model training vs. evaluation  
+- Is there any evidence of data leakage (i.e., using information from the test set to guide modeling decisions)?
+- Adequate size of test sets during resampling 
+- Justification of resampling methods
+- Understanding of limitations of resampling methods
+- Justification of algorithm selection
+- Appropriate handling of multilevel/nested data
+]
+
+---
+class: onecol 
+
+## Model Evaluation and Interpretation
+
+.left-column[
+</br>
+```{r, echo = FALSE}
+include_graphics("eval.png")
+```
+]
+
+.right-column[
+- Are the authors' interpretations and claims supported by the modeling methods and algorithms?
+- Are evaluation metrics differentiated appropriately (e.g., accuracy vs. AUROC vs. sensitivity vs. specificity)?
+- Appropriate interpretation of performance
+- Not overstating performance 
+- Limitations adequately stated 
+]
+
+---
+## Comprehension check
+
+<font size="5">**Identify the problems with each sentence in a paper you're reviewing.**<font size="5">
+.pull-left[
+<font size="5">**Question 1**<font size="5">
+
+"*We used ridge regularization to detect and model complex nonlinear relationships*"
+
+a) Ridge is not a useful predictive algorithm.
+
+b) Ridge cannot include any nonlinear terms.
+
+c) Ridge isn't well-suited for modeling non-linearities; other algorithms are better.
+
+d) Ridge is not a machine learning method.
+
+]
+
+.pull-right[
+<font size="5">**Question 2**<font size="5">
+
+"*Our model provided excellent predictions, with an AUC of 0.68.*"
+
+a) AUC is not a good performance metric.
+
+b) An AUC of 0.68 isn't very good.
+
+c) An AUC of 0.68 is not within the range of possible AUC values. 
+
+c) AUC does not provide useful information about predictive accuracy.
+
+]
+
 
 ---
 class: onecol
@@ -615,19 +991,3 @@ We will jump between rooms to join discussions and answer questions.
 2. Have you written any ML papers (or are you planning to)? What information do you find helpful to include in the methods and results?
 
 3. Have you peer-reviewed (or read) any ML papers in your field? What do you typically pay attention to? What elements do you enjoy, and what concerns do you have?
-
----
-class: inverse, center, middle
-# Peer-Reviewing ML Papers
-
-
----
-## Peer-Reviewing ML Papers
-
-Is the sample appropriate? 
-
-How were features and outcomes measured? 
-
-Separate training and testing process? 
-
-Appropriate matching of research q --> ML model? 
