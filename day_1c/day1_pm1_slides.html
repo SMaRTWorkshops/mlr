@@ -201,9 +201,9 @@ library(tidymodels)
 tidymodels_prefer()
 
 # load titanic data
-titanic &lt;- read_csv(
-  "https://bit.ly/amlr-titanic"
-)
+#titanic &lt;- read_csv(
+#  "https://bit.ly/amlr-titanic"
+#)
 ```
 ]
 
@@ -368,10 +368,9 @@ dim(titanic_train_strat)
 class: inverse, center, middle
 # Additional Considerations
 
-
 ---
 class: twocol
-# Validation Set
+# What about Validation Sets?
 
 .left-column[
 &lt;br /&gt;
@@ -379,23 +378,54 @@ class: twocol
 ]
 
 .right-column[
+We don't have to **wait until the test set** to evaluate our model.
+
 It can be helpful to get a performance estimate **during model training**.
 
-![:emphasize](Validation sets) provide a third split of the dataset to do so.
+![:emphasize](Validation sets)&lt;sup&gt;1&lt;/sup&gt; provide a third split of the dataset to do so.
 
 This can warn us about **overfitting** before we get to the test set.
 
-This is particularly help when tuning model **hyperparameters**.
+This is most often useful when tuning model **hyperparameters**.
+
+Validation sets can also be embedded in more **advanced CV methods**.
 
 .footnote[
-"Testing" and "validation" sets are often used interchangeably, but they refer to different 
+"Testing" and "validation" sets are often used interchangeably, but they refer to different splits of the data that are used for different purposes.
 ]
-
 ]
 
 ---
-# TODO: special considerations. time series, multilevel data, final fit on all data?
+class: twocol
+# What about Multilevel Data?
 
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/multilevel.png" width="100%" /&gt;
+]
+
+.right-column[
+Observations in multilevel data are not independent. 
+
+Random resampling of rows may cause biased train/test sets.
+
+E.g., patients from hospital 1 may end up mostly in the training set, while patients from hospital 2 are primarily in the test set.
+
+When working with multilevel data, resampling should occur at the level of the experimental unit.
+]
+
+---
+class: twocol
+# What about Time Series Data?
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/validation.png" width="100%" /&gt;
+]
+
+.right-column[
+
+]
 
 ---
 # TODO: preview of advanced (k-fold, nested cv)

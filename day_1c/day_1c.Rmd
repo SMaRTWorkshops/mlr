@@ -2,7 +2,7 @@
 title: '<span style="font-size:48pt;">Cross-Validation: Introduction</span>'
 subtitle: '👩‍💻️ 🤖 👨‍🏫️' 
 author: 'Pittsburgh Summer Methodology Series'
-date: 'Day 1-PM1 &emsp; &emsp; August 8, 2022'
+date: 'Day 1C &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
     css: xaringan-themer.css
@@ -94,7 +94,7 @@ We may not get a **true picture** of our model's accuracy or effectiveness.
 
 ---
 class: twocol
-# Spending our Data
+# A Data Budget
 
 .left-column[
 <br />
@@ -121,7 +121,7 @@ We need **strong methods** for how to spend data in different tasks.
 
 ---
 class: twocol
-# Why is data spending so important?
+# Avoiding Data Leaks
 
 .left-column[
 <br />
@@ -152,7 +152,7 @@ class: inverse, center, middle
 
 ---
 class: onecol
-## Cross-Validation
+# Cross-Validation
 There are some clever algorithmic tricks to prevent overfitting
 
 - For example, we can penalize the model for adding complexity
@@ -384,10 +384,9 @@ titanic_test_strat <- titanic_test_strat %>%
 class: inverse, center, middle
 # Additional Considerations
 
-
 ---
 class: twocol
-# Validation Set
+# What about Validation Sets?
 
 .left-column[
 <br />
@@ -401,28 +400,104 @@ We don't have to **wait until the test set** to evaluate our model.
 
 It can be helpful to get a performance estimate **during model training**.
 
-![:emphasize](Validation sets) provide a third split of the dataset to do so.
+![:emphasize](Validation sets)<sup>1</sup> provide a third split of the dataset to do so.
 
 This can warn us about **overfitting** before we get to the test set.
 
 This is most often useful when tuning model **hyperparameters**.
 
+Validation sets can also be embedded in more **advanced CV methods**.
+
 .footnote[
-"Testing" and "validation" sets are often used interchangeably, but they refer to different processes
+"Testing" and "validation" sets are often used interchangeably, but they refer to different splits of the data that are used for different purposes.
+]
 ]
 
+---
+class: twocol
+# What about Multilevel Data?
+
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics('../figs/multilevel.png')
+```
+]
+
+.right-column[
+Observations in multilevel data are not ![:emphasize](independent). 
+
+**Random resampling of rows** may cause biased train/test sets.
+
+For instance, some patients from hospital 1 may be in the training set and others in the testing set. 
+
+Resampling should occur at the **level of the experimental unit**.
+
+In this case, resampling would occur at the level of **hospitals**. 
 ]
 
 ---
-# TODO: special considerations. time series, multilevel data, final fit on all data?
+class: twocol
+# What about Time Series Data?
 
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics('../figs/validation.png')
+```
+]
+
+.right-column[
+Random resampling is also not appropriate for **time series data**.
+
+![:emphasize](Data from the future) can't be used to predict the past! 
+
+Rather, it is typical to use the most **recent data** for a test set. 
+
+The {rsample} package has a function for **splitting time series data**.
+
+`initial_time_split()`:
+- `data`: dataset
+- `prop`: proportion of first part of data for training
+- `lag`: lag value if using lagged predictors 
+]
 
 ---
-# TODO: preview of advanced (k-fold, nested cv)
+class: onecol
+# Coming Soon (Preview)
 
+Today we reviewed the rationale for ![:emphasize](separating model training from model testing). 
+
+We learned various methods for **holdout cross-validation (CV)**: 
+- Simple random split
+- Stratified sampling
+- Validation set
+- Multilevel data
+- Time series data
+
+However, in practice, we might not want to limit ourselves to a **single test set**. 
+
+What if we could create **multiple test sets** to evaluate our model many times? 
+
+Tomorrow will cover advanced methods for **k-fold CV** and **nested CV**.
 
 ---
-# TODO: summary
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```
 
 
 
