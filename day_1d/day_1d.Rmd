@@ -1,0 +1,310 @@
+---
+title: '<span style="font-size:48pt;">Fitting Models</span>'
+subtitle: '📈  💻  🤖️' 
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Day 1D &emsp; &emsp; August 8, 2022'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      beforeInit: "macros.js"
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light(
+  base_color = "#23395b",
+  footnote_font_size = "20px",
+  footnote_color = "gray",
+  text_slide_number_font_size = "18px"
+)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+<style type="text/css">
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
+}
+</style>
+
+---
+class: onecol
+# Plan for Today
+
+This lecture will focus on ![:emphasize](training models and making predictions) in R.
+
+All modeling will be done with **{parsnip}**, part of the {tidymodels} meta-package.
+
+--
+
+<p style="padding-top:30px;">We will **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+
+This will **ease the transition to ML** and highlight its similarities with classical statistics.
+
+Finally, we will **foreshadow future topics** (e.g., regularized linear models and tuning).
+
+---
+class: onecol
+# Motivation
+
+Suppose we have collected data that are now ready to be fit to a statistical model. 
+
+Let's say that a linear regression model is our first choice: 
+
+$$y_i = \beta_0 + \beta_1x1_i+...+\beta_px_{pi}$$
+--
+
+There are **many statistical methods available** for estimating these model parameters:
+- Ordinary least squares (OLS) regression 
+- Regularized linear regression<sup>1</sup>, such as lasso, ridge, and elastic net regression.
+
+.footnote[
+[1] Regularization adds a penalty to traditional OLS regression to shrink feature coefficients to zero. No need to be familiar with these algorithms yet; we will review them in detail on Day 3! 
+]
+
+--
+
+However, they are all implemented in different R packages with **hereogeneous syntax, arguments, and output**. 
+
+---
+class: onecol
+# A Problem
+
+The {stats} package implements **OLS regression** using ![:emphasize](formula notation).
+
+```{r, eval = FALSE}
+model <- lm(outcome ~ predictor, data = df, ...)
+```
+
+--
+
+The {glmnet} package implements **regularized regression** using ![:emphasize](x/y notation).
+
+```{r, eval = FALSE}
+model <- glmnet(x = outcome, y = predictor, ...)
+```
+
+--
+
+Note that `lm()` accepts data in a dataframe while `glmnet()` requires predictors to be formatted as a numeric matrix and the outcome as a vector.
+
+This makes it a pain to switch between models! 
+
+---
+class: twocol
+# A Solution
+
+.left-column[
+<br />
+```{r, echo = FALSE}
+include_graphics("../figs/parsnip.png")
+```
+]
+
+.right-column[
+The {parsnip} package provides a **unified interface** for model fitting.
+
+There are functions to:
+- Specify models
+- Fit models 
+- Inspect model results
+- Make predictions
+
+We can fit any model with the **same syntax and data format**.
+
+We **don't need memorize** specific details of any particular R package!
+]
+
+---
+class: inverse, center, middle
+# Introduction to {parsnip}
+
+---
+# A {parsnip} roadmap
+</br>
+
+```{r, echo = FALSE}
+include_graphics("../figs/parsnip_workflow.png")
+```
+
+---
+class: onecol
+# 1. Specify Model Details
+
+Before fitting an ML model, we need to **specify the model details**.
+
+All models are specified with the same **syntactical structure** in {parsnip}.
+
+- **Model Type**: the mathematical structure (e.g., linear regression, random forests)
+
+- **Model Mode**: the mode of prediction (e.g., regression, classification)<sup>1</sup>.
+
+- **Computational Engine**: how the actual model is fit (often a specific R package)
+
+These details are specified *before* even referencing the data. 
+
+.footnote[
+[1] Sometimes the model mode is already determined by the model type (e.g., linear regression) and so specifying a mode is not needed.
+]
+
+---
+class: onecol
+# Example: OLS Regression
+
+To specify an OLS regression in {parsnip}, we specify the model type as `linear_reg()` and the computational engine as `"lm"`.
+
+--
+
+```{r}
+library(tidymodels)
+tidymodels_prefer()
+
+# specify an OLS regression
+ols_reg <- linear_reg() %>% # specify model type
+  set_engine("lm") # specify computational engine
+
+ols_reg
+```
+
+---
+class: onecol 
+# Example: Regularized Regression
+
+If we want to use regularization, we simply change the **computational engine**. 
+
+Switching between OLS vs. regularization is now much simpler! 
+
+--
+
+```{r}
+# specify a GLMNET regression
+glmnet_reg <- linear_reg() %>% 
+  set_engine("glmnet") 
+
+glmnet_reg
+```
+
+---
+class: onecol
+# More Computational Engines 
+
+To see all the computational engines that exist for a model type, use `show_engines()`. 
+
+```{r, eval = FALSE}
+show_engines("linear_reg")
+```
+
+```{r, echo = FALSE}
+show_engines("linear_reg") %>% kable() %>% scroll_box(height = "300px")
+```
+
+---
+class: onecol 
+# A World of Possibilities
+
+There are **hundreds** of machine learning models available in {parsnip}.
+
+Many models can be implemented in different ways (different computational engines).
+
+You can explore all the options on the [tidymodels website](https://www.tidymodels.org/find/parsnip/).
+
+--
+
+<p style="padding-top:30px;">To fit different ML models, you just change the **model type** and `set_engine()`.
+
+This makes it *super* easy to implement new algorithms and explore the world of ML!
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution:** Be sure you understand an algorithm before writing a paper with it.
+]
+
+---
+class: onecol
+# 2. Fit Model
+
+Once we have specified model details, we can fit the model using the `fit()` function.
+
+Let's walk through an OLS example with some pseudocode. 
+
+--
+
+```{r, echo = FALSE}
+titanic <- read_csv(
+  "https://bit.ly/amlr-titanic"
+)
+```
+
+```{r, eval = FALSE}
+ols_reg_fit <- ols_reg %>% 
+  fit(outcome ~ predictor, data = my_data)
+
+```
+
+--
+
+In {parsnip}, models can be flexibly fit with **formula notation** or **x/y notation**. 
+
+```{r, eval = FALSE}
+ols_reg_fit <- ols_reg %>% 
+  fit_xy(x = select(my_data, predictor), y = select(my_data, outcome))
+```
+
+---
+class: onecol 
+# 3. Inspect Model Results
+
+Once we fit a model, we can examine the model by printing or plotting it.
+
+---
+class: inverse, center, middle
+# End of Day 1
+
