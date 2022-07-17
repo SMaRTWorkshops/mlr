@@ -20,12 +20,15 @@ output:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(
   fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
   out.width = "100%",
   cache = FALSE,
   echo = TRUE,
   message = FALSE, 
   warning = FALSE,
-  hiline = TRUE
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
 )
 ```
 

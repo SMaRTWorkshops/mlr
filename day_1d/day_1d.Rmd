@@ -5,7 +5,7 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 1D &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: [xaringan-themer.css, style.css]
     nature:
       beforeInit: "macros.js"
       slideNumberFormat: "%current% / %total%"
@@ -20,12 +20,15 @@ output:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(
   fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
   out.width = "100%",
   cache = FALSE,
   echo = TRUE,
   message = FALSE, 
   warning = FALSE,
-  hiline = TRUE
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
 )
 ```
 
@@ -103,21 +106,22 @@ $$y_i = \beta_0 + \beta_1x1_i+...+\beta_px_{pi}$$
 
 There are **many statistical methods available** for estimating these model parameters:
 - Ordinary least squares (OLS) regression 
+
 - Regularized linear regression<sup>1</sup>, such as lasso, ridge, and elastic net regression.
 
 .footnote[
-[1] Regularization adds a penalty to traditional OLS regression to shrink feature coefficients to zero. No need to be familiar with these algorithms yet; we will review them in detail on Day 3! 
+[1] No need to be familiar with regularization yet; we will learn about these algorithms in detail on Day 3! 
 ]
 
 --
 
-However, they are all implemented in different R packages with **hereogeneous syntax, arguments, and output**. 
+However, they use different R packages with **varying syntax, arguments, and output**. 
 
 ---
 class: onecol
 # A Problem
 
-The {stats} package implements **OLS regression** using ![:emphasize](formula notation).
+The {stats} package implements **OLS regression** using ![:emphasize](formula notation), with data accepted in a dataframe or vector.
 
 ```{r, eval = FALSE}
 model <- lm(outcome ~ predictor, data = df, ...)
@@ -125,7 +129,7 @@ model <- lm(outcome ~ predictor, data = df, ...)
 
 --
 
-The {glmnet} package implements **regularized regression** using ![:emphasize](x/y notation).
+<p style="padding-top:30px;"> The {glmnet} package implements **regularized regression** using ![:emphasize](x/y notation), with predictors required to be formatted as a numeric matrix and the outcome as a vector.
 
 ```{r, eval = FALSE}
 model <- glmnet(x = outcome, y = predictor, ...)
@@ -133,9 +137,7 @@ model <- glmnet(x = outcome, y = predictor, ...)
 
 --
 
-Note that `lm()` accepts data in a dataframe while `glmnet()` requires predictors to be formatted as a numeric matrix and the outcome as a vector.
-
-This makes it a pain to switch between models! 
+<p style="padding-top:30px;"> This makes it a **pain** to switch between models! 
 
 ---
 class: twocol
@@ -232,10 +234,57 @@ glmnet_reg
 ```
 
 ---
+class: onecol 
+# Tuning Sneak Peak
+
+Some algorithms (such as regularized regression) have *hyperparameters*.
+
+e.g., `linear_reg` has a `penalty` hyperparameter that sets the degree of regularization.
+
+--
+
+<p style="padding-top:30px;"> We might want to change this value to optimize model performance.
+
+However, might not know what the best value is just yet.
+
+This is the basis of **model tuning**<sup>1</sup>, and is easily embedded into `parsnip` using the `tune()` function when specifying the model type.
+
+
+.footnote[
+[1] We will learn about tuning in detail on Day 3, so no need to worry about the details yet! 
+]
+
+---
+class: onecol 
+# Tuning Sneak Peak
+
+```{r}
+glmnet_tune <- linear_reg(penalty = tune()) %>%
+  set_engine("glmnet")
+
+glmnet_tune
+```
+
+---
+class: onecol
+# More Options
+
+To see all arguments for a particular model type (e.g., `linear_reg`), use `args()`.
+
+--
+
+```{r}
+args(linear_reg)
+```
+
+
+---
 class: onecol
 # More Computational Engines 
 
 To see all the computational engines that exist for a model type, use `show_engines()`. 
+
+--
 
 ```{r, eval = FALSE}
 show_engines("linear_reg")
@@ -277,16 +326,12 @@ Let's walk through an OLS example with some pseudocode.
 
 --
 
-```{r, echo = FALSE}
-titanic <- read_csv(
-  "https://bit.ly/amlr-titanic"
-)
-```
-
 ```{r, eval = FALSE}
+ols_reg <- linear_reg() %>% 
+  set_engine("lm") 
+
 ols_reg_fit <- ols_reg %>% 
   fit(outcome ~ predictor, data = my_data)
-
 ```
 
 --
@@ -303,6 +348,283 @@ class: onecol
 # 3. Inspect Model Results
 
 Once we fit a model, we can examine the model by printing or plotting it.
+
+Some useful functions:
+
+- `tidy()`: return model summary (coefficient values, std error, *p* value) in a tibble
+
+- `glance()`: return performance metrics from the training data (e.g., $r^2$)
+
+- `vip()`: variable importance plots (note: from a separate {vip} package)
+
+- `autoplot()`: plot tuning search results (relevant when working with hyperparameters)
+
+---
+class: onecol
+# 4. Make Model Predictions 
+
+Getting predictions for `parsnip` models is easy and *tidy*. 
+
+The `predict()` function will always return: 
+
+- Predictions as a tibble
+
+- The same number of rows as the data being predicted 
+
+- Interpretable column names (e.g., `.pred`, `.pred_lower`, `.pred_upper`)
+
+---
+class: inverse, center, middle
+# A Full {parsnip} Walkthrough
+
+---
+class: onecol
+# Applied Example
+
+Let's put what we just learned into practice in R! 
+
+Let's use {rsample} and {parsnip} to train a regression model on the `titanic` data. 
+
+We will: 
+
+- Load in and split the data.
+
+- Train a regression model to predict each passenger's fare (how much they paid).
+
+- Make predictions on the test set.
+
+---
+class: onecol
+# Load and Split Data
+
+```{r}
+# load titanic data
+titanic <- read_csv("https://bit.ly/amlr-titanic")
+
+# create a training and testing set (stratified by fare)
+set.seed(1234)
+fare_index <- initial_split(data = titanic, prop = 0.8, 
+                                     strata = 'fare')
+fare_train <- training(titanic_split_strat)
+fare_test <- testing(titanic_split_strat)
+```
+
+--
+
+```{r}
+# Check sizes
+dim(fare_train)
+dim(fare_test)
+```
+
+---
+class: onecol
+# Specify and Fit Model
+
+```{r}
+# Specify Model
+ols_reg <- linear_reg() %>% 
+  set_engine("lm")
+
+# Fit Model
+fare_fit <- ols_reg %>% 
+  fit(fare ~ age + sibsp + parch, data = fare_train)
+```
+
+---
+class: onecol
+# Inspect Results
+
+```{r, eval = FALSE}
+# Inspect model results
+tidy(fare_fit)
+```
+
+```{r, echo = FALSE}
+tidy(fare_fit) %>% kable()
+```
+
+---
+class: onecol
+# Inspect Results
+
+```{r, eval = FALSE}
+# Performance metrics on training data 
+glance(fare_fit)
+```
+
+```{r, echo = FALSE}
+glance(fare_fit) %>% kable() %>% scroll_box(width = "1000px")
+```
+
+---
+class: onecol
+# Test Set Predictions
+
+To evaluate our model's performance on the test set, we need two things: 
+
+1. Predictions from the model on the test set (e.g., values, classes, or probabilities)
+
+2. Trusted labels on the test set 
+
+--
+
+<p style="padding-top:30px;"> We can compare these predicted and trusted labels using {yardstick}
+
+Some common options for regression include *RMSE*, $R^2$, and *MAE*.
+
+We will learn about performance evaluation and {yardstick} in more detail tomorrow!
+
+---
+class: onecol
+# Test Set Predictions
+
+To get predictions from the final model on new data<sup>1</sup>, we can use `predict()`
+
+Argument&emsp; | Description
+:------- | :----------
+object | A trained model object created by `fit()`
+new_data | A data frame with the same features as training
+type | Data type (numeric, classes, probabilities, etc.)
+
+.footnote[
+[1] The same process is used for both evaluating performance and deploying the model in the real world.
+]
+
+---
+class: onecol
+# Test Set Predictions
+
+```{r}
+fare_pred <- predict(fare_fit, new_data = fare_test)
+fare_pred
+```
+
+---
+class: onecol
+# Visualizing Predicted and Trusted Labels
+
+```{r, eval = FALSE}
+qplot(x = fare_test$fare, y = fare_pred$.pred) + abline()
+```
+
+```{r quick, echo=FALSE, fig.height=3.25}
+qplot(x = fare_test$fare, y = fare_pred$.pred) + geom_abline() +
+  theme_xaringan(text_font_size = 20) +
+  theme(
+    axis.title = element_text(size = 20),
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+---
+class: onecol
+# Estimating Test Set Performance 
+
+`predict()` returns predictions in the **same order** as the original data.
+
+This makes it easy to merge predictions with test data to estimate model performance.
+
+--
+
+.scroll50[
+```{r}
+fare_pred <- fare_test %>% 
+  select(fare) %>% 
+  bind_cols(predict(fare_fit, new_data = fare_test))
+
+fare_pred
+```
+]
+
+---
+class: onecol
+# Estimating Test Set Performance
+
+To estimate performance in {tidymodels}, use {yardstick}<sup>1</sup>.
+
+```{r, eval = FALSE}
+# create a performance metric set 
+fare_metrics <- metric_set(rmse, rsq, mae)
+
+fare_metrics(fare_pred, truth = fare, estimate = .pred)
+```
+
+```{r, echo = FALSE}
+# create a performance metric set 
+fare_metrics <- metric_set(rmse, rsq, mae)
+
+fare_metrics(fare_pred, truth = fare, estimate = .pred) %>% kable(digits = 5)
+```
+
+.footnote[
+[1] More on {yardstick} coming tomorrow! 
+]
+
+---
+class: onecol
+# Model Interpretation 
+
+Predictive **accuracy** is emphasized in ML over interpretability and inference
+
+- The main goal of most applied ML studies is to **quantify performance**
+
+--
+
+However, some algorithms can provide insight into their decision-making
+
+- As a model usually used for inference, linear regression has strong interpretability
+
+- We can examine the model coefficients (intercept and slopes)
+
+--
+
+```{r, eval=FALSE}
+fare_fit$fit %>% coef()
+```
+
+```{r, echo=FALSE}
+fare_fit$fit %>% coef() %>% t() %>% kable(digits = 2)
+```
+
+---
+class: onecol
+# Variable Importance
+
+We can also plot variable importance using the {vip} package.
+
+```{r, out.width = "50%"}
+library(vip)
+vip(fare_fit)
+```
+
+.footnote[
+Other algorithms have different ways to estimate variable importance, but `vip()` will take care of it.
+]
+
+---
+class: inverse, center, middle
+# Wrapping Up 
+
+
+---
+class: onecol
+# Summary
+
+Today started with a **conceptual overview** of the goals and methods of ML.
+
+We reviewed **tidyverse** principles and datasets used in the course. 
+
+We introduced the basic goals of **data splitting** with {rsample}.
+
+Finally, we fit and evaluated our first **prediction model** with {parsnip}.
+
+--
+
+<p style="padding-top:30px;"> Tomorrow will dive into **feature engineering** and **performance evaluation**.
+
+We will also learn more advanced **cross-validation** for a full ML **workflow**.
 
 ---
 class: inverse, center, middle
