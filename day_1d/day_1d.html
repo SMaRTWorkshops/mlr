@@ -130,6 +130,19 @@ model &lt;- glmnet(x = outcome, y = predictor, ...)
 &lt;p style="padding-top:30px;"&gt; This makes it a **pain** to switch between models! 
 
 ---
+class: onecol
+# A Problem
+
+R packages also return **model predictions** in different formats. 
+
+Some examples of these inconsistencies:
+
+--
+
+&lt;img src="../figs/package_predictions.png" width="40%" /&gt;
+
+
+---
 class: twocol
 # A Solution
 
@@ -137,6 +150,8 @@ class: twocol
 &lt;br /&gt;
 &lt;img src="../figs/parsnip.png" width="100%" /&gt;
 ]
+
+--
 
 .right-column[
 The {parsnip} package provides a **unified interface** for model fitting.
@@ -186,7 +201,13 @@ These details are specified *before* even referencing the data.
 class: onecol
 # Example: OLS Regression
 
-To specify an OLS regression in {parsnip}, we specify the model type as `linear_reg()` and the computational engine as `"lm"`.
+To specify an OLS regression in {parsnip}, we specify&lt;sup&gt;1&lt;/sup&gt;:
+- The model type as `linear_reg()` 
+- The computational engine as `"lm"`.
+
+.footnote[
+[1] We don't need to specify the model mode because `linear_reg()` already implies `mode = regression`. 
+]
 
 --
 
@@ -195,10 +216,8 @@ To specify an OLS regression in {parsnip}, we specify the model type as `linear_
 library(tidymodels)
 tidymodels_prefer()
 
-# specify an OLS regression
 ols_reg &lt;- linear_reg() %&gt;% # specify model type
   set_engine("lm") # specify computational engine
-
 ols_reg
 #&gt; Linear Regression Model Specification (regression)
 #&gt; 
@@ -210,8 +229,6 @@ class: onecol
 # Example: Regularized Regression
 
 If we want to use regularization, we simply change the **computational engine**. 
-
-Switching between OLS vs. regularization is now much simpler! 
 
 --
 
@@ -227,36 +244,32 @@ glmnet_reg
 #&gt; Computational engine: glmnet
 ```
 
----
-class: onecol 
-# Tuning Sneak Peak
-
-Some algorithms (such as regularized regression) have *hyperparameters*.
-
-e.g., `linear_reg` has a `penalty` hyperparameter that sets the degree of regularization.
-
 --
 
-&lt;p style="padding-top:30px;"&gt; We might want to change this value to optimize model performance.
+Switching between OLS vs. regularization is now much simpler! 
+
+---
+class: onecol 
+# Model Tuning
+
+Some algorithms (such as regularized regression) have *hyperparameters*&lt;sup&gt;1&lt;/sup&gt;.
+
+We can change hyperparameters to find the value that optimizes model performance.
 
 However, might not know what the best value is just yet.
 
-This is the basis of **model tuning**&lt;sup&gt;1&lt;/sup&gt;, and is easily embedded into `parsnip` using the `tune()` function when specifying the model type.
-
+This is the basis of **model tuning**, which can be included when specifying model type.
 
 .footnote[
-[1] We will learn about tuning in detail on Day 3, so no need to worry about the details yet! 
+[1] e.g., `linear_reg` has a `penalty` hyperparameter that sets the degree of regularization. We will learn about hyperparameters and tuning in detail on Day 3, so no need to worry about the details yet! 
 ]
 
----
-class: onecol 
-# Tuning Sneak Peak
+--
 
+.scroll25[
 
 ```r
-glmnet_tune &lt;- linear_reg(penalty = tune()) %&gt;%
-  set_engine("glmnet")
-
+glmnet_tune &lt;- linear_reg(penalty = tune()) %&gt;% set_engine("glmnet")
 glmnet_tune
 #&gt; Linear Regression Model Specification (regression)
 #&gt; 
@@ -265,12 +278,13 @@ glmnet_tune
 #&gt; 
 #&gt; Computational engine: glmnet
 ```
+]
 
 ---
 class: onecol
-# More Options
+# More Model Type Arguments
 
-To see all arguments for a particular model type (e.g., `linear_reg`), use `args()`.
+To see all arguments for a particular model type, use `args()`.
 
 --
 
@@ -279,6 +293,16 @@ To see all arguments for a particular model type (e.g., `linear_reg`), use `args
 args(linear_reg)
 #&gt; function (mode = "regression", engine = "lm", penalty = NULL, 
 #&gt;     mixture = NULL) 
+#&gt; NULL
+```
+
+--
+
+
+```r
+args(rand_forest)
+#&gt; function (mode = "unknown", engine = "ranger", mtry = NULL, trees = NULL, 
+#&gt;     min_n = NULL) 
 #&gt; NULL
 ```
 
@@ -291,16 +315,17 @@ To see all the computational engines that exist for a model type, use `show_engi
 
 --
 
+.pull-left[
 
 ```r
 show_engines("linear_reg")
 ```
 
-&lt;div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; "&gt;&lt;table&gt;
+&lt;table class="table" style=""&gt;
  &lt;thead&gt;
   &lt;tr&gt;
-   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; engine &lt;/th&gt;
-   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; mode &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; engine &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; mode &lt;/th&gt;
   &lt;/tr&gt;
  &lt;/thead&gt;
 &lt;tbody&gt;
@@ -333,8 +358,52 @@ show_engines("linear_reg")
    &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
-&lt;/table&gt;&lt;/div&gt;
+&lt;/table&gt;
+]
 
+--
+
+.pull-right[
+
+```r
+show_engines("rand_forest")
+```
+
+&lt;div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; "&gt;&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; engine &lt;/th&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; mode &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ranger &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; classification &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ranger &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; randomForest &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; classification &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; randomForest &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; spark &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; classification &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; spark &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;&lt;/div&gt;
+]
 ---
 class: onecol 
 # A World of Possibilities
@@ -416,379 +485,11 @@ The `predict()` function will always return:
 
 - Interpretable column names (e.g., `.pred`, `.pred_lower`, `.pred_upper`)
 
----
-class: inverse, center, middle
-# A Full {parsnip} Walkthrough
-
----
-class: onecol
-# Applied Example
-
-Let's put what we just learned into practice in R! 
-
-Let's use {rsample} and {parsnip} to train a regression model on the `titanic` data. 
-
-We will: 
-
-- Load in and split the data.
-
-- Train a regression model to predict each passenger's fare (how much they paid).
-
-- Make predictions on the test set.
-
----
-class: onecol
-# Load and Split Data
-
-
-```r
-# load titanic data
-titanic &lt;- read_csv("https://bit.ly/amlr-titanic")
-
-# create a training and testing set (stratified by fare)
-set.seed(1234)
-fare_index &lt;- initial_split(data = titanic, prop = 0.8, 
-                                     strata = 'fare')
-fare_train &lt;- training(titanic_split_strat)
-fare_test &lt;- testing(titanic_split_strat)
-```
-
 --
 
-
-```r
-# Check sizes
-dim(fare_train)
-#&gt; [1] 769   7
-dim(fare_test)
-#&gt; [1] 194   7
-```
-
----
-class: onecol
-# Specify and Fit Model
-
-
-```r
-# Specify Model
-ols_reg &lt;- linear_reg() %&gt;% 
-  set_engine("lm")
-
-# Fit Model
-fare_fit &lt;- ols_reg %&gt;% 
-  fit(fare ~ age + sibsp + parch, data = fare_train)
-```
-
----
-class: onecol
-# Inspect Results
-
-
-```r
-# Inspect model results
-tidy(fare_fit)
-```
-
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt; term &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; estimate &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; std.error &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; statistic &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; p.value &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; (Intercept) &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.3446110 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 5.3174521 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.0648075 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.9483442 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; age &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.9053166 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.1510263 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 5.9944320 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; sibsp &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 10.8183000 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.9212508 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.7033109 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.0002281 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; parch &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 13.5033434 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2.4519700 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 5.5071405 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
----
-class: onecol
-# Inspect Results
-
-
-```r
-# Performance metrics on training data 
-glance(fare_fit)
-```
-
-&lt;div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:1000px; "&gt;&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:right;"&gt; r.squared &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; adj.r.squared &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; sigma &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; statistic &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; p.value &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; df &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; logLik &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; AIC &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; BIC &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; deviance &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; df.residual &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; nobs &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 0.1121604 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.1086786 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 53.7684 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 32.21403 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -4153.382 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 8316.764 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 8339.989 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2211646 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 765 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 769 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;&lt;/div&gt;
-
----
-class: onecol
-# Test Set Predictions
-
-To evaluate our model's performance on the test set, we need two things: 
-
-1. Predictions from the model on the test set (e.g., values, classes, or probabilities)
-
-2. Trusted labels on the test set 
-
---
-
-&lt;p style="padding-top:30px;"&gt; We can compare these predicted and trusted labels using {yardstick}
-
-Some common options for regression include *RMSE*, `\(R^2\)`, and *MAE*.
-
-We will learn about performance evaluation and {yardstick} in more detail tomorrow!
-
----
-class: onecol
-# Test Set Predictions
-
-To get predictions from the final model on new data&lt;sup&gt;1&lt;/sup&gt;, we can use `predict()`
-
-Argument&amp;emsp; | Description
-:------- | :----------
-object | A trained model object created by `fit()`
-new_data | A data frame with the same features as training
-type | Data type (numeric, classes, probabilities, etc.)
-
-.footnote[
-[1] The same process is used for both evaluating performance and deploying the model in the real world.
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+These rules make it easier to merge predictions with the original data!
 ]
-
----
-class: onecol
-# Test Set Predictions
-
-
-```r
-fare_pred &lt;- predict(fare_fit, new_data = fare_test)
-fare_pred
-#&gt; # A tibble: 194 × 1
-#&gt;    .pred
-#&gt;    &lt;dbl&gt;
-#&gt;  1  38.3
-#&gt;  2  67.5
-#&gt;  3  21.4
-#&gt;  4  32.2
-#&gt;  5  37.7
-#&gt;  6  27.7
-#&gt;  7  40.4
-#&gt;  8  37.7
-#&gt;  9  36.8
-#&gt; 10  43.1
-#&gt; # … with 184 more rows
-```
-
----
-class: onecol
-# Visualizing Predicted and Trusted Labels
-
-
-```r
-qplot(x = fare_test$fare, y = fare_pred$.pred) + abline()
-```
-
-&lt;img src="day_1d_files/figure-html/quick-1.png" width="100%" /&gt;
-
----
-class: onecol
-# Estimating Test Set Performance 
-
-`predict()` returns predictions in the **same order** as the original data.
-
-This makes it easy to merge predictions with test data to estimate model performance.
-
---
-
-.scroll50[
-
-```r
-fare_pred &lt;- fare_test %&gt;% 
-  select(fare) %&gt;% 
-  bind_cols(predict(fare_fit, new_data = fare_test))
-
-fare_pred
-#&gt; # A tibble: 194 × 2
-#&gt;     fare .pred
-#&gt;    &lt;dbl&gt; &lt;dbl&gt;
-#&gt;  1 152.   38.3
-#&gt;  2  78.0  67.5
-#&gt;  3  69.3  21.4
-#&gt;  4  75.2  32.2
-#&gt;  5 228.   37.7
-#&gt;  6  91.1  27.7
-#&gt;  7  35.5  40.4
-#&gt;  8  26.6  37.7
-#&gt;  9  30.5  36.8
-#&gt; 10  50.5  43.1
-#&gt; # … with 184 more rows
-```
-]
-
----
-class: onecol
-# Estimating Test Set Performance
-
-To estimate performance in {tidymodels}, use {yardstick}&lt;sup&gt;1&lt;/sup&gt;.
-
-
-```r
-# create a performance metric set 
-fare_metrics &lt;- metric_set(rmse, rsq, mae)
-
-fare_metrics(fare_pred, truth = fare, estimate = .pred)
-```
-
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt; .metric &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; .estimator &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; .estimate &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; rmse &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; standard &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 56.86845 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; rsq &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; standard &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.09955 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; mae &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; standard &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 31.85922 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-.footnote[
-[1] More on {yardstick} coming tomorrow! 
-]
-
----
-class: onecol
-# Model Interpretation 
-
-Predictive **accuracy** is emphasized in ML over interpretability and inference
-
-- The main goal of most applied ML studies is to **quantify performance**
-
---
-
-However, some algorithms can provide insight into their decision-making
-
-- As a model usually used for inference, linear regression has strong interpretability
-
-- We can examine the model coefficients (intercept and slopes)
-
---
-
-
-```r
-fare_fit$fit %&gt;% coef()
-```
-
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:right;"&gt; (Intercept) &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; age &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; sibsp &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; parch &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; -0.34 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.91 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 10.82 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 13.5 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
----
-class: onecol
-# Variable Importance
-
-We can also plot variable importance using the {vip} package.
-
-
-```r
-library(vip)
-vip(fare_fit)
-```
-
-&lt;img src="day_1d_files/figure-html/unnamed-chunk-27-1.png" width="50%" /&gt;
-
-.footnote[
-Other algorithms have different ways to estimate variable importance, but `vip()` will take care of it.
-]
-
----
-class: inverse, center, middle
-# Wrapping Up 
-
 
 ---
 class: onecol
@@ -807,6 +508,15 @@ Finally, we fit and evaluated our first **prediction model** with {parsnip}.
 &lt;p style="padding-top:30px;"&gt; Tomorrow will dive into **feature engineering** and **performance evaluation**.
 
 We will also learn more advanced **cross-validation** for a full ML **workflow**.
+
+---
+class: inverse, center, middle
+# Live Coding
+
+---
+class: inverse, center, middle
+# Hands-On Activity
+
 
 ---
 class: inverse, center, middle

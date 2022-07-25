@@ -79,7 +79,7 @@ a {
 
 ---
 class: onecol
-# Motivation
+## Motivation
 
 There are **several steps** in the machine learning workflow.
 
@@ -97,7 +97,7 @@ We may not get a **true picture** of our model's accuracy or effectiveness.
 
 ---
 class: twocol
-# A Data Budget
+## A Data Budget
 
 .left-column[
 <br />
@@ -124,7 +124,7 @@ We need **strong methods** for how to spend data in different tasks.
 
 ---
 class: twocol
-# Avoiding Data Leaks
+## Avoiding Data Leaks
 
 .left-column[
 <br />
@@ -155,7 +155,7 @@ class: inverse, center, middle
 
 ---
 class: onecol
-# Cross-Validation
+## Cross-Validation
 There are some clever algorithmic tricks to prevent overfitting
 
 - For example, we can penalize the model for adding complexity
@@ -179,13 +179,13 @@ The main approach, however, is to use ![:emphasize](cross-validation):
 ]
 
 ---
-# Holdout Cross-Validation
+## Holdout Cross-Validation
 ```{r, echo=FALSE}
 include_graphics("../figs/holdout.png")
 ```
 
 ---
-# Holdout Cross-Validation
+## Holdout Cross-Validation
 ```{r, echo=FALSE}
 include_graphics("../figs/holdout2.png")
 ```
@@ -193,23 +193,24 @@ include_graphics("../figs/holdout2.png")
 ---
 class: inverse, center, middle
 
-# Holdout Cross-Validation in R
+## Holdout Cross-Validation in R
 
 ---
-# Example Dataset: `titanic`
+## Example Dataset: `affect`
 
 .pull-left[
-**Rows:** 963 passengers&emsp;&emsp;**Columns:** 7 variables
+**Rows:** 330 participants&emsp;&emsp;**Columns:** 9 variables
 
 Variable | Description
-:------- | :----------
-survived&emsp; | Did passenger survive? {FALSE, TRUE}&emsp; 
-pclass | Passenger class {1st, 2nd, 3rd}
-sex | Passenger sex {female, male}
-age | Passenger age (years)
-sibsp | Siblings and spouses Aboard (\#)
-parch | Parents and children Aboard (\#)
-fare | Cost of passenger fare ($)
+:------- | :-------------
+Film&emsp; | Film {docu, horror, nature, comedy}&emsp; 
+ext | Extroversion 
+neur | Neuroticism 
+imp | Impulsivity 
+soc | Sociability 
+BDI | Depression
+posaff | Positive Affect after film
+negaff | Negative affect after film
 ]
 
 --
@@ -222,16 +223,16 @@ library(tidymodels)
 # resolve package conflicts
 tidymodels_prefer()
 
-# load titanic data
-titanic <- read_csv(
-  "https://bit.ly/amlr-titanic"
+# load affect data
+affect <- read_csv(
+  "../data/affect.csv"
 )
 ```
 ]
 
 ---
 class: onecol
-# Simple Random Split
+## Simple Random Split
 
 The simplest way to perform **holdout cross-validation** is by randomly splitting the data. 
 
@@ -253,7 +254,7 @@ Too little data in the test set reduces **quality of model performance estimates
 
 ---
 class: twocol
-# Simple Random Split in R
+## Simple Random Split in R
 
 .left-column[
 <br />
@@ -275,14 +276,14 @@ Its simplest use case requires 2 arguments:
  
 ---
 class: onecol
-# Simple Random Split in R
+## Simple Random Split in R
 ```{r, message = FALSE}
 # set random seed so results are reproducible
 set.seed(1234) 
 
 # create and save an 80/20 data split
-titanic_split_simple <- initial_split(data = titanic, prop = 0.80)
-titanic_split_simple
+affect_split_simple <- initial_split(data = affect, prop = 0.80)
+affect_split_simple
 ```
 
 This output shows the amount of training, testing, and total data.
@@ -291,30 +292,22 @@ The resulting `initial_split` object **only contains partitioning information**.
 
 ---
 class: onecol
-# Simple Random Split in R
+## Simple Random Split in R
 
 To get the actual training and testing data subsets, we need two more functions.
 
 We will use the `training()` and `testing()` functions, also from {rsample}.
 
 ```{r, message = FALSE}
-titanic_train_simple <- training(titanic_split_simple)
-titanic_test_simple <- testing(titanic_split_simple)
+affect_train_simple <- training(affect_split_simple)
+affect_test_simple <- testing(affect_split_simple)
 
-dim(titanic_train_simple)
-```
-
-```{r, echo = FALSE}
-# convert survived to factor 
-titanic_train_simple<- titanic_train_simple %>% 
-  mutate(survived = as.factor(survived), traintest = 'train', split = 'simple')
-titanic_test_simple <- titanic_test_simple %>% 
-  mutate(survived = as.factor(survived), traintest = 'test', split = 'simple')
+dim(affect_train_simple)
 ```
 
 ---
 class: onecol
-# Stratified Sampling 
+## Stratified Sampling 
 
 While simple random sampling is sometimes sufficient, there are often exceptions. 
 
@@ -336,7 +329,7 @@ It is important for data subsets to be representative of the whole dataset.
 
 ---
 class: onecol
-# Stratified Sampling
+## Stratified Sampling
 
 As a solution, ![:emphasize](stratified sampling) can be used instead of simple random sampling. 
 
@@ -358,7 +351,7 @@ This ensures that the **distribution of the outcome variable** is preserved.
 
 ---
 class: onecol
-# Stratified Sampling in R
+## Stratified Sampling in R
 
 To create a stratified random sample, we can use the same `initial_split()` function.
 
@@ -367,21 +360,13 @@ We will use the `strata` argument to name the variable to stratify on.
 ```{r, message = FALSE}
 set.seed(1234)
 
-titanic_split_strat <- initial_split(data = titanic, prop = 0.8, 
-                                     strata = 'survived')
-titanic_train_strat <- training(titanic_split_strat)
-titanic_test_strat <- testing(titanic_split_strat)
+affect_split_strat <- initial_split(data = affect, prop = 0.8, 
+                                     strata = 'Film')
+affect_train_strat <- training(affect_split_strat)
+affect_test_strat <- testing(affect_split_strat)
 
-dim(titanic_train_strat)
+dim(affect_train_strat)
 ```
-
-```{r, echo = FALSE}
-titanic_train_strat <- titanic_train_strat %>% 
-  mutate(survived = as.factor(survived), traintest = 'train', split = 'strat')
-titanic_test_strat <- titanic_test_strat %>% 
-  mutate(survived = as.factor(survived), traintest = 'test', split = 'strat')
-```
-
 
 ---
 class: inverse, center, middle
@@ -389,7 +374,7 @@ class: inverse, center, middle
 
 ---
 class: twocol
-# What about Validation Sets?
+## What about Validation Sets?
 
 .left-column[
 <br />
@@ -418,7 +403,7 @@ Validation sets can also be embedded in more **advanced CV methods**.
 
 ---
 class: twocol
-# What about Multilevel Data?
+## What about Multilevel Data?
 
 .left-column[
 <br />
@@ -441,7 +426,7 @@ In this case, resampling would occur at the level of **hospitals**.
 
 ---
 class: twocol
-# What about Time Series Data?
+## What about Time Series Data?
 
 .left-column[
 <br />
@@ -467,7 +452,7 @@ The {rsample} package has a function for **splitting time series data**.
 
 ---
 class: onecol
-# Coming Soon (Preview)
+## Coming Soon (Preview)
 
 Today we reviewed the rationale for ![:emphasize](separating model training from model testing). 
 
