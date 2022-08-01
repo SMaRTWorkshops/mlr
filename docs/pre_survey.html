@@ -13,8 +13,8 @@
 
 <title>Pre-Course Survey</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -50,6 +50,7 @@
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -70,6 +71,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -222,7 +226,7 @@ $(document).ready(function () {
 <div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -232,7 +236,7 @@ $(document).ready(function () {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Details
      
     <span class="caret"></span>
@@ -250,86 +254,80 @@ $(document).ready(function () {
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Day 1 Materials
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 1
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_1A/Day_1A_Slides.html">Day 1-A Lecture</a>
+      <a href="./wip.html">[1A] Conceptual introductions</a>
     </li>
     <li>
-      <a href="./Day_1A/Day_1A_Activity.html">Day 1-A Activity</a>
+      <a href="./wip.html">[1B] Tidyverse primer and data</a>
     </li>
     <li>
-      <a href="./Day_1B/Day_1B_Slides.html">Day 1-B Lecture</a>
+      <a href="./wip.html">[1C] Cross-validation</a>
     </li>
     <li>
-      <a href="./Day_1B/Day_1B_Activity.html">Day 1-B Activity</a>
+      <a href="./wip.html">[1D] Fitting models</a>
     </li>
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Day 2 Materials
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 2
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_2A/Day_2A_Slides.html">Day 2-A Lecture</a>
+      <a href="./wip.html">[2A] Workflows and recipes</a>
     </li>
     <li>
-      <a href="./Day_2A/Day_2A_Activity.html">Day 2-A Activity</a>
+      <a href="./wip.html">[2B] Performance evaluation</a>
     </li>
     <li>
-      <a href="./Day_2B/Day_2B_Slides.html">Day 2-B Lecture</a>
+      <a href="./wip.html">[2C] Resampling</a>
     </li>
     <li>
-      <a href="./Day_2B/Day_2B_Activity.html">Day 2-B Activity</a>
+      <a href="./wip.html">[2D] Linear model example</a>
     </li>
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Day 3 Materials
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 3
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_3A/Day_3A_Slides.html">Day 3-A Lecture</a>
+      <a href="./wip.html">[3A] GLMNET algorithm</a>
     </li>
     <li>
-      <a href="./Day_3A/Day_3A_Activity.html">Day 3-A Activity</a>
+      <a href="./wip.html">[3B] Example and tuning</a>
     </li>
     <li>
-      <a href="./Day_3B/Day_3B_Slides.html">Day 3-B Lecture</a>
+      <a href="./wip.html">[3C] Random forest algorithm</a>
     </li>
     <li>
-      <a href="./Day_3B/Day_3B_Activity.html">Day 3-B Activity</a>
+      <a href="./wip.html">[3D] Example and deployment</a>
     </li>
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Day 4 Materials
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 4
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="./Day_4A/Day_4A_Slides.html">Day 4-A Lecture</a>
+      <a href="./wip.html">[4A] SVM algorithm and example</a>
     </li>
     <li>
-      <a href="./Day_4A/Day_4A_Activity.html">Day 4-A Activity</a>
-    </li>
-    <li>
-      <a href="./Day_4B/Day_4B_Slides.html">Day 4-B Lecture</a>
-    </li>
-    <li>
-      <a href="./Day_4B/Day_4B_Activity.html">Day 4-B Activity</a>
+      <a href="./wip.html">[4B] Preview of advanced topics</a>
     </li>
   </ul>
 </li>
@@ -357,25 +355,47 @@ $(document).ready(function () {
 
 <p>Let’s look at who is registered for this course!</p>
 <p><img src="pre_survey_files/figure-html/role-1.png" width="50%" /></p>
-<p>The majority of attendees are graduate students, although we have a nice representation of postdoctoral scholars and faculty as well.</p>
+<p>The majority of attendees are graduate students, although we have a
+nice representation of postdoctoral scholars and faculty as well.</p>
 <hr />
 <p><img src="pre_survey_files/figure-html/device-1.png" width="50%" /></p>
-<p>Most attendees like to stay mobile and will be using a laptop computer. Training complex machine learning models on large amounts of data may require more computing power than a laptop can provide, but luckily that won’t be a problem during the course as we will be training relatively efficient algorithms on relatively modest datasets.</p>
+<p>Most attendees like to stay mobile and will be using a laptop
+computer. Training complex machine learning models on large amounts of
+data may require more computing power than a laptop can provide, but
+luckily that won’t be a problem during the course as we will be training
+relatively efficient algorithms on relatively modest datasets.</p>
 <hr />
 <p><img src="pre_survey_files/figure-html/opsys-1.png" width="50%" /></p>
-<p>Most attendees are using MacOS, although quite a few are on Windows! Jeff uses Windows and Shirley uses Mac, so we are covered! Also, R and RStudio work beautifully on both.</p>
+<p>Most attendees are using MacOS, although quite a few are on Windows!
+Jeff uses Windows and Shirley uses Mac, so we are covered! Also, R and
+RStudio work beautifully on both.</p>
 <hr />
 <p><img src="pre_survey_files/figure-html/screens-1.png" width="50%" /></p>
-<p>Most attendees are expanding their digital real-estate by using two or more screens. However, nearly half will have a single screen and will need to think about how best to use this screen during the course.</p>
+<p>Most attendees are expanding their digital real-estate by using two
+or more screens. However, nearly half will have a single screen and will
+need to think about how best to use this screen during the course.</p>
 <hr />
 <p><img src="pre_survey_files/figure-html/rknow-1.png" width="50%" /></p>
-<p>As requested, most attendees are coming into the course with some existing knowledge about importing, wrangling, and analyzing data in R. A few attendees are less confident in this knowledge, so we will be including a brief refresher on R during the Day 1-B lecture.</p>
+<p>As requested, most attendees are coming into the course with some
+existing knowledge about importing, wrangling, and analyzing data in R.
+A few attendees are less confident in this knowledge, so we will be
+including a brief refresher on R during the Day 1-B lecture.</p>
 <hr />
 <p><img src="pre_survey_files/figure-html/lmknow-1.png" width="50%" /></p>
-<p>Also as requested, most attendees are coming into the course with quite a bit of knowledge about linear modeling (e.g., <span class="math inline">\(t\)</span>-tests, ANOVAs, linear regression, GLM, MLM, SEM). Knowledge about peer-review is a bit lower, likely due to the higher representation of graduate students who may not have had many opportunities to write reviews yet.</p>
+<p>Also as requested, most attendees are coming into the course with
+quite a bit of knowledge about linear modeling (e.g., <span
+class="math inline">\(t\)</span>-tests, ANOVAs, linear regression, GLM,
+MLM, SEM). Knowledge about peer-review is a bit lower, likely due to the
+higher representation of graduate students who may not have had many
+opportunities to write reviews yet.</p>
 <hr />
 <p><img src="pre_survey_files/figure-html/mlknow-1.png" width="50%" /></p>
-<p>Most participants have a little knowledge about machine learning already but not much, and many have none at all. The workshop is meant to be introductory and will cater mostly to those at the lower end of this scale (where most are). For those with more existing knowledge, Day 5 will be an excellent opportunity to discuss more advanced topics and plan out where to go next.</p>
+<p>Most participants have a little knowledge about machine learning
+already but not much, and many have none at all. The workshop is meant
+to be introductory and will cater mostly to those at the lower end of
+this scale (where most are). For those with more existing knowledge, Day
+5 will be an excellent opportunity to discuss more advanced topics and
+plan out where to go next.</p>
 
 
 

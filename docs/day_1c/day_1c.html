@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Cross-Validation: Introduction</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pittsburgh Summer Methodology Series" />
+    <script src="day_1c_files/header-attrs/header-attrs.js"></script>
+    <link href="day_1c_files/tachyons/tachyons.min.css" rel="stylesheet" />
+    <script src="day_1c_files/clipboard/clipboard.min.js"></script>
+    <link href="day_1c_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="day_1c_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="day_1c_files/countdown/countdown.css" rel="stylesheet" />
+    <script src="day_1c_files/countdown/countdown.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <span style="font-size:48pt;">Cross-Validation: Introduction</span>
+]
+.subtitle[
+## 👩‍💻️ 🤖 👨‍🏫️
+]
+.author[
+### Pittsburgh Summer Methodology Series
+]
+.date[
+### Day 1C     August 8, 2022
+]
+
+---
+
+
+
+
+
+
+
+
+
+
+class: inverse, center, middle
+# Overview
+
+&lt;style type="text/css"&gt;
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
+}
+&lt;/style&gt;
+
+---
+class: onecol
+## Motivation
+
+There are **several steps** in the machine learning workflow.
+
+These include data exploration, engineering, model development, and evaluation.
+
+We have a ![:emphasize](finite amount of data) to work with for each of these taks.
+
+--
+
+&lt;p style="padding-top:30px;"&gt;Reusing the same data for multiple tasks increases risk of **overfitting**.
+
+It also reduces **generalizability** to future datasets or prediction problems.
+
+We may not get a **true picture** of our model's accuracy or effectiveness.
+
+---
+class: twocol
+## A Data Budget
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/spending.jpg" width="100%" /&gt;
+]
+
+.right-column[
+
+Using all the data at once **causes many problems in ML**.
+
+However, these can be addressed by **budgeting our data**.
+
+We can **spend our data** on different tasks in the ML workflow.
+
+This is particularly important in **model development to evaluation**.
+
+In smaller datasets, there may be **overlap** in how we spend our data.
+
+We need **strong methods** for how to spend data in different tasks.
+
+]
+
+---
+class: twocol
+## Avoiding Data Leaks
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/leak.jpg" width="100%" /&gt;
+]
+
+.right-column[
+
+All data is a mix of the true data-generating process **and random noise**.
+
+The modeling process includes many **decision points**. 
+
+Which features to include? What algorithm to use?
+
+There is risk of ![:emphasize](leaking information) from model training to evaluation.
+
+This artificially **inflates optimism about model accuracy**.
+
+Carefully spending data for training or testing prevents ![:emphasize](data leakage).
+
+]
+
+---
+class: inverse, center, middle
+# Countering Overfitting
+
+---
+class: onecol
+## Cross-Validation
+There are some clever algorithmic tricks to prevent overfitting
+
+- For example, we can penalize the model for adding complexity
+
+The main approach, however, is to use ![:emphasize](cross-validation):
+
+--
+
+- Multiple **fully independent** sets of data are created (by subsetting or resampling)
+
+- Some sets are used for training (and tuning) and other sets are used for testing
+
+- **Model evaluation is always done on data that were not used to train the model**
+
+- This way, if performance looks good, we can worry less about variance/overfitting&lt;sup&gt;1&lt;/sup&gt;
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution:** We still need to consider whether the original data was representative!
+]
+
+---
+## Holdout Cross-Validation
+&lt;img src="../figs/holdout.png" width="100%" /&gt;
+
+---
+## Holdout Cross-Validation
+&lt;img src="../figs/holdout2.png" width="100%" /&gt;
+
+---
+class: inverse, center, middle
+
+## Holdout Cross-Validation in R
+
+---
+## Example Dataset: `affect`
+
+.pull-left[
+**Rows:** 330 participants&amp;emsp;&amp;emsp;**Columns:** 9 variables
+
+Variable | Description
+:------- | :-------------
+Film&amp;emsp; | Film {docu, horror, nature, comedy}&amp;emsp; 
+ext | Extroversion 
+neur | Neuroticism 
+imp | Impulsivity 
+soc | Sociability 
+BDI | Depression
+posaff | Positive Affect after film
+negaff | Negative affect after film
+]
+
+--
+
+.pull-right[
+
+```r
+library(tidyverse)
+library(tidymodels)
+
+# resolve package conflicts
+tidymodels_prefer()
+
+# load affect data
+affect &lt;- read_csv(
+  "../data/affect.csv"
+)
+```
+]
+
+---
+class: onecol
+## Simple Random Split
+
+The simplest way to perform **holdout cross-validation** is by randomly splitting the data. 
+
+One portion of the data is allocated for model training, and another for testing. 
+
+Deciding on the proportion of data to split is very context-dependent.
+
+--
+
+&lt;p style="padding-top:30px;"&gt;Too little data in the training set makes it difficult to **accurately estimate parameters**.
+
+Too little data in the test set reduces **quality of model performance estimates**.
+
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+**Advice:** A good default is to allocate 80% of the data for training and 20% for testing.
+]
+
+---
+class: twocol
+## Simple Random Split in R
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/rsample.png" width="100%" /&gt;
+]
+
+.right-column[
+We will use the {rsample} package from {tidymodels}. 
+
+The `initial_split()` function was built for this purpose.
+
+Its simplest use case requires 2 arguments: 
+
+- `data`: the dataframe to be split.
+- `prop`: the proportion of data to be used for training.
+]
+ 
+---
+class: onecol
+## Simple Random Split in R
+
+```r
+# set random seed so results are reproducible
+set.seed(1234) 
+
+# create and save an 80/20 data split
+affect_split_simple &lt;- initial_split(data = affect, prop = 0.80)
+affect_split_simple
+#&gt; &lt;Analysis/Assess/Total&gt;
+#&gt; &lt;264/66/330&gt;
+```
+
+This output shows the amount of training, testing, and total data.
+
+The resulting `initial_split` object **only contains partitioning information**.
+
+---
+class: onecol
+## Simple Random Split in R
+
+To get the actual training and testing data subsets, we need two more functions.
+
+We will use the `training()` and `testing()` functions, also from {rsample}.
+
+
+```r
+affect_train_simple &lt;- training(affect_split_simple)
+affect_test_simple &lt;- testing(affect_split_simple)
+
+dim(affect_train_simple)
+#&gt; [1] 264   8
+```
+
+---
+class: onecol
+## Stratified Sampling 
+
+While simple random sampling is sometimes sufficient, there are often exceptions. 
+
+**Class imbalance**&lt;sup&gt;1&lt;/sup&gt; (classification) and highly **skewed data** (regression) may cause issues.
+
+Most machine learning algorithms work best when classes are of equal size. 
+
+.footnote[
+[1] Class imbalance refers to a categorical variable in which one class occurs much more frequently than others (e.g., a dataset with 90% healthy cases and 10% disease cases).
+]
+
+--
+
+&lt;p style="padding-top:30px;"&gt; Random sampling may result in vastly **different distributions** between data subsets.
+
+This can result in poor model performance (particularly for the **minority class**). 
+
+It is important for data subsets to be representative of the whole dataset.
+
+---
+class: onecol
+## Stratified Sampling
+
+As a solution, ![:emphasize](stratified sampling) can be used instead of simple random sampling. 
+
+For classification problems, we conduct **data splits separately within each class**. 
+
+For regression problems, we **bin the outcome into quartiles** and sample within each.
+
+--
+
+&lt;p style="padding-top:30px;"&gt;These **stratified samples are combined** together for overall training and testing sets. 
+
+This ensures that the **distribution of the outcome variable** is preserved.
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution:** We still need to ensure the sample distribution matches the population!
+]
+
+---
+class: onecol
+## Stratified Sampling in R
+
+To create a stratified random sample, we can use the same `initial_split()` function.
+
+We will use the `strata` argument to name the variable to stratify on.
+
+
+```r
+set.seed(1234)
+
+affect_split_strat &lt;- initial_split(data = affect, prop = 0.8, 
+                                     strata = 'Film')
+affect_train_strat &lt;- training(affect_split_strat)
+affect_test_strat &lt;- testing(affect_split_strat)
+
+dim(affect_train_strat)
+#&gt; [1] 263   8
+```
+
+---
+class: inverse, center, middle
+# Additional Considerations
+
+---
+class: twocol
+## What about Validation Sets?
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/validation.png" width="100%" /&gt;
+]
+
+.right-column[
+We don't have to **wait until the test set** to evaluate our model.
+
+It can be helpful to get a performance estimate **during model training**.
+
+![:emphasize](Validation sets)&lt;sup&gt;1&lt;/sup&gt; provide a third split of the dataset to do so.
+
+This can warn us about **overfitting** before we get to the test set.
+
+This is most often useful when tuning model **hyperparameters**.
+
+Validation sets can also be embedded in more **advanced CV methods**.
+
+.footnote[
+"Testing" and "validation" sets are often used interchangeably, but they refer to different splits of the data that are used for different purposes.
+]
+]
+
+---
+class: twocol
+## What about Multilevel Data?
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/multilevel.png" width="100%" /&gt;
+]
+
+.right-column[
+Observations in multilevel data are not ![:emphasize](independent). 
+
+**Random resampling of rows** may cause biased train/test sets.
+
+For instance, some patients from hospital 1 may be in the training set and others in the testing set. 
+
+Resampling should occur at the **level of the experimental unit**.
+
+In this case, resampling would occur at the level of **hospitals**. 
+]
+
+---
+class: twocol
+## What about Time Series Data?
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/validation.png" width="100%" /&gt;
+]
+
+.right-column[
+Random resampling is also not appropriate for **time series data**.
+
+![:emphasize](Data from the future) can't be used to predict the past! 
+
+Rather, it is typical to use the most **recent data** for a test set. 
+
+The {rsample} package has a function for **splitting time series data**.
+
+`initial_time_split()`:
+- `data`: dataset
+- `prop`: proportion of first part of data for training
+- `lag`: lag value if using lagged predictors 
+]
+
+---
+class: onecol
+## Coming Soon (Preview)
+
+Today we reviewed the rationale for ![:emphasize](separating model training from model testing). 
+
+We learned various methods for **holdout cross-validation (CV)**: 
+- Simple random split
+- Stratified sampling
+- Validation set
+- Multilevel data
+- Time series data
+
+However, in practice, we might not want to limit ourselves to a **single test set**. 
+
+What if we could create **multiple test sets** to evaluate our model many times? 
+
+Tomorrow will cover advanced methods for **k-fold CV** and **nested CV**.
+
+---
+class: inverse, center, middle
+# Time for a Break!
+<div class="countdown" id="timer_62d8613f" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current% / %total%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

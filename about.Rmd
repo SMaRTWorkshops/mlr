@@ -5,32 +5,39 @@ output:
     toc: FALSE
 ---
 
-This is a synchronous, online course taking place as part of the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) on July 19-23, 2021. Each of these five days will run for four hours from 1:00pm - 5:00pm (New York Time/EDT/UTC-4:00). Enrollment in the course and access to the video recordings requires registration, which can be purchased through the [Pitt Methods website](https://www.pittmethods.com/applied-ml); we are pleased to offer a discounted rate for students and trainees. However, materials (slides and activities) are freely available through this website and may be re-used according to the [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt).
+This is a synchronous, online course taking place as part of the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) on August 8-11, 2022. Each of these four days will run for between 10:30am - 3:30pm (New York Time/EDT/UTC-4:00) with an hour lunch break from 12:30pm - 1:30pm. Enrollment in the course and access to the video recordings requires registration, which can be purchased through the [Pitt Methods website](https://www.pittmethods.com/applied-ml); we are pleased to offer a discounted rate for students and trainees. However, materials (slides and activities) are freely available through this website and may be re-used according to the [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt).
 
 ---
 
 ## Course Schedule
 
-Day | Part | Topic | Lead | Video Link
-:-: | :--: | :---- | :--- | :---------
-1 | A | Conceptual introductions | Girard | https://youtu.be/vD3w54Y4OCI
-1 | B | Logistics and data exploration | Wang | https://youtu.be/MMsf544NsH8
-2 | A | Feature engineering | Girard | https://youtu.be/CPVy1Mxqzu4
-2 | B | Predictive modeling basics | Girard | https://youtu.be/0HaLHcPSPVk
-3 | A | Regularized regression | Wang | https://youtu.be/nTpVaUnsjfk
-3 | B | Decision trees and random forests | Wang | https://youtu.be/tEpudktDIac
-4 | A | Support vector machines | Girard | https://youtu.be/Ydzxe1NDfiw
-4 | B | Practical matters and advice | Wang | https://youtu.be/zM4Ebex9KW8
-5 | A | Panel Q&A and discussion | Both | https://youtu.be/00g3ZvASlUQ
-5 | B | Hackathon and consultation | Both | 
+| Day | Part | Topic                      | Lead   | Video Link |
+| :-: | :--: | :------------------------- | :----- | :--------- |
+| 1   | A    | Conceptual introductions   | Girard | TBA        |
+|     | B    | Tidyverse primer and data  | Girard | TBA        |
+|     | C    | Cross-validation           | Wang   | TBA        |
+|     | D    | Fitting models             | Wang   | TBA        |
+| 2   | A    | Workflows and recipes      | Girard | TBA        |
+|     | B    | Performance evaluation     | Girard | TBA        |
+|     | C    | Resampling                 | Wang   | TBA        |
+|     | D    | Linear model example       | Wang   | TBA        |
+| 3   | A    | GLMNET algorithm           | Wang   | TBA        |
+|     | B    | Example and tuning         | Girard | TBA        |
+|     | C    | Random forest algorithm    | Wang   | TBA        |
+|     | D    | Example and deployment     | Girard | TBA        |
+| 4   | A    | SVM algorithm and example  | Girard | TBA        |
+|     | B    | Preview of advanced topics | Wang   | TBA        |
+|     | C    | Consulting                 |        |            |
+|     | D    | Consulting                 |        |            |
 
-Video recordings of the course meetings have been posted as private YouTube videos (see the links in the table above). In order to access them, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know.
+
+Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). In order to access them, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.
 
 ---
 
 ## Course Communication
 
-Important announcements will be emailed to registered attendees. However, attendees are strongly encouraged to join the course's Slack workspace. This workspace will provide a place for questions, answers, comments, and other discussions to occur in a more permanent place. We will monitor the Zoom chat window but this disappears when you leave a meeting, so Slack is the preferred method for communication. There will be several channels for discussion different topics (i.e., `general`, `questions`, `resources`, `panel-topics`, and `random`). More personal or sensitive communications should occur via email or Slack direct messages.
+Important announcements will be emailed to registered attendees. However, attendees are strongly encouraged to join the course's Slack workspace. This workspace will provide a place for questions, answers, comments, and other discussions to occur in a more permanent place. We will monitor the Zoom chat window but this disappears when you leave a meeting, so Slack is the preferred method for communication. There will be several channels for discussion different topics (i.e., `announcements`, `general`, `questions`, `resources`, and `random`). More personal or sensitive communications should occur via email or Slack direct messages.
 
 - An invitation to join this Slack workspace was emailed to registered attendees.
 
@@ -44,7 +51,7 @@ Important announcements will be emailed to registered attendees. However, attend
 
 - Behave professionally at all times
 - Stay on topic and minimize distractions
-- Stay muted unless talking to minimize noise
+- Stay muted unless talking (to minimize noise)
 - Ask questions in Slack or use "Raise Hand"
 - Be respectful to everyone in the workshop
 - Be patient with yourself and others

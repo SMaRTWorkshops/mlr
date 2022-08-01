@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Fitting Models</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pittsburgh Summer Methodology Series" />
+    <script src="day_1d_files/header-attrs/header-attrs.js"></script>
+    <link href="day_1d_files/tachyons/tachyons.min.css" rel="stylesheet" />
+    <script src="day_1d_files/clipboard/clipboard.min.js"></script>
+    <link href="day_1d_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="day_1d_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <script src="day_1d_files/kePrint/kePrint.js"></script>
+    <link href="day_1d_files/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <span style="font-size:48pt;">Fitting Models</span>
+]
+.subtitle[
+## 📈 💻 🤖️
+]
+.author[
+### Pittsburgh Summer Methodology Series
+]
+.date[
+### Day 1D     August 8, 2022
+]
+
+---
+
+
+
+
+
+
+
+
+
+
+class: inverse, center, middle
+# Overview
+
+&lt;style type="text/css"&gt;
+.onecol {
+    font-size: 26px;
+}
+.twocol {
+  font-size: 24px;
+}
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+a {
+  background-color: lightblue;
+}
+.remark-inline-code {
+  background-color: white;
+}
+&lt;/style&gt;
+
+---
+class: onecol
+# Plan for Today
+
+This lecture will focus on ![:emphasize](training models and making predictions) in R.
+
+All modeling will be done with **{parsnip}**, part of the {tidymodels} meta-package.
+
+--
+
+&lt;p style="padding-top:30px;"&gt;We will **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+
+This will **ease the transition to ML** and highlight its similarities with classical statistics.
+
+Finally, we will **foreshadow future topics** (e.g., regularized linear models and tuning).
+
+---
+class: onecol
+# Motivation
+
+Suppose we have collected data that are now ready to be fit to a statistical model. 
+
+Let's say that a linear regression model is our first choice: 
+
+`$$y_i = \beta_0 + \beta_1x1_i+...+\beta_px_{pi}$$`
+--
+
+There are **many statistical methods available** for estimating these model parameters:
+- Ordinary least squares (OLS) regression 
+
+- Regularized linear regression&lt;sup&gt;1&lt;/sup&gt;, such as lasso, ridge, and elastic net regression.
+
+.footnote[
+[1] No need to be familiar with regularization yet; we will learn about these algorithms in detail on Day 3! 
+]
+
+--
+
+However, they use different R packages with **varying syntax, arguments, and output**. 
+
+---
+class: onecol
+# A Problem
+
+The {stats} package implements **OLS regression** using ![:emphasize](formula notation), with data accepted in a dataframe or vector.
+
+
+```r
+model &lt;- lm(outcome ~ predictor, data = df, ...)
+```
+
+--
+
+&lt;p style="padding-top:30px;"&gt; The {glmnet} package implements **regularized regression** using ![:emphasize](x/y notation), with predictors required to be formatted as a numeric matrix and the outcome as a vector.
+
+
+```r
+model &lt;- glmnet(x = outcome, y = predictor, ...)
+```
+
+--
+
+&lt;p style="padding-top:30px;"&gt; This makes it a **pain** to switch between models! 
+
+---
+class: onecol
+# A Problem
+
+R packages also return **model predictions** in different formats. 
+
+Some examples of these inconsistencies:
+
+--
+
+&lt;img src="../figs/package_predictions.png" width="40%" /&gt;
+
+
+---
+class: twocol
+# A Solution
+
+.left-column[
+&lt;br /&gt;
+&lt;img src="../figs/parsnip.png" width="100%" /&gt;
+]
+
+--
+
+.right-column[
+The {parsnip} package provides a **unified interface** for model fitting.
+
+There are functions to:
+- Specify models
+- Fit models 
+- Inspect model results
+- Make predictions
+
+We can fit any model with the **same syntax and data format**.
+
+We **don't need memorize** specific details of any particular R package!
+]
+
+---
+class: inverse, center, middle
+# Introduction to {parsnip}
+
+---
+# A {parsnip} roadmap
+&lt;/br&gt;
+
+&lt;img src="../figs/parsnip_workflow.png" width="100%" /&gt;
+
+---
+class: onecol
+# 1. Specify Model Details
+
+Before fitting an ML model, we need to **specify the model details**.
+
+All models are specified with the same **syntactical structure** in {parsnip}.
+
+- **Model Type**: the mathematical structure (e.g., linear regression, random forests)
+
+- **Model Mode**: the mode of prediction (e.g., regression, classification)&lt;sup&gt;1&lt;/sup&gt;.
+
+- **Computational Engine**: how the actual model is fit (often a specific R package)
+
+These details are specified *before* even referencing the data. 
+
+.footnote[
+[1] Sometimes the model mode is already determined by the model type (e.g., linear regression) and so specifying a mode is not needed.
+]
+
+---
+class: onecol
+# Example: OLS Regression
+
+To specify an OLS regression in {parsnip}, we specify&lt;sup&gt;1&lt;/sup&gt;:
+- The model type as `linear_reg()` 
+- The computational engine as `"lm"`.
+
+.footnote[
+[1] We don't need to specify the model mode because `linear_reg()` already implies `mode = regression`. 
+]
+
+--
+
+
+```r
+library(tidymodels)
+tidymodels_prefer()
+
+ols_reg &lt;- linear_reg() %&gt;% # specify model type
+  set_engine("lm") # specify computational engine
+ols_reg
+#&gt; Linear Regression Model Specification (regression)
+#&gt; 
+#&gt; Computational engine: lm
+```
+
+---
+class: onecol 
+# Example: Regularized Regression
+
+If we want to use regularization, we simply change the **computational engine**. 
+
+--
+
+
+```r
+# specify a GLMNET regression
+glmnet_reg &lt;- linear_reg() %&gt;% 
+  set_engine("glmnet") 
+
+glmnet_reg
+#&gt; Linear Regression Model Specification (regression)
+#&gt; 
+#&gt; Computational engine: glmnet
+```
+
+--
+
+Switching between OLS vs. regularization is now much simpler! 
+
+---
+class: onecol 
+# Model Tuning
+
+Some algorithms (such as regularized regression) have *hyperparameters*&lt;sup&gt;1&lt;/sup&gt;.
+
+We can change hyperparameters to find the value that optimizes model performance.
+
+However, might not know what the best value is just yet.
+
+This is the basis of **model tuning**, which can be included when specifying model type.
+
+.footnote[
+[1] e.g., `linear_reg` has a `penalty` hyperparameter that sets the degree of regularization. We will learn about hyperparameters and tuning in detail on Day 3, so no need to worry about the details yet! 
+]
+
+--
+
+.scroll25[
+
+```r
+glmnet_tune &lt;- linear_reg(penalty = tune()) %&gt;% set_engine("glmnet")
+glmnet_tune
+#&gt; Linear Regression Model Specification (regression)
+#&gt; 
+#&gt; Main Arguments:
+#&gt;   penalty = tune()
+#&gt; 
+#&gt; Computational engine: glmnet
+```
+]
+
+---
+class: onecol
+# More Model Type Arguments
+
+To see all arguments for a particular model type, use `args()`.
+
+--
+
+
+```r
+args(linear_reg)
+#&gt; function (mode = "regression", engine = "lm", penalty = NULL, 
+#&gt;     mixture = NULL) 
+#&gt; NULL
+```
+
+--
+
+
+```r
+args(rand_forest)
+#&gt; function (mode = "unknown", engine = "ranger", mtry = NULL, trees = NULL, 
+#&gt;     min_n = NULL) 
+#&gt; NULL
+```
+
+
+---
+class: onecol
+# More Computational Engines 
+
+To see all the computational engines that exist for a model type, use `show_engines()`. 
+
+--
+
+.pull-left[
+
+```r
+show_engines("linear_reg")
+```
+
+&lt;table class="table" style=""&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; engine &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; mode &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; lm &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; glm &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; glmnet &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; stan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; spark &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; keras &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; brulee &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+--
+
+.pull-right[
+
+```r
+show_engines("rand_forest")
+```
+
+&lt;div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; "&gt;&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; engine &lt;/th&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; mode &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ranger &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; classification &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ranger &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; randomForest &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; classification &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; randomForest &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; spark &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; classification &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; spark &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; regression &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;&lt;/div&gt;
+]
+---
+class: onecol 
+# A World of Possibilities
+
+There are **hundreds** of machine learning models available in {parsnip}.
+
+Many models can be implemented in different ways (different computational engines).
+
+You can explore all the options on the [tidymodels website](https://www.tidymodels.org/find/parsnip/).
+
+--
+
+&lt;p style="padding-top:30px;"&gt;To fit different ML models, you just change the **model type** and `set_engine()`.
+
+This makes it *super* easy to implement new algorithms and explore the world of ML!
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution:** Be sure you understand an algorithm before writing a paper with it.
+]
+
+---
+class: onecol
+# 2. Fit Model
+
+Once we have specified model details, we can fit the model using the `fit()` function.
+
+Let's walk through an OLS example with some pseudocode. 
+
+--
+
+
+```r
+ols_reg &lt;- linear_reg() %&gt;% 
+  set_engine("lm") 
+
+ols_reg_fit &lt;- ols_reg %&gt;% 
+  fit(outcome ~ predictor, data = my_data)
+```
+
+--
+
+In {parsnip}, models can be flexibly fit with **formula notation** or **x/y notation**. 
+
+
+```r
+ols_reg_fit &lt;- ols_reg %&gt;% 
+  fit_xy(x = select(my_data, predictor), y = select(my_data, outcome))
+```
+
+---
+class: onecol 
+# 3. Inspect Model Results
+
+Once we fit a model, we can examine the model by printing or plotting it.
+
+Some useful functions:
+
+- `tidy()`: return model summary (coefficient values, std error, *p* value) in a tibble
+
+- `glance()`: return performance metrics from the training data (e.g., `\(r^2\)`)
+
+- `vip()`: variable importance plots (note: from a separate {vip} package)
+
+- `autoplot()`: plot tuning search results (relevant when working with hyperparameters)
+
+---
+class: onecol
+# 4. Make Model Predictions 
+
+Getting predictions for `parsnip` models is easy and *tidy*. 
+
+The `predict()` function will always return: 
+
+- Predictions as a tibble
+
+- The same number of rows as the data being predicted 
+
+- Interpretable column names (e.g., `.pred`, `.pred_lower`, `.pred_upper`)
+
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+These rules make it easier to merge predictions with the original data!
+]
+
+---
+class: onecol
+# Summary
+
+Today started with a **conceptual overview** of the goals and methods of ML.
+
+We reviewed **tidyverse** principles and datasets used in the course. 
+
+We introduced the basic goals of **data splitting** with {rsample}.
+
+Finally, we fit and evaluated our first **prediction model** with {parsnip}.
+
+--
+
+&lt;p style="padding-top:30px;"&gt; Tomorrow will dive into **feature engineering** and **performance evaluation**.
+
+We will also learn more advanced **cross-validation** for a full ML **workflow**.
+
+---
+class: inverse, center, middle
+# Live Coding
+
+---
+class: inverse, center, middle
+# Hands-On Activity
+
+
+---
+class: inverse, center, middle
+# End of Day 1
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current% / %total%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
