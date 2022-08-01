@@ -98,7 +98,7 @@ Today's focus is on advanced cross-validation methods, including:
 
 --
 
-All CV methods will be performed with {rsample}.
+All CV methods will be performed with {rsample} and {tune}.
 
 ---
 class: inverse, center, middle
@@ -215,30 +215,30 @@ affect_folds$splits[[1]] %&gt;% analysis()
 #&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
 #&gt;  1 Nature         18     9     7    10      7      4 0.0476
 #&gt;  2 Nature         16    12     5     8      5      5 0.333 
-#&gt;  3 Nature          6     5     3     1      3      1 0.190 
-#&gt;  4 Nature         12    15     4     6      0      2 0.385 
-#&gt;  5 Nature         14     2     5     6     16     13 0.381 
-#&gt;  6 Documentary     6    15     2     4      2      2 0.238 
-#&gt;  7 Documentary    15    12     4     9      8      8 0.308 
-#&gt;  8 Horror         15     1     3    11     14      0 0     
-#&gt;  9 Horror          8    10     2     5     11      2 0.333 
+#&gt;  3 Nature         12    15     4     6      0      2 0.385 
+#&gt;  4 Nature         14     2     5     6     16     13 0.381 
+#&gt;  5 Documentary     6    15     2     4      2      2 0.238 
+#&gt;  6 Documentary    15    12     4     9      8      8 0.308 
+#&gt;  7 Horror         18    10     7     9     16      0 0     
+#&gt;  8 Horror          8    10     2     5     11      2 0.333 
+#&gt;  9 Documentary    13     9     3     9      3      7 0.381 
 #&gt; 10 Comedy         14     1     3    12     29      0 0.143 
 #&gt; # … with 287 more rows
 
 affect_folds$splits[[1]] %&gt;% assessment()
 #&gt; # A tibble: 33 × 8
-#&gt;    Film          ext  neur   imp   soc posaff negaff    BDI
-#&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-#&gt;  1 Horror         18    10     7     9     16      0 0     
-#&gt;  2 Documentary    13     9     3     9      3      7 0.381 
-#&gt;  3 Documentary    16    18     5    10      4     18 0.667 
-#&gt;  4 Horror         14     3     5     7      7      2 0.0476
-#&gt;  5 Nature         13     7     4     7      5      0 0.429 
-#&gt;  6 Horror         14    14     3    10     10     14 0.190 
-#&gt;  7 Horror         11     8     3     7     11      1 0     
-#&gt;  8 Nature         12    10     4     7     10      5 0.286 
-#&gt;  9 Nature         12     7     2     9     23      0 0.190 
-#&gt; 10 Nature         18     6     7     8     20      0 0.143 
+#&gt;    Film          ext  neur   imp   soc posaff negaff   BDI
+#&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+#&gt;  1 Nature          6     5     3     1      3      1 0.190
+#&gt;  2 Horror         15     1     3    11     14      0 0    
+#&gt;  3 Comedy         15     2     4    10      4      0 0    
+#&gt;  4 Documentary     7    10     2     4     12     12 0.429
+#&gt;  5 Documentary    12     7     5     6     10      9 0.143
+#&gt;  6 Comedy         13    13     5     6      4      5 0.143
+#&gt;  7 Nature         16     3     4    10      1      0 0    
+#&gt;  8 Nature         16    10     7     6      5      0 0.143
+#&gt;  9 Documentary     9    13     2     5      3     15 0.143
+#&gt; 10 Documentary    20     9     7    11      8      2 0.190
 #&gt; # … with 23 more rows
 ```
 ]
@@ -247,7 +247,57 @@ affect_folds$splits[[1]] %&gt;% assessment()
 
 However, we generally don't need to extract the individual folds.
 
-{tidymodels} has built-in functions that can use a `vfold_cv` object directly. 
+{tune} has built-in functions that can use a `vfold_cv` object directly:
+
+- `fit_resamples()` estimates model performance across resamples **with no tuning**.
+
+- `tune_grid()` estimates model performance across resamples **with tuning**.
+
+---
+class: onecol
+## Resampling Options 
+
+There are three possible interfaces to `fit_resamples()` and `tune_grid()`:
+
+
+```r
+model_spec %&gt;% fit_resamples(formula, resamples, ...)
+
+model_spec %&gt;% fit_resamples(recipe, resamples, ...)
+
+workflow %&gt;% fit_resamples(resamples, ...)
+```
+
+--
+
+There are also a number of optional arguments, including:
+
+- `metrics`: performance statistics to compute&lt;sup&gt;1&lt;/sup&gt;
+
+- `control`: a list created by `control_resamples()` or `control_grid()` with various options
+
+.footnote[
+[1] Regression default metrics are RMSE and `\(R^2\)`. Classification default metrics are AUROC and overall accuracy.
+]
+
+---
+class: onecol
+## Resampling Options 
+
+The `control` argument to `fit_resamples()` can be configured by `control_resamples()`&lt;sup&gt;1&lt;/sup&gt;:
+
+Argument | Description
+:------- | :----------
+verbose | Whether to print progress (default = FALSE) 
+save_pred | Whether to save out-of-sample predictions per *k* fold (default = FALSE)
+event_level | For classification only; specify which level is considered the "event" (`"first"` or `"second"`)
+extract | An optional function to retain model objects≈
+oiuyt vbl,./
+
+
+.footnote[
+[1] The same list can be created for `tune_grid()` by `control_grid()`.
+]
 
 ---
 class: onecol
@@ -402,12 +452,12 @@ Results are averaged across all outer splits for an **unbiased estimate of the m
 
 ---
 class: onecol
-## Nested Cross-Validation in R
+## Nested CV in R: The good news!
 
-The `nested_cv()` function in {rsample} performs nested cross-validation&lt;sup&gt;1&lt;/sup&gt;.
+The `nested_cv()` function in {rsample} splits data for nested cross-validation&lt;sup&gt;1&lt;/sup&gt;.
 
 .footnote[
-[1] This is an amazing addition to {tidymodels} beyond {caret}! In the past, you had to write your own custom function/loop to perform nested CV.
+[1] This is an amazing addition to {tidymodels} beyond {caret}! 
 ]
 
 --
@@ -421,7 +471,7 @@ inside | The inside resampling specification (e.g., `vfold_cv()`)
 
 ---
 class: onecol
-## Nested Cross-Validation in R
+## Nested CV in R
 
 Let's run nested CV with 10 outer folds and 5 inner folds in the `affect` dataset.
 
@@ -453,13 +503,27 @@ affect_folds_nested
 ```
 ]
 
+---
+class: onecol
+## Nested CV in R: The less-good news
+
+Unfortunately, nested cross-validation is not yet fully supported in tidymodels. 
+
+`fit_resamples()` does not work for nested cross-validation&lt;sup&gt;1&lt;/sup&gt;.
+
+If you want to use nested cross-validation, you will need to write your own functions.
+
+.footnote[
+[1] Though it works great for regular k-fold CV!
+]
+
 --
 
-Just like before, we don't need to access this object directly. 
+&lt;p style="padding-top:30px;"&gt; Example code can be found on the [tidymodels website](https://www.tidymodels.org/learn/work/nested-resampling/).
 
-Instead, we can use this resampling object directly in our ML ![:emphasize](workflow). 
+This is a bit complicated, so we will stick to using **repeated k-fold CV** for this course. 
 
-We'll walk through a full worked example in the next hour! 
+But if you are ready to for a challenge, we highly encourage looking into nested CV!
 
 ---
 class: inverse, center, middle
