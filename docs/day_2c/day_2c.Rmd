@@ -111,7 +111,7 @@ Today's focus is on advanced cross-validation methods, including:
 
 --
 
-All CV methods will be performed with {rsample}.
+All CV methods will be performed with {rsample} and {tune}.
 
 ---
 class: inverse, center, middle
@@ -220,7 +220,56 @@ affect_folds$splits[[1]] %>% assessment()
 
 However, we generally don't need to extract the individual folds.
 
-{tidymodels} has built-in functions that can use a `vfold_cv` object directly. 
+{tune} has built-in functions that can use a `vfold_cv` object directly:
+
+- `fit_resamples()` estimates model performance across resamples **with no tuning**.
+
+- `tune_grid()` estimates model performance across resamples **with tuning**.
+
+---
+class: onecol
+## Resampling Options 
+
+There are three possible interfaces to `fit_resamples()` and `tune_grid()`:
+
+```{r, eval = FALSE}
+model_spec %>% fit_resamples(formula, resamples, ...)
+
+model_spec %>% fit_resamples(recipe, resamples, ...)
+
+workflow %>% fit_resamples(resamples, ...)
+```
+
+--
+
+There are also a number of optional arguments, including:
+
+- `metrics`: performance statistics to compute<sup>1</sup>
+
+- `control`: a list created by `control_resamples()` or `control_grid()` with various options
+
+.footnote[
+[1] Regression default metrics are RMSE and $R^2$. Classification default metrics are AUROC and overall accuracy.
+]
+
+---
+class: onecol
+## Resampling Options 
+
+The `control` argument to `fit_resamples()` can be configured by `control_resamples()`<sup>1</sup>:
+
+Argument | Description
+:------- | :----------
+verbose | Whether to print progress (default = FALSE) 
+save_pred | Whether to save out-of-sample predictions per *k* fold (default = FALSE)
+event_level | For classification only; specify which level is considered the "event" (`"first"` or `"second"`)
+extract | An optional function to retain model objects≈
+oiuyt vbl,./
+
+
+.footnote[
+[1] The same list can be created for `tune_grid()` by `control_grid()`.
+]
 
 ---
 class: onecol
@@ -384,12 +433,12 @@ include_graphics("../figs/nested_cv.gif")
 
 ---
 class: onecol
-## Nested Cross-Validation in R
+## Nested CV in R: The good news!
 
-The `nested_cv()` function in {rsample} performs nested cross-validation<sup>1</sup>.
+The `nested_cv()` function in {rsample} splits data for nested cross-validation<sup>1</sup>.
 
 .footnote[
-[1] This is an amazing addition to {tidymodels} beyond {caret}! In the past, you had to write your own custom function/loop to perform nested CV.
+[1] This is an amazing addition to {tidymodels} beyond {caret}! 
 ]
 
 --
@@ -403,7 +452,7 @@ inside | The inside resampling specification (e.g., `vfold_cv()`)
 
 ---
 class: onecol
-## Nested Cross-Validation in R
+## Nested CV in R
 
 Let's run nested CV with 10 outer folds and 5 inner folds in the `affect` dataset.
 
@@ -418,13 +467,27 @@ affect_folds_nested
 ```
 ]
 
+---
+class: onecol
+## Nested CV in R: The less-good news
+
+Unfortunately, nested cross-validation is not yet fully supported in tidymodels. 
+
+`fit_resamples()` does not work for nested cross-validation<sup>1</sup>.
+
+If you want to use nested cross-validation, you will need to write your own functions.
+
+.footnote[
+[1] Though it works great for regular k-fold CV!
+]
+
 --
 
-Just like before, we don't need to access this object directly. 
+<p style="padding-top:30px;"> Example code can be found on the [tidymodels website](https://www.tidymodels.org/learn/work/nested-resampling/).
 
-Instead, we can use this resampling object directly in our ML ![:emphasize](workflow). 
+This is a bit complicated, so we will stick to using **repeated k-fold CV** for this course. 
 
-We'll walk through a full worked example in the next hour! 
+But if you are ready to for a challenge, we highly encourage looking into nested CV!
 
 ---
 class: inverse, center, middle

@@ -1,0 +1,38 @@
+/* Set font size for single column slides */
+
+.onecol {
+  font-size: 26px;
+}
+
+/* Set font size for double column slides */
+
+.twocol {
+  font-size: 24px;
+}
+
+/* Set appearance of code chunks */
+
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+
+/* Set appearance of inline code */
+
+.remark-inline-code {
+  background-color: white;
+}
+
+/* Set appearance of hyperlinks */
+
+a {
+  background-color: lightblue;
+}
+
+
+/* Custom class for emphasizing text as important */
+
+.imp {
+  font-weight: bold;
+  color: darkred;
+}

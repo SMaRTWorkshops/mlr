@@ -1,5 +1,5 @@
 ---
-title: '<span style="font-size:48pt;">Cross-Validation: Advanced</span>'
+title: '<span style="font-size:48pt;">Building a Model: Start to Finish</span>'
 subtitle: '📈  💻  🤖️' 
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2D &emsp; &emsp; August 9, 2022'
@@ -13,6 +13,8 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: false
     self_contained: true
 ---
 
@@ -77,198 +79,228 @@ a {
 }
 </style>
 
----
-class: inverse, center, middle
-# A Full {parsnip} Walkthrough
 
 ---
 class: onecol
-# Applied Example
+## Plan for Today
 
-Let's put what we just learned into practice in R! 
+Thus far, we have learned {rsample}, {workflows}, {recipes}, {yardstick}, and {parsnip}.
 
-Let's use {rsample} and {parsnip} to train a regression model on the `titanic` data. 
-
-We will: 
-
-- Load in and split the data.
-
-- Train a regression model to predict each passenger's fare (how much they paid).
-
-- Make predictions on the test set.
-
----
-class: onecol
-# Load and Split Data
-
-```{r}
-# load titanic data
-titanic <- read_csv("https://bit.ly/amlr-titanic")
-
-# create a training and testing set (stratified by fare)
-set.seed(1234)
-fare_index <- initial_split(data = titanic, prop = 0.8, 
-                                     strata = 'fare')
-fare_train <- training(titanic_split_strat)
-fare_test <- testing(titanic_split_strat)
-```
+This lecture aims to tie it all together and ![:emphasize](build a model from start to finish).
 
 --
 
-```{r}
-# Check sizes
-dim(fare_train)
-dim(fare_test)
+<p style="padding-top:30px;">We will **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+
+This will **ease the transition to ML** and highlight its similarities with classical statistics.
+
+Finally, we will **foreshadow future topics** (e.g., regularized linear models and tuning).
+
+---
+class: onecol
+## Applied Example
+
+Let's put what we learned into practice in R! 
+
+Let's train a regression model on the `titanic` data. 
+
+--
+
+<p style="padding-top:30px;">We will: 
+
+- Load the data
+
+- Create a recipe for feature engineering
+
+- Train a regression model to predict each passenger's fare (how much they paid).
+
+- Evaluate the model using 10-fold cross-validation 
+
+---
+class: onecol
+## Load Data
+
+```{r, eval = FALSE}
+library(tidymodels)
+
+# load titanic data
+titanic <- read_csv("../data/titanic.csv")
+
+# look at the data
+head(titanic, 5)
+```
+
+```{r, echo = FALSE}
+library(tidymodels)
+
+# load titanic data
+titanic <- read_csv("../data/titanic.csv")
+
+# look at the data
+head(titanic, 5) %>% kable()
 ```
 
 ---
 class: onecol
-# Specify and Fit Model
+## Feature Engineering with {recipes}
+
+```{r}
+# Create a preprocessing recipe (don't prep or bake)
+fare_recipe <-
+  fare_train %>%
+  recipe(fare ~ .) %>% 
+  step_rm(survived) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors())
+```
+
+
+---
+class: onecol
+## Specify Model with {parsnip}
 
 ```{r}
 # Specify Model
 ols_reg <- linear_reg() %>% 
   set_engine("lm")
 
-# Fit Model
-fare_fit <- ols_reg %>% 
-  fit(fare ~ age + sibsp + parch, data = fare_train)
+ols_reg
 ```
 
 ---
 class: onecol
-# Inspect Results
+## Build Workflow with {workflows}
 
-```{r, eval = FALSE}
-# Inspect model results
-tidy(fare_fit)
-```
+.scroll70[
+```{r}
+fare_workflow <- 
+  workflow() %>%
+  add_model(ols_reg) %>%
+  add_recipe(fare_recipe)
 
-```{r, echo = FALSE}
-tidy(fare_fit) %>% kable()
+fare_workflow
 ```
+]
 
 ---
 class: onecol
-# Inspect Results
+## Fit Model with Resampling
 
-```{r, eval = FALSE}
-# Performance metrics on training data 
-glance(fare_fit)
+```{r}
+set.seed(2022)
+
+# configure resampling
+fare_folds <- vfold_cv(data = fare_train, 
+                       v = 10, 
+                       repeats = 3,
+                       strata = 'fare')
+
+# save predictions from resampling
+keep_pred <- control_resamples(save_pred = TRUE, extract = get_lm_coefs)
 ```
-
-```{r, echo = FALSE}
-glance(fare_fit) %>% kable() %>% scroll_box(width = "1000px")
-```
-
----
-class: onecol
-# Test Set Predictions
-
-To evaluate our model's performance on the test set, we need two things: 
-
-1. Predictions from the model on the test set (e.g., values, classes, or probabilities)
-
-2. Trusted labels on the test set 
 
 --
 
-<p style="padding-top:30px;"> We can compare these predicted and trusted labels using {yardstick}
-
-Some common options for regression include *RMSE*, $R^2$, and *MAE*.
-
-We will learn about performance evaluation and {yardstick} in more detail tomorrow!
+```{r}
+# train the model using the recipe, data, and method 
+fare_results <- fare_workflow %>%
+  fit_resamples(resamples = fare_folds, control = keep_pred)
+```
 
 ---
-class: onecol
-# Test Set Predictions
+class: twocol
+## Fit Model with Resampling
 
-To get predictions from the final model on new data<sup>1</sup>, we can use `predict()`
-
-Argument&emsp; | Description
-:------- | :----------
-object | A trained model object created by `fit()`
-new_data | A data frame with the same features as training
-type | Data type (numeric, classes, probabilities, etc.)
-
-.footnote[
-[1] The same process is used for both evaluating performance and deploying the model in the real world.
+.pull-left[
+```{r, echo = FALSE}
+include_graphics("../figs/kfold5.png")
+```
 ]
 
+.pull-right[
+Note that we are fitting our model with 10-fold CV on the **entire data set**.
+
+This means we have training and test sets. 
+
+There are 30 training and test sets in total.
+
+There is no separate validation set. 
+
+Model evaluation will occur on each cross-validated test set. 
+
+We will obtain performance metrics by averaging over all 30 test sets.
+] 
+
 ---
-class: onecol
-# Test Set Predictions
-
-```{r}
-fare_pred <- predict(fare_fit, new_data = fare_test)
-fare_pred
-```
-
----
-class: onecol
-# Visualizing Predicted and Trusted Labels
-
-```{r, eval = FALSE}
-qplot(x = fare_test$fare, y = fare_pred$.pred) + abline()
-```
-
-```{r quick, echo=FALSE, fig.height=3.25}
-qplot(x = fare_test$fare, y = fare_pred$.pred) + geom_abline() +
-  theme_xaringan(text_font_size = 20) +
-  theme(
-    axis.title = element_text(size = 20),
-    panel.grid.minor = element_blank(), 
-    panel.background = element_rect(fill = "white")
-  )
-```
+class: inverse, center, middle 
+# Model Evaluation 
 
 ---
 class: onecol
-# Estimating Test Set Performance 
+## Cross-Validated Test Performance
 
-`predict()` returns predictions in the **same order** as the original data.
+The object created by `fit_resamples()` will contain lots of information.
 
-This makes it easy to merge predictions with test data to estimate model performance.
+We can view the predictions made in each cross-validated test set with `collect_predictions()`.
 
 --
 
-.scroll50[
-```{r}
-fare_pred <- fare_test %>% 
-  select(fare) %>% 
-  bind_cols(predict(fare_fit, new_data = fare_test))
-
-fare_pred
-```
-]
-
----
-class: onecol
-# Estimating Test Set Performance
-
-To estimate performance in {tidymodels}, use {yardstick}<sup>1</sup>.
-
 ```{r, eval = FALSE}
-# create a performance metric set 
-fare_metrics <- metric_set(rmse, rsq, mae)
-
-fare_metrics(fare_pred, truth = fare, estimate = .pred)
+collect_predictions(fare_results)
 ```
 
 ```{r, echo = FALSE}
-# create a performance metric set 
-fare_metrics <- metric_set(rmse, rsq, mae)
-
-fare_metrics(fare_pred, truth = fare, estimate = .pred) %>% kable(digits = 5)
+collect_predictions(fare_results) %>% kable() %>% scroll_box(height = "250px")
 ```
-
-.footnote[
-[1] More on {yardstick} coming tomorrow! 
-]
 
 ---
 class: onecol
-# Model Interpretation 
+## Cross-Validated Test Performance
+
+
+We can view a summary of training set performance with `collect_metrics()`.
+
+These results include the mean and standard error of each metric across resamples<sup>1</sup>.
+
+.footnote[
+[1] To see metrics for each fold, include `summarize = FALSE` in `collect_metrics()`.
+]
+
+--
+
+```{r, eval = FALSE}
+collect_metrics(fare_results)
+```
+
+
+```{r, echo = FALSE}
+collect_metrics(fare_results) %>% kable()
+```
+
+---
+class: onecol
+## A Final Model
+
+Importantly, the goal of `fit_resamples()` is to ![:emphasize](measure model importance).
+
+The models trained in `fit_resamples()` are not saved or used later. 
+
+It also doesn't perform hyperparameter tuning (which we will learn about tomorrow).
+
+--
+
+<p style="padding-top:30px;"> We need a **final model** for interpretation and prediction on new data. 
+
+For OLS regression, so we can go back and fit a model on the entire data set.
+
+For tuning hyperparameters, we first use `tune_grid()` and then fit a final model.
+
+---
+class: onecol
+## Model Interpretation 
 
 Predictive **accuracy** is emphasized in ML over interpretability and inference
 
@@ -285,11 +317,14 @@ However, some algorithms can provide insight into their decision-making
 --
 
 ```{r, eval=FALSE}
-fare_fit$fit %>% coef()
+# fit a final model 
+fare_final <- fare_workflow %>% fit(titanic)
+
+fare_results$fit %>% coef()
 ```
 
 ```{r, echo=FALSE}
-fare_fit$fit %>% coef() %>% t() %>% kable(digits = 2)
+#fare_fit$fit %>% coef() %>% t() %>% kable(digits = 2)
 ```
 
 ---
@@ -299,8 +334,8 @@ class: onecol
 We can also plot variable importance using the {vip} package.
 
 ```{r, out.width = "50%"}
-library(vip)
-vip(fare_fit)
+#library(vip)
+#vip(fare_fit)
 ```
 
 .footnote[
