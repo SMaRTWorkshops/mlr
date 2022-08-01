@@ -5,9 +5,8 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2C &emsp; &emsp; August 9, 2022'
 output:
   xaringan::moon_reader:
-    css: [xaringan-themer.css, style.css]
+    css: [../xaringan-themer.css, ../styles.css]
     nature:
-      beforeInit: "macros.js"
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
       highlightLines: true
@@ -34,12 +33,6 @@ knitr::opts_chunk$set(
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
 library(xaringanthemer)
-style_mono_light(
-  base_color = "#23395b",
-  footnote_font_size = "20px",
-  footnote_color = "gray",
-  text_slide_number_font_size = "18px"
-)
 ```
 
 ```{r xaringanExtra, echo=FALSE}
@@ -57,25 +50,6 @@ library(patchwork)
 
 class: inverse, center, middle
 # Overview
-
-<style type="text/css">
-.onecol {
-    font-size: 26px;
-}
-.twocol {
-  font-size: 24px;
-}
-.remark-code {
-  font-size: 24px;
-  border: 1px solid grey;
-}
-a {
-  background-color: lightblue;
-}
-.remark-inline-code {
-  background-color: white;
-}
-</style>
 
 ---
 class: onecol
@@ -139,9 +113,9 @@ class: onecol
 
 The final resampling performance estimate is averaged across each *k* fold.
 
-k-fold cross-validation can also be ![:emphasize](stratified) to keep the sets relatively similar.
+k-fold cross-validation can also be .imp[stratified] to keep the sets relatively similar.
 
-k-fold cross-validation can also be ![:emphasize](repeated) to avoid problems with any single split.
+k-fold cross-validation can also be .imp[repeated] to avoid problems with any single split.
 
 --
 
@@ -277,7 +251,7 @@ class: onecol
 
 The most extreme variation of k-fold CV is when $k = N-1$.
 
-This is called ![:emphasize](leave-one-out cross-validation).
+This is called .imp[leave-one-out cross-validation].
 
 A model is trained on $N-1$ rows and used to predict a **single held-out observation**.
 
@@ -303,7 +277,7 @@ class: twocol
 --
 
 .pull-left[
-k-fold CV is often used on a ![:emphasize](full data set). 
+k-fold CV is often used on a .imp[full data set]. 
 
 **Pro**: All data used for training and testing.
 
@@ -315,7 +289,7 @@ class: twocol
 count: false
 ## Should we use a separate test set?
 .pull-left[
-k-fold CV is often used on a ![:emphasize](full data set). 
+k-fold CV is often used on a .imp[full data set]. 
 
 **Pro**: All data used for training and testing.
 
@@ -328,7 +302,7 @@ include_graphics("../figs/kfold3.png")
 
 --
 .pull-right[
-Others advocate for a ![:emphasize](held-out test set).
+Others advocate for a .imp[held-out test set].
 
 **Pro**: Final models are tested on new data.  
 
@@ -341,7 +315,7 @@ count: false
 ## Should we use a separate test set?
 
 .pull-left[
-k-fold CV is often used on a ![:emphasize](full data set). 
+k-fold CV is often used on a .imp[full data set]. 
 
 **Pro**: All data used for training and testing.
 
@@ -353,7 +327,7 @@ include_graphics("../figs/kfold3.png")
 ]
 
 .pull-right[
-Others advocate for a ![:emphasize](held-out test set).
+Others advocate for a .imp[held-out test set].
 
 **Pro**: Final models are tested on new data.  
 
@@ -401,9 +375,9 @@ It also frees us from having to rely on a **single** test set to evaluate our mo
 
 <p style="padding-top:30px;">There are **two layers** of resampling in nested CV.
 
-The ![:emphasize](outer loop) splits the full data set into not-testing and testing sets.
+The .imp[outer loop] splits the full data set into not-testing and testing sets.
 
-The ![:emphasize](inner loop) splits the training data set into model training and validation sets.
+The .imp[inner loop] splits the training data set into model training and validation sets.
 
 ---
 class: onecol
@@ -413,7 +387,7 @@ For every split of the outer loop, a **full inner resampling split** is conducte
 
 Let's say we use 10-fold CV on the **outer loop** and 5-fold CV on the **inner loop**.
 
-This would be a total of ![:emphasize](500 models) being fit! 
+This would be a total of .imp[500 models] being fit! 
 
 --
 

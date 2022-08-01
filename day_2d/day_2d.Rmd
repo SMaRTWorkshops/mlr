@@ -5,9 +5,8 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2D &emsp; &emsp; August 9, 2022'
 output:
   xaringan::moon_reader:
-    css: [xaringan-themer.css, style.css]
+    css: [../xaringan-themer.css, ../styles.css]
     nature:
-      beforeInit: "macros.js"
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
       highlightLines: true
@@ -36,12 +35,6 @@ knitr::opts_chunk$set(
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
 library(xaringanthemer)
-style_mono_light(
-  base_color = "#23395b",
-  footnote_font_size = "20px",
-  footnote_color = "gray",
-  text_slide_number_font_size = "18px"
-)
 ```
 
 ```{r xaringanExtra, echo=FALSE}
@@ -60,33 +53,13 @@ library(patchwork)
 class: inverse, center, middle
 # Overview
 
-<style type="text/css">
-.onecol {
-    font-size: 26px;
-}
-.twocol {
-  font-size: 24px;
-}
-.remark-code {
-  font-size: 24px;
-  border: 1px solid grey;
-}
-a {
-  background-color: lightblue;
-}
-.remark-inline-code {
-  background-color: white;
-}
-</style>
-
-
 ---
 class: onecol
 ## Plan for Today
 
 Thus far, we have learned {rsample}, {workflows}, {recipes}, {yardstick}, and {parsnip}.
 
-This lecture aims to tie it all together and ![:emphasize](build a model from start to finish).
+This lecture aims to tie it all together and .imp[build a model from start to finish].
 
 --
 
@@ -284,7 +257,7 @@ collect_metrics(fare_results) %>% kable()
 class: onecol
 ## A Final Model
 
-Importantly, the goal of `fit_resamples()` is to ![:emphasize](measure model importance).
+Importantly, the goal of `fit_resamples()` is to .imp[measure model importance].
 
 The models trained in `fit_resamples()` are not saved or used later. 
 
