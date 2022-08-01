@@ -9,7 +9,7 @@ left:
        - text: "Course Datasets"
          href: datasets.html
        - text: "Pre-Course Survey"
-         href: pre_survey.html
+         href: ./wip.html
   - text: "Day 1"
     menu:
        - text: "[1A] Conceptual introductions"

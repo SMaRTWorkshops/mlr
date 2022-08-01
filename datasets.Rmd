@@ -15,15 +15,15 @@ The following datasets will be used in the course:
 library(tidyverse)
 ```
 
-## titanic
+## ahd 
 
-Real data on 963 passengers on the Titanic
+Real data on Alzheimer's Disease. 
 
-- Short URL: https://bit.ly/amlr-titanic
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/titanic.csv
+- Short URL: https://bit.ly/amlr-ahd
+- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/ahd.csv
 
-```{r, echo=FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-titanic", col_types = "fffdiid")
+```{r, echo = FALSE, message=FALSE}
+read_csv("https://bit.ly/amlr-ahd", col_types = list(male = "f", Genotype = "f", diagnosis = "f"))
 ```
 
 ---
@@ -41,15 +41,15 @@ read_csv("https://bit.ly/amlr-airsat", col_types = "fffdffdiiiiiiiiiiiiiidd")
 
 ---
 
-## iris
+## attrition
 
-Real data on 150 iris flowers. 
+Simulated data on 1470 fictional employees who either quit their job (attrition = yes) or did not (attrition = no).
 
-- Available from the base R {datasets} package. 
+- Available from the {modeldata} package
 
-```{r, echo = FALSE, message=FALSE}
-data(iris)
-iris %>% as_tibble()
+```{r, echo=FALSE, message=FALSE}
+data("attrition", package = "modeldata")
+attrition
 ```
 
 ---
@@ -63,33 +63,6 @@ Real data on emotions, ideology, and party affiliation as predictors of attitude
 ```{r, echo=FALSE, message=FALSE}
 data("globalWarm", package = "psychTools")
 globalWarm
-```
-
-
----
-
-## heart 
-
-Real data on risk for heart disease. 
-
-- Short URL: https://bit.ly/amlr-heart
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/heart.csv
-
-```{r, echo = FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-heart", col_types = "dffddffdfdiiif")
-```
-
----
-
-## ahd 
-
-Real data on Alzheimer's Disease. 
-
-- Short URL: https://bit.ly/amlr-ahd
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/ahd.csv
-
-```{r, echo = FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-ahd", col_types = list(male = "f", Genotype = "f", diagnosis = "f"))
 ```
 
 ---
@@ -107,6 +80,45 @@ read_csv("https://bit.ly/amlr-memory")
 
 ---
 
+## heart 
+
+Real data on risk for heart disease. 
+
+- Short URL: https://bit.ly/amlr-heart
+- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/heart.csv
+
+```{r, echo = FALSE, message=FALSE}
+read_csv("https://bit.ly/amlr-heart", col_types = "dffddffdfdiiif")
+```
+
+---
+
+## iris
+
+Real data on 150 iris flowers. 
+
+- Available from the base R {datasets} package. 
+
+```{r, echo = FALSE, message=FALSE}
+data(iris)
+iris %>% as_tibble()
+```
+
+---
+
+## titanic
+
+Real data on 963 passengers on the Titanic
+
+- Short URL: https://bit.ly/amlr-titanic
+- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/titanic.csv
+
+```{r, echo=FALSE, message=FALSE}
+read_csv("https://bit.ly/amlr-titanic", col_types = "fffdiid")
+```
+
+---
+
 ## water
 
 Real data on 3276 different water bodies. Modified to turn `Potability` from a numeric variable (dummy code) into a character variable.
@@ -118,17 +130,3 @@ Real data on 3276 different water bodies. Modified to turn `Potability` from a n
 ```{r, echo=FALSE, message=FALSE}
 read_csv("https://bit.ly/amlr-water")
 ```
-
----
-
-## attrition
-
-Simulated data on 1470 fictional employees who either quit their job (attrition = yes) or did not (attrition = no).
-
-- Available from the {modeldata} package
-
-```{r, echo=FALSE, message=FALSE}
-data("attrition", package = "modeldata")
-attrition
-```
-
