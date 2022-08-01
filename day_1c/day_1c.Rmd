@@ -5,9 +5,8 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 1C &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: [../xaringan-themer.css, ../styles.css]
     nature:
-      beforeInit: "macros.js"
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
       highlightLines: true
@@ -34,12 +33,6 @@ knitr::opts_chunk$set(
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
 library(xaringanthemer)
-style_mono_light(
-  base_color = "#23395b",
-  footnote_font_size = "20px",
-  footnote_color = "gray",
-  text_slide_number_font_size = "18px"
-)
 ```
 
 ```{r xaringanExtra, echo=FALSE}
@@ -58,25 +51,6 @@ library(patchwork)
 class: inverse, center, middle
 # Overview
 
-<style type="text/css">
-.onecol {
-    font-size: 26px;
-}
-.twocol {
-  font-size: 24px;
-}
-.remark-code {
-  font-size: 24px;
-  border: 1px solid grey;
-}
-a {
-  background-color: lightblue;
-}
-.remark-inline-code {
-  background-color: white;
-}
-</style>
-
 ---
 class: onecol
 ## Motivation
@@ -85,7 +59,7 @@ There are **several steps** in the machine learning workflow.
 
 These include data exploration, engineering, model development, and evaluation.
 
-We have a ![:emphasize](finite amount of data) to work with for each of these taks.
+We have a .imp[finite amount of data] to work with for each of these taks.
 
 --
 
@@ -141,11 +115,11 @@ The modeling process includes many **decision points**.
 
 Which features to include? What algorithm to use?
 
-There is risk of ![:emphasize](leaking information) from model training to evaluation.
+There is risk of .imp[leaking information] from model training to evaluation.
 
 This artificially **inflates optimism about model accuracy**.
 
-Carefully spending data for training or testing prevents ![:emphasize](data leakage).
+Carefully spending data for training or testing prevents .imp[data leakage].
 
 ]
 
@@ -160,7 +134,7 @@ There are some clever algorithmic tricks to prevent overfitting
 
 - For example, we can penalize the model for adding complexity
 
-The main approach, however, is to use ![:emphasize](cross-validation):
+The main approach, however, is to use .imp[cross-validation]:
 
 --
 
@@ -331,7 +305,7 @@ It is important for data subsets to be representative of the whole dataset.
 class: onecol
 ## Stratified Sampling
 
-As a solution, ![:emphasize](stratified sampling) can be used instead of simple random sampling. 
+As a solution, .imp[stratified sampling] can be used instead of simple random sampling. 
 
 For classification problems, we conduct **data splits separately within each class**. 
 
@@ -388,7 +362,7 @@ We don't have to **wait until the test set** to evaluate our model.
 
 It can be helpful to get a performance estimate **during model training**.
 
-![:emphasize](Validation sets)<sup>1</sup> provide a third split of the dataset to do so.
+.imp[Validation sets]<sup>1</sup> provide a third split of the dataset to do so.
 
 This can warn us about **overfitting** before we get to the test set.
 
@@ -413,7 +387,7 @@ include_graphics('../figs/multilevel.png')
 ]
 
 .right-column[
-Observations in multilevel data are not ![:emphasize](independent). 
+Observations in multilevel data are not .imp[independent]. 
 
 **Random resampling of rows** may cause biased train/test sets.
 
@@ -438,7 +412,7 @@ include_graphics('../figs/validation.png')
 .right-column[
 Random resampling is also not appropriate for **time series data**.
 
-![:emphasize](Data from the future) can't be used to predict the past! 
+.imp[Data from the future] can't be used to predict the past! 
 
 Rather, it is typical to use the most **recent data** for a test set. 
 
@@ -454,7 +428,7 @@ The {rsample} package has a function for **splitting time series data**.
 class: onecol
 ## Coming Soon (Preview)
 
-Today we reviewed the rationale for ![:emphasize](separating model training from model testing). 
+Today we reviewed the rationale for .imp[separating model training from model testing]. 
 
 We learned various methods for **holdout cross-validation (CV)**: 
 - Simple random split
@@ -486,6 +460,3 @@ countdown(
   warn_when = 60
 )
 ```
-
-
-

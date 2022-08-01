@@ -5,9 +5,8 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 1D &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
-    css: [xaringan-themer.css, style.css]
+    css: [../xaringan-themer.css, ../styles.css]
     nature:
-      beforeInit: "macros.js"
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
       highlightLines: true
@@ -36,12 +35,6 @@ knitr::opts_chunk$set(
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
 library(xaringanthemer)
-style_mono_light(
-  base_color = "#23395b",
-  footnote_font_size = "20px",
-  footnote_color = "gray",
-  text_slide_number_font_size = "18px"
-)
 ```
 
 ```{r xaringanExtra, echo=FALSE}
@@ -60,30 +53,11 @@ library(patchwork)
 class: inverse, center, middle
 # Overview
 
-<style type="text/css">
-.onecol {
-    font-size: 26px;
-}
-.twocol {
-  font-size: 24px;
-}
-.remark-code {
-  font-size: 24px;
-  border: 1px solid grey;
-}
-a {
-  background-color: lightblue;
-}
-.remark-inline-code {
-  background-color: white;
-}
-</style>
-
 ---
 class: onecol
 ## Plan for Today
 
-First will be a lecture focusing on ![:emphasize](training models and making predictions) in R.
+First will be a lecture focusing on .imp[training models and making predictions] in R.
 
 All modeling will be done with **{parsnip}**, part of the {tidymodels} meta-package.
 
@@ -127,7 +101,7 @@ There are **many statistical methods available** for estimating these model para
 class: onecol
 ## A Problem
 
-The {stats} package implements **OLS regression** using ![:emphasize](formula notation), with data accepted in a dataframe or vector.
+The {stats} package implements **OLS regression** using .imp[formula notation], with data accepted in a dataframe or vector.
 
 ```{r, eval = FALSE}
 model <- lm(outcome ~ predictor, data = df, ...)
@@ -135,7 +109,7 @@ model <- lm(outcome ~ predictor, data = df, ...)
 
 --
 
-<p style="padding-top:30px;"> The {glmnet} package implements **regularized regression** using ![:emphasize](x/y notation), with predictors required to be formatted as a numeric matrix and the outcome as a vector.
+<p style="padding-top:30px;"> The {glmnet} package implements **regularized regression** using .imp[x/y notation], with predictors required to be formatted as a numeric matrix and the outcome as a vector.
 
 ```{r, eval = FALSE}
 model <- glmnet(x = outcome, y = predictor, ...)
