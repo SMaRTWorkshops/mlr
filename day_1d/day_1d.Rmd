@@ -13,6 +13,8 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: false
     self_contained: true
 ---
 
@@ -79,23 +81,27 @@ a {
 
 ---
 class: onecol
-# Plan for Today
+## Plan for Today
 
-This lecture will focus on ![:emphasize](training models and making predictions) in R.
+First will be a lecture focusing on ![:emphasize](training models and making predictions) in R.
 
 All modeling will be done with **{parsnip}**, part of the {tidymodels} meta-package.
 
+Specifically, we will learn to `fit()` and `predict()` models with a common interface.
+
 --
 
-<p style="padding-top:30px;">We will **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+<p style="padding-top:30px;"> We will end with a **live coding activity**. 
 
-This will **ease the transition to ML** and highlight its similarities with classical statistics.
+This will put everything we have learned today into practice. 
 
-Finally, we will **foreshadow future topics** (e.g., regularized linear models and tuning).
+We will build a basic model and use it to predict out-of-sample testing data.
+
+This will ease the transition to full ML {workflows}, which we will learn tomorrow.
 
 ---
 class: onecol
-# Motivation
+## Motivation
 
 Suppose we have collected data that are now ready to be fit to a statistical model. 
 
@@ -115,11 +121,11 @@ There are **many statistical methods available** for estimating these model para
 
 --
 
-However, they use different R packages with **varying syntax, arguments, and output**. 
+<p style="padding-top:30px;">However, they use different R packages with **varying syntax, arguments, and output**. 
 
 ---
 class: onecol
-# A Problem
+## A Problem
 
 The {stats} package implements **OLS regression** using ![:emphasize](formula notation), with data accepted in a dataframe or vector.
 
@@ -141,22 +147,23 @@ model <- glmnet(x = outcome, y = predictor, ...)
 
 ---
 class: onecol
-# A Problem
+## A Problem
 
 R packages also return **model predictions** in different formats. 
 
-Some examples of these inconsistencies:
+Some examples of these inconsistencies for various classification models:
 
 --
 
+.center[
 ```{r, echo = FALSE, out.width = "40%"}
 include_graphics("../figs/package_predictions.png")
 ```
-
+]
 
 ---
 class: twocol
-# A Solution
+## A Solution
 
 .left-column[
 <br />
@@ -186,7 +193,7 @@ class: inverse, center, middle
 # Introduction to {parsnip}
 
 ---
-# A {parsnip} roadmap
+## A {parsnip} roadmap
 </br>
 
 ```{r, echo = FALSE}
@@ -195,11 +202,13 @@ include_graphics("../figs/parsnip_workflow.png")
 
 ---
 class: onecol
-# 1. Specify Model Details
+## 1. Specify Model Details
 
 Before fitting an ML model, we need to **specify the model details**.
 
-All models are specified with the same **syntactical structure** in {parsnip}.
+--
+
+<p style="padding-top:30px;">All models are specified with the same **syntactical structure** in {parsnip}.
 
 - **Model Type**: the mathematical structure (e.g., linear regression, random forests)
 
@@ -207,15 +216,18 @@ All models are specified with the same **syntactical structure** in {parsnip}.
 
 - **Computational Engine**: how the actual model is fit (often a specific R package)
 
-These details are specified *before* even referencing the data. 
-
 .footnote[
 [1] Sometimes the model mode is already determined by the model type (e.g., linear regression) and so specifying a mode is not needed.
 ]
 
+--
+
+<p style="padding-top:30px;">These details are specified *before* even referencing the data. 
+
+
 ---
 class: onecol
-# Example: OLS Regression
+## Example: OLS Regression
 
 To specify an OLS regression in {parsnip}, we specify<sup>1</sup>:
 - The model type as `linear_reg()` 
@@ -238,7 +250,7 @@ ols_reg
 
 ---
 class: onecol 
-# Example: Regularized Regression
+## Example: Regularized Regression
 
 If we want to use regularization, we simply change the **computational engine**. 
 
@@ -258,7 +270,7 @@ Switching between OLS vs. regularization is now much simpler!
 
 ---
 class: onecol 
-# Model Tuning
+## Model Tuning
 
 Some algorithms (such as regularized regression) have *hyperparameters*<sup>1</sup>.
 
@@ -283,7 +295,7 @@ glmnet_tune
 
 ---
 class: onecol
-# More Model Type Arguments
+## More Model Type Arguments
 
 To see all arguments for a particular model type, use `args()`.
 
@@ -302,7 +314,7 @@ args(rand_forest)
 
 ---
 class: onecol
-# More Computational Engines 
+## More Computational Engines 
 
 To see all the computational engines that exist for a model type, use `show_engines()`. 
 
@@ -314,7 +326,7 @@ show_engines("linear_reg")
 ```
 
 ```{r, echo = FALSE}
-show_engines("linear_reg") %>% kable() %>% kable_styling(position = "left")
+show_engines("linear_reg") %>% kable() %>% kable_styling(position = "left") %>% scroll_box(height = "300px")
 ```
 ]
 
@@ -329,9 +341,10 @@ show_engines("rand_forest")
 show_engines("rand_forest") %>% kable() %>% scroll_box(height = "300px")
 ```
 ]
+
 ---
 class: onecol 
-# A World of Possibilities
+## A World of Possibilities
 
 There are **hundreds** of machine learning models available in {parsnip}.
 
@@ -353,7 +366,7 @@ This makes it *super* easy to implement new algorithms and explore the world of 
 
 ---
 class: onecol
-# 2. Fit Model
+## 2. Fit Model
 
 Once we have specified model details, we can fit the model using the `fit()` function.
 
@@ -380,7 +393,7 @@ ols_reg_fit <- ols_reg %>%
 
 ---
 class: onecol 
-# 3. Inspect Model Results
+## 3. Inspect Model Results
 
 Once we fit a model, we can examine the model by printing or plotting it.
 
@@ -396,9 +409,19 @@ Some useful functions:
 
 ---
 class: onecol
-# 4. Make Model Predictions 
+## 4. Make Model Predictions 
 
-Getting predictions for `parsnip` models is easy and *tidy*. 
+Getting predictions for `parsnip` models is easy and *tidy* with `predict()`:
+
+Argument&emsp; | Description
+:------- | :----------
+object | A trained model object created by `fit()`
+new_data | A data frame with the same features as training
+type | Data type (numeric, classes, probabilities, etc.)
+
+---
+class: onecol
+## 4. Make Model Predictions
 
 The `predict()` function will always return: 
 
@@ -416,7 +439,7 @@ These rules make it easier to merge predictions with the original data!
 
 ---
 class: onecol
-# Summary
+## Summary
 
 Today started with a **conceptual overview** of the goals and methods of ML.
 
@@ -435,10 +458,6 @@ We will also learn more advanced **cross-validation** for a full ML **workflow**
 ---
 class: inverse, center, middle
 # Live Coding
-
----
-class: inverse, center, middle
-# Hands-On Activity
 
 
 ---
