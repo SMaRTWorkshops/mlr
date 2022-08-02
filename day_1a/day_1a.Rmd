@@ -2,7 +2,7 @@
 title: '<span style="font-size:48pt;">Applied Machine Learning in R</span>'
 subtitle: '👩‍💻️ 🤖 👨‍🏫️' 
 author: 'Pittsburgh Summer Methodology Series'
-date: 'Lecture 1-A &emsp; &emsp; August 8, 2022'
+date: 'Day 1A &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
     css: [../xaringan-themer.css, ../styles.css]
@@ -43,7 +43,6 @@ library(patchwork)
 library(xaringanthemer)
 ```
 
----
 class: twocol
 ## Jeffrey Girard
 
@@ -62,14 +61,16 @@ University of Kansas
 - Prediction of Mental Health Status
 ]
 
-.pull-right[
-.center[
-```{r jg, echo=FALSE, out.width=300, out.height=300}
+.pull-right.center.lh-copy[
+
+```{r jg, echo=FALSE, out.width=240, out.height=240}
 include_graphics("../figs/jg_headshot.jpeg")
 ```
 
-[www.jmgirard.com](https://www.jmgirard.com)<br /> [jmgirard@ku.edu](mailto:jmgirard@ku.edu)<br /> [@jeffreymgirard](https://twitter.com/jeffreymgirard)
-]
+[www.jmgirard.com](https://www.jmgirard.com)<br />
+[jmgirard@ku.edu](mailto:jmgirard@ku.edu)<br />
+[@jeffreymgirard](https://twitter.com/jeffreymgirard)
+
 ]
 ---
 class: twocol
@@ -91,14 +92,15 @@ Harvard University
 - Idiographic prediction
 ]
 
-.pull-right[
-.center[
-```{r sw, echo=FALSE, out.width=300, out.height=300}
+.pull-right.center.lh-copy[
+```{r sw, echo=FALSE, out.width=240, out.height=240}
 include_graphics("../figs/sw_headshot.jpeg")
 ```
 
-[shirleywang.rbind.io](https://shirleywang.rbind.io/)<br /> [shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)<br /> [@ShirleyBWang](https://twitter.com/ShirleyBWang)
-]
+[shirleywang.rbind.io](https://shirleywang.rbind.io/)<br />
+[shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)<br />
+[@ShirleyBWang](https://twitter.com/ShirleyBWang)
+
 ]
 ---
 class: twocol
@@ -122,20 +124,18 @@ Communicate the pros and cons of choices
 
 --
 
-.pull-right[
+.pull-right.pv4[
 ```{r timeline, echo=FALSE}
 timeline <- tribble(
-  ~Day, ~Topic, ~Lead,
-  "1-A", "Conceptual introductions", "JG",
-  "1-B", "Logistics and data exploration", "SW",
-  "2-A", "Feature engineering", "JG",
-  "2-B", "Predictive modeling basics", "JG",
-  "3-A", "Regularized regression", "SW",
-  "3-B", "Decision trees and random forests", "SW",
-  "4-A", "Support vector machines","JG",
-  "4-B", "Practical matters and advice", "SW",
-  "5-A", "Panel Q&A and discussion", "Both",
-  "5-B", "Hackathon and consultation", "Both"
+  ~Day, ~Parts, ~Topics,
+  "1", "A,B", "Concepts, tidyverse, data", 
+  "", "C,D", "Crossvalidation, model fitting", 
+  "2", "A,B", "Workflows, recipes, evaluation", 
+  "", "C,D", "Resampling, GLM", 
+  "3", "A,B", "GLMNET, hyperparameter tuning", 
+  "", "C,D", "Random forest, deployment", 
+  "4", "A,B", "SVM, explainability, previews",
+  "", "C,D", "Q&A, consultation"
 )
 kable(timeline, format = "html") %>% kable_styling(font_size = 20)
 ```
@@ -144,73 +144,89 @@ kable(timeline, format = "html") %>% kable_styling(font_size = 20)
 class: twocol
 ## Format and Materials
 .pull-left[
-Each workshop day will have **two parts**
+The course will span **four days** (M, Tu, W, Th)
+
+Each day will be organized into **four parts** (Parts A–D, each running for 55 minutes)
+
+We will take a 10 minute break between<br />Parts A and B and between Parts C and D
+
+We will take a 60 minute break between<br />Parts B and C for lunch (12:30–1:30pm EDT)
 
 Most parts will have **lecture** and **live coding**
 
-Most parts will have hands-on **activities**
-
-We will take a **~10m break** after the first part
+We will provide optional **practice activities** to complete after each course day (or later)
 ]
+
 --
-.pull-right[
-Course materials are the course website:
+.pull-right.lh-copy[
+Course materials are on the course website:
+- <https://pittmethods.github.io/appliedml/>
 
-https://pittmethods.github.io/appliedml/
+Chat will take place in our Slack channel:
+- <https://amlr2022.slack.com>
 
-You can download and re-use the materials according to our "CC-By Attribution" license
+A few inspirations for this workshop include:
+- [Applied Predictive Modeling](http://appliedpredictivemodeling.com/)
+- [Tidy Modeling with R](https://www.tmwr.org/)
+- [StatQuest](https://statquest.org/)
 ]
 
-.footnote[A few inspirations for this workshop include [Applied Predictive Modeling](http://appliedpredictivemodeling.com/), [Tidy Modeling with R](https://www.tmwr.org/), and [StatQuest](https://statquest.org/).]
+.footnote[*Note.* Breaks are meant to provide both a rest and a time buffer (e.g., to allow questions and longwindedness).]
+
 ---
 class: twocol
-## Etiquette and Responsibilities
+## Course Behavior
 .pull-left[
-**Behave professionally** at all times
+.imp[Rights:]
+- Be **treated with respect** at all times
 
-Stay on topic and **minimize distractions**
+- Turn your **camera on or off**
 
-**Stay muted** unless talking to minimize noise
+- **Arrive and depart** whenever needed
 
-Ask **questions** in chat or use "Raise Hand"
+- **Ask for help** with workshop content
 
-Be **respectful** to everyone in the workshop
+- **Reuse materials** according to the license
 
-Be **patient** with yourself and others
+- Receive **reasonable accommodations**
 ]
 --
 .pull-right[
-.imp[You have the right to:]
+.imp[Responsibilities:]
 
-- Be **treated with respect** at all times
-- Turn your **camera on or off**
-- **Arrive and depart** whenever needed
-- **Ask for help** with workshop content
-- **Share your opinions** respectfully
-- **Reuse materials** according to the license
-- Receive **reasonable accommodations**
-- **Contact the instructors** by email
+- **Treat others with respect** at all times
+
+- **Stay muted** when not asking a question
+
+- Stay on topic and **minimize distractions**
+
+- Ask **questions** in Slack or "Raise Hand"
+
+- **Accept if we defer** answering a question
+
+- **Ask for accommodations** well before
+
 ]
----
-class: inverse, center, middle
-# Icebreakers
----
-class: onecol
-## Icebreakers
-We will randomly assign everyone to one of two breakout rooms
+<!-- --- -->
+<!-- class: inverse, center, middle -->
+<!-- # Icebreakers -->
+<!-- --- -->
+<!-- class: onecol -->
+<!-- ## Icebreakers -->
+<!-- We will randomly assign everyone to one of two breakout rooms -->
 
-Each person will have *up to one minute* to introduce themselves
+<!-- Each person will have *up to one minute* to introduce themselves -->
 
-In addition to **sharing your name**, please answer these questions:
+<!-- In addition to **sharing your name**, please answer these questions: -->
 
-1. Where are you joining us from?
-2. What field(s) do you work in?
-3. What is one of your research interests?
-4. What is one of your personal interests?
+<!-- 1. Where are you joining us from? -->
+<!-- 2. What field(s) do you work in? -->
+<!-- 3. What is one of your research interests? -->
+<!-- 4. What is one of your personal interests? -->
 
-The instructor will go first and call on attendees to go next
+<!-- The instructor will go first and call on attendees to go next -->
 
-If you would prefer not to share, please indicate that in chat
+<!-- If you would prefer not to share, please indicate that in chat -->
 ---
 class: inverse, center, middle
 # Conceptual Introduction
@@ -402,9 +418,7 @@ class: inverse, center, middle
 ---
 ## Typical ML Workflow
 
-<br /><br />
-
-.center[
+.center.pv4[
 ```{r workflow, echo=FALSE}
 include_graphics("../figs/workflow.png")
 ```
@@ -412,8 +426,7 @@ include_graphics("../figs/workflow.png")
 ---
 class: onecol
 ## Exploratory Analysis
-.left-column[
-<br />
+.left-column.pv3[
 ```{r explore, echo=FALSE}
 include_graphics("../figs/explore.jpg")
 ```
@@ -432,8 +445,7 @@ include_graphics("../figs/explore.jpg")
 ---
 class: onecol
 ## Feature Engineering
-.left-column[
-<br />
+.left-column.pv3[
 ```{r engineer, echo=FALSE}
 include_graphics("../figs/engineer.jpg")
 ```
@@ -451,8 +463,7 @@ include_graphics("../figs/engineer.jpg")
 ---
 class: onecol
 ## Model Development
-.left-column[
-<br />
+.left-column.pv3[
 ```{r develop, echo=FALSE}
 include_graphics("../figs/develop.jpg")
 ```
@@ -470,8 +481,7 @@ include_graphics("../figs/develop.jpg")
 ---
 class: onecol
 ## Model Tuning
-.left-column[
-<br />
+.left-column.pv3[
 ```{r tune, echo=FALSE}
 include_graphics("../figs/tune.jpg")
 ```
@@ -491,7 +501,7 @@ include_graphics("../figs/tune.jpg")
 class: onecol
 ## Model Evaluation
 
-.left-column[
+.left-column.pv3[
 ```{r target, echo=FALSE}
 include_graphics("../figs/target.jpg")
 ```
@@ -656,12 +666,10 @@ For detection, we need two sets of data:
 .imp[Testing set]: used to evaluate performance
 ]
 
-.pull-right[
-.center[
-```{r kryptonite, echo=FALSE, out.width="67%"}
+.pull-right.center.pv2[
+```{r kryptonite, echo=FALSE, out.width="50%"}
 include_graphics("../figs/kryptonite.png")
 ```
-]
 ]
 ---
 layout: true
@@ -775,6 +783,7 @@ ggplot(mapping = aes(x, y)) +
   geom_smooth(
     data = training,
     method = "lm",
+    se = FALSE,
     color = "black",
     size = 1.5,
     linetype = "dashed"
@@ -823,6 +832,7 @@ ggplot(mapping = aes(x, y)) +
   geom_smooth(
     data = training,
     method = "lm",
+    se = FALSE,
     color = "black",
     size = 1.5,
     linetype = "dashed"
@@ -868,15 +878,19 @@ In ML, .imp[variance] is a lack of predictive accuracy in new data (the "testing
 
 --
 
-<p style="padding-top:25px;">An ideal predictive model would have both low bias and low variance</p>
+.pt1[
+An ideal predictive model would have both low bias and low variance
 
-However, there is often an inherent <b>trade-off between bias and variance</b><sup>1</sup>
+However, there is often an inherent **trade-off between bias and variance**<sup>1</sup>
+]
 
 .footnote[[1] To increase our testing set performance, we often need to worsen our performance in the training set.]
 
 --
 
-<p style="padding-top:25px;">We want to find the model that is <b>as simple as possible</b> but <b>no simpler</b></p>
+.pt1[
+We want to find the model that is **as simple as possible** but **no simpler**
+]
 
 
 
@@ -893,6 +907,7 @@ include_graphics("../figs/overfitting_lay.png")
 ```
 
 ---
+
 ## Comprehension Check \#3
 <span style="font-size:30px;">Sam used all emails in his inbox to create an ML model to classify emails as "work-related" or "personal." Its accuracy on these emails was 98%.</span>
 
@@ -921,129 +936,6 @@ c) Variance
 
 d) All of the above
 ]
----
-class: inverse, center, middle
-# Countering Overfitting
----
-class: onecol
-## Cross-Validation
-There are some clever algorithmic tricks to prevent overfitting
-
-- For example, we can penalize the model for adding complexity
-
-The main approach, however, is to use .imp[cross-validation]:
-
---
-
-- Multiple **fully independent** sets of data are created (by subsetting or resampling)
-
-- Some sets are used for training (and tuning) and other sets are used for testing
-
-- **Model evaluation is always done on data that were not used to train the model**
-
-- This way, if performance looks good, we can worry less about variance/overfitting<sup>1</sup>
-
---
-
-.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
-**Caution:** We still need to consider whether the original data was representative!
-]
-
----
-# Holdout Cross-Validation
-```{r, echo=FALSE}
-include_graphics("../figs/holdout.png")
-```
-
----
-# Holdout Cross-Validation
-```{r, echo=FALSE}
-include_graphics("../figs/holdout2.png")
-```
-
----
-# k-fold Cross-Validation
-```{r, echo=FALSE}
-include_graphics("../figs/kfold1.png")
-```
-
----
-count: false
-# k-fold Cross-Validation
-.center[
-```{r, echo=FALSE, out.width="70%"}
-include_graphics("../figs/kfold2.png")
-```
-]
----
-class: onecol
-## Advanced Cross-Validation
-Cross-validation can also be **nested** to let the model tune on unseen data:
-
- - An outer loop (applied to the original data) is used for *model evaluation*
-
- - An inner loop (applied to the training set) is used for *model tuning*
- 
- - This is what I typically do but is more advanced, so we will leave that for Day 5
-
-Cross-validation can also be **stratified** to keep the sets relatively similar
-
-Cross-validation can also be **repeated** to avoid problems with any single split
-
---
-
-.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
-**Advice:** A good default is a stratified 10-fold cross-validation repeated 3 times.
-]
-
----
-## Comprehension Check \#4
-<span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
-
-.pull-left[
-### Question 1
-**What major mistake did Bogdan make?**
-
-a) He used a testing set instead of a holdout set
-
-b) Some patients are in both training and testing
-
-c) The two subsets of data have different sizes
-
-d) He did not use k-fold cross-validation 
-]
-
-.pull-right[
-### Question 2
-**Which step should not be done in the training set?**
-
-a) Exploratory Analysis
-
-b) Feature Engineering
-
-c) Model Development
-
-d) Model Evaluation
-]
-
----
-class: inverse, center, middle
-# Small Group Discussion
----
-class: onecol
-# Small Group Discussion
-
-We will randomly assign you to a small breakout room
-
-We will jump between rooms to join discussions and answer questions
-
-**Introduce yourselves again and discuss the following topics**
-
- 1. What types of labels and features would you like to work with?
-
- 2. What problems might predictive modeling help your field solve?
-
- 3. Do you have any questions or comments about the material so far?
 
 ---
 class: inverse, center, middle
@@ -1059,6 +951,6 @@ countdown(
   color_text = "black",
   color_running_background = "white",
   color_running_text = "black",
-  warn_when = 60
+  warn_when = 120
 )
 ```
