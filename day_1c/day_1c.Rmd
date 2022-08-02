@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Cross-Validation: Introduction</span>'
 subtitle: '👩‍💻️ 🤖 👨‍🏫️' 
-author: 'Pittsburgh Summer Methodology Series'
+author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
 date: 'Day 1C &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
@@ -73,8 +73,7 @@ We may not get a **true picture** of our model's accuracy or effectiveness.
 class: twocol
 ## A Data Budget
 
-.left-column[
-<br />
+.left-column.pv3[
 ```{r spending, echo=FALSE}
 include_graphics('../figs/spending.jpg')
 ```
@@ -100,8 +99,7 @@ We need **strong methods** for how to spend data in different tasks.
 class: twocol
 ## Avoiding Data Leaks
 
-.left-column[
-<br />
+.left-column.pv3[
 ```{r, echo=FALSE}
 include_graphics('../figs/leak.jpg')
 ```
@@ -144,11 +142,11 @@ The main approach, however, is to use .imp[cross-validation]:
 
 - **Model evaluation is always done on data that were not used to train the model**
 
-- This way, if performance looks good, we can worry less about variance/overfitting<sup>1</sup>
+- This way, if performance looks good, we can worry less about variance/overfitting
 
 --
 
-.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+.bg-light-yellow.b--light-red.ba.bw1.br3.ph4[
 **Caution:** We still need to consider whether the original data was representative!
 ]
 
@@ -189,7 +187,7 @@ negaff | Negative affect after film
 
 --
 
-.pull-right[
+.pull-right.pv4[
 ```{r, message=FALSE}
 library(tidyverse)
 library(tidymodels)
@@ -222,8 +220,8 @@ Too little data in the test set reduces **quality of model performance estimates
 
 --
 
-.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
-**Advice:** A good default is to allocate 80% of the data for training and 20% for testing.
+.bg-light-green.b--dark-green.ba.bw1.br3.ph4[
+**Advice:** It is common to use 80% for training and 20% for testing.
 ]
 
 ---
@@ -319,7 +317,7 @@ This ensures that the **distribution of the outcome variable** is preserved.
 
 --
 
-.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+.bg-light-yellow.b--light-red.ba.bw1.br3.ph4[
 **Caution:** We still need to ensure the sample distribution matches the population!
 ]
 
