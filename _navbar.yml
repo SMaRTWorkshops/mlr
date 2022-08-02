@@ -8,44 +8,42 @@ left:
          href: about.html
        - text: "Course Datasets"
          href: datasets.html
-       - text: "Pre-Course Survey"
-         href: ./wip.html
   - text: "Day 1"
     menu:
        - text: "[1A] Conceptual introductions"
-         href: ./wip.html
+         href: day_1a.html
        - text: "[1B] Tidyverse primer and data"
-         href: ./wip.html
+         href: wip.html #day_1b.html
        - text: "[1C] Cross-validation"
-         href: ./wip.html
+         href: wip.html #day_1c.html
        - text: "[1D] Fitting models"
-         href: ./wip.html
+         href: wip.html #day_1d.html
   - text: "Day 2"
     menu:
        - text: "[2A] Workflows and recipes"
-         href: ./wip.html
+         href: wip.html #day_2a.html
        - text: "[2B] Performance evaluation"
-         href: ./wip.html
+         href: wip.html #day_2b.html
        - text: "[2C] Resampling"
-         href: ./wip.html
+         href: wip.html #day_2c.html
        - text: "[2D] Linear model example"
-         href: ./wip.html
+         href: wip.html #day_2d.html
   - text: "Day 3"
     menu:
        - text: "[3A] GLMNET algorithm"
-         href: ./wip.html
+         href: wip.html #day_3a.html
        - text: "[3B] Example and tuning"
-         href: ./wip.html
+         href: wip.html #day_3b.html
        - text: "[3C] Random forest algorithm"
-         href: ./wip.html
+         href: wip.html #day_3c.html
        - text: "[3D] Example and deployment"
-         href: ./wip.html
+         href: wip.html #day_3d.html
   - text: "Day 4"
     menu:
        - text: "[4A] SVM algorithm and example"
-         href: ./wip.html
+         href: wip.html #day_4a.html
        - text: "[4B] Preview of advanced topics"
-         href: ./wip.html
+         href: wip.html #day_4b.html
 right:
   - icon: fa-github fa-lg
     href: https://github.com/pittmethods/appliedml
