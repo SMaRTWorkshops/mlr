@@ -1,0 +1,73 @@
+---
+title: '<span style="font-size:48pt;">Example and Deployment</span>'
+subtitle: 'X Y Z'
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Day 3D &emsp; &emsp; August 10, 2022'
+output:
+  xaringan::moon_reader:
+    css: [./css/xaringan-themer.css, ./css/styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+library(xaringanthemer)
+```
+
+class: inverse, center, middle
+# Section 1
+
+---
+class: twocol
+
+---
+
+class: inverse, center, middle
+# Section 2
+
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```
