@@ -5,7 +5,7 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2D &emsp; &emsp; August 9, 2022'
 output:
   xaringan::moon_reader:
-    css: [./css/xaringan-themer.css, ./css/styles.css]
+    css: [../css/xaringan-themer.css, ../css/styles.css]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
