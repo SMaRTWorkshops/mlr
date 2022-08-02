@@ -1,7 +1,7 @@
 ---
-title: '<span style="font-size:48pt;">Applied Machine Learning in R</span>'
+title: '<span style="font-size:48pt;">Conceptual Introductions</span>'
 subtitle: '👩‍💻️ 🤖 👨‍🏫️' 
-author: 'Pittsburgh Summer Methodology Series'
+author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
 date: 'Day 1A &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
