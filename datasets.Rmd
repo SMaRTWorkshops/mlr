@@ -9,124 +9,69 @@ output:
 
 The following datasets will be used in the course:
 
----
-
 ```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
 ```
 
-## ahd 
-
-Real data on Alzheimer's Disease. 
-
-- Short URL: https://bit.ly/amlr-ahd
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/ahd.csv
-
-```{r, echo = FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-ahd", col_types = list(male = "f", Genotype = "f", diagnosis = "f"))
-```
-
----
-
 ## airsat
 
-Real data on 10,000 customers of an airline
+Real data on the satisfaction and experience of 10,000 customers of an airline <a href="https://www.kaggle.com/datasets/teejmahal20/airline-passenger-satisfaction" class="badge badge-info">Info</a>
 
-- Short URL: https://bit.ly/amlr-airsat
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/airsatisfaction.csv
+```{r, eval=FALSE}
+# install.packages("readr")
+airsat <- readr::read_csv("https://tinyurl.com/amlr-airsat")
+```
 
 ```{r, echo=FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-airsat", col_types = "fffdffdiiiiiiiiiiiiiidd")
+# https://github.com/PittMethods/appliedml/blob/main/data/airsat.csv
+read_csv("./data/airsat.csv", show_col_types = FALSE)
 ```
 
 ---
 
-## attrition
+## spotify
 
-Simulated data on 1470 fictional employees who either quit their job (attrition = yes) or did not (attrition = no).
+Real data on the popularity and acoustic properties of 5,000 songs from Spotify <a href="https://www.kaggle.com/datasets/yasserh/song-popularity-dataset" class="badge badge-info">Info</a>
 
-- Available from the {modeldata} package
+```{r, eval=FALSE}
+# install.packages("readr")
+spotify <- readr::read_csv("https://tinyurl.com/amlr-spotify")
+```
 
 ```{r, echo=FALSE, message=FALSE}
-data("attrition", package = "modeldata")
-attrition
-```
-
----
-
-## globalWarm
-
-Real data on emotions, ideology, and party affiliation as predictors of attitudes towards government action on climate change. 
-
-- Available from the {psychTools} package. 
-
-```{r, echo=FALSE, message=FALSE}
-data("globalWarm", package = "psychTools")
-globalWarm
-```
-
----
-
-## hcp_memory
-
-Real neuroimaging data from the Human Connectome Project used to predict scores on a memory test. Note: artificially modified to increase predictive power and make activities more engaging.  
-
-- Short URL: https://bit.ly/amlr-memory
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/hcp_memory.csv
-
-```{r, echo = FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-memory")
-```
-
----
-
-## heart 
-
-Real data on risk for heart disease. 
-
-- Short URL: https://bit.ly/amlr-heart
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/heart.csv
-
-```{r, echo = FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-heart", col_types = "dffddffdfdiiif")
-```
-
----
-
-## iris
-
-Real data on 150 iris flowers. 
-
-- Available from the base R {datasets} package. 
-
-```{r, echo = FALSE, message=FALSE}
-data(iris)
-iris %>% as_tibble()
+# https://github.com/PittMethods/appliedml/blob/main/data/spotify.csv
+read_csv("./data/spotify.csv", show_col_types = FALSE)
 ```
 
 ---
 
 ## titanic
 
-Real data on 963 passengers on the Titanic
+Real data on 1,309 passengers on the Titanic <a href="https://www.openml.org/search?type=data&sort=runs&id=40945&status=active" class="badge badge-info">Info</a>
 
-- Short URL: https://bit.ly/amlr-titanic
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/titanic.csv
+
+```{r, eval=FALSE}
+# install.packages("readr")
+titanic <- readr::read_csv("https://tinyurl.com/amlr-titanic")
+```
 
 ```{r, echo=FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-titanic", col_types = "fffdiid")
+# https://github.com/PittMethods/appliedml/blob/main/data/titanic.csv
+read_csv("./data/titanic.csv", show_col_types = FALSE)
 ```
 
 ---
 
 ## water
 
-Real data on 3276 different water bodies. Modified to turn `Potability` from a numeric variable (dummy code) into a character variable.
+Real data on the potability and chemical properties of 3,276 water bodies <a href="https://www.kaggle.com/adityakadiwal/water-potability" class="badge badge-info">Info</a>
 
-- Short URL: https://bit.ly/amlr-water
-- Long URL: https://github.com/PittMethods/appliedml/blob/main/data/water.csv
-- Original Source: https://www.kaggle.com/adityakadiwal/water-potability
+```{r, eval=FALSE}
+# install.packages("readr")
+water <- readr::read_csv("https://tinyurl.com/amlr-water")
+```
 
 ```{r, echo=FALSE, message=FALSE}
-read_csv("https://bit.ly/amlr-water")
+# https://github.com/PittMethods/appliedml/blob/main/data/water.csv
+read_csv("./data/water.csv", show_col_types = FALSE)
 ```
