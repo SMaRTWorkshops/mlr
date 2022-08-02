@@ -63,11 +63,36 @@ We have a .imp[finite amount of data] to work with for each of these tasks.
 
 --
 
-<p style="padding-top:30px;">Reusing the same data for multiple tasks increases risk of **overfitting**.
+<p style="padding-top:30px;">Reusing the same data for multiple tasks increases risk of .imp[overfitting].
+
+---
+class: onecol
+count: false
+
+## (a brief reminder about overfitting)
+
+```{r overmeme, echo=FALSE}
+include_graphics("../figs/overfitting_lay.png")
+```
+
+---
+class: onecol
+count: false
+## Motivation
+
+There are **several steps** in the machine learning workflow.
+
+These include data exploration, engineering, model development, and evaluation.
+
+We have a .imp[finite amount of data] to work with for each of these tasks.
+
+<p style="padding-top:30px;">Reusing the same data for multiple tasks increases risk of .imp[overfitting].
+
+--
 
 It also reduces **generalizability** to future datasets or prediction problems.
 
-We may not get a **true picture** of our model's accuracy or effectiveness.
+We may not get a **true understanding** of our model's accuracy or effectiveness.
 
 ---
 class: twocol
@@ -107,7 +132,7 @@ include_graphics('../figs/leak.jpg')
 
 .right-column[
 
-All data is a mix of the true data-generating process **and random noise**.
+All data is a mix of the true data-generating process and random noise<sup>1</sup>.
 
 The modeling process includes many **decision points**. 
 
@@ -119,6 +144,10 @@ This artificially **inflates optimism about model accuracy**.
 
 Carefully spending data for training or testing prevents .imp[data leakage].
 
+]
+
+.footnote[
+[1] *Data generating process* refers to the signal we want to capture - the underlying processes that gives rise to the data that we observe. *Random noise* refers to error (e.g., sampling error) we do not want to model.
 ]
 
 ---
@@ -163,44 +192,125 @@ include_graphics("../figs/holdout2.png")
 ```
 
 ---
+## Comprehension Check \#1
+<span style="font-size:30px;">Bogdan collects data from 1000 patients. He assigns patients 1 to 800<br />to be in his training set and patients 700 to 1000 to be in his testing set.</span>
+
+.pull-left[
+### Question 1
+**What major mistake did Bogdan make?**
+
+a) He used a testing set instead of a holdout set
+
+b) Some patients are in both training and testing
+
+c) The two subsets of data have different sizes
+
+d) He did not use k-fold cross-validation 
+]
+
+.pull-right[
+### Question 2
+**Which step should not be done in the training set?**
+
+a) Exploratory Analysis
+
+b) Feature Engineering
+
+c) Model Development
+
+d) Model Evaluation
+]
+
+---
 class: inverse, center, middle
 
 ## Holdout Cross-Validation in R
 
 ---
-## Example Dataset: `affect`
+## Example Dataset: `titanic`
 
 .pull-left[
-**Rows:** 330 participants&emsp;&emsp;**Columns:** 9 variables
+**Rows:** 963 passengers&emsp;&emsp;**Columns:** 7 variables
 
 Variable | Description
-:------- | :-------------
-Film&emsp; | Film {docu, horror, nature, comedy}&emsp; 
-ext | Extroversion 
-neur | Neuroticism 
-imp | Impulsivity 
-soc | Sociability 
-BDI | Depression
-posaff | Positive Affect after film
-negaff | Negative affect after film
+:------- | :----------
+survived&emsp; | Did passenger survive? {FALSE, TRUE}&emsp; 
+pclass | Passenger class {1st, 2nd, 3rd}
+sex | Passenger sex {female, male}
+age | Passenger age (years)
+sibsp | Siblings and spouses Aboard (\#)
+parch | Parents and children Aboard (\#)
+fare | Cost of passenger fare ($)
 ]
 
 --
 
 .pull-right.pv4[
-```{r, message=FALSE}
+```{r, message=FALSE, eval = FALSE}
 library(tidyverse)
 library(tidymodels)
 
 # resolve package conflicts
 tidymodels_prefer()
 
-# load affect data
-affect <- read_csv(
-  "../data/affect.csv"
+# load titanic data
+titanic <- read_csv(
+  "titanic.csv"
 )
 ```
 ]
+
+.pull-right.pv4[
+```{r, message=FALSE, echo = FALSE}
+library(tidyverse)
+library(tidymodels)
+
+# resolve package conflicts
+tidymodels_prefer()
+
+# load titanic data
+titanic <- read_csv(
+  "../data/titanic.csv"
+)
+```
+]
+
+---
+count: false
+
+## Example Dataset: `titanic`
+
+.pull-left[
+**Rows:** 963 passengers&emsp;&emsp;**Columns:** 7 variables
+
+Variable | Description
+:------- | :----------
+survived&emsp; | Did passenger survive? {FALSE, TRUE}&emsp; 
+pclass | Passenger class {1st, 2nd, 3rd}
+sex | Passenger sex {female, male}
+age | Passenger age (years)
+sibsp | Siblings and spouses Aboard (\#)
+parch | Parents and children Aboard (\#)
+fare | Cost of passenger fare ($)
+]
+
+.pull-right.pv4[
+```{r, message=FALSE, eval = FALSE}
+library(tidyverse)
+library(tidymodels)
+
+# resolve package conflicts
+tidymodels_prefer()
+
+# load titanic data
+titanic <- read_csv(
+  "titanic.csv"
+)
+```
+]
+
+In this dataset, `survived` would be used as the **label** and the other variables would be used as **features**.
+
 
 ---
 class: onecol
@@ -251,12 +361,14 @@ class: onecol
 ## Simple Random Split in R
 ```{r, message = FALSE}
 # set random seed so results are reproducible
-set.seed(1234) 
+set.seed(2022) 
 
 # create and save an 80/20 data split
-affect_split_simple <- initial_split(data = affect, prop = 0.80)
-affect_split_simple
+titanic_split_simple <- initial_split(data = titanic, prop = 0.80)
+titanic_split_simple
 ```
+
+--
 
 This output shows the amount of training, testing, and total data.
 
@@ -270,11 +382,13 @@ To get the actual training and testing data subsets, we need two more functions.
 
 We will use the `training()` and `testing()` functions, also from {rsample}.
 
-```{r, message = FALSE}
-affect_train_simple <- training(affect_split_simple)
-affect_test_simple <- testing(affect_split_simple)
+--
 
-dim(affect_train_simple)
+```{r, message = FALSE}
+titanic_train_simple <- training(titanic_split_simple)
+titanic_test_simple <- testing(titanic_split_simple)
+
+dim(titanic_train_simple)
 ```
 
 ---
@@ -329,15 +443,16 @@ To create a stratified random sample, we can use the same `initial_split()` func
 
 We will use the `strata` argument to name the variable to stratify on.
 
+--
+
 ```{r, message = FALSE}
-set.seed(1234)
+set.seed(2022)
 
-affect_split_strat <- initial_split(data = affect, prop = 0.8, 
-                                     strata = 'Film')
-affect_train_strat <- training(affect_split_strat)
-affect_test_strat <- testing(affect_split_strat)
+titanic_split_strat <- initial_split(data = titanic, prop = 0.8, strata = 'survived')
+titanic_train_strat <- training(titanic_split_strat)
+titanic_test_strat <- testing(titanic_split_strat)
 
-dim(affect_train_strat)
+dim(titanic_train_strat)
 ```
 
 ---
@@ -387,17 +502,43 @@ include_graphics('../figs/multilevel.png')
 .right-column[
 Observations in multilevel data are not .imp[independent]. 
 
-**Random resampling of rows** may cause biased train/test sets.
-
-For instance, some patients from hospital 1 may be in the training set and others in the testing set. 
+**Random resampling of rows** may cause biased train/test sets<sup>1</sup>.
 
 Resampling should occur at the **level of the experimental unit**.
 
-In this case, resampling would occur at the level of **hospitals**. 
+In this case, resampling would be at the level of **hospitals**. 
+
+{tidymodels} is working on a function to split multilevel data.
+
+**INSERT JEFF'S FUNCTION HERE**
+]
+
+.footnote[
+[1] For example, some patients from hospital 1 may end up in the training set and others in the testing set).
 ]
 
 ---
 class: twocol
+## What about Time Series Data?
+
+.left-column[
+<br />
+```{r, echo=FALSE}
+include_graphics('../figs/validation.png')
+```
+]
+
+.right-column[
+Random resampling is also not appropriate for **time series data**.
+
+.imp[Data from the future] can't be used to predict the past! 
+
+Rather, it is typical to use the most **recent data** for a test set. 
+]
+
+---
+class: twocol
+count: false
 ## What about Time Series Data?
 
 .left-column[
