@@ -938,6 +938,24 @@ d) All of the above
 ]
 
 ---
+## Activity: Icebreakers
+
+.f4[
+In the Slack **\#general** channel, post a brief introduction about yourself and react to at least one other attendee's post (e.g., with an emoji or by "replying in thread" with a message).
+]
+
+#### Possible Inclusions:
+
+- Where are you joining us from?
+- What discipline are you in and what topics do you study?
+- What problems do you want to apply machine learning to?
+- What do you do for fun?
+
+#### Example:
+
+> Hi! I am Jeff, one of the two instructors for this course. I am an Assistant Professor of quantitative and clinical psychology at the University of Kansas (in Lawrence, Kansas, USA). I study affective and interpersonal functioning and how technology can be used to improve research in the social and medical sciences. I am interested in using machine learning to recognize facial expressions from images and to predict emotional states and mental health status from clinical data. For fun, I bring my 100 lb labrador/pyrenhees mix to the dog park or read sci-fi/fantasy novels.
+
+---
 class: inverse, center, middle
 # Time for a Break!
 ```{r countdown, echo=FALSE}
