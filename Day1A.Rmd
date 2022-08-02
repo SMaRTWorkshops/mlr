@@ -1,0 +1,12 @@
+---
+title: "Day 1A Presentation"
+output: 
+  html_document:
+    css: ./styles.css
+    toc: FALSE
+    self-contained: true
+---
+
+<iframe class="slide-deck" src="./day_1a/day_1a.html" title="Day 1A Presentation"></iframe>
+
+*Note.* To view the slideshow in full screen mode, click inside the slideshow and press the "f" key on your keyboard. To advance the slides, click inside the slideshow and press the "right arrow" or "down arrow" keys on your keyboard.

@@ -123,7 +123,7 @@ model <- glmnet(x = outcome, y = predictor, ...)
 class: onecol
 ## A Problem
 
-R packages also return **model predictions** in different formats. 
+Different packages also return **model predictions** in different formats. 
 
 Some examples of these inconsistencies for various classification models:
 
@@ -159,7 +159,7 @@ There are functions to:
 
 We can fit any model with the **same syntax and data format**.
 
-We **don't need memorize** specific details of any particular R package!
+We **don't need to memorize** package-specific details!
 ]
 
 ---

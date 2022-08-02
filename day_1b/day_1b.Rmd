@@ -49,6 +49,20 @@ class: inverse, center, middle
 ---
 class: twocol
 
+Projects
+
+RMarkdown
+
+readr
+
+dplyr
+  - select
+  - tidyselect
+  - mutate
+  - filter
+
+pipes
+
 ---
 
 class: inverse, center, middle
