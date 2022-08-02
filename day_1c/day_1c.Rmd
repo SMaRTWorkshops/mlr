@@ -59,7 +59,7 @@ There are **several steps** in the machine learning workflow.
 
 These include data exploration, engineering, model development, and evaluation.
 
-We have a .imp[finite amount of data] to work with for each of these taks.
+We have a .imp[finite amount of data] to work with for each of these tasks.
 
 --
 
