@@ -13,6 +13,7 @@ output:
       ratio: 16:9
       countIncrementalSlides: false
     self_contained: true
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -67,6 +68,132 @@ pipes
 
 class: inverse, center, middle
 # Course Data
+
+---
+
+## Airline Satisfaction (airsat)
+
+```{r, eval=FALSE}
+airsat <- readr::read_csv("https://rb.gy/ldq0y4")
+```
+
+```{r, echo=FALSE}
+airsat <- readr::read_csv("../data/airsat.csv")
+```
+
+![](../figs/airsat.png)
+
+---
+
+## Airline Satisfaction (airsat)
+
+### Labels
+
+-   **Satisfaction:** `satisfaction` \{dissatisfied, satisfied\}
+
+### Features
+.lh-copy[
+-   **Customer info:** `sex` \{Female, Male\}, `customer_type` \{disloyal, loyal\}, `age`
+
+-   **Trip info:** `travel_type` \{Business, Personal\}, `class` \{Business, Eco, Eco Plus\}, `flight_distance`
+
+-   **Flight info:** `departure_delay`, `arrival_delay`
+
+-   **Ratings (0–5):** `seat_comfort`, `time_convenience`, `food_drink`, `gate_location`, `inflight_wifi`, `inflight_entertainment`, `online_support`, `ease_booking`, `onboard_service`, `leg_room`, `baggage_handling`, `checkin_service`, `cleanliness`, `online_baording`
+]
+
+---
+
+## Spotify Song Popularity (spotify)
+
+```{r, eval=FALSE}
+spotify <- readr::read_csv("https://rb.gy/gmzeyv")
+```
+
+```{r, echo=FALSE}
+spotify <- readr::read_csv("../data/spotify.csv")
+```
+
+![](../figs/spotify.png)
+
+---
+
+## Spotify Song Popularity (spotify)
+
+### Labels
+
+-   **Popularity:** `popularity` (0, 100)
+
+### Features
+.lh-copy[
+-   **Timing:** `duration`, `tempo`, `time_signature`
+
+-   **Acoustics:** `energy`, `key`, `loudness`, `mode` \{major, minor\}
+
+-   **Qualities:** `acousticness`, `danceability`, `instrumentalness`, `liveliness`, `speechiness`, `valence`
+]
+
+---
+
+## Titanic Passengers (titanic)
+
+```{r, eval=FALSE}
+titanic <- readr::read_csv("https://rb.gy/hm7p84")
+```
+
+```{r, echo=FALSE}
+titanic <- readr::read_csv("../data/titanic.csv")
+```
+
+![](../figs/titanic.png)
+
+---
+
+## Titanic Passengers (titanic)
+
+### Labels
+.lh-copy[
+-   **Survival:** `survived` \{0=no, 1=yes\}
+
+-   **Fare Price:** `fare` \[0, 512.329\]
+]
+
+### Features
+.lh-copy[
+-   **Passenger info:** `sex` \{female, male\}, `pclass` \{1=1st Class, 2=2nd Class, 3=3rd Class\}
+
+-   **Family presence:** `sibsp` (\# siblings and spouses), `parch` (\# parents and children)
+]
+
+---
+
+## Water Potability (water)
+
+```{r, eval=FALSE}
+water <- readr::read_csv("https://rb.gy/sjmiqr")
+```
+
+```{r, echo=FALSE}
+water <- readr::read_csv("../data/water.csv")
+```
+
+![](../figs/water.png)
+
+---
+
+## Water Potability (water)
+
+### Labels
+.lh-copy[
+-   **Safety:** `Potability` \{unsafe, safe\}
+]
+
+### Features
+.lh-copy[
+-   **Chemistry:** `ph`, `Hardness`, `Solids`, `Sulfate`, `Conductivity`, `Organic_carbon`, `Turbidity`
+
+-   **Treatment:** `Chloramines`, `Trihalomethanes`
+]
 
 ---
 class: inverse, center, middle
