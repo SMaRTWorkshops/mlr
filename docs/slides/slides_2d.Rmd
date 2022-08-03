@@ -1,0 +1,321 @@
+---
+title: '<span style="font-size:48pt;">Building a Model: Start to Finish</span>'
+subtitle: '📈  💻  🤖️' 
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Day 2D &emsp; &emsp; August 9, 2022'
+output:
+  xaringan::moon_reader:
+    css: [../css/xaringan-themer.css, ../css/styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+---
+class: onecol
+## Plan for Today
+
+Thus far, we have learned {rsample}, {workflows}, {recipes}, {yardstick}, and {parsnip}.
+
+This lecture aims to tie it all together and .imp[build a model from start to finish].
+
+--
+
+<p style="padding-top:30px;">We will **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+
+This will **ease the transition to ML** and highlight its similarities with classical statistics.
+
+Finally, we will **foreshadow future topics** (e.g., regularized linear models and tuning).
+
+---
+class: onecol
+## Applied Example
+
+Let's put what we learned into practice in R! 
+
+Let's train a regression model on the `titanic` data. 
+
+--
+
+<p style="padding-top:30px;">We will: 
+
+- Load the data
+
+- Create a recipe for feature engineering
+
+- Train a regression model to predict each passenger's fare (how much they paid).
+
+- Evaluate the model using 10-fold cross-validation 
+
+---
+class: onecol
+## Load Data
+
+```{r, eval = FALSE}
+library(tidymodels)
+
+# load titanic data
+titanic <- read_csv("../data/titanic.csv")
+
+# look at the data
+head(titanic, 5)
+```
+
+```{r, echo = FALSE}
+library(tidymodels)
+
+# load titanic data
+titanic <- read_csv("../data/titanic.csv")
+
+# look at the data
+head(titanic, 5) %>% kable()
+```
+
+---
+class: onecol
+## Feature Engineering with {recipes}
+
+```{r}
+# Create a preprocessing recipe (don't prep or bake)
+fare_recipe <-
+  fare_train %>%
+  recipe(fare ~ .) %>% 
+  step_rm(survived) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors())
+```
+
+
+---
+class: onecol
+## Specify Model with {parsnip}
+
+```{r}
+# Specify Model
+ols_reg <- linear_reg() %>% 
+  set_engine("lm")
+
+ols_reg
+```
+
+---
+class: onecol
+## Build Workflow with {workflows}
+
+.scroll70[
+```{r}
+fare_workflow <- 
+  workflow() %>%
+  add_model(ols_reg) %>%
+  add_recipe(fare_recipe)
+
+fare_workflow
+```
+]
+
+---
+class: onecol
+## Fit Model with Resampling
+
+```{r}
+set.seed(2022)
+
+# configure resampling
+fare_folds <- vfold_cv(data = fare_train, 
+                       v = 10, 
+                       repeats = 3,
+                       strata = 'fare')
+
+# save predictions from resampling
+keep_pred <- control_resamples(save_pred = TRUE, extract = get_lm_coefs)
+```
+
+--
+
+```{r}
+# train the model using the recipe, data, and method 
+fare_results <- fare_workflow %>%
+  fit_resamples(resamples = fare_folds, control = keep_pred)
+```
+
+---
+class: twocol
+## Fit Model with Resampling
+
+.pull-left[
+```{r, echo = FALSE}
+include_graphics("../figs/kfold5.png")
+```
+]
+
+.pull-right[
+Note that we are fitting our model with 10-fold CV on the **entire data set**.
+
+This means we have training and test sets. 
+
+There are 30 training and test sets in total.
+
+There is no separate validation set. 
+
+Model evaluation will occur on each cross-validated test set. 
+
+We will obtain performance metrics by averaging over all 30 test sets.
+] 
+
+---
+class: inverse, center, middle 
+# Model Evaluation 
+
+---
+class: onecol
+## Cross-Validated Test Performance
+
+The object created by `fit_resamples()` will contain lots of information.
+
+We can view the predictions made in each cross-validated test set with `collect_predictions()`.
+
+--
+
+```{r, eval = FALSE}
+collect_predictions(fare_results)
+```
+
+```{r, echo = FALSE}
+collect_predictions(fare_results) %>% kable() %>% scroll_box(height = "250px")
+```
+
+---
+class: onecol
+## Cross-Validated Test Performance
+
+
+We can view a summary of training set performance with `collect_metrics()`.
+
+These results include the mean and standard error of each metric across resamples<sup>1</sup>.
+
+.footnote[
+[1] To see metrics for each fold, include `summarize = FALSE` in `collect_metrics()`.
+]
+
+--
+
+```{r, eval = FALSE}
+collect_metrics(fare_results)
+```
+
+
+```{r, echo = FALSE}
+collect_metrics(fare_results) %>% kable()
+```
+
+---
+class: onecol
+## A Final Model
+
+Importantly, the goal of `fit_resamples()` is to .imp[measure model importance].
+
+The models trained in `fit_resamples()` are not saved or used later. 
+
+It also doesn't perform hyperparameter tuning (which we will learn about tomorrow).
+
+--
+
+<p style="padding-top:30px;"> We need a **final model** for interpretation and prediction on new data. 
+
+For OLS regression, so we can go back and fit a model on the entire data set.
+
+For tuning hyperparameters, we first use `tune_grid()` and then fit a final model.
+
+---
+class: onecol
+## Model Interpretation 
+
+Predictive **accuracy** is emphasized in ML over interpretability and inference
+
+- The main goal of most applied ML studies is to **quantify performance**
+
+--
+
+However, some algorithms can provide insight into their decision-making
+
+- As a model usually used for inference, linear regression has strong interpretability
+
+- We can examine the model coefficients (intercept and slopes)
+
+--
+
+```{r, eval=FALSE}
+# fit a final model 
+fare_final <- fare_workflow %>% fit(titanic)
+
+fare_results$fit %>% coef()
+```
+
+```{r, echo=FALSE}
+#fare_fit$fit %>% coef() %>% t() %>% kable(digits = 2)
+```
+
+---
+class: onecol
+# Variable Importance
+
+We can also plot variable importance using the {vip} package.
+
+```{r, out.width = "50%"}
+#library(vip)
+#vip(fare_fit)
+```
+
+.footnote[
+Other algorithms have different ways to estimate variable importance, but `vip()` will take care of it.
+]
+
+---
+class: inverse, center, middle
+# End of Day 2 
+

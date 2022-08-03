@@ -13,7 +13,7 @@ left:
        - text: "[1A] Conceptual introductions"
          href: day_1a.html
        - text: "[1B] Tidyverse primer and data"
-         href: wip.html #day_1b.html
+         href: day_1b.html
        - text: "[1C] Cross-validation"
          href: wip.html #day_1c.html
        - text: "[1D] Fitting models"

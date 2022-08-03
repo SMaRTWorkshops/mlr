@@ -54,6 +54,10 @@ iframe.slide-deck {
   color: darkred;
 }
 
+.left-column img {
+  border: 2px solid black;
+}
+
 /* scrollable codebox */
 
 .scroll .remark-code {

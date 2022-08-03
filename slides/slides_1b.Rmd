@@ -55,22 +55,22 @@ class: onecol
 .left-column.pv3[
 ```{r communicating, echo=FALSE}
 # TODO: Replace this image with one of a scrapbook
-include_graphics("../figs/explore.jpg")
+include_graphics("../figs/scrapbook.jpg")
 ```
 
 ]
 .right-column[
 -   The .imp[console] is like a .b[chat window] with R
-    -   You send a command to R and get a response
-    -   Neither side of the conversation is saved
+  -   You send a command to R and get a response
+  -   Neither side of the conversation is saved
     
 -   A .imp[script] is like an .b[email thread] with R
-    -   You send many commands to R all at once
-    -   Only your side of the conversation is saved
+  -   You send many commands to R all at once
+  -   Only your side of the conversation is saved
     
 -   .imp[R Markdown] is like a .b[scrapbook] with R
-    -   You can combine code and formatted text
-    -   Both sides of the conversation are saved
+  -   You can combine code and formatted text
+  -   Both sides of the conversation are saved
 ]
 
 ---
@@ -129,7 +129,7 @@ goodName1 <- 10
 good_name_2 <- 20
 okay.name.3 <- 30
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Functions
 
@@ -139,7 +139,7 @@ round(2/3, digits = 2)
 round(2/3, 2)
 round(2/3)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Vectors
 
@@ -149,7 +149,7 @@ sqrt(my_numbers)
 length(my_numbers)
 mean(my_numbers)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Strings
 
@@ -162,7 +162,7 @@ dyes
 length(dyes)
 nchar(dyes)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Factors
 
@@ -174,7 +174,7 @@ food3 <- factor(food, levels = c(1, 2, 3),
                 labels = c("nuggets", "pizza", "salad"))
 food3
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Packages
 
@@ -196,24 +196,22 @@ class: onecol
 .left-column.pv3[
 ```{r tidyverse, echo=FALSE}
 # TODO: Replace this image with one of tidyverse
-include_graphics("../figs/explore.jpg")
+include_graphics("../figs/tidyverse.jpg")
 ```
 
 ]
 .right-column[
-.imp[tidyverse] is a .b[meta-package] of related R packages
+-   .imp[tidyverse] is a .b[meta-package] of related R packages
+  -   They share a common philosophy and work well together
+  
+  -   They are designed with tibbles and pipes in mind
 
--   They share a common philosophy and work well together
-
-.pt1[
-Data is stored in rectangular data frames called .imp[tibbles]
-
--   Each row is one .b[observation] (person, place, thing)
-
--   Each column is one .b[variable] (attribute, quality, scale)
-
--   Each cell is one .b[value] (variable-observation combination)
-]
+-   Data is stored in rectangular data frames called .imp[tibbles]
+  -   Each row is one .b[observation] (person, place, thing)
+  
+  -   Each column is one .b[variable] (attribute, quality, scale)
+  
+  -   Each cell is one .b[value] (variable-observation combination)
 ]
 
 ---
@@ -231,7 +229,7 @@ titanic
 glimpse(titanic)
 View(titanic)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Read data from local file
 
@@ -240,7 +238,7 @@ spotify
 glimpse(spotify)
 View(spotify)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Read data from loaded package
 
@@ -258,22 +256,20 @@ class: onecol
 .left-column.pv3[
 ```{r missing, echo=FALSE}
 # TODO: Replace this image with one of puzzle
-include_graphics("../figs/explore.jpg")
+include_graphics("../figs/missing.jpg")
 ```
 
 ]
 .right-column[
-Sometimes your data will have missing values
+-   Sometimes your data will have .imp[missing values]
+  -   Perhaps these were .b[never collected]
+  -   Perhaps these were .b[lost or corrupted]
+  -   Perhaps the participant .b[didn't respond]
 
--   Perhaps these were .b[never collected]
--   Perhaps these were .b[lost or corrupted]
--   Perhaps the participant .b[didn't respond]
-.pv1[
-We need to tell R which values are missing
-
--   To do so, we set those values to `NA`
--   Functions from .b[tidyverse] make this easy
-]
+-   We need to tell R which values are missing
+  -   To do so, we set those values to `NA`
+  -   Functions from .b[tidyverse] make this easy
+  -   We can use recipes later to manage NAs
 ]
 
 ---
@@ -284,7 +280,7 @@ We need to tell R which values are missing
 ```{r, eval=FALSE}
 # library(tidyverse)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Problems when using a number like -999 to represent missingness
 
@@ -293,7 +289,7 @@ range(heights)
 mean(heights)
 log(heights)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Instead, tell R a value is missing by setting it to NA
 
@@ -305,14 +301,14 @@ mean(heights2)
 mean(heights2, na.rm = TRUE)
 log(heights2)
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # We can use na_if() to transform a specific value to NA
 
 heights3 <- na_if(heights, -999)
 heights3
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # We can also convert missing values while reading in data
 
@@ -328,19 +324,24 @@ class: onecol
 
 ## Basic Wrangling Verbs
 
+.footnote[*Tip:* Other helpful verbs include `rename()`, `relocate()`, `arrange()`, `summarize()`, and `group_by()`.]
+
 .left-column.pv3[
 ```{r dplyr, echo=FALSE}
 # TODO: Replace this image with one of tools
-include_graphics("../figs/explore.jpg")
+include_graphics("../figs/tools.jpg")
 ```
 
 ]
 .right-column[
--   .imp[Select] ...
+-   .imp[Select] lets you retain only certain variables
+  -   You will often end up with .b[fewer columns]
 
--   .imp[Mutate] ...
+-   .imp[Mutate] lets you add and transform variables
+  -   You will often end up with .b[more columns]
 
--   .imp[Filter] ...
+-   .imp[Filter] lets you retain only certain observations
+  -   You will often end up with .b[fewer rows]
 ]
 
 ---
@@ -353,7 +354,7 @@ include_graphics("../figs/explore.jpg")
 
 starwars
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Retain only the specified variables
 
@@ -362,7 +363,7 @@ sw
 sw <- select(starwars, name, sex, species)
 sw
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Retain all variables between two specified variables
 
@@ -371,7 +372,7 @@ sw
 sw <- select(starwars, name, sex, hair_color:eye_color)
 sw
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Retain all variables except the specified ones
 
@@ -380,7 +381,7 @@ sw
 sw <- select(starwars, -c(films:starships))
 sw
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Select all variables based on name criteria
 
@@ -391,7 +392,7 @@ sw
 sw <- select(starwars, contains("ar"))
 sw
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Select variables based on data type
 
@@ -412,21 +413,21 @@ sw
 
 starwars
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Overwrite / modify a variable
 
 sw <- mutate(starwars, sex = factor(sex))
 sw
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Create a new variable
 
 sw <- mutate(starwars, homeworld_caps = str_to_upper(homeworld))
 sw
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Do multiple operations in order
 
@@ -449,7 +450,7 @@ sw
 
 starwars
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Retain only observations that meet a numerical criterion
 
@@ -459,7 +460,7 @@ massive
 smaller <- filter(starwars, mass <= 50)
 smaller
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Retain only observations that meet a character criterion
 
@@ -469,7 +470,7 @@ humans
 nonhumans <- filter(starwars, species != "Human")
 nonhumans
 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 
 # Combine criteria with: logical AND (&), logical OR (|)
 
@@ -486,19 +487,31 @@ class: onecol
 
 ## Pipes and Pipelines
 
+.footnote[*Note.* You need tidyverse to use `%>%`, but R 4.1 added the "native pipe" `|>`, which functions the same.]
+
 .left-column.pv3[
 ```{r pipelines, echo=FALSE}
 # TODO: Replace this image with one of pipes
-include_graphics("../figs/explore.jpg")
+include_graphics("../figs/pipelines.jpg")
 ```
 
 ]
 .right-column[
-A
+-   How can we do .imp[multiple operations] to an object?
 
-B
+  ```{r, eval=FALSE}
+  x <- 10
+  x2 <- sqrt(x)
+  x3 <- round(x2, digits = 1)
+  ```
 
-C
+-   A cleaner approach is to connect .b[pipes] into a .b[pipeline]
+
+  ```{r, eval=FALSE}
+  x3 <- 10 %>% sqrt() %>% round(digits = 1)
+  ```
+  
+  -   I like to read each pipe (`%>%`) as "and then..."
 ]
 
 ---
@@ -509,9 +522,38 @@ C
 ```{r, eval=FALSE}
 # library(tidyverse)
 
+# Simple numeric example
 
-# ---------------------------------------------------------------
+x <- 10
+x
+x2 <- sqrt(x)
+x2
+x2 <- x %>% sqrt()
+x2
+#error: x2 <- x %>% sqrt(x)
 
+x3 <- round(x2, digits = 1)
+x3
+x3 <- x2 %>% round(digits = 1)
+x3
+#error: x3 <- x2 %>% sqrt(x2, digits = 1)
+
+# --------------------------------------------------------------------
+
+# Basic verb example
+
+sw <- select(starwars, name, species, height)
+sw
+sw <- starwars %>% select(name, species, height)
+sw
+
+# --------------------------------------------------------------------
+
+# To make it more readable, insert line break after the pipe
+
+sw <- 
+  starwars %>% 
+  select(name, species, height)
 ```
 ]
 
@@ -523,9 +565,129 @@ C
 ```{r, eval=FALSE}
 # library(tidyverse)
 
+# Simple numeric example
 
-# ---------------------------------------------------------------
+x <- 
+  10 %>% 
+  sqrt() %>% 
+  round(digits = 1)
+x
 
+# --------------------------------------------------------------------
+
+# End your pipeline with print() to show the results
+
+x <- 
+  10 %>% 
+  sqrt() %>% 
+  round(digits = 1) %>% 
+  print()
+
+# --------------------------------------------------------------------
+
+# Basic verb example
+
+sw <- 
+  starwars %>% 
+  select(name, height) %>% 
+  print()
+
+sw <- 
+  starwars %>% 
+  select(name, height) %>% 
+  mutate(height_ft = height / 30.48) %>% 
+  print()
+
+sw <- 
+  starwars %>% 
+  select(name, height) %>% 
+  mutate(height_ft = height / 30.48) %>% 
+  filter(height_ft > 7) %>% 
+  print()
+
+```
+]
+
+---
+class: onecol
+
+## Basic Graphics
+
+.footnote[*Note.* You can do much more with ggplot2; this is just the very beginning!]
+
+.left-column.pv3[
+```{r ggplot, echo=FALSE}
+# TODO: Replace this image with one of pipes
+include_graphics("../figs/charts.jpg")
+```
+
+]
+.right-column[
+-   Tidyverse includes the .imp[ggplot2] package for graphics
+  -   It can create very complex and beautiful charts
+  
+  -   It uses a system called the "grammar of graphics"
+  
+-   Graphics need *at least* three things:
+  -   A tibble with .b[data] (variables and observations) to plot
+  
+  -   .b[Aesthetics] (visual qualities) to represent each variable
+  
+  -   .b[Geometric objects] (s) to represent each observation 
+]
+
+---
+
+## Live Coding: ggplot
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+# Read in titanic data and mutate survived into a labeled factor
+
+titanic <- 
+  read_csv("https://rb.gy/hm7p84") %>% 
+  mutate(
+    survived = factor(
+      survived, 
+      levels = c(0, 1), 
+      labels = c("No", "Yes")
+    )
+  ) %>% 
+  print()
+
+# --------------------------------------------------------------------
+
+# Create scatterplots
+
+ggplot(titanic, aes(x = age, y = fare)) + geom_point()
+
+ggplot(titanic, aes(x = age, y = fare, color = sex)) + geom_point()
+
+# --------------------------------------------------------------------
+
+# Create bar charts (of counts)
+
+ggplot(titanic, aes(x = survived)) + geom_bar()
+
+# --------------------------------------------------------------------
+
+# Create histograms
+
+ggplot(titanic, aes(x = fare)) + geom_histogram()
+
+# --------------------------------------------------------------------
+
+# Create boxplots
+
+ggplot(titanic, aes(x = fare)) + geom_boxplot()
+
+# --------------------------------------------------------------------
+
+# Create grouped boxplots
+
+ggplot(titanic, aes(x = fare, y = survived)) + geom_boxplot()
 ```
 ]
 

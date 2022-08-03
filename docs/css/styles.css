@@ -1,0 +1,105 @@
+/* Set iframe style for slide decks */
+
+iframe.slide-deck {
+  border: 3px solid #dee2e6;
+  width: 100%;
+  height: 520px;
+}
+
+/* Set font size for single column slides */
+
+.onecol {
+  font-size: 26px;
+}
+
+/* Set font size for double column slides */
+
+.twocol {
+  font-size: 24px;
+}
+
+/* Set appearance of code chunks */
+
+.remark-code {
+  font-size: 24px;
+  border: 1px solid grey;
+}
+
+/* Set appearance of inline code */
+
+.remark-inline-code {
+  background-color: white;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+/* Set appearance of hyperlinks */
+
+.remark-container a {
+  background-color: lightblue;
+}
+
+/* Style footer */
+
+.footer {
+  text-align: center;
+  padding-top: 2.0rem;
+  color: grey;
+}
+
+/* Custom class for emphasizing text as important */
+
+.imp {
+  font-weight: bold;
+  color: darkred;
+}
+
+.left-column img {
+  border: 2px solid black;
+}
+
+/* scrollable codebox */
+
+.scroll .remark-code {
+  height: 85vh;
+  overflow-y: scroll;
+}
+
+/* Scrollbox classes */
+
+.scroll25 {
+  height: 25%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+.scroll30 {
+  height: 30%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+.scroll40 {
+  height: 40%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+.scroll50 {
+  height: 50%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+.scroll60 {
+  height: 60%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+.scroll70 {
+  height: 70%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
