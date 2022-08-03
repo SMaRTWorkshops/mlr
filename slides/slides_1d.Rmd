@@ -357,6 +357,44 @@ This makes it *super* easy to implement new algorithms and explore the world of 
 ]
 
 ---
+class: onecol 
+## Comprehension Check \#1
+
+### Question 1
+**Which is *not* a part of specifying model details with {parsnip}?**
+
+a) Model Mode
+
+b) Model Form 
+
+c) Computational Engine
+
+d) Model Type
+
+
+---
+class: onecol
+## Comprehension Check \#1
+
+### Question 2
+**What error was made in this code?**
+
+```{r, eval = FALSE}
+my_model <- linear_reg() %>% 
+  set_engine("regression") %>% 
+  set_mode("lm")
+```
+
+a) The name of the dataset is missing.
+
+b) We forgot to specify frequentist vs bayesian regression.
+
+c) The `set_engine()` function does not exist.
+
+d) The arguments for `set_engine()` and `set_mode()` are reversed.
+
+
+---
 class: onecol
 ## 2. Fit Model
 
@@ -484,11 +522,13 @@ We reviewed **tidyverse** principles and datasets used in the course.
 
 We introduced the basic goals of **data splitting** with {rsample}.
 
-We learned how to fit and predict with {parsnip}.
+We learned how to fit models and make predictions with {parsnip}.
 
 --
 
-<p style="padding-top:30px;"> Tomorrow will dive into **feature engineering** and **performance evaluation**.
+<p style="padding-top:30px;"> We will wrap up with a **live coding activity** to tie everything together. 
+
+Tomorrow will dive into **feature engineering** and **performance evaluation**.
 
 We will also learn more advanced **cross-validation** for a full ML **workflow**.
 
