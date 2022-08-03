@@ -652,24 +652,26 @@ p3 <-
 ---
 class: twocol
 ## A Super Metaphor
-.pull-left[
-What makes machine learning so amazing is its **ability to learn complex patterns**
+.left-column.pv3[
+```{r kryptonite, echo=FALSE}
+include_graphics("../figs/kryptonite.png")
+```
+]
+.right-column[
+What makes machine learning so amazing is<br />
+its **ability to learn complex patterns**
 
-However, with this great power and flexibility comes the looming **danger of overfitting**
+However, with this great power and flexibility<br />
+comes the looming **danger of overfitting**
 
-Thus, much of ML research is about finding ways to **detect** and **counteract** overfitting
+Thus, much of ML research is about finding ways<br />
+to **detect** and **counteract** overfitting
 
-For detection, we need two sets of data:
+For detection, we need *at least* two sets of data:
 
 .imp[Training set]: used to learn relationships
 
 .imp[Testing set]: used to evaluate performance
-]
-
-.pull-right.center.pv2[
-```{r kryptonite, echo=FALSE, out.width="50%"}
-include_graphics("../figs/kryptonite.png")
-```
 ]
 ---
 layout: true
