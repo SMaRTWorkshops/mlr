@@ -5,13 +5,15 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2C &emsp; &emsp; August 9, 2022'
 output:
   xaringan::moon_reader:
-    css: [../css/xaringan-themer.css, ../css/styles.css]
+    css: ["xaringan-themer.css", "styles.css"]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: false
     self_contained: true
 ---
 
@@ -87,6 +89,10 @@ Today's focus is on advanced cross-validation methods, including:
 
 All CV methods will be performed with {rsample} and {tune}.
 
+```{r, echo = FALSE, out.width="30%"}
+include_graphics('../figs/rsample_tune.png')
+```
+
 ---
 class: inverse, center, middle
 # k-fold Cross-Validation
@@ -153,17 +159,17 @@ strata | Variable to conduct stratified sampling (default = NULL)
 class: onecol
 ## k-fold Cross-Validation in R
 
-Let's perform 10-fold cross-validation repeated 3 times using the `affect` dataset.
+Let's perform 10-fold cross-validation repeated 3 times using the `titanic` dataset.
 
 --
 
 .scroll40[
 ```{r}
 library(tidymodels)
-affect <- read_csv("../data/affect.csv")
+titanic <- read.csv("https://rb.gy/hm7p84")
 
-affect_folds <- vfold_cv(affect, v = 10, repeats = 3)
-affect_folds
+titanic_folds <- vfold_cv(titanic, v = 10, repeats = 3)
+titanic_folds
 ```
 ]
 
@@ -181,16 +187,23 @@ We can extract individual resampled data folds with `analysis()` and `assessment
 
 --
 
-.scroll40[
+.scroll30[
 ```{r}
-affect_folds$splits[[1]] %>% analysis()
-
-affect_folds$splits[[1]] %>% assessment()
-
+titanic_folds$splits[[1]] %>% analysis()
 ```
 ]
 
 --
+
+.scroll30[
+```{r}
+titanic_folds$splits[[1]] %>% assessment()
+```
+]
+
+---
+class: onecol
+## k-fold Cross-Validation in R
 
 However, we generally don't need to extract the individual folds.
 
@@ -199,6 +212,18 @@ However, we generally don't need to extract the individual folds.
 - `fit_resamples()` estimates model performance across resamples **with no tuning**.
 
 - `tune_grid()` estimates model performance across resamples **with tuning**.
+
+--
+
+<p style="padding-top:30px;"> Most ML algorithms include .imp[hyperparameters] to be tuned<sup>1</sup> and require `tune_grid()`. 
+
+But we can use `fit_resamples()` for 'traditional' statistical models like OLS regression. 
+
+Luckily, these functions are **nearly identical** so learning one will transfer to the other! 
+
+.footnote[
+[1] We will learn our first ML algorithms and tuning tomorrow!
+]
 
 ---
 class: onecol
@@ -237,9 +262,7 @@ Argument | Description
 verbose | Whether to print progress (default = FALSE) 
 save_pred | Whether to save out-of-sample predictions per *k* fold (default = FALSE)
 event_level | For classification only; specify which level is considered the "event" (`"first"` or `"second"`)
-extract | An optional function to retain model objects≈
-oiuyt vbl,./
-
+extract | An optional function to retain model objects
 
 .footnote[
 [1] The same list can be created for `tune_grid()` by `control_grid()`.
@@ -269,6 +292,34 @@ LOOCV is **computationally expensive** and may have poor statistical properties.
 LOOCV is not generally recommended. It's usually better to stick with k-fold CV.
 ]
 
+---
+## Comprehension Check \#1
+
+.pull-left[
+### Question 1
+**Which is the best data splitting method for ML?**
+
+a) A single training and a single test set
+
+b) *k*-fold cross-validation
+
+c) Repeated *k*-fold cross-validation
+
+d) Leave-one-out cross-validation
+]
+
+.pull-right[
+### Question 2
+**What is stratified *k*-fold cross-validation?**
+
+a) Each *k* fold contains 1/2 of the data
+
+b) Some data are withheld from cross-validation
+
+c) Each *k* fold has a similar distribution of data
+
+d) Multiple iterations of *k* folds are created
+]
 
 ---
 class: twocol
@@ -350,7 +401,7 @@ class: onecol
 
 <br>
 
-####...all that being said, there *is* an option that gives us the best of both worlds!
+####...all that being said, there *is* an option that allows us to do both!
 
 
 ---
@@ -400,6 +451,15 @@ Results are averaged across all outer splits for an **unbiased estimate of the m
 ---
 ## Nested Cross-Validation
 
+.center[
+```{r, echo = FALSE, out.width = "60%"}
+include_graphics("../figs/nestedcv_confused.png")
+```
+]
+
+---
+## Nested Cross-Validation
+
 ```{r xaringanExtra-freezeframe, echo = FALSE, out.width = "90%"}
 xaringanExtra::use_freezeframe(trigger = "click", responsive = FALSE)
 include_graphics("../figs/nested_cv.gif")
@@ -426,40 +486,40 @@ inside | The inside resampling specification (e.g., `vfold_cv()`)
 
 ---
 class: onecol
-## Nested CV in R
+## Nested CV in R: The good news!
 
-Let's run nested CV with 10 outer folds and 5 inner folds in the `affect` dataset.
+Let's run nested CV with 10 outer folds and 5 inner folds in the `titanic` dataset.
 
 --
 
 .scroll40[
 ```{r}
-affect_folds_nested <- nested_cv(affect, 
+titanic_folds_nested <- nested_cv(titanic, 
                                  outside = vfold_cv(v = 10),
                                  inside = vfold_cv(v = 5))
-affect_folds_nested
+titanic_folds_nested
 ```
 ]
 
 ---
 class: onecol
-## Nested CV in R: The less-good news
+## Nested CV in R: The less-good news :/
 
 Unfortunately, nested cross-validation is not yet fully supported in tidymodels. 
 
-`fit_resamples()` does not work for nested cross-validation<sup>1</sup>.
+`fit_resamples()` and `tune_grid()` do not work for nested cross-validation<sup>1</sup>.
 
 If you want to use nested cross-validation, you will need to write your own functions.
 
 .footnote[
-[1] Though it works great for regular k-fold CV!
+[1] Though they work great for regular k-fold CV!
 ]
 
 --
 
 <p style="padding-top:30px;"> Example code can be found on the [tidymodels website](https://www.tidymodels.org/learn/work/nested-resampling/).
 
-This is a bit complicated, so we will stick to using **repeated k-fold CV** for this course. 
+This is a bit complicated, so **we will stick to using repeated k-fold CV** for this course. 
 
 But if you are ready to for a challenge, we highly encourage looking into nested CV!
 
