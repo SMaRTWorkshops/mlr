@@ -29,6 +29,8 @@ iframe.slide-deck {
 
 .remark-inline-code {
   background-color: white;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 
 /* Set appearance of hyperlinks */
@@ -37,6 +39,13 @@ iframe.slide-deck {
   background-color: lightblue;
 }
 
+/* Style footer */
+
+.footer {
+  text-align: center;
+  padding-top: 2.0rem;
+  color: grey;
+}
 
 /* Custom class for emphasizing text as important */
 
@@ -44,6 +53,15 @@ iframe.slide-deck {
   font-weight: bold;
   color: darkred;
 }
+
+/* scrollable codebox */
+
+.scroll .remark-code {
+  height: 85vh;
+  overflow-y: scroll;
+}
+
+/* Scrollbox classes */
 
 .scroll25 {
   height: 25%;

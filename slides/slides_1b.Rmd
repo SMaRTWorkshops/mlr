@@ -50,33 +50,6 @@ class: inverse, center, middle
 ---
 class: onecol
 
-## Projects
-
-.footnote[*Tip.* Save your project in a cloud service folder (e.g., Box or OneDrive) to backup and sync it.]
-
-.left-column.pv3[
-```{r projects, echo=FALSE}
-# TODO: Replace this image with one of a folder
-include_graphics("../figs/explore.jpg")
-```
-
-]
-.right-column[
--   .imp[Projects] are .b[special folders] on your computer
-    -   They contain all files related to a task
-    -   They keep everything together and organized
-
--   Projects make it easy to .b[find and use your files]
-    -   No need to specify long, annoying file paths
-    -   No need to worry about working directories
-
--   Projects make it easy to .b[switch between tasks]
-    -   They will remember where you left off
-]
-
----
-class: onecol
-
 ## Communicating with R
 
 .left-column.pv3[
@@ -102,25 +75,459 @@ include_graphics("../figs/explore.jpg")
 
 ---
 
-## Importing / Exporting
+## Live Coding: R Markdown
 
-readr
+.scroll[
+```{r, eval=FALSE}
+# Optionally create an RStudio Project
+# - File > New Project...
+
+# Create an RMarkdown Document
+# - File > New File > R Markdown...
+# - Keep the defaults (HTML Document) and hit "Ok"
+# - File > Save
+# - Give it a name like "Day 1" (or whatever)
+# - Note that the file extension is .Rmd
+
+# Remove the boilerplate content
+# - The top part of the notebook is called the "Header"
+# - Don't delete the header or the notebook won't work
+# - You can change the title but keep it in quotes
+# - Highlight and delete everything below the header
+
+# Add Formatted Text (i.e., Markdown)
+# - Below the header you can add formatted text
+# - Show how to add bold, italics, headers, etc.
+
+# Add R Chunks (i.e., R code)
+# - Click the green "Insert a new code chunk" button (top right)
+# - Inside the chunk, you can type R commands like a mini console
+# - Try doing some calculations in the chunk and hit the green arrow
+# - The answer appears right below the chunk!
+# - If we knit the document, it appears there too
+# - We can share the .html file with others
+# - It will include all the formatted text, code, and R's answers
+# - Knitting will fail if your Rmd contains any errors
+```
+]
 
 ---
 
-## Basic Wrangling
+## Live Coding: R Refresher
 
-dplyr
-  - select
-  - tidyselect
-  - mutate
-  - filter
+.scroll[
+```{r, eval=FALSE}
+# Assignment
+
+x <- 9
+x
+
+y <- (x + 10) / x
+y
+
+goodName1 <- 10
+good_name_2 <- 20
+okay.name.3 <- 30
+
+# ---------------------------------------------------------------
+
+# Functions
+
+sqrt(100)
+round(2/3, digits = 1)
+round(2/3, digits = 2)
+round(2/3, 2)
+round(2/3)
+
+# ---------------------------------------------------------------
+
+# Vectors
+
+my_numbers <- c(4, 9, 16, 25, 36)
+my_numbers * 10
+sqrt(my_numbers)
+length(my_numbers)
+mean(my_numbers)
+
+# ---------------------------------------------------------------
+
+# Strings
+
+x <- sqrt(9)
+x
+y <- "sqrt(9)"
+y
+dyes <- c("red#40", "blue#02")
+dyes
+length(dyes)
+nchar(dyes)
+
+# ---------------------------------------------------------------
+
+# Factors
+
+food <- c(2, 2, 1, 2, 1, 2, 1)
+food
+food2 <- factor(food, levels = c(1, 2, 3))
+food2
+food3 <- factor(food, levels = c(1, 2, 3),
+                labels = c("nuggets", "pizza", "salad"))
+food3
+
+# ---------------------------------------------------------------
+
+# Packages
+
+# run from console, not from Rmd
+install.packages("tidyverse")
+# use package_name::function_name()
+tidyverse::tidyverse_packages()
+# or load the package at the top of each Rmd
+library(tidyverse)
+tidyverse_packages()
+```
+]
 
 ---
+class: onecol
+
+## Tidyverse Basics
+
+.left-column.pv3[
+```{r tidyverse, echo=FALSE}
+# TODO: Replace this image with one of tidyverse
+include_graphics("../figs/explore.jpg")
+```
+
+]
+.right-column[
+.imp[tidyverse] is a .b[meta-package] of related R packages
+
+-   They share a common philosophy and work well together
+
+.pt1[
+Data is stored in rectangular data frames called .imp[tibbles]
+
+-   Each row is one .b[observation] (person, place, thing)
+
+-   Each column is one .b[variable] (attribute, quality, scale)
+
+-   Each cell is one .b[value] (variable-observation combination)
+]
+]
+
+---
+
+## Live Coding: Tibbles
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+# Read data from web link
+
+titanic <- read_csv("https://rb.gy/hm7p84")
+titanic
+glimpse(titanic)
+View(titanic)
+
+# ---------------------------------------------------------------
+
+# Read data from local file
+
+spotify <- read_csv("../data/spotify.csv")
+spotify
+glimpse(spotify)
+View(spotify)
+
+# ---------------------------------------------------------------
+
+# Read data from loaded package
+
+starwars
+glimpse(starwars)
+View(starwars)
+```
+]
+
+---
+class: onecol
+
+## Missing Values
+
+.left-column.pv3[
+```{r missing, echo=FALSE}
+# TODO: Replace this image with one of puzzle
+include_graphics("../figs/explore.jpg")
+```
+
+]
+.right-column[
+Sometimes your data will have missing values
+
+-   Perhaps these were .b[never collected]
+-   Perhaps these were .b[lost or corrupted]
+-   Perhaps the participant .b[didn't respond]
+.pv1[
+We need to tell R which values are missing
+
+-   To do so, we set those values to `NA`
+-   Functions from .b[tidyverse] make this easy
+]
+]
+
+---
+
+## Live Coding: Missing Values
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+# ---------------------------------------------------------------
+
+# Problems when using a number like -999 to represent missingness
+
+heights <- c(149, 158, -999)
+range(heights)
+mean(heights)
+log(heights)
+
+# ---------------------------------------------------------------
+
+# Instead, tell R a value is missing by setting it to NA
+
+heights2 <- c(149, 158, NA)
+heights2
+range(heights2)
+range(heights2, na.rm = TRUE)
+mean(heights2)
+mean(heights2, na.rm = TRUE)
+log(heights2)
+
+# ---------------------------------------------------------------
+
+# We can use na_if() to transform a specific value to NA
+
+heights3 <- na_if(heights, -999)
+heights3
+
+# ---------------------------------------------------------------
+
+# We can also convert missing values while reading in data
+
+titanic <- read_csv("https://rb.gy/hm7p84", 
+                    na = c("NA", "*", -999))
+titanic
+
+```
+]
+
+---
+class: onecol
+
+## Basic Wrangling Verbs
+
+.left-column.pv3[
+```{r dplyr, echo=FALSE}
+# TODO: Replace this image with one of tools
+include_graphics("../figs/explore.jpg")
+```
+
+]
+.right-column[
+-   .imp[Select] ...
+
+-   .imp[Mutate] ...
+
+-   .imp[Filter] ...
+]
+
+---
+
+## Live Coding: Select
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+starwars
+
+# ---------------------------------------------------------------
+
+# Retain only the specified variables
+
+sw <- select(starwars, name)
+sw
+sw <- select(starwars, name, sex, species)
+sw
+
+# ---------------------------------------------------------------
+
+# Retain all variables between two specified variables
+
+sw <- select(starwars, birth_year:species)
+sw
+sw <- select(starwars, name, sex, hair_color:eye_color)
+sw
+
+# ---------------------------------------------------------------
+
+# Retain all variables except the specified ones
+
+sw <- select(starwars, -name)
+sw
+sw <- select(starwars, -c(films:starships))
+sw
+
+# ---------------------------------------------------------------
+
+# Select all variables based on name criteria
+
+sw <- select(starwars, starts_with("h"))
+sw
+sw <- select(starwars, ends_with("_color"))
+sw
+sw <- select(starwars, contains("ar"))
+sw
+
+# ---------------------------------------------------------------
+
+# Select variables based on data type
+
+sw <- select(starwars, where(is.numeric))
+sw
+sw <- select(starwars, -where(is.character))
+sw
+```
+]
+
+---
+
+## Live Coding: Mutate
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+starwars
+
+# ---------------------------------------------------------------
+
+# Overwrite / modify a variable
+
+sw <- mutate(starwars, sex = factor(sex))
+sw
+
+# ---------------------------------------------------------------
+
+# Create a new variable
+
+sw <- mutate(starwars, homeworld_caps = str_to_upper(homeworld))
+sw
+
+# ---------------------------------------------------------------
+
+# Do multiple operations in order
+
+sw <- mutate(
+  starwars,
+  height_m = height / 100,
+  bmi = mass / height_m^2
+)
+sw
+```
+]
+
+---
+
+## Live Coding: Filter
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+starwars
+
+# ---------------------------------------------------------------
+
+# Retain only observations that meet a numerical criterion
+
+massive <- filter(starwars, mass > 100)
+massive
+
+smaller <- filter(starwars, mass <= 50)
+smaller
+
+# ---------------------------------------------------------------
+
+# Retain only observations that meet a character criterion
+
+humans <- filter(starwars, species == "Human")
+humans
+
+nonhumans <- filter(starwars, species != "Human")
+nonhumans
+
+# ---------------------------------------------------------------
+
+# Combine criteria with: logical AND (&), logical OR (|)
+
+big_and_tall <- filter(starwars, mass > 100 & height > 200)
+big_and_tall
+
+blue_or_red <- filter(starwars, eye_color == "blue" | eye_color == "red")
+blue_or_red
+```
+]
+
+---
+class: onecol
 
 ## Pipes and Pipelines
 
-pipes
+.left-column.pv3[
+```{r pipelines, echo=FALSE}
+# TODO: Replace this image with one of pipes
+include_graphics("../figs/explore.jpg")
+```
+
+]
+.right-column[
+A
+
+B
+
+C
+]
+
+---
+
+## Live Coding: Pipes
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+
+# ---------------------------------------------------------------
+
+```
+]
+
+---
+
+## Live Coding: Pipelines
+
+.scroll[
+```{r, eval=FALSE}
+# library(tidyverse)
+
+
+# ---------------------------------------------------------------
+
+```
+]
 
 ---
 
