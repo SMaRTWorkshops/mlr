@@ -1,6 +1,5 @@
 name: "Applied Machine Learning in R"
 output_dir: 'docs'
-exclude: [slides_*.Rmd]
 output:
   html_document:
     theme: cerulean
