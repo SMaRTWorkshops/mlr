@@ -5,7 +5,7 @@ author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Serie
 date: 'Day 1D &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
-    css: [../css/xaringan-themer.css, ../css/styles.css]
+    css: ["xaringan-themer.css", "styles.css"]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
@@ -123,17 +123,26 @@ model <- glmnet(x = outcome, y = predictor, ...)
 class: onecol
 ## A Problem
 
-Different packages also return **model predictions** in different formats. 
+Different packages also require different syntax to obtain **model predictions**.
 
 Some examples of these inconsistencies for various classification models:
 
 --
 
-.center[
-```{r, echo = FALSE, out.width = "40%"}
-include_graphics("../figs/package_predictions.png")
-```
-]
+```{r timeline, echo=FALSE} 
+timeline <- tribble( 
+  ~FUNCTION, ~PACKAGE, ~CODE, 
+  "glm", "stats", "predict(obj, type = 'response')", 
+  "lda", "MASS", "predict(obj)", 
+  "gbm", "gbm", "predict(obj, type = 'response', n.trees)", 
+  "mda", "mda", "predict(obj, type = 'posterior')", 
+  "rpart", "rpart", "predict(obj, type = 'prob')", 
+  "Weka", "RWeka", "predict(obj, type = 'probability')", 
+  "logitboost", "LogitBoost", "predict(obj, type = 'raw', nIter)", 
+  "pamr.train", "pamr", "pamr.predict(obj, type = 'posterior')" 
+) 
+kable(timeline, format = "html", table.attr = "style='width:80%;'") %>% kable_styling(font_size = 20, html_font = "courier new") 
+``` 
 
 ---
 class: twocol
@@ -201,69 +210,78 @@ Before fitting an ML model, we need to **specify the model details**.
 
 ---
 class: onecol
-## Example: OLS Regression
+## Example: Linear Regression
 
-To specify an OLS regression in {parsnip}, we specify<sup>1</sup>:
+.pull-left[
+To specify an OLS regression in {parsnip}, we designate:
+
 - The model type as `linear_reg()` 
+
+- The model mode as `"regression"`<sup>1</sup>.
+
 - The computational engine as `"lm"`.
+]
 
 .footnote[
-[1] We don't need to specify the model mode because `linear_reg()` already implies `mode = regression`. 
+[1] Technically this is redundant because `linear_reg()` already implies `mode = regression`; could be dropped. 
 ]
 
 --
 
+.pull-right[
 ```{r}
 library(tidymodels)
 tidymodels_prefer()
 
-ols_reg <- linear_reg() %>% # specify model type
-  set_engine("lm") # specify computational engine
-ols_reg
+# specify model details
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>% 
+  set_mode("regression")
+
 ```
+]
 
 ---
-class: onecol 
-## Example: Regularized Regression
+class: twocol 
+## The power of {parsnip}
 
-If we want to use regularization, we simply change the **computational engine**. 
+.pull-left[
+Building different models is very straightforward in {parsnip}.
 
---
+Let's try specifying a bunch of options: 
 
-```{r}
-# specify a GLMNET regression
-glmnet_reg <- linear_reg() %>% 
-  set_engine("glmnet") 
+- Linear regression (frequentist)
 
-glmnet_reg
-```
+- Linear regression (bayesian)
 
---
+- Logistic regresion (frequentist)
 
-Switching between OLS vs. regularization is now much simpler! 
-
----
-class: onecol 
-## Model Tuning
-
-Some algorithms (such as regularized regression) have *hyperparameters*<sup>1</sup>.
-
-We can change hyperparameters to find the value that optimizes model performance.
-
-However, might not know what the best value is just yet.
-
-This is the basis of **model tuning**, which can be included when specifying model type.
-
-.footnote[
-[1] e.g., `linear_reg` has a `penalty` hyperparameter that sets the degree of regularization. We will learn about hyperparameters and tuning in detail on Day 3, so no need to worry about the details yet! 
+- Logistic regression (bayesian)
 ]
 
 --
 
-.scroll25[
+.scroll70[
 ```{r}
-glmnet_tune <- linear_reg(penalty = tune()) %>% set_engine("glmnet")
-glmnet_tune
+reg_freq <-
+  linear_reg() %>%
+  set_mode("regression") %>%
+  set_engine("lm")
+
+reg_bayes <-
+  linear_reg() %>%
+  set_mode("regression") %>%
+  set_engine("stan")
+
+log_freq <-
+  logistic_reg() %>%
+  set_mode("classification") %>%
+  set_engine("glm")
+
+log_bayes <-
+  logistic_reg() %>%
+  set_mode("classification") %>%
+  set_engine("stan")
 ```
 ]
 
@@ -282,7 +300,7 @@ args(linear_reg)
 --
 
 ```{r}
-args(rand_forest)
+args(logistic_reg)
 ```
 
 
@@ -308,11 +326,11 @@ show_engines("linear_reg") %>% kable() %>% kable_styling(position = "left") %>% 
 
 .pull-right[
 ```{r, eval = FALSE}
-show_engines("rand_forest")
+show_engines("logistic_reg")
 ```
 
 ```{r, echo = FALSE}
-show_engines("rand_forest") %>% kable() %>% scroll_box(height = "300px")
+show_engines("logistic_reg") %>% kable() %>% scroll_box(height = "300px")
 ```
 ]
 
@@ -344,26 +362,73 @@ class: onecol
 
 Once we have specified model details, we can fit the model using the `fit()` function.
 
-Let's walk through an OLS example with some pseudocode. 
+--
+
+`fit()` allows us to always use formula notation: 
+
+ - `fit(y ~ x, data = training_data)`
+ 
+ - `fit(y ~ x1 + x2 + x3, data = training_data)`
+ 
+ - `fit(y ~ ., data = training_data)`
+ 
+--
+
+This is possible regardless of whether the underlying package function uses formula or `x/y` interface, making it much easier to switch between models.
+
+
+---
+class: onecol
+## 2. Fit Model
+
+Let's walk through fitting a linear regression example with some pseudocode! 
 
 --
 
 ```{r, eval = FALSE}
-ols_reg <- linear_reg() %>% 
-  set_engine("lm") 
-
-ols_reg_fit <- ols_reg %>% 
-  fit(outcome ~ predictor, data = my_data)
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
 ```
 
 --
 
-In {parsnip}, models can be flexibly fit with **formula notation** or **x/y notation**. 
+```{r, eval = FALSE}
+ols_reg_fit <- reg_freq %>% 
+  fit(outcome ~ predictor, data = training_data)
+```
+
+---
+class: twocol
+## 2. Fit Model
+
+We don't have to use formula notation. `x/y` notation is also available with `fit_xy()`: 
+
+--
 
 ```{r, eval = FALSE}
 ols_reg_fit <- ols_reg %>% 
-  fit_xy(x = select(my_data, predictor), y = select(my_data, outcome))
+  fit_xy(x = predictor, y = outcome)
 ```
+
+--
+
+What is the difference between `fit()` and `fit_xy()`? 
+
+- `fit_xy()` will pass your data **as is** to the underlying model function. 
+
+- It will not create dummy variables for categorical predictors before doing so. 
+
+- On the other hand, `fit()` will create dummy variables used with a model specification. 
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+We recommend preprocessing (e.g., creating dummy variables) before model fitting. 
+
+We'll learn how to do this with {recipes} tomorrow!
+]
+
 
 ---
 class: onecol 
@@ -376,10 +441,6 @@ Some useful functions:
 - `tidy()`: return model summary (coefficient values, std error, *p* value) in a tibble
 
 - `glance()`: return performance metrics from the training data (e.g., $r^2$)
-
-- `vip()`: variable importance plots (note: from a separate {vip} package)
-
-- `autoplot()`: plot tuning search results (relevant when working with hyperparameters)
 
 ---
 class: onecol
@@ -403,7 +464,9 @@ The `predict()` function will always return:
 
 - The same number of rows as the data being predicted 
 
-- Interpretable column names (e.g., `.pred`, `.pred_lower`, `.pred_upper`)
+- Interpretable column names (e.g., `.pred`, `.pred_lower`, `.pred_upper`) 
+
+- Consistent column names across all model types and engines 
 
 --
 
@@ -421,7 +484,7 @@ We reviewed **tidyverse** principles and datasets used in the course.
 
 We introduced the basic goals of **data splitting** with {rsample}.
 
-Finally, we fit and evaluated our first **prediction model** with {parsnip}.
+We learned how to fit and predict with {parsnip}.
 
 --
 
