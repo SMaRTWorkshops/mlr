@@ -205,7 +205,7 @@ Before fitting an ML model, we need to **specify the model details**.
 
 --
 
-<p style="padding-top:30px;">These details are specified *before* even referencing the data. 
+These details are specified *before* even referencing the data. 
 
 
 ---
