@@ -21,7 +21,7 @@ iframe.slide-deck {
 /* Set appearance of code chunks */
 
 .remark-code {
-  font-size: 24px;
+  font-size: 22px;
   border: 1px solid grey;
 }
 
@@ -47,6 +47,12 @@ iframe.slide-deck {
   color: grey;
 }
 
+/* Slide Footnote */
+
+.remark-slide .footnote {
+  bottom: 24px;
+}
+
 /* Custom class for emphasizing text as important */
 
 .imp {
@@ -61,9 +67,22 @@ iframe.slide-deck {
 /* scrollable codebox */
 
 .scroll .remark-code {
+  overflow-y: scroll;
+}
+
+.h-0l .remark-code {
   height: 460px;
   max-height: 460px;
-  overflow-y: scroll;
+}
+
+.h-1l .remark-code {
+  height: 420px;
+  max-height: 420px;
+}
+
+.h-2l .remark-code {
+  height: 380px;
+  max-height: 380px;
 }
 
 /* Scrollbox classes */

@@ -76,7 +76,7 @@ include_graphics("../figs/scrapbook.jpg")
 
 ## Live Coding: R Markdown
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # Optionally create an RStudio Project
 # - File > New Project...
@@ -114,7 +114,7 @@ include_graphics("../figs/scrapbook.jpg")
 
 ## Live Coding: R Refresher
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # Assignment
 
@@ -217,7 +217,7 @@ include_graphics("../figs/tidyverse.jpg")
 
 ## Live Coding: Tibbles
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
@@ -275,7 +275,7 @@ include_graphics("../figs/missing.jpg")
 
 ## Live Coding: Missing Values
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
@@ -345,7 +345,7 @@ include_graphics("../figs/tools.jpg")
 
 ## Live Coding: Select
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
@@ -404,7 +404,7 @@ sw
 
 ## Live Coding: Mutate
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
@@ -441,7 +441,7 @@ sw
 
 ## Live Coding: Filter
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
@@ -514,7 +514,7 @@ include_graphics("../figs/pipelines.jpg")
 
 ## Live Coding: Pipes
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
@@ -557,7 +557,7 @@ sw <-
 
 ## Live Coding: Pipelines
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
@@ -635,7 +635,7 @@ include_graphics("../figs/charts.jpg")
 
 ## Live Coding: ggplot
 
-.scroll[
+.scroll.h-0l[
 ```{r, eval=FALSE}
 # library(tidyverse)
 
