@@ -70,16 +70,19 @@ iframe.slide-deck {
   overflow-y: scroll;
 }
 
+/* Use with .scroll when 0 lines of text above code */
 .h-0l .remark-code {
   height: 460px;
   max-height: 460px;
 }
 
+/* Use with .scroll when 1 line of text above code */
 .h-1l .remark-code {
   height: 420px;
   max-height: 420px;
 }
 
+/* Use with .scroll when 2 lines of text above code  */
 .h-2l .remark-code {
   height: 380px;
   max-height: 380px;
