@@ -27,21 +27,21 @@ airsat <- readr::read_csv("https://rb.gy/ldq0y4")
 read_csv("./data/airsat.csv", show_col_types = FALSE)
 ```
 
----
+<!-- --- -->
 
-## spotify
+<!-- ## spotify -->
 
-Real data on the popularity and acoustic properties of 5,000 songs from Spotify <a href="https://www.kaggle.com/datasets/yasserh/song-popularity-dataset" class="badge badge-info">Info</a>
+<!-- Real data on the popularity and acoustic properties of 5,000 songs from Spotify <a href="https://www.kaggle.com/datasets/yasserh/song-popularity-dataset" class="badge badge-info">Info</a> -->
 
-```{r, eval=FALSE}
-# install.packages("readr")
-spotify <- readr::read_csv("https://rb.gy/gmzeyv")
-```
+<!-- ```{r, eval=FALSE} -->
+<!-- # install.packages("readr") -->
+<!-- spotify <- readr::read_csv("https://rb.gy/gmzeyv") -->
+<!-- ``` -->
 
-```{r, echo=FALSE, message=FALSE}
-# https://github.com/PittMethods/appliedml/raw/main/data/spotify.csv
-read_csv("./data/spotify.csv", show_col_types = FALSE)
-```
+<!-- ```{r, echo=FALSE, message=FALSE} -->
+<!-- # https://github.com/PittMethods/appliedml/raw/main/data/spotify.csv -->
+<!-- read_csv("./data/spotify.csv", show_col_types = FALSE) -->
+<!-- ``` -->
 
 ---
 
