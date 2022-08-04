@@ -291,7 +291,7 @@ tidymodels_prefer()
 
 # load titanic data
 titanic <- read_csv(
-  "https://rb.gy/hm7p84"
+  "tinyurl.com/titanic-pm"
 )
 ```
 ]

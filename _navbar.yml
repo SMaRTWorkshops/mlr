@@ -25,7 +25,7 @@ left:
        - text: "[2B] Feature engineering recipes"
          href: wip.html #day_2b.html
        - text: "[2C] Resampling"
-         href: wip.html #day_2c.html
+         href: day_2c.html
        - text: "[2D] Linear model example"
          href: wip.html #day_2d.html
   - text: "Day 3"
