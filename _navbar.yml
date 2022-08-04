@@ -20,9 +20,9 @@ left:
          href: day_1d.html
   - text: "Day 2"
     menu:
-       - text: "[2A] Workflows and recipes"
+       - text: "[2A] Workflows and metrics"
          href: wip.html #day_2a.html
-       - text: "[2B] Performance evaluation"
+       - text: "[2B] Feature engineering recipes"
          href: wip.html #day_2b.html
        - text: "[2C] Resampling"
          href: wip.html #day_2c.html
