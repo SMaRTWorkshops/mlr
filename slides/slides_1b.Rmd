@@ -54,7 +54,6 @@ class: onecol
 
 .left-column.pv3[
 ```{r communicating, echo=FALSE}
-# TODO: Replace this image with one of a scrapbook
 include_graphics("../figs/scrapbook.jpg")
 ```
 
@@ -312,8 +311,7 @@ heights3
 
 # We can also convert missing values while reading in data
 
-titanic <- read_csv("https://rb.gy/hm7p84", 
-                    na = c("NA", "*", -999))
+titanic <- read_csv("https://rb.gy/hm7p84", na = c("NA", "*", -999))
 titanic
 
 ```
@@ -328,7 +326,6 @@ class: onecol
 
 .left-column.pv3[
 ```{r dplyr, echo=FALSE}
-# TODO: Replace this image with one of tools
 include_graphics("../figs/tools.jpg")
 ```
 
@@ -491,7 +488,6 @@ class: onecol
 
 .left-column.pv3[
 ```{r pipelines, echo=FALSE}
-# TODO: Replace this image with one of pipes
 include_graphics("../figs/pipelines.jpg")
 ```
 
@@ -617,7 +613,6 @@ class: onecol
 
 .left-column.pv3[
 ```{r ggplot, echo=FALSE}
-# TODO: Replace this image with one of pipes
 include_graphics("../figs/charts.jpg")
 ```
 

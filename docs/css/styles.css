@@ -61,7 +61,8 @@ iframe.slide-deck {
 /* scrollable codebox */
 
 .scroll .remark-code {
-  height: 85vh;
+  height: 460px;
+  max-height: 460px;
   overflow-y: scroll;
 }
 
