@@ -446,8 +446,6 @@ cp_recipe <-
   titanic %>% 
   recipe(fare ~ .) %>% 
   step_mutate( #<<
-    pclass = factor(pclass), #<<
-    sex = factor(sex), #<<
     numfamily = sibsp + parch, #<<
     over70 = age > 70 #<<
   )
@@ -492,7 +490,6 @@ In `titanic`, the categorical variable `sex` takes on the value *male* or *femal
 
 .pull-left[
 ```{r}
-# Add a step to add one hot encoding
 oh_recipe <- 
   titanic %>% 
   recipe(fare ~ .) %>% 
@@ -501,7 +498,6 @@ oh_recipe <-
 ]
 .pull-right[
 ```{r}
-# Add a step to the recipe to create dummy codes for pclass and sex
 dc_recipe <- 
   titanic %>%
   recipe(fare ~ .) %>% 

@@ -1,0 +1,1181 @@
+---
+title: '<span style="font-size:48pt;">Workflows and Recipes</span>'
+subtitle: '🚣  🍳 🧑‍🍳'
+author: 'Applied Machine Learning in R<br />Pittsburgh Summer Methodology Series'
+date: 'Day 2A &emsp; &emsp; August 9, 2022'
+output:
+  xaringan::moon_reader:
+    css: [../css/xaringan-themer.css, ../css/styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  collapse = TRUE
+)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+library(xaringanthemer)
+```
+
+class: inverse, center, middle
+# Workflows
+
+---
+
+# Setup
+
+.scroll[
+```{r, eval=FALSE}
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+titanic <- read_csv("https://rb.gy/hm7p84")
+
+# Create train/test split, stratified by fare
+set.seed(2022)
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+
+# Set up model (linear regression using lm)
+lm_model <- 
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+```
+]
+
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+titanic <- read_csv("../data/titanic.csv")
+
+# Create initial split, stratified by fare
+set.seed(2022)
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+
+# Set up model
+lm_model <- 
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+```
+
+---
+
+## Create a simple workflow
+
+.onecol[
+-   A .imp[workflow] collects various specifications for your ML experiment
+
+  -   The **model** specifies the algorithm, mode, engine, and tuning steps
+  
+  -   The **preprocessor** specifies the formula and feature engineering steps
+]
+
+```{r}
+fare_wflow <-
+  workflow() %>% 
+  add_model(lm_model) %>% 
+  print()
+```
+
+---
+
+## Add a formula as a simple preprocessor
+
+.onecol[
+-   We can use a .imp[formula] as a simple preprocessor (without feature engineering)
+]
+
+```{r}
+fare_wflow <- 
+  fare_wflow %>% 
+  add_formula(fare ~ pclass + sex + age + sibsp + parch) %>% 
+  print()
+```
+
+.footnote[*Note.* We will soon learn to use "recipes" as more powerful preprocessors]
+
+---
+
+## Fit a model using a workflow
+
+.onecol[
+-   We can explicitly fit the model to the training data using `fit()`
+]
+
+.scroll.h-1l[
+```{r}
+fare_fit <- 
+  fit(fare_wflow, fare_train) %>% 
+  print()
+```
+]
+
+---
+
+## Make predictions using the fit model
+
+.onecol[
+-   We can explicitly make predictions in the testing set using `predict()`
+]
+
+.scroll.h-1l[
+```{r, message=FALSE}
+fare_pred <- 
+  predict(fare_fit, fare_test) %>% 
+  print()
+```
+]
+
+---
+
+## A helpful shortcut
+
+.onecol[
+-   Or we can do both automatically using `last_fit()` and the "split" object
+
+  -   This will fit to the (entire) training set and predict the testing set
+]
+
+.scroll.h-2l[
+```{r}
+fare_fit <- last_fit(fare_wflow, split = fare_split)
+fare_fit
+```
+]
+
+---
+
+## Collecting the predictions
+
+.onecol[
+-   We can gather the testing set predictions with `collect_predictions()`
+]
+
+.scroll.h-1l[
+```{r}
+fare_pred <- collect_predictions(fare_fit)
+fare_pred
+```
+
+]
+
+.footnote[*Note.* We will soon learn how to plot these predictions against the true values.]
+
+---
+
+## Collecting the performance metrics
+
+.onecol[
+-   We can gather the testing set predictions with `collect_metrics()`
+]
+
+.scroll.h-1l[
+```{r}
+fare_perf <- collect_metrics(fare_fit)
+fare_perf
+```
+
+]
+
+.footnote[*Note.* We will soon learn how to interpret these metrics and calculate alternatives.]
+
+---
+
+## Putting it all together
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Load packages and data
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+titanic <- read_csv("https://rb.gy/hm7p84")
+
+# Create data splits, stratified by fare
+set.seed(2022)
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+
+# Set up model (linear regression using lm)
+lm_model <- 
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+
+# Set up workflow with simple formula preprocessor
+fare_wflow <-
+  workflow() %>% 
+  add_model(lm_model) %>% 
+  add_formula(fare ~ pclass + sex + age + sibsp + parch)
+
+# Fit workflow and make predictions using data splits
+fare_fit <- last_fit(fare_wflow, split = fare_split)
+
+# Collect predictions and performance metrics
+fare_pred <- collect_predictions(fare_fit)
+fare_perf <- collect_metrics(fare_fit)
+```
+]
+
+---
+
+class: inverse, center, middle
+# Recipes
+
+---
+class: onecol
+
+## Feature Engineering
+.left-column.pv3[
+```{r engineer, echo=FALSE}
+include_graphics("../figs/engineer.jpg")
+```
+]
+.right-column.lh-copy[
+**Prepare the predictors for analysis**
+- *Extract* predictors
+- *Transform* predictors
+- *Re-encode* predictors
+- *Combine* predictors
+- *Reduce* predictor dimensionality
+- *Impute* missing predictor values
+- *Select* and drop predictors
+]
+
+---
+class: onecol
+
+## Motivation
+
+**Features** are descriptions of the data points that help to predict the outcomes
+
+  -   We may need to extract features from "raw" or "low-level" data (e.g., images)
+
+  -   We may need to address issues with missing data and feature distributions
+
+--
+
+.pt1[
+There are many potential ways to **encode** or "represent" the features/predictors
+
+  -   e.g., adding, dropping, transforming, and combining predictors<sup>1</sup>
+
+  -   predictor encoding can have a big .imp[impact on predictive performance]<sup>2</sup>
+
+  -   The optimal encoding depends on both the **algorithm** and the **relationships**
+]
+
+.footnote[
+[1] Some algorithms can learn their own, complex feature representations<br />
+[2] Some algorithms are more sensitive to feature encoding than others
+]
+
+---
+class: onecol
+## Examples of Feature Encodings
+.left-column.pv3[
+```{r, echo=FALSE}
+include_graphics("../figs/july.jpg")
+```
+
+]
+.right-column[
+**When an event or observation occurred**
+
+- The numeric year *(2021)*
+- The numeric month *(7)*
+- The numeric day of the month *(20)*
+- The numeric day of the year *(201)*
+- Days since a reference *(diagnosis +2)*
+- The day of the week *(Tuesday)*
+- The season of the year *(Summer)*
+- The type of day *(weekday)* 
+- The presence of a holiday *(FALSE)*
+
+]
+---
+class: onecol
+## Issues to Navigate in Feature Engineering
+
+.left-column.pv3[
+```{r, echo=FALSE}
+include_graphics("../figs/cones.jpg")
+```
+]
+.right-column.lh-copy[
+- Predictors with **non-normal** distributions
+- Predictors with vastly **different scales**
+- Predictors with extreme **outliers**
+- Predictors with **missing** or censored values
+- Predictors that are **correlated** with one another
+- Predictors that are **redundant** with one another
+- Predictors that have zero or **near-zero variance**
+- Predictors that are **uninformative** for a task
+- Predictors with **uncertainty** or unreliability
+]
+
+---
+
+class: onecol
+## Recipes for Feature Engineering
+
+.left-column.pv3[
+```{r, echo=FALSE}
+include_graphics("../figs/chef.jpg")
+```
+
+]
+
+.right-column[
+We will be learning the {recipes} package from {tidymodels}
+
+1. Initiate a recipe by declaring data and roles using `recipe()`
+
+2. Add one or more preprocessing steps using `step_*()`
+
+]
+
+---
+
+## Recipes for Feature Engineering
+
+.scroll.h-0l[
+```{r}
+fare_recipe <- 
+  titanic %>% 
+  recipe(formula = fare ~ pclass + sex + age + sibsp + parch)
+
+fare_recipe <- 
+  titanic %>% 
+  recipe(formula = fare ~ .) # . means all, so it includes "survived"
+
+fare_recipe <-
+  titanic %>% 
+  recipe() %>% 
+  update_role(fare, new_role = "outcome") %>% 
+  update_role(pclass:parch, new_role = "predictor")
+```
+]
+
+---
+class: onecol
+## Common Steps
+
+.pull-left[
+- **Adding predictors**
+  - Calculated predictors
+  - Categorical predictors
+  - Interaction Terms
+- **Transforming predictors**
+  - Centering and Scaling
+  - Addressing Non-normality
+  - Adding Non-linearity
+]
+.pull-right[
+
+- **Reducing predictors**
+  - Nero-Zero Variance
+  - Multicollinearity
+  - Dimensionality Reduction
+- **Advanced Steps**
+  - Feature Extraction
+  - Dealing with Missing Values
+  - Feature Selection
+]
+
+---
+class: inverse, center, middle
+# Adding predictors
+---
+class: onecol
+## Calculated predictors
+
+Some variables will need to be calculated from existing values and variables
+
+- You may choose to score an instrument from item-level data
+- You may choose to encode a predictor as the ratio of two values
+- You may choose to calculate sums, means, counts, proportions, etc.
+
+--
+
+<p style="padding-top:25px;">We will show you some basic steps for calculating variables within {recipes}</p>
+
+For more advanced/complex data wrangling, we recommend you read
+
+- <i>[R for Data Science: Visualize, Model, Transform, Tidy, and Import Data](https://r4ds.had.co.nz/)</i><br />by Wickham and Grolemund (book for purchase or online for free)
+
+---
+## Calculated predictors
+
+```{r}
+# Add a step to calculate new predictors from existing predictors
+cp_recipe <- 
+  titanic %>% 
+  recipe(fare ~ .) %>% 
+  step_mutate( #<<
+    numfamily = sibsp + parch, #<<
+    over70 = age > 70 #<<
+  )
+```
+
+---
+class: onecol
+## Categorical predictors
+
+Categorical predictors can be re-encoded into multiple binary (0 or 1) predictors
+
+In `titanic`, the categorical variable `sex` takes on the value *male* or *female*
+
+--
+
+.pull-left[
+.center.imp[One-Hot Encoding]
+
+| sex    | sex_female | sex_male |
+|:------ |:----------:|:-------: |
+| female | 1          | 0        |
+| male   | 0          | 1        |
+
+<p style="text-align:center;font-size:20px;">Simple and easy to interpret<br />Good for tree-based methods</p>
+]
+
+--
+
+.pull-right[
+.center.imp[Dummy Coding]
+
+| sex    | sex_male |
+|:------ |:-------: |
+| female | 0        |
+| male   | 1        |
+
+<p style="text-align:center;font-size:20px;">Efficient and avoids redundancy<br />Good for GLM-based methods</p>
+]
+
+---
+## Categorical predictors in R
+
+.pull-left[
+```{r}
+oh_recipe <- 
+  titanic %>% 
+  recipe(fare ~ .) %>% 
+  step_dummy(sex, one_hot = TRUE) #<<
+```
+]
+.pull-right[
+```{r}
+dc_recipe <- 
+  titanic %>%
+  recipe(fare ~ .) %>% 
+  step_dummy(sex, one_hot = FALSE) #<<
+```
+]
+.footnote[
+[1] As a shortcut, we could use `all_nominal_predictors()` instead of `pclass, sex`.
+[2] As another shortcut, I could omit `one_hot = FALSE` since that is the default option.
+]
+
+---
+class: onecol
+## Interaction Terms
+
+Interaction terms allow the meaning of one predictor to depend on other predictors
+
+In this way, interaction terms allow predictor "effects" to be **contingent** or **conditional**
+
+e.g., perhaps having parents or children on board the Titanic helps you predict survival... but the effects differs depending on whether the passenger is a man or a woman
+
+--
+
+<p style="padding-top:25px;">Interaction terms are literally <b>products</b> (i.e., multiplications) of two or more predictors</p>
+
+In order to include categorical variables in interaction terms, dummy code them first
+
+---
+## Interaction Terms in R
+
+```{r}
+# Add interaction terms using formula notation
+it_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_dummy(pclass, sex) %>% 
+  step_interact(~ age:parch + sibsp:starts_with("pclass_")) %>% #<<
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+.footnote[[1] The selector function `starts\_with()` allows you to easily capture all dummy codes for a variable.]
+
+---
+## Interaction Terms in R
+
+```{r,}
+# Bake the recipe and preview the updated training set
+it_train_baked <- bake(it_recipe, new_data = titanic_train)
+```
+
+```{r, echo=FALSE}
+it_train_baked %>% kable() %>% scroll_box(height = "300px")
+```
+
+---
+## Comprehension Check \#1
+.pull-left[
+### Question 1
+**What is the correct order in which to add the {recipe} functions to a pipeline?**
+
+a) recipe > prep > step(s) > bake
+
+b) recipe > step(s) > prep > bake
+
+c) prep > step > bake > recipe
+
+d) prep > recipe > step > bake
+]
+
+.pull-right[
+### Question 2
+**How many dummy codes are needed to encode a variable with five (5) categorical levels?**
+
+a) Six (6)
+
+b) Five (5)
+
+c) Four (4)
+
+d) One (1)
+]
+
+---
+class: inverse, center, middle
+# Transforming predictors
+---
+class: onecol
+## Normalizing
+
+Predictors with vastly different means and SDs can cause problems for some algorithms
+
+--
+
+![:emphasize](Centering) a predictor involves changing its mean to $0.0$
+
+- This is accomplished by subtracting the mean from every observation 
+
+--
+
+![:emphasize](Scaling) a predictor involves changing its standard deviation (and variance) to $1.0$
+
+- This is accomplished by dividing each observation by the standard deviation
+
+--
+
+![:emphasize](Normalizing) a predictor involves centering it and then scaling it
+
+- This is also sometimes called "standardizing" or $z$-scoring the predictor
+
+---
+## Centering Visualized
+
+```{r centering, echo=FALSE}
+x <- titanic$age
+p1 <- ggplot(tibble(x), aes(x)) + geom_density(na.rm = TRUE) +
+  annotate(
+    "label", 
+    x = mean(x, na.rm = TRUE), 
+    y = 0.005, 
+    label = glue::glue("M={round(mean(x, na.rm = TRUE), 1)}, SD={round(sd(x, na.rm = TRUE), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age", y = "density") +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+x_c <- x - mean(x, na.rm = TRUE)
+p2 <- ggplot(tibble(x_c), aes(x_c)) + geom_density(na.rm = TRUE) + 
+  annotate(
+    "label", 
+    x = mean(x_c, na.rm = TRUE), 
+    y = 0.005, 
+    label = glue::glue("M={round(mean(x_c, na.rm = TRUE), 1)}, SD={round(sd(x_c, na.rm = TRUE), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age_centered", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p2
+```
+
+.footnote[The mean is now 0 but the shape and SD of the distribution are unchanged (i.e., it has been shifted left).]
+
+---
+## Scaling Visualized
+
+```{r scaling, echo=FALSE}
+x_s <- x / sd(x, na.rm = TRUE)
+p3 <- ggplot(tibble(x_s), aes(x_s)) + geom_density(na.rm = TRUE) + 
+  annotate(
+    "label", 
+    x = mean(x_s, na.rm = TRUE), 
+    y = 0.075, 
+    label = glue::glue("M={round(mean(x_s, na.rm = TRUE), 1)}, SD={round(sd(x_s, na.rm = TRUE), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age_scaled", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p3
+```
+
+.footnote[The SD is now 1 and the mean is lower, but the shape of the distribution is unchanged.]
+
+---
+## Normalizing Visualized
+
+```{r normalizing, echo=FALSE}
+x_n <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+p4 <- ggplot(tibble(x_n), aes(x_n)) + geom_density(na.rm = TRUE) + 
+  annotate(
+    "label", 
+    x = mean(x_n, na.rm = TRUE), 
+    y = 0.075, 
+    label = glue::glue("M={round(mean(x_n, na.rm = TRUE), 1)}, SD={round(sd(x_n, na.rm = TRUE), 1)}"),
+    size = 5
+    ) +
+  labs(x = "age_normalized", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p4
+```
+
+.footnote[The mean is now 0 and the SD is now 1, but the shape of the distribution is unchanged.]
+
+---
+## Normalizing in R
+
+```{r}
+# Normalize the age variable using the training set mean and SD
+norm_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_normalize(age) %>% #<<  
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+--
+
+```{r}
+# Because of prep(), bake() uses the training set mean and SD²
+norm_test <- bake(norm_recipe, new_data = titanic_test)
+```
+
+
+.footnote[
+[1] We could also have used `step_center()` and/or `step_scale()` instead of `step_normalize()`.<br />
+[2] This is important to accurately estimating out-of-sample performance on truly novel data.
+]
+
+---
+class: onecol
+## Addressing Non-normality
+
+A ![:emphasize](skewed) distribution is one that is not symmetric (i.e., it has a "heavy tail")
+
+A ![:emphasize](bounded) distribution is one that cannot go beyond certain boundary values
+
+```{r skew, echo=FALSE, out.width='90%'}
+n <- 1e5
+skew_ex <- tibble(
+  x = c(
+    rbeta(n, 1, 8), 
+    rbeta(n, 9, 9),
+    rbeta(n, 8, 1)
+  ),
+  type = factor(
+    rep(c("Positively Skewed", "Symmetrical", "Negatively Skewed"), each = n),
+    levels = c("Positively Skewed", "Symmetrical", "Negatively Skewed")
+  )
+)
+ggplot(skew_ex, aes(x = x, fill = type, linetype = type)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40") + 
+  scale_fill_brewer(palette = "BrBG") +
+  scale_linetype_manual(values = c("solid", "dotted", "solid"), 
+                        guide = "legend") +
+  labs(x = NULL, fill = NULL, linetype = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+---
+class: onecol
+## Addressing Non-normality
+Specific transformations (e.g., log, inverse, logit) can help address specific issues
+
+The Box-Cox and Yeo-Johnson approaches employ **families of transformations**
+
+Box-Cox cannot be applied to negative or zero values, but ![:emphasize](Yeo-Johnson) can
+
+<br />
+
+$$x_{(yj)}^\star=\begin{cases}((x+1)^\lambda-1)/\lambda & \text{if } \lambda\ne0, x\ge0 \\
+\log(x+1) & \text{if } \lambda=0, x\ge0 \\
+-[(-x+1)^{2-\lambda}-1)]/(2-\lambda) & \text{if } \lambda\ne2, x<0 \\
+-\log(-x+1) & \text{if } \lambda=2, x<0
+\end{cases}$$
+
+---
+## Addressing Non-normality in R
+
+```{r}
+# Add step to apply the Yeo-Johnson transformation to fare
+yj_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_YeoJohnson(fare) %>% #<<  
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+.footnote[[1] If you would like to use specific transformations, use: `step_log()`, `step_inverse()`, `step_sqrt()`, etc.<br />[2] As with normalizing, use `prep()` to estimate `\\(\lambda\\)` from training set and use it when you `bake()` the test set.]
+
+---
+class: onecol
+## Addressing Non-normality in R
+
+Bake the recipe using the training data and then plot the transformed variable
+
+```{r yjfare, echo = FALSE}
+yj_train <- bake(yj_recipe, new_data = titanic_train)
+p1 <- 
+  ggplot(titanic_train, aes(x = fare)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40", 
+               fill = "#91bfdb", na.rm = TRUE) + 
+  labs(x = "Original fare", y = "density") +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p2 <- 
+  ggplot(yj_train, aes(x = fare)) + 
+  geom_density(size = 1.25, alpha = 0.4, color = "grey40", 
+               fill = "#91bfdb", na.rm = TRUE) + 
+  labs(x = "Transformed fare (Yeo-Johnson)", y = NULL) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+p1 | p2
+```
+
+---
+class: onecol
+## Adding Nonlinearity
+
+Many relationships between features and labels are non-linear in nature
+- *e.g., perhaps survival was lowest for young adults and higher for children and elders*
+
+<p style="padding-top:25px;">Successful prediction will require us to <b>model that nonlinearity</b> in such cases</p>
+
+--
+
+<p style="padding-top:25px;">Many algorithms can capture nonlinearity easily but others need our help</p>
+
+- For these algorithms, we can provide help through feature engineering
+
+- This typically means adding ![:emphasize](nonlinear expansions) of existing predictors<sup>1</sup>
+
+.footnote[[1] If you are familiar with polynomial (e.g., quadratic or cubic) regression, you already have relevant experience!]
+
+---
+## Adding Nonlinearity in R
+
+```{r}
+# Add step to add orthogonal polynomial basis functions
+nl_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_poly(age, degree = 2) %>% #<<  
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+.footnote[[1] Note that, by specifying `degree = 2`, we are creating a quadratic expansion; more flexibility can be added.<br />[2] Additional nonlinear expansions are also available: `step_ns()`, `step_bs()`, and `step_hyperbolic()`.]
+
+---
+class: onecol
+## Adding Nonlinearity in R
+
+Bake the recipe and plot the polynomial terms against one another (with vertical jitter).
+
+```{r poly, echo=FALSE}
+nl_train <- bake(nl_recipe, new_data = titanic_train)
+ggplot(nl_train, aes(x = age_poly_1, y = age_poly_2)) + 
+  geom_jitter(size = 3, alpha = 0.25, width = 0, height = 0.01) +
+  theme_xaringan(text_font_size = 16, title_font_size = 18) +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+
+---
+
+## Comprehension check \#2
+.pull-left[
+### Question 1
+**I want to transform two predictors to have the same variance. Which would NOT achieve this?**
+
+a) Centering both
+
+b) Scaling both
+
+c) Normalizing both
+
+d) Dividing each by its SD
+]
+
+.pull-right[
+### Question 2
+**Which of the following issues would the Yeo-Johnson transformation NOT help with?**
+
+a) Positive skew
+
+b) Negative skew
+
+c) Outlier values
+
+d) Categorical data
+]
+
+---
+class: inverse, center, middle
+# Reducing predictors
+---
+class: onecol
+## Zero and Near-Zero Variance Predictors
+![:emphasize](Zero variance predictors) take on only a single value in the sample
+
+- These predictors are **uninformative** and may lead to **modeling problems**
+
+--
+
+![:emphasize](Near-zero variance predictors) take on only a few unique values with low frequencies
+
+- These predictors can easily become zero-variance predictors during resampling
+
+--
+
+<p style="padding-top:25px;">For many algorithms, we want to <b>detect</b> and <b>remove</b> both types of predictors</p>
+
+(This may not be necessary for algorithms with built-in *predictor selection*)
+
+---
+## Zero and Nero-Zero Variance Predictors in R
+
+```{r}
+# Detect and remove zero-variance predictors
+zv_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_mutate(
+    species = "homo sapiens", # will have zero variance
+    over70 = age > 70 # will have near-zero variance
+  ) %>% 
+  step_zv(all_predictors()) %>% #<<
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+---
+## Zero and Nero-Zero Variance Predictors in R
+
+```{r}
+# Detect and remove near-zero-variance predictors
+nzv_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_mutate(
+    species = "homo sapiens",  # will have zero variance
+    over70 = age > 70 # will have near-zero variance
+  ) %>% 
+  step_nzv(all_predictors()) %>% #<<
+  prep(training = titanic_train, log_changes = TRUE)
+```
+
+---
+class: onecol
+## Multicollinearity
+
+![:emphasize](Highly correlated predictors) can lead to problems for some algorithms/procedures
+
+- The model has to randomly choose between the predictors, leading to **instability**
+- Model predictions may be fine, but model **interpretation** will often be obfuscated
+- The cutoff for "problematically high" correlations varies (e.g., 0.5 to 0.9 or higher)
+
+--
+
+Predictors that are ![:emphasize](linear combinations) of other predictors are similarly problematic
+
+- Occurs if a predictor variable can be predicted from the other predictor variables
+- This is why dummy coding is preferred to one-hot encoding for some algorithms
+
+--
+
+<p style="padding-top:25px;">For many algorithms, we want to <b>detect</b> and <b>remove</b> redundant predictors</p>
+
+(This may not be necessary for algorithms with *regularization* or *predictor selection*)
+
+---
+class: onecol
+## Multicollinearity in R
+
+```{r}
+# Add some predictors with high correlations and linear dependency
+mc_titanic <- titanic %>% mutate(
+  wisdom = 100 + 0.25 * age + rnorm(nrow(.)), # high corr
+  numfamily = sibsp + parch # linear combination
+)
+mc_train <- mc_titanic[index, ]
+```
+
+---
+class: onecol
+## Multicollinearity in R
+
+```{r, eval=FALSE}
+library(correlation)
+correlation(mc_train) %>% filter(abs(r) > 0.75)
+```
+
+```{r, echo=FALSE}
+library(correlation)
+correlation(mc_train) %>% filter(abs(r) > 0.75) %>% print_md()
+```
+
+---
+class: onecol
+## Multicollinearity in R
+
+```{r}
+# Detect and remove predictors that are highly correlated
+hc_recipe <- 
+  mc_titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>% #<<
+  prep(training = mc_train, log_changes = TRUE)
+```
+
+--
+
+.footnote[[1] If we want to consider correlations with categorical variables, we can add `step_dummy()` to the pipeline.<br />[2] We could have also lowered the threshold to 0.8 in order to drop the `family` variable here.]
+---
+class: onecol
+## Multicollinearity in R
+
+```{r}
+# Detect and remove predictors that are linear combinations
+lc_recipe <- 
+  mc_titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_lincomb(all_numeric_predictors()) %>%  #<<
+  prep(training = mc_train, log_changes = TRUE)
+```
+
+---
+class: onecol
+## Dealing with Missing Values
+
+There are several approaches to handling missing values in predictors
+
+- Some algorithms (e.g., tree-based techniques) handle missing data inherently
+
+- Another option is to drop predictors with any (or a lot of) missing values
+
+- Or we can .imp[impute] or estimate the missing values based on the other predictors
+
+--
+
+There are many techniques for imputing missing predictor values
+
+- Some are very simple (e.g., using the mean or median) and others more complex
+
+- We can also use a linear model or even machine learning to impute missing values
+
+- \{recipes\} provides functions: `step_impute_linear()`, `step_impute_knn()`, etc.
+
+.footnote[
+[1] Missing data tends to be more problematic for inferential modeling than predictive modeling.<br />
+[2] When imputing, it is a good idea to use cross-validation to capture the uncertainty in the imputations.]
+---
+
+class: inverse, center, middle
+# Advanced Topics
+---
+class: onecol
+## Feature Extraction
+Feature extraction involves generating features from "raw" data
+
+--
+
+For raw **text** data, natural language processing techniques can be used
+- *e.g., sentiment, word frequencies, word relationships, topic modeling, syntax*
+
+--
+
+For raw **image** and video data, computer vision techniques can be used
+- *e.g., edges, corners, blobs, ridges, objects, curvature, shape, motion, color*
+
+--
+
+For raw **audio** data, acoustic signal processing techniques can be used
+- *e.g., rhythm, stress, intonation, pitch, loudness, glottal flow, spectral density*
+
+--
+
+.footnote[[1] One of the strengths of deep learning is its ability to learn its own feature representations from raw data.]
+
+---
+class: onecol
+## Dimensionality Reduction
+
+Each feature/predictor included can be considered an additional "dimension"
+
+.imp[Dimensionality reduction] techniques try to find a smaller set of predictors to use
+
+- If successful, little information from the original set of predictors will be lost
+
+- Most techniques create new predictors as *functions of the original predictors*
+
+--
+
+**Principal Components Analysis** (PCA) is a commonly used technique
+
+- The new predictors (PCs) are *linear combinations* of the original predictors
+
+- The PCs are *uncorrelated* with one another, thus addressing multicollinearity
+
+- PCs are extracted until a target amount of variability is explained (e.g., 75%)
+
+.footnote[[1] Predictors should be normalized (i.e., centered and scaled) before PCA is used.<br />[2] PCA is linear and unsupervised but there are nonlinear and supervised techniques.]
+
+
+---
+class: onecol
+## Feature Selection
+
+.imp[Feature selection] is focused on removing uninformative or redundant predictors
+
+  -   Models with fewer predictors may be more interpretable, accurate, and efficient
+
+--
+
+.b[Wrapper methods] compare models with different combinations of predictors
+
+  -   These are algorithms that search for combinations that optimize performance
+  
+  -   These methods tend to perform well but can be computationally expensive
+
+--
+
+.b[Filter methods] evaluate predictors outside of the context of the predictive model<sup>1</sup>
+
+- Only predictors that seem informative, relevant, or unique will be retained
+
+- These methods don't perform as well but are computationally efficient
+
+.footnote[[1] Note that we have already learned some basic filter methods (e.g., `step_corr()` and `step_nzv()`).]
+
+---
+
+```{r}
+fare_recipe <- 
+  recipe(titanic) %>% 
+  update_role(fare, new_role = "outcome") %>% 
+  update_role(pclass:parch, new_role = "predictor") %>% 
+  step_rm(survived) %>% 
+  step_naomit(fare) %>% 
+  step_mutate(
+    pclass = factor(pclass, levels = c(1, 2, 3)),
+    sex = factor(sex, levels = c("female", "male"))
+  ) %>% 
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(pclass, sex) %>%
+  step_impute_linear(age) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors())
+
+fare_wflow <-
+  workflow() %>% 
+  add_model(lm_model) %>% 
+  add_recipe(fare_recipe)
+
+fare_fit <- 
+  last_fit(fare_wflow, fare_split)
+```
+
+
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 120
+)
+```

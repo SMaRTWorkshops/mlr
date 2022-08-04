@@ -1,0 +1,629 @@
+---
+title: '<span style="font-size:48pt;">Cross-Validation: Advanced</span>'
+subtitle: '📈  💻  🤖️' 
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Day 2C &emsp; &emsp; August 9, 2022'
+output:
+  xaringan::moon_reader:
+    css: ["xaringan-themer.css", "styles.css"]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+---
+class: onecol
+## Motivation
+
+Yesterday, we introduced the rationale for **holdout cross-validation**. 
+
+--
+
+```{r, echo=FALSE, out.width = "70%"}
+include_graphics("../figs/holdout.png")
+```
+
+--
+
+This is a good first step! 
+
+However, we often want model performance *before getting to the final test set*.
+
+---
+class: onecol
+## Plan for Today
+
+Today's focus is on advanced cross-validation methods, including: 
+
+- *k*-fold cross-validation
+
+- repeated *k*-fold cross-validation 
+
+- leave-one-out cross-validation (LOOCV)
+
+- nested cross-validation
+
+--
+
+All CV methods will be performed with {rsample} and {tune}.
+
+```{r, echo = FALSE, out.width="30%"}
+include_graphics('../figs/rsample_tune.png')
+```
+
+---
+class: inverse, center, middle
+# k-fold Cross-Validation
+
+---
+## k-fold Cross-Validation
+<br>
+```{r, echo=FALSE, out.width = "95%"}
+include_graphics("../figs/kfold1.png")
+```
+
+---
+count: false
+## k-fold Cross-Validation
+.center[
+```{r, echo=FALSE, out.width="70%"}
+include_graphics("../figs/kfold2.png")
+```
+]
+
+---
+class: onecol
+## k-fold Cross-Validation
+
+The final resampling performance estimate is averaged across each *k* fold.
+
+k-fold cross-validation can also be .imp[stratified] to keep the sets relatively similar.
+
+k-fold cross-validation can also be .imp[repeated] to avoid problems with any single split.
+
+--
+
+<p style="padding-top:30px;">How many folds should be used in cross-validation?
+
+Larger values of *k* result in resampling estimates with **lower bias** but **higher variance**. 
+
+Smaller values of *k* result in estimates with **higher bias** but **lower variance**.
+
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+**Advice**: In practice, values of *k* = 5 or *k* = 10 are most common.
+]
+
+---
+class: onecol
+## k-fold Cross-Validation in R 
+
+We will use the `vfold_cv()` function from {rsample}<sup>1</sup>.
+
+Argument | Description
+:------- | :----------
+data | The data frame
+v | The number of partitions to create (default = 10)
+repeats | The number of times to repeat the v-fold partitioning (default = 1)
+strata | Variable to conduct stratified sampling (default = NULL)
+
+
+.footnote[
+[1] Note that {tidymodels} refers to k-fold as v-fold CV. These refer to the same resampling process!
+]
+
+---
+class: onecol
+## k-fold Cross-Validation in R
+
+Let's perform 10-fold cross-validation repeated 3 times using the `titanic` dataset.
+
+Our goal will be to predict each passenger's fare (how much they paid).
+
+--
+
+.scroll40[
+```{r}
+library(tidymodels)
+titanic <- read.csv("https://rb.gy/hm7p84")
+
+set.seed(2022)
+
+fare_folds <- vfold_cv(titanic, v = 10, repeats = 3, strata = fare)
+fare_folds
+```
+]
+
+--
+
+The `splits` column contains information on how to split the data. 
+
+`[297/33]` indicates N = 297 in the analysis set and N = 33 in that particular k-fold.  
+
+---
+class: onecol
+## k-fold Cross-Validation in R
+
+We can extract individual resampled data folds with `analysis()` and `assessment()`.
+
+--
+
+.scroll30[
+```{r}
+fare_folds$splits[[1]] %>% analysis()
+```
+]
+
+--
+
+.scroll30[
+```{r}
+fare_folds$splits[[1]] %>% assessment()
+```
+]
+
+---
+class: onecol
+## k-fold Cross-Validation in R
+
+However, we generally don't need to extract the individual folds.
+
+{tune} has built-in functions that can use a `vfold_cv` object directly:
+
+- `fit_resamples()` estimates model performance across resamples **with no tuning**.
+
+- `tune_grid()` estimates model performance across resamples **with tuning**.
+
+--
+
+<p style="padding-top:30px;"> Most ML algorithms include .imp[hyperparameters] to be tuned<sup>1</sup> and require `tune_grid()`. 
+
+But we can use `fit_resamples()` for 'traditional' statistical models like OLS regression. 
+
+Luckily, these functions are **nearly identical** so learning one will transfer to the other! 
+
+.footnote[
+[1] We will learn our first ML algorithms and tuning tomorrow!
+]
+
+---
+class: onecol
+## Resampling Options 
+
+There are three possible interfaces to `fit_resamples()` and `tune_grid()`:
+
+```{r, eval = FALSE}
+model_spec %>% fit_resamples(formula, resamples, ...)
+
+model_spec %>% fit_resamples(recipe, resamples, ...)
+
+workflow %>% fit_resamples(resamples, ...)
+```
+
+--
+
+There are also a number of optional arguments, including:
+
+- `metrics`: performance statistics to compute<sup>1</sup>
+
+- `control`: a list created by `control_resamples()` or `control_grid()` with various resampling options
+
+.footnote[
+[1] Regression default metrics are RMSE and $R^2$. Classification default metrics are AUROC and overall accuracy.
+]
+
+---
+class: onecol
+## Resampling Options 
+
+The `control` argument to `fit_resamples()` can be configured by `control_resamples()`<sup>1</sup>:
+
+Argument | Description
+:------- | :----------
+verbose | Whether to print progress (default = FALSE) 
+save_pred | Whether to save out-of-sample predictions per *k* fold (default = FALSE)
+event_level | For classification only; specify which level is considered the "event" (`"first"` or `"second"`)
+extract | An optional function to retain model objects
+
+.footnote[
+[1] The same list can be created for `tune_grid()` by `control_grid()`.
+]
+
+---
+class: onecol
+## Fit a Resampled Model in R
+
+Let's use `titanic_folds` to fit a resampled model in R predicting `fare`. 
+
+First, we'll make a preprocessing {recipe} (without prepping or baking).
+
+```{r}
+fare_recipe <- 
+  titanic %>% 
+  recipe(fare ~ .) %>% 
+  step_rm(survived) %>%
+  step_normalize(all_numeric_predictors()) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_corr(all_predictors()) %>% 
+  step_lincomb(all_predictors())
+```
+
+---
+class: onecol
+## Fit a Resampled Model in R
+
+Second, we'll specify a linear regression model.
+
+```{r}
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
+```
+
+--
+
+Third, we'll create a {workflow}.
+
+```{r}
+fare_workflow <- 
+  workflow() %>% 
+  add_recipe(fare_recipe) %>% 
+  add_model(reg_freq)
+```
+
+---
+class: onecol
+## Fit a Resampled Model in R
+
+Finally, we can fit a resampled model with our {workflow} and `fare_folds`.
+
+```{r}
+# configure sampling to save predictions from each k-fold
+keep_pred <- control_resamples(save_pred = TRUE)
+
+fare_results <- 
+  fare_workflow %>% 
+  fit_resamples(resamples = fare_folds, control = keep_pred)
+```
+
+---
+class: onecol
+## Evaluate a Resampled Model in R
+
+We can evaluate this model with `collect_metrics()`:
+
+```{r}
+collect_metrics(fare_results)
+```
+
+---
+class: onecol
+## Evaluate a Resampled Model in R
+
+We can also plot **predicted** against **observed** values to get a better understanding of model performance:
+
+
+```{r, echo = FALSE, fig.height=2, fig.width=6}
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18,
+                 css_file = "../css/xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+
+fare_predictions <- collect_predictions(fare_results)
+
+fare_predictions %>%
+  ggplot(aes(x = fare, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'red') + 
+  coord_obs_pred() + 
+  ylab("Predicted") + 
+  xlab("Observed") + 
+  config
+```
+
+---
+class: onecol
+## Leave-One-Out Cross-Validation
+
+The most extreme variation of k-fold CV is when $k = N-1$.
+
+This is called .imp[leave-one-out cross-validation].
+
+A model is trained on $N-1$ rows and used to predict a **single held-out observation**.
+
+--
+
+<p style="padding-top:30px;"> The {rsample} package has a `loo_cv()` function that performs LOOCV.
+
+However, these objects are not well integrated into the broader tidymodels framework.
+
+LOOCV is **computationally expensive** and may have poor statistical properties.
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+LOOCV is not generally recommended. It's usually better to stick with k-fold CV.
+]
+
+---
+## Comprehension Check \#1
+
+.pull-left[
+### Question 1
+**Which is the best data splitting method for ML?**
+
+a) A single training and a single test set
+
+b) *k*-fold cross-validation
+
+c) Repeated *k*-fold cross-validation
+
+d) Leave-one-out cross-validation
+]
+
+.pull-right[
+### Question 2
+**What is stratified *k*-fold cross-validation?**
+
+a) Each *k* fold contains 1/2 of the data
+
+b) Some data are withheld from cross-validation
+
+c) Each *k* fold has a similar distribution of data
+
+d) Multiple iterations of *k* folds are created
+]
+
+---
+class: twocol
+## Should we use a separate test set?
+
+--
+
+.pull-left[
+k-fold CV is often used on a .imp[full data set]. 
+
+**Pro**: All data used for training and testing.
+
+**Con**: No true test set the model hasn't seen. 
+]
+
+---
+class: twocol
+count: false
+## Should we use a separate test set?
+.pull-left[
+k-fold CV is often used on a .imp[full data set]. 
+
+**Pro**: All data used for training and testing.
+
+**Con**: No true test set the model hasn't seen. 
+
+```{r, echo = FALSE, out.width = "85%"}
+include_graphics("../figs/kfold3.png")
+```
+]
+
+--
+.pull-right[
+Others advocate for a .imp[held-out test set].
+
+**Pro**: Final models are tested on new data.  
+
+**Con**: Decision-making from a single test set.
+]
+
+---
+class: twocol
+count: false
+## Should we use a separate test set?
+
+.pull-left[
+k-fold CV is often used on a .imp[full data set]. 
+
+**Pro**: All data used for training and testing.
+
+**Con**: No true test set the model hasn't seen. 
+
+```{r, echo = FALSE, out.width = "85%"}
+include_graphics("../figs/kfold3.png")
+```
+]
+
+.pull-right[
+Others advocate for a .imp[held-out test set].
+
+**Pro**: Final models are tested on new data.  
+
+**Con**: Decision-making from a single test set.
+
+```{r, echo = FALSE, out.width = "110%"}
+include_graphics("../figs/kfold4.png")
+```
+]
+
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+**Advice**: A good default is to use 10-fold CV, repeated 3 times, on the entire dataset. 
+]
+
+---
+class: onecol
+## Should we use a separate test set? 
+
+<br>
+
+####...all that being said, there *is* an option that allows us to do both!
+
+
+---
+class: inverse, center, middle
+# Nested Cross-Validation
+
+---
+class: onecol
+## Nested Cross-Validation 
+
+Nested cross-validation adds an additional layer of resampling. 
+
+This separates the model **tuning**<sup>1</sup> from the model evaluation process.
+
+It also frees us from having to rely on a **single** test set to evaluate our model.
+
+.footnote[
+[1] We'll discuss model tuning in detail tomorrow!
+]
+
+--
+
+<p style="padding-top:30px;">There are **two layers** of resampling in nested CV.
+
+The .imp[outer loop] splits the full data set into not-testing and testing sets.
+
+The .imp[inner loop] splits the training data set into model training and validation sets.
+
+---
+class: onecol
+## Nested Cross-Validation
+
+For every split of the outer loop, a **full inner resampling split** is conducted. 
+
+Let's say we use 10-fold CV on the **outer loop** and 5-fold CV on the **inner loop**.
+
+This would be a total of .imp[500 models] being fit! 
+
+--
+
+<p style="padding-top:30px;">In this case, **hyperparameter tuning** is performed within each inner loop.
+
+A model is then **fit to each outer split** with the best parameter from that resample.
+
+Results are averaged across all outer splits for an **unbiased estimate of the model**.
+
+---
+## Nested Cross-Validation
+
+.center[
+```{r, echo = FALSE, out.width = "60%"}
+include_graphics("../figs/nestedcv_confused.png")
+```
+]
+
+---
+## Nested Cross-Validation
+
+```{r xaringanExtra-freezeframe, echo = FALSE, out.width = "90%"}
+xaringanExtra::use_freezeframe(trigger = "click", responsive = FALSE)
+include_graphics("../figs/nested_cv.gif")
+```
+
+---
+class: onecol
+## Nested CV in R: The good news!
+
+The `nested_cv()` function in {rsample} splits data for nested cross-validation<sup>1</sup>.
+
+.footnote[
+[1] This is an amazing addition to {tidymodels} beyond {caret}! 
+]
+
+--
+<br> 
+
+Argument | Description
+:------- | :----------
+data | The data frame
+outside | The outside resampling specification (can be an existing resampled object)
+inside | The inside resampling specification (e.g., `vfold_cv()`)
+
+---
+class: onecol
+## Nested CV in R: The good news!
+
+Let's run nested CV with 10 outer folds and 5 inner folds in the `titanic` dataset.
+
+--
+
+.scroll40[
+```{r}
+titanic_folds_nested <- nested_cv(titanic, 
+                                 outside = vfold_cv(v = 10),
+                                 inside = vfold_cv(v = 5))
+titanic_folds_nested
+```
+]
+
+---
+class: onecol
+## Nested CV in R: The less-good news :/
+
+Unfortunately, nested cross-validation is not yet fully supported in tidymodels. 
+
+`fit_resamples()` and `tune_grid()` do not work for nested cross-validation<sup>1</sup>.
+
+If you want to use nested cross-validation, you will need to write your own functions.
+
+.footnote[
+[1] Though they work great for regular k-fold CV!
+]
+
+--
+
+<p style="padding-top:30px;"> Example code can be found on the [tidymodels website](https://www.tidymodels.org/learn/work/nested-resampling/).
+
+This is a bit complicated, so **we will stick to using repeated k-fold CV** for this course. 
+
+But if you are ready to for a challenge, we highly encourage looking into nested CV!
+
+---
+class: inverse, center, middle
+# Time for a Break!
+

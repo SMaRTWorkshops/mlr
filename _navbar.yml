@@ -15,9 +15,9 @@ left:
        - text: "[1B] Tidyverse primer and data"
          href: day_1b.html
        - text: "[1C] Cross-validation"
-         href: wip.html #day_1c.html
+         href: day_1c.html
        - text: "[1D] Fitting models"
-         href: wip.html #day_1d.html
+         href: day_1d.html
   - text: "Day 2"
     menu:
        - text: "[2A] Workflows and recipes"

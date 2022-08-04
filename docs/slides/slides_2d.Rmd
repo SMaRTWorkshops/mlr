@@ -1,0 +1,392 @@
+---
+title: '<span style="font-size:48pt;">Building a Model: Start to Finish</span>'
+subtitle: '📈  💻  🤖️' 
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Day 2D &emsp; &emsp; August 9, 2022'
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+---
+class: onecol
+## Plan for Today
+
+Thus far, we have learned {rsample}, {workflows}, {recipes}, {yardstick}, and {parsnip}.
+
+This lecture aims to tie it all together and .imp[build a model from start to finish].
+
+--
+
+<p style="padding-top:30px;">We will **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+
+This will **ease the transition to ML** and highlight its similarities with classical statistics.
+
+Finally, we will **foreshadow future topics** (e.g., regularized linear models and tuning).
+
+---
+class: onecol
+## Applied Example
+
+Let's put what we learned into practice in R! 
+
+Let's train a regression model on the `spotify` data to predict song popularity. 
+
+--
+
+<p style="padding-top:30px;">We will: 
+
+- Load the data
+
+- Create a recipe for feature engineering
+
+- Train a regression model to predict each passenger's fare (how much they paid).
+
+- Evaluate the model using 10-fold cross-validation 
+
+---
+class: onecol
+## Load Data
+
+```{r, eval = FALSE}
+library(tidymodels)
+
+# load and look at spotify data
+spotify <- read_csv("https://rb.gy/gmzeyv")
+head(spotify, 5)
+```
+
+```{r, echo = FALSE}
+library(tidymodels)
+
+# load spotify data
+spotify <- read_csv("https://rb.gy/gmzeyv")
+spotify <- spotify %>% 
+  mutate(key = factor(key), mode = factor(mode))
+
+# look at the data
+head(spotify, 5) %>% kable() %>% scroll_box(height = "280px")
+```
+
+---
+class: onecol
+## Feature Engineering with {recipes}
+
+```{r}
+# Create a preprocessing recipe (don't prep or bake)
+popular_recipe <-
+  spotify %>%
+  recipe(popularity ~ .) %>% 
+  step_rm(title, key) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors())
+```
+
+
+---
+class: onecol
+## Specify Model with {parsnip}
+
+```{r}
+# Specify Model
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
+
+reg_freq
+```
+
+---
+class: onecol
+## Build Workflow with {workflows}
+
+.scroll70[
+```{r}
+popular_workflow <- 
+  workflow() %>%
+  add_model(reg_freq) %>%
+  add_recipe(popular_recipe)
+
+popular_workflow
+```
+]
+
+---
+class: onecol
+## Fit Model with Resampling
+
+```{r}
+set.seed(2022)
+
+# configure resampling
+popular_folds <- vfold_cv(data = spotify, 
+                          v = 10, 
+                          repeats = 3,
+                          strata = 'popularity')
+```
+
+---
+class: onecol
+## Fit Model with Resampling
+
+Because the goal of `fit_resamples()` is to .imp[measure model importance], the models trained are not saved or used later by default.
+
+To save model coefficients from each resample, we need to .imp[extract] the underlying model object (i.e., the engine fit). 
+
+This can be done with a custom function, and specified in `control_resamples()`: 
+
+--
+
+```{r}
+get_lm_coefs <- function(x) {
+  x %>% 
+    # get the lm model object
+    extract_fit_engine() %>% 
+    # transform its format
+    tidy()
+}
+
+# save predictions from resampling
+keep_pred <- control_resamples(save_pred = TRUE, extract = get_lm_coefs)
+```
+
+---
+class: onecol
+## Fit Model with Resampling
+
+Now that we have set up the workflow and configured resampling, we are ready to fit the model! 
+
+--
+
+```{r}
+# train the model using the recipe, data, and method 
+popular_results <- popular_workflow %>%
+  fit_resamples(resamples = popular_folds, control = keep_pred)
+```
+
+---
+class: twocol
+## Fit Model with Resampling
+
+.pull-left[
+```{r, echo = FALSE}
+include_graphics("../figs/kfold5.png")
+```
+]
+
+.pull-right[
+Note: we are resampling the **entire data set**.
+
+This means that we only have training and test sets (N = 30). 
+
+We have no separate validation sets. 
+
+Model evaluation will occur for each cross-validated test set. 
+
+We will average performance metrics, and use these to evaluate the model. 
+] 
+
+---
+class: inverse, center, middle 
+# Model Evaluation 
+
+---
+class: onecol
+## Cross-Validated Test Performance
+
+The object created by `fit_resamples()` will contain lots of information.
+
+We can view the predictions made in each cross-validated test set with `collect_predictions()`.
+
+--
+
+```{r, eval = FALSE}
+collect_predictions(popular_results)
+```
+
+```{r, echo = FALSE}
+collect_predictions(popular_results) %>% kable() %>% scroll_box(height = "250px")
+```
+
+---
+class: onecol
+## Cross-Validated Test Performance 
+
+We can plot these predictions against the observed values.
+
+```{r, eval = FALSE}
+popular_predictions <- collect_predictions(popular_results)
+
+popular_predictions %>%
+  ggplot(aes(x = popularity, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'red')
+```
+
+```{r, echo = FALSE}
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18,
+                 css_file = "xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+
+popular_predictions <- collect_predictions(popular_results)
+
+popular_predictions %>%
+  ggplot(aes(x = popularity, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'red') + 
+  coord_obs_pred() + 
+  ylab("Predicted") + 
+  xlab("Observed") + 
+  config
+```
+
+---
+class: onecol
+## Cross-Validated Test Performance
+
+We can view a summary of training set performance with `collect_metrics()`.
+
+These results include the mean and standard error of each metric across resamples<sup>1</sup>.
+
+.footnote[
+[1] To see metrics for each fold, include `summarize = FALSE` in `collect_metrics()`.
+]
+
+--
+
+```{r, eval = FALSE}
+collect_metrics(popular_results)
+```
+
+
+```{r, echo = FALSE}
+collect_metrics(popular_results) %>% kable()
+```
+
+
+---
+class: onecol
+## Model Interpretation 
+
+Predictive **accuracy** is emphasized in ML over interpretability and inference
+
+- The main goal of most applied ML studies is to **quantify performance**
+
+--
+
+However, some algorithms can provide insight into their decision-making
+
+- As a model usually used for inference, linear regression has strong interpretability
+
+- We can examine the model coefficients (intercept and slopes)
+
+The `get_lm_coefs()` function we wrote earlier will allow us to do this!
+
+---
+class: onecol
+## Model Interpretation
+
+Extracting the coefficients we need is a bit messy.
+
+Let's take a look at the output from our resampled model `popular_results`:
+
+--
+
+```{r, eval = FALSE}
+popular_results
+```
+
+```{r, echo = FALSE}
+popular_results %>% kable() %g it>% scroll_box(height = "300px")
+```
+
+---
+class: onecol
+## Variable Importance
+
+We can also plot variable importance using the {vip} package.
+
+```{r, out.width = "50%"}
+#library(vip)
+#vip(fare_fit)
+```
+
+.footnote[
+Other algorithms have different ways to estimate variable importance, but `vip()` will take care of it.
+]
+
+
+---
+class: onecol
+## A Final Model
+
+Importantly, the goal of `fit_resamples()` is to .imp[measure model importance].
+
+The models trained in `fit_resamples()` are not saved or used later. 
+
+It also doesn't perform hyperparameter tuning (which we will learn about tomorrow).
+
+--
+
+<p style="padding-top:30px;"> We need a **final model** for interpretation and prediction on new data. 
+
+For OLS regression, so we can go back and fit a model on the entire data set.
+
+For tuning hyperparameters, we first use `tune_grid()` and then fit a final model.
+
+---
+class: inverse, center, middle
+# End of Day 2 
+
