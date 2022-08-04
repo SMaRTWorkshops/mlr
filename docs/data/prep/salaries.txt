@@ -1,2 +1,0 @@
-https://www.kaggle.com/datasets/tysonpo/university-salaries
-https://www.uvm.edu/oir/faculty-and-staff
