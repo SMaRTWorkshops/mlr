@@ -5,7 +5,7 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2D &emsp; &emsp; August 9, 2022'
 output:
   xaringan::moon_reader:
-    css: [../css/xaringan-themer.css, ../css/styles.css]
+    css: [xaringan-themer.css, styles.css]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
@@ -75,7 +75,7 @@ class: onecol
 
 Let's put what we learned into practice in R! 
 
-Let's train a regression model on the `titanic` data. 
+Let's train a regression model on the `spotify` data to predict song popularity. 
 
 --
 
@@ -96,21 +96,21 @@ class: onecol
 ```{r, eval = FALSE}
 library(tidymodels)
 
-# load titanic data
-titanic <- read_csv("../data/titanic.csv")
-
-# look at the data
-head(titanic, 5)
+# load and look at spotify data
+spotify <- read_csv("https://rb.gy/gmzeyv")
+head(spotify, 5)
 ```
 
 ```{r, echo = FALSE}
 library(tidymodels)
 
-# load titanic data
-titanic <- read_csv("../data/titanic.csv")
+# load spotify data
+spotify <- read_csv("https://rb.gy/gmzeyv")
+spotify <- spotify %>% 
+  mutate(key = factor(key), mode = factor(mode))
 
 # look at the data
-head(titanic, 5) %>% kable()
+head(spotify, 5) %>% kable() %>% scroll_box(height = "280px")
 ```
 
 ---
@@ -119,10 +119,10 @@ class: onecol
 
 ```{r}
 # Create a preprocessing recipe (don't prep or bake)
-fare_recipe <-
-  fare_train %>%
-  recipe(fare ~ .) %>% 
-  step_rm(survived) %>%
+popular_recipe <-
+  spotify %>%
+  recipe(popularity ~ .) %>% 
+  step_rm(title, key) %>%
   step_normalize(all_numeric_predictors()) %>%
   step_dummy(all_nominal_predictors()) %>%
   step_nzv(all_predictors()) %>%
@@ -137,10 +137,11 @@ class: onecol
 
 ```{r}
 # Specify Model
-ols_reg <- linear_reg() %>% 
-  set_engine("lm")
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
 
-ols_reg
+reg_freq
 ```
 
 ---
@@ -149,12 +150,12 @@ class: onecol
 
 .scroll70[
 ```{r}
-fare_workflow <- 
+popular_workflow <- 
   workflow() %>%
-  add_model(ols_reg) %>%
-  add_recipe(fare_recipe)
+  add_model(reg_freq) %>%
+  add_recipe(popular_recipe)
 
-fare_workflow
+popular_workflow
 ```
 ]
 
@@ -166,21 +167,49 @@ class: onecol
 set.seed(2022)
 
 # configure resampling
-fare_folds <- vfold_cv(data = fare_train, 
-                       v = 10, 
-                       repeats = 3,
-                       strata = 'fare')
+popular_folds <- vfold_cv(data = spotify, 
+                          v = 10, 
+                          repeats = 3,
+                          strata = 'popularity')
+```
+
+---
+class: onecol
+## Fit Model with Resampling
+
+Because the goal of `fit_resamples()` is to .imp[measure model importance], the models trained are not saved or used later by default.
+
+To save model coefficients from each resample, we need to .imp[extract] the underlying model object (i.e., the engine fit). 
+
+This can be done with a custom function, and specified in `control_resamples()`: 
+
+--
+
+```{r}
+get_lm_coefs <- function(x) {
+  x %>% 
+    # get the lm model object
+    extract_fit_engine() %>% 
+    # transform its format
+    tidy()
+}
 
 # save predictions from resampling
 keep_pred <- control_resamples(save_pred = TRUE, extract = get_lm_coefs)
 ```
 
+---
+class: onecol
+## Fit Model with Resampling
+
+Now that we have set up the workflow and configured resampling, we are ready to fit the model! 
+
 --
 
 ```{r}
 # train the model using the recipe, data, and method 
-fare_results <- fare_workflow %>%
-  fit_resamples(resamples = fare_folds, control = keep_pred)
+popular_results <- popular_workflow %>%
+  fit_resamples(resamples = popular_folds, control = keep_pred)
 ```
 
 ---
@@ -194,17 +223,15 @@ include_graphics("../figs/kfold5.png")
 ]
 
 .pull-right[
-Note that we are fitting our model with 10-fold CV on the **entire data set**.
+Note: we are resampling the **entire data set**.
 
-This means we have training and test sets. 
+This means that we only have training and test sets (N = 30). 
 
-There are 30 training and test sets in total.
+We have no separate validation sets. 
 
-There is no separate validation set. 
+Model evaluation will occur for each cross-validated test set. 
 
-Model evaluation will occur on each cross-validated test set. 
-
-We will obtain performance metrics by averaging over all 30 test sets.
+We will average performance metrics, and use these to evaluate the model. 
 ] 
 
 ---
@@ -222,17 +249,52 @@ We can view the predictions made in each cross-validated test set with `collect_
 --
 
 ```{r, eval = FALSE}
-collect_predictions(fare_results)
+collect_predictions(popular_results)
 ```
 
 ```{r, echo = FALSE}
-collect_predictions(fare_results) %>% kable() %>% scroll_box(height = "250px")
+collect_predictions(popular_results) %>% kable() %>% scroll_box(height = "250px")
+```
+
+---
+class: onecol
+## Cross-Validated Test Performance 
+
+We can plot these predictions against the observed values.
+
+```{r, eval = FALSE}
+popular_predictions <- collect_predictions(popular_results)
+
+popular_predictions %>%
+  ggplot(aes(x = popularity, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'red')
+```
+
+```{r, echo = FALSE}
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18,
+                 css_file = "xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+
+popular_predictions <- collect_predictions(popular_results)
+
+popular_predictions %>%
+  ggplot(aes(x = popularity, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'red') + 
+  coord_obs_pred() + 
+  ylab("Predicted") + 
+  xlab("Observed") + 
+  config
 ```
 
 ---
 class: onecol
 ## Cross-Validated Test Performance
-
 
 We can view a summary of training set performance with `collect_metrics()`.
 
@@ -245,13 +307,66 @@ These results include the mean and standard error of each metric across resample
 --
 
 ```{r, eval = FALSE}
-collect_metrics(fare_results)
+collect_metrics(popular_results)
 ```
 
 
 ```{r, echo = FALSE}
-collect_metrics(fare_results) %>% kable()
+collect_metrics(popular_results) %>% kable()
 ```
+
+
+---
+class: onecol
+## Model Interpretation 
+
+Predictive **accuracy** is emphasized in ML over interpretability and inference
+
+- The main goal of most applied ML studies is to **quantify performance**
+
+--
+
+However, some algorithms can provide insight into their decision-making
+
+- As a model usually used for inference, linear regression has strong interpretability
+
+- We can examine the model coefficients (intercept and slopes)
+
+The `get_lm_coefs()` function we wrote earlier will allow us to do this!
+
+---
+class: onecol
+## Model Interpretation
+
+Extracting the coefficients we need is a bit messy.
+
+Let's take a look at the output from our resampled model `popular_results`:
+
+--
+
+```{r, eval = FALSE}
+popular_results
+```
+
+```{r, echo = FALSE}
+popular_results %>% kable() %g it>% scroll_box(height = "300px")
+```
+
+---
+class: onecol
+## Variable Importance
+
+We can also plot variable importance using the {vip} package.
+
+```{r, out.width = "50%"}
+#library(vip)
+#vip(fare_fit)
+```
+
+.footnote[
+Other algorithms have different ways to estimate variable importance, but `vip()` will take care of it.
+]
+
 
 ---
 class: onecol
@@ -270,50 +385,6 @@ It also doesn't perform hyperparameter tuning (which we will learn about tomorro
 For OLS regression, so we can go back and fit a model on the entire data set.
 
 For tuning hyperparameters, we first use `tune_grid()` and then fit a final model.
-
----
-class: onecol
-## Model Interpretation 
-
-Predictive **accuracy** is emphasized in ML over interpretability and inference
-
-- The main goal of most applied ML studies is to **quantify performance**
-
---
-
-However, some algorithms can provide insight into their decision-making
-
-- As a model usually used for inference, linear regression has strong interpretability
-
-- We can examine the model coefficients (intercept and slopes)
-
---
-
-```{r, eval=FALSE}
-# fit a final model 
-fare_final <- fare_workflow %>% fit(titanic)
-
-fare_results$fit %>% coef()
-```
-
-```{r, echo=FALSE}
-#fare_fit$fit %>% coef() %>% t() %>% kable(digits = 2)
-```
-
----
-class: onecol
-# Variable Importance
-
-We can also plot variable importance using the {vip} package.
-
-```{r, out.width = "50%"}
-#library(vip)
-#vip(fare_fit)
-```
-
-.footnote[
-Other algorithms have different ways to estimate variable importance, but `vip()` will take care of it.
-]
 
 ---
 class: inverse, center, middle

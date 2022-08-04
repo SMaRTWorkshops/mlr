@@ -12,6 +12,8 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: false
     self_contained: true
 ---
 
@@ -246,7 +248,7 @@ fare | Cost of passenger fare ($)
 --
 
 .pull-right.pv4[
-```{r, message=FALSE, eval = FALSE}
+```{r, message=FALSE}
 library(tidyverse)
 library(tidymodels)
 
@@ -255,22 +257,7 @@ tidymodels_prefer()
 
 # load titanic data
 titanic <- read_csv(
-  "titanic.csv"
-)
-```
-]
-
-.pull-right.pv4[
-```{r, message=FALSE, echo = FALSE}
-library(tidyverse)
-library(tidymodels)
-
-# resolve package conflicts
-tidymodels_prefer()
-
-# load titanic data
-titanic <- read_csv(
-  "../data/titanic.csv"
+  "https://rb.gy/hm7p84"
 )
 ```
 ]
@@ -304,12 +291,10 @@ tidymodels_prefer()
 
 # load titanic data
 titanic <- read_csv(
-  "titanic.csv"
+  "https://rb.gy/hm7p84"
 )
 ```
 ]
-
-In this dataset, `survived` would be used as the **label** and the other variables would be used as **features**.
 
 
 ---
@@ -358,25 +343,24 @@ Its simplest use case requires 2 arguments:
  
 ---
 class: onecol
-## Simple Random Split in R
+## Live Coding: Simple Random Split in R
 ```{r, message = FALSE}
 # set random seed so results are reproducible
 set.seed(2022) 
 
 # create and save an 80/20 data split
 titanic_split_simple <- initial_split(data = titanic, prop = 0.80)
-titanic_split_simple
 ```
 
 --
 
-This output shows the amount of training, testing, and total data.
+<p style="padding-top:30px;">This output shows the amount of training, testing, and total data.
 
 The resulting `initial_split` object **only contains partitioning information**.
 
 ---
 class: onecol
-## Simple Random Split in R
+## Live Coding: Simple Random Split in R
 
 To get the actual training and testing data subsets, we need two more functions.
 
@@ -385,10 +369,11 @@ We will use the `training()` and `testing()` functions, also from {rsample}.
 --
 
 ```{r, message = FALSE}
+# create training set 
 titanic_train_simple <- training(titanic_split_simple)
-titanic_test_simple <- testing(titanic_split_simple)
 
-dim(titanic_train_simple)
+# create testing set 
+titanic_test_simple <- testing(titanic_split_simple)
 ```
 
 ---
@@ -437,7 +422,7 @@ This ensures that the **distribution of the outcome variable** is preserved.
 
 ---
 class: onecol
-## Stratified Sampling in R
+## Live Coding: Stratified Sampling in R
 
 To create a stratified random sample, we can use the same `initial_split()` function.
 
@@ -448,11 +433,14 @@ We will use the `strata` argument to name the variable to stratify on.
 ```{r, message = FALSE}
 set.seed(2022)
 
-titanic_split_strat <- initial_split(data = titanic, prop = 0.8, strata = 'survived')
+# create initial stratified split
+titanic_split_strat <- initial_split(data = titanic, 
+                                     prop = 0.8, 
+                                     strata = 'survived')
+
+# create training and testing sets
 titanic_train_strat <- training(titanic_split_strat)
 titanic_test_strat <- testing(titanic_split_strat)
-
-dim(titanic_train_strat)
 ```
 
 ---
@@ -508,14 +496,35 @@ Resampling should occur at the **level of the experimental unit**.
 
 In this case, resampling would be at the level of **hospitals**. 
 
-{tidymodels} is working on a function to split multilevel data.
+{tidymodels} has a development version of a function to create an initial split of multilevel data.
 
-**INSERT JEFF'S FUNCTION HERE**
 ]
 
 .footnote[
 [1] For example, some patients from hospital 1 may end up in the training set and others in the testing set).
 ]
+
+---
+class: onecol
+## What about Multilevel Data?
+
+You can access the development function `group_initial_split()` from [github](https://github.com/tidymodels/rsample).
+
+```{r, eval = FALSE}
+# install.packages("devtools")
+library(devtools)
+install_dev("rsample")
+```
+
+--
+
+<p style="padding-top:30px;">The `group_initial_split()` function has three arguments:
+- `data`: dataset
+
+- `group`: group to split on (e.g.. hospitals)
+
+- `prop`: proportion of data to use for training
+
 
 ---
 class: twocol
@@ -524,7 +533,7 @@ class: twocol
 .left-column[
 <br />
 ```{r, echo=FALSE}
-include_graphics('../figs/validation.png')
+include_graphics('../figs/time.png')
 ```
 ]
 
@@ -544,7 +553,7 @@ count: false
 .left-column[
 <br />
 ```{r, echo=FALSE}
-include_graphics('../figs/validation.png')
+include_graphics('../figs/time.png')
 ```
 ]
 
