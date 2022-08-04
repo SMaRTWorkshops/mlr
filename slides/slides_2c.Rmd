@@ -1,6 +1,6 @@
 ---
 title: '<span style="font-size:48pt;">Cross-Validation: Advanced</span>'
-subtitle: '📈  💻  🤖️' 
+subtitle: '📚 ⚒️ 🤓️' 
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2C &emsp; &emsp; August 9, 2022'
 output:
@@ -168,7 +168,7 @@ Our goal will be to predict each passenger's fare (how much they paid).
 .scroll40[
 ```{r}
 library(tidymodels)
-titanic <- read.csv("https://rb.gy/hm7p84")
+titanic <- read.csv("https://tinyurl.com/titanic-pm")
 
 set.seed(2022)
 
@@ -271,102 +271,6 @@ extract | An optional function to retain model objects
 .footnote[
 [1] The same list can be created for `tune_grid()` by `control_grid()`.
 ]
-
----
-class: onecol
-## Fit a Resampled Model in R
-
-Let's use `titanic_folds` to fit a resampled model in R predicting `fare`. 
-
-First, we'll make a preprocessing {recipe} (without prepping or baking).
-
-```{r}
-fare_recipe <- 
-  titanic %>% 
-  recipe(fare ~ .) %>% 
-  step_rm(survived) %>%
-  step_normalize(all_numeric_predictors()) %>% 
-  step_dummy(all_nominal_predictors()) %>% 
-  step_nzv(all_predictors()) %>% 
-  step_corr(all_predictors()) %>% 
-  step_lincomb(all_predictors())
-```
-
----
-class: onecol
-## Fit a Resampled Model in R
-
-Second, we'll specify a linear regression model.
-
-```{r}
-reg_freq <- linear_reg() %>% 
-  set_engine("lm") %>%
-  set_mode("regression")
-```
-
---
-
-Third, we'll create a {workflow}.
-
-```{r}
-fare_workflow <- 
-  workflow() %>% 
-  add_recipe(fare_recipe) %>% 
-  add_model(reg_freq)
-```
-
----
-class: onecol
-## Fit a Resampled Model in R
-
-Finally, we can fit a resampled model with our {workflow} and `fare_folds`.
-
-```{r}
-# configure sampling to save predictions from each k-fold
-keep_pred <- control_resamples(save_pred = TRUE)
-
-fare_results <- 
-  fare_workflow %>% 
-  fit_resamples(resamples = fare_folds, control = keep_pred)
-```
-
----
-class: onecol
-## Evaluate a Resampled Model in R
-
-We can evaluate this model with `collect_metrics()`:
-
-```{r}
-collect_metrics(fare_results)
-```
-
----
-class: onecol
-## Evaluate a Resampled Model in R
-
-We can also plot **predicted** against **observed** values to get a better understanding of model performance:
-
-
-```{r, echo = FALSE, fig.height=2, fig.width=6}
-config <-   
-  theme_xaringan(text_font_size = 14, title_font_size = 18,
-                 css_file = "../css/xaringan-themer.css") +
-  theme(
-    panel.grid.minor = element_blank(),
-    panel.background = element_rect(fill = "white")
-  )
-
-fare_predictions <- collect_predictions(fare_results)
-
-fare_predictions %>%
-  ggplot(aes(x = fare, y = .pred)) + 
-  geom_point(alpha = .15) + 
-  geom_abline(color = 'red') + 
-  coord_obs_pred() + 
-  ylab("Predicted") + 
-  xlab("Observed") + 
-  config
-```
 
 ---
 class: onecol
@@ -501,7 +405,7 @@ class: onecol
 
 <br>
 
-####...all that being said, there *is* an option that allows us to do both!
+####...all that being said, there *is* an advanced option that allows us to do both!
 
 
 ---
@@ -567,45 +471,12 @@ include_graphics("../figs/nested_cv.gif")
 
 ---
 class: onecol
-## Nested CV in R: The good news!
+## Nested CV in R: It's Complicated
 
-The `nested_cv()` function in {rsample} splits data for nested cross-validation<sup>1</sup>.
+There is a `nested_cv()` function in {rsample} splits data for nested cross-validation<sup>1</sup>.
 
-.footnote[
-[1] This is an amazing addition to {tidymodels} beyond {caret}! 
-]
-
---
-<br> 
-
-Argument | Description
-:------- | :----------
-data | The data frame
-outside | The outside resampling specification (can be an existing resampled object)
-inside | The inside resampling specification (e.g., `vfold_cv()`)
-
----
-class: onecol
-## Nested CV in R: The good news!
-
-Let's run nested CV with 10 outer folds and 5 inner folds in the `titanic` dataset.
-
---
-
-.scroll40[
-```{r}
-titanic_folds_nested <- nested_cv(titanic, 
-                                 outside = vfold_cv(v = 10),
-                                 inside = vfold_cv(v = 5))
-titanic_folds_nested
-```
-]
-
----
-class: onecol
-## Nested CV in R: The less-good news :/
-
-Unfortunately, nested cross-validation is not yet fully supported in tidymodels. 
+Unfortunately, nested cross-validation is not yet **fully supported** 
+in tidymodels. 
 
 `fit_resamples()` and `tune_grid()` do not work for nested cross-validation<sup>1</sup>.
 
@@ -622,6 +493,130 @@ If you want to use nested cross-validation, you will need to write your own func
 This is a bit complicated, so **we will stick to using repeated k-fold CV** for this course. 
 
 But if you are ready to for a challenge, we highly encourage looking into nested CV!
+
+---
+class: inverse, center, middle
+# Full Walkthrough of k-fold CV
+
+---
+class: onecol
+## Applied Example: Feature Engineering
+
+Let's use `titanic_folds` to fit a resampled model in R predicting `fare`. 
+
+First, we'll make a preprocessing {recipe} (without prepping or baking).
+
+```{r}
+fare_recipe <- 
+  titanic %>% 
+  recipe(fare ~ .) %>% 
+  step_rm(survived) %>% 
+  step_naomit(fare) %>% 
+  step_mutate(pclass = factor(pclass, levels = c(1, 2, 3)),
+              sex = factor(sex, levels = c("female", "male"))) %>% 
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(pclass, sex) %>%
+  step_impute_linear(age) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors())
+```
+
+---
+class: onecol
+## Applied Example: Specify Model and Workflow
+
+Second, we'll specify a linear regression model.
+
+```{r}
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
+```
+
+--
+
+Third, we'll create a {workflow}.
+
+```{r}
+fare_workflow <- 
+  workflow() %>% 
+  add_recipe(fare_recipe) %>% 
+  add_model(reg_freq)
+```
+
+---
+class: onecol
+## Applied Example: Fit the Model
+
+Finally, we can fit a resampled model with our {workflow} and `fare_folds`.
+
+```{r}
+# configure sampling to save predictions from each k-fold
+keep_pred <- control_resamples(save_pred = TRUE)
+
+fare_results <- 
+  fare_workflow %>% 
+  fit_resamples(resamples = fare_folds, control = keep_pred)
+```
+
+---
+class: onecol
+## Applied Example: Evaluate a Resampled Model
+
+We can evaluate this model with `collect_metrics()`:
+
+```{r}
+collect_metrics(fare_results)
+```
+
+---
+class: onecol
+## Applied Example: Evaluate a Resampled Model
+
+We can also plot **predicted** against **observed** values to get a better understanding of model performance:
+
+.pull-left[
+```{r, eval = FALSE}
+fare_predictions <- collect_predictions(fare_results)
+
+fare_predictions %>%
+  ggplot(aes(x = fare, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'darkred') + 
+  coord_obs_pred() + 
+  labs(x = "Observed Fare", y = "Predicted Fare")
+```
+
+```{r, echo = FALSE, fig.show = 'hide'}
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18,
+                 css_file = "../css/xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+
+fare_predictions <- collect_predictions(fare_results)
+
+fare_plot_2c <- fare_predictions %>%
+  ggplot(aes(x = fare, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'red') + 
+  coord_obs_pred() + 
+  ylab("Predicted") + 
+  xlab("Observed") + 
+  config
+
+ggsave("../figs/fare_pred_2c.png", width = 3.5, height = 3.5, units = 'in')
+```
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="70%"}
+include_graphics("../figs/fare_pred_2c.png")
+```
+]
 
 ---
 class: inverse, center, middle
