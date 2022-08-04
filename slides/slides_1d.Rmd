@@ -248,7 +248,9 @@ class: twocol
 .pull-left[
 Building different models is very straightforward in {parsnip}.
 
-Let's try specifying a bunch of options: 
+This makes it easy to try out multiple model options at once.
+
+Let's try specifying a variety of frequentist and bayesian models: 
 
 - Linear regression (frequentist)
 
