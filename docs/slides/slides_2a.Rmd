@@ -542,7 +542,7 @@ class: twocol
 --
 
 .mt4[
-$$\text{Accuracy} = \frac{TN + TP}{n}$$
+$$\text{Accuracy} = \frac{TN + TP}{TN + FN + FP + TP}$$
 ]
 .tc[
 Ranges from $0$ to $1$, higher is better

@@ -21,7 +21,7 @@ iframe.slide-deck {
 /* Set appearance of code chunks */
 
 .remark-code {
-  font-size: 22px;
+  font-size: 20px;
   border: 1px solid grey;
 }
 
@@ -53,6 +53,10 @@ iframe.slide-deck {
   bottom: 24px;
 }
 
+.remark-slide .footnote p {
+  margin-bottom:0;
+}
+
 /* Custom class for emphasizing text as important */
 
 .imp {
@@ -62,6 +66,11 @@ iframe.slide-deck {
 
 .left-column img {
   border: 2px solid black;
+}
+
+.pad-table th,td {
+  padding-left:0.5rem;
+  padding-right:0.5rem;
 }
 
 /* scrollable codebox */
