@@ -691,7 +691,7 @@ font-size: 24px;
 }
 
 .remark-code {
-font-size: 24px;
+font-size: 22px;
 border: 1px solid grey;
 }
 
@@ -711,6 +711,10 @@ padding-top: 2.0rem;
 color: grey;
 }
 
+.remark-slide .footnote {
+bottom: 24px;
+}
+
 .imp {
 font-weight: bold;
 color: darkred;
@@ -720,9 +724,22 @@ border: 2px solid black;
 }
 
 .scroll .remark-code {
+overflow-y: scroll;
+}
+
+.h-0l .remark-code {
 height: 460px;
 max-height: 460px;
-overflow-y: scroll;
+}
+
+.h-1l .remark-code {
+height: 420px;
+max-height: 420px;
+}
+
+.h-2l .remark-code {
+height: 380px;
+max-height: 380px;
 }
 
 .scroll25 {
@@ -765,7 +782,7 @@ class: center, middle, inverse, title-slide
 # <span style="font-size:48pt;">Cross-Validation: Introduction</span>
 ]
 .subtitle[
-## 👩‍💻️ 🤖 👨‍🏫️
+## ⚒️️ 📈 🤖️
 ]
 .author[
 ### Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series
@@ -1018,7 +1035,7 @@ tidymodels_prefer()
 
 # load titanic data
 titanic &lt;- read_csv(
-  &quot;https://rb.gy/hm7p84&quot;
+  &quot;tinyurl.com/titanic-pm&quot;
 )
 ```
 ]
@@ -1315,7 +1332,7 @@ Tomorrow will cover advanced methods for **k-fold CV** and **nested CV**.
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_62ec3b36" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_62ed58c6" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
