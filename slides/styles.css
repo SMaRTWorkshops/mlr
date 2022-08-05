@@ -75,6 +75,12 @@ iframe.slide-deck {
   overflow-x: scroll;
 }
 
+.scroll65 {
+  height: 65%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
 .scroll70 {
   height: 70%;
   overflow-y: scroll;

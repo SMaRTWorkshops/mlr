@@ -63,11 +63,11 @@ This lecture aims to tie it all together and .imp[build a model from start to fi
 
 --
 
-<p style="padding-top:30px;">We will **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+<p style="padding-top:30px;">We will tackle a classification problem by **adapt familiar (statistical) algorithms** to a predictive modeling framework.
 
 This will **ease the transition to ML** and highlight its similarities with classical statistics.
 
-Finally, we will **foreshadow future topics** (e.g., regularized linear models and tuning).
+Finally, we will have a **hands-on coding activity** for you to build your own predictive model from scratch.
 
 ---
 class: onecol
@@ -75,7 +75,7 @@ class: onecol
 
 Let's put what we learned into practice in R! 
 
-Let's train a regression model on the `spotify` data to predict song popularity. 
+Let's train a classification model on the `titanic` data to predict survival.
 
 --
 
@@ -85,51 +85,33 @@ Let's train a regression model on the `spotify` data to predict song popularity.
 
 - Create a recipe for feature engineering
 
-- Train a regression model to predict each passenger's fare (how much they paid).
+- Train a classification model to predict if each passanger survived the titanic
 
 - Evaluate the model using 10-fold cross-validation 
 
+- Interpret the model 
+
 ---
 class: onecol
-## Load Data
+## Load Data and Create Recipe
 
 ```{r, eval = FALSE}
 library(tidymodels)
+titanic <- read.csv("https://tinyurl.com/titanic-pm")
 
-# load and look at spotify data
-spotify <- read_csv("https://rb.gy/gmzeyv")
-head(spotify, 5)
-```
-
-```{r, echo = FALSE}
-library(tidymodels)
-
-# load spotify data
-spotify <- read_csv("https://rb.gy/gmzeyv")
-spotify <- spotify %>% 
-  mutate(key = factor(key), mode = factor(mode))
-
-# look at the data
-head(spotify, 5) %>% kable() %>% scroll_box(height = "280px")
-```
-
----
-class: onecol
-## Feature Engineering with {recipes}
-
-```{r}
-# Create a preprocessing recipe (don't prep or bake)
-popular_recipe <-
-  spotify %>%
-  recipe(popularity ~ .) %>% 
-  step_rm(title, key) %>%
+survived_recipe <- 
+  titanic %>% 
+  recipe(survived ~ .) %>% 
+  step_mutate(survived = factor(survived),
+              pclass = factor(pclass, levels = c(1, 2, 3)),
+              sex = factor(sex, levels = c("female", "male"))) %>% 
   step_normalize(all_numeric_predictors()) %>%
-  step_dummy(all_nominal_predictors()) %>%
+  step_dummy(pclass, sex) %>%
+  step_impute_linear(age, fare) %>%
   step_nzv(all_predictors()) %>%
   step_corr(all_predictors()) %>%
   step_lincomb(all_predictors())
 ```
-
 
 ---
 class: onecol
@@ -137,11 +119,11 @@ class: onecol
 
 ```{r}
 # Specify Model
-reg_freq <- linear_reg() %>% 
-  set_engine("lm") %>%
-  set_mode("regression")
+log_reg <- logistic_reg() %>% 
+  set_engine("glm") %>%
+  set_mode("classification")
 
-reg_freq
+log_reg
 ```
 
 ---
@@ -150,12 +132,12 @@ class: onecol
 
 .scroll70[
 ```{r}
-popular_workflow <- 
+survived_workflow <- 
   workflow() %>%
-  add_model(reg_freq) %>%
-  add_recipe(popular_recipe)
+  add_model(log_reg) %>%
+  add_recipe(survive_recipe)
 
-popular_workflow
+survived_workflow
 ```
 ]
 
@@ -167,10 +149,10 @@ class: onecol
 set.seed(2022)
 
 # configure resampling
-popular_folds <- vfold_cv(data = spotify, 
-                          v = 10, 
-                          repeats = 3,
-                          strata = 'popularity')
+survived_folds <- vfold_cv(data = titanic, 
+                           v = 10, 
+                           repeats = 3,
+                           strata = 'survived')
 ```
 
 ---
@@ -186,7 +168,7 @@ This can be done with a custom function, and specified in `control_resamples()`:
 --
 
 ```{r}
-get_lm_coefs <- function(x) {
+get_glm_coefs <- function(x) {
   x %>% 
     # get the lm model object
     extract_fit_engine() %>% 
@@ -208,8 +190,8 @@ Now that we have set up the workflow and configured resampling, we are ready to 
 
 ```{r}
 # train the model using the recipe, data, and method 
-popular_results <- popular_workflow %>%
-  fit_resamples(resamples = popular_folds, control = keep_pred)
+survived_results <- survived_workflow %>%
+  fit_resamples(resamples = survived_folds, control = keep_pred)
 ```
 
 ---
