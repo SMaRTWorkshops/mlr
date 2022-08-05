@@ -1,6 +1,6 @@
 ---
 title: '<span style="font-size:48pt;">Fitting Models</span>'
-subtitle: '📈  💻  🤖️' 
+subtitle: '🥼 💥 💻 ️' 
 author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
 date: 'Day 1D &emsp; &emsp; August 8, 2022'
 output:
@@ -205,7 +205,7 @@ Before fitting an ML model, we need to **specify the model details**.
 
 --
 
-These details are specified *before* even referencing the data. 
+<p style="padding-top:30px;">These details are specified *before* even referencing the data. 
 
 
 ---
@@ -223,7 +223,7 @@ To specify an OLS regression in {parsnip}, we designate:
 ]
 
 .footnote[
-[1] Technically this is redundant because `linear_reg()` already implies `mode = regression`; could be dropped. 
+[1] Technically this is redundant because `linear_reg()` already implies `mode = regression`. Therefore, this `set_mode()` line could be dropped. 
 ]
 
 --
@@ -245,66 +245,39 @@ reg_freq <- linear_reg() %>%
 class: twocol 
 ## The power of {parsnip}
 
-.pull-left[
-Building different models is very straightforward in {parsnip}.
+{parsnip} makes it easy to build many different models .imp[without memorizing the idiosyncracies of various R packages].
 
-This makes it easy to try out multiple model options at once.
-
-Let's try specifying a variety of frequentist and bayesian models: 
-
-- Linear regression (frequentist)
-
-- Linear regression (bayesian)
-
-- Logistic regresion (frequentist)
-
-- Logistic regression (bayesian)
-]
+To illustrate, let's specify frequentist and bayesian forms of linear and logistic regression:
 
 --
 
-.scroll70[
+.pull-left[
 ```{r}
 reg_freq <-
-  linear_reg() %>%
-  set_mode("regression") %>%
+  linear_reg() %>% 
+  set_mode("regression") %>% 
   set_engine("lm")
 
 reg_bayes <-
-  linear_reg() %>%
-  set_mode("regression") %>%
-  set_engine("stan")
-
-log_freq <-
-  logistic_reg() %>%
-  set_mode("classification") %>%
-  set_engine("glm")
-
-log_bayes <-
-  logistic_reg() %>%
-  set_mode("classification") %>%
+  linear_reg() %>% 
+  set_mode("regression") %>% 
   set_engine("stan")
 ```
 ]
 
----
-class: onecol
-## More Model Type Arguments
-
-To see all arguments for a particular model type, use `args()`.
-
---
-
+.pull-right[
 ```{r}
-args(linear_reg)
+log_freq <-
+  logistic_reg() %>% 
+  set_mode("classification") %>% 
+  set_engine("glm")
+
+log_bayes <-
+  logistic_reg() %>% 
+  set_mode("classification") %>% 
+  set_engine("stan")
 ```
-
---
-
-```{r}
-args(logistic_reg)
-```
-
+]
 
 ---
 class: onecol

@@ -1,6 +1,6 @@
 ---
 title: '<span style="font-size:48pt;">Cross-Validation: Introduction</span>'
-subtitle: '👩‍💻️ 🤖 👨‍🏫️' 
+subtitle: '⚒️️ 📈 🤖️' 
 author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
 date: 'Day 1C &emsp; &emsp; August 8, 2022'
 output:
