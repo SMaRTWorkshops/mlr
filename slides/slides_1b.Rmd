@@ -12,6 +12,8 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: false
     self_contained: true
     df_print: paged
 ---
