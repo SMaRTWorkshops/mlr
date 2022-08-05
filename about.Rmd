@@ -5,7 +5,7 @@ output:
     toc: FALSE
 ---
 
-This is a synchronous, online course taking place as part of the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) on August 8-11, 2022. Each of these four days will run for between 10:30am - 3:30pm (New York Time/EDT/UTC-4:00) with an hour lunch break from 12:30pm - 1:30pm. Enrollment in the course and access to the video recordings requires registration, which can be purchased through the [Pitt Methods website](https://www.pittmethods.com/applied-ml); we are pleased to offer a discounted rate for students and trainees. However, materials (slides and activities) are freely available through this website and may be re-used according to the [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt).
+This is a synchronous, online course taking place as part of the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) on August 8-11, 2022. Each of these four days will run for between 10:30am - 3:30pm (New York Time/EDT/UTC-4:00) with an hour lunch break from 12:30pm - 1:30pm (approximately). Enrollment in the course and access to the video recordings requires registration, which can be purchased through the [Pitt Methods website](https://www.pittmethods.com/applied-ml); we are pleased to offer a discounted rate for students and trainees. However, materials (slides and activities) are freely available through this website and may be re-used according to the [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt).
 
 ---
 
@@ -31,7 +31,7 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 |     | D    | Consulting                 |        |            |
 
 
-Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). In order to access them, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.
+Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). It may take up to 6 hours for the high definition versions of the videos to be ready on YouTube. In order to access the videos, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.
 
 ---
 
