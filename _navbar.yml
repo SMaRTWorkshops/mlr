@@ -23,7 +23,7 @@ left:
        - text: "[2A] Workflows and metrics"
          href: day_2a.html
        - text: "[2B] Feature engineering recipes"
-         href: wip.html #day_2b.html
+         href: day_2b.html
        - text: "[2C] Resampling"
          href: day_2c.html
        - text: "[2D] Linear model example"
