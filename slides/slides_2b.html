@@ -1014,8 +1014,8 @@ class: twocol
 ]
 
 .pull-right.lh-copy[
-- **Missing value imputation:**&lt;br /&gt;
-  `step_impute_linear()`, ...
+- **Missing values:**&lt;br /&gt;
+  `step_naomit()`, `step_impute_*()`, ...
 - **Near-zero variance:**&lt;br /&gt;
   `step_nzv()`
 - **Multicollinearity:**&lt;br /&gt;
@@ -3359,9 +3359,11 @@ fare_recipe %&gt;%
   
 ---
 class: onecol
-## Missing value imputation
+## Missing values
 
 -   It is not uncommon for outcomes and predictors to have missing values
+
+--
 
 -   If we have marked these values correctly as `NA`, we can impute them
 
@@ -3373,24 +3375,27 @@ class: onecol
   
   -   We will use a linear imputation model via `step_impute_linear()`
   
+--
+
 -   Imputing predictor values is fine when you are using cross-validation
 
-  -   The jury is still out about how to handle missing outcome values...
+  -   But omit observations with missing outcome values using `step_naomit()`
 
 .footnote[*Note.* You can even impute via machine learning models (e.g., `step_impute_bag()`). Inception!]
 
 ---
 
-## Missing value imputation
+## Missing values
 
 
 ```r
-si_recipe &lt;- 
+na_recipe &lt;- 
   fare_recipe %&gt;% 
-* step_impute_linear(age, impute_with = imp_vars(all_predictors()))
+* step_naomit(fare) %&gt;%
+* step_impute_linear(age)
 ```
 
-.footnote[*Note.* The default is to use all other predictor variables, so we can omit `impute_with`.]
+.footnote[*Note.* The default is to include all other predictor variables in the imputation model but we can customize that.]
 
 --
 
@@ -3546,7 +3551,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; male &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 42.31004 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 42.28233 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 25.9250 &lt;/td&gt;
@@ -3744,7 +3749,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; male &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 42.31004 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 42.28233 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 26.5500 &lt;/td&gt;
@@ -3771,7 +3776,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; male &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 42.31004 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 42.28233 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 39.6000 &lt;/td&gt;
@@ -3825,7 +3830,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; male &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 42.31004 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 42.28233 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 31.0000 &lt;/td&gt;
@@ -3942,7 +3947,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; female &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 39.55574 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 39.56304 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 27.7208 &lt;/td&gt;
@@ -4032,7 +4037,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; female &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 38.70222 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 38.71795 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 55.0000 &lt;/td&gt;
@@ -4041,7 +4046,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; male &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 42.31004 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 42.28233 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0.0000 &lt;/td&gt;
@@ -4077,7 +4082,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; male &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 42.31004 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 42.28233 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 52.0000 &lt;/td&gt;
@@ -4131,7 +4136,7 @@ si_recipe &lt;-
    &lt;td style=&quot;text-align:left;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; 1 &lt;/td&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; male &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; 42.31004 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 42.28233 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 0 &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; 26.5500 &lt;/td&gt;
@@ -6353,16 +6358,17 @@ fare_recipe &lt;-
   update_role(fare, new_role = &quot;outcome&quot;) %&gt;% 
   update_role(pclass:parch, new_role = &quot;predictor&quot;) %&gt;% 
   update_role(survived, new_role = &quot;ignore&quot;) %&gt;% 
+  step_naomit(fare) %&gt;% 
   step_mutate(
     pclass = factor(pclass),
     sex = factor(sex)
   ) %&gt;% 
-  step_normalize(all_numeric_predictors()) %&gt;%
   step_dummy(all_nominal_predictors()) %&gt;%
   step_impute_linear(age) %&gt;%
   step_nzv(all_predictors()) %&gt;%
   step_corr(all_numeric_predictors()) %&gt;%
-  step_lincomb(all_numeric_predictors())
+  step_lincomb(all_numeric_predictors()) %&gt;% 
+  step_normalize(all_predictors())
 
 # Prepare workflow
 
@@ -6389,7 +6395,7 @@ collect_metrics(fare_fit)
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_62ed8a49" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
+<div class="countdown" id="timer_62eece8f" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
 <code class="countdown-time"><span class="countdown-digits minutes">60</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
