@@ -1,5 +1,5 @@
 ---
-title: '<span style="font-size:48pt;">Example and Tuning</span>'
+title: '<span style="font-size:48pt;">GLMNET Example and Tuning</span>'
 subtitle: '🎛️  🎚️     🏇'
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 3B &emsp; &emsp; August 10, 2022'
@@ -12,6 +12,8 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: false
     self_contained: true
 ---
 

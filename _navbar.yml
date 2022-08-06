@@ -14,9 +14,9 @@ left:
          href: day_1a.html
        - text: "[1B] Tidyverse primer and data"
          href: day_1b.html
-       - text: "[1C] Cross-validation"
+       - text: "[1C] Data partitioning or splitting"
          href: day_1c.html
-       - text: "[1D] Fitting models"
+       - text: "[1D] Model fitting and prediction"
          href: day_1d.html
   - text: "Day 2"
     menu:
@@ -24,19 +24,19 @@ left:
          href: day_2a.html
        - text: "[2B] Feature engineering recipes"
          href: day_2b.html
-       - text: "[2C] Resampling"
+       - text: "[2C] Resampling and cross-validation"
          href: day_2c.html
-       - text: "[2D] Linear model example"
+       - text: "[2D] Resampling example and deployment"
          href: wip.html #day_2d.html
   - text: "Day 3"
     menu:
        - text: "[3A] GLMNET algorithm"
          href: wip.html #day_3a.html
-       - text: "[3B] Example and tuning"
+       - text: "[3B] GLMNET example and tuning"
          href: wip.html #day_3b.html
-       - text: "[3C] Random forest algorithm"
+       - text: "[3C] Random Forest (RF) algorithm"
          href: wip.html #day_3c.html
-       - text: "[3D] Example and deployment"
+       - text: "[3D] RF example and reporting"
          href: wip.html #day_3d.html
   - text: "Day 4"
     menu:

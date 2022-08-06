@@ -11,24 +11,24 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 
 ## Course Schedule
 
-| Day | Part | Topic                      | Lead   | Video Link |
-| :-: | :--: | :------------------------- | :----- | :--------- |
-| 1   | A    | Conceptual introductions   | Girard | TBA        |
-|     | B    | Tidyverse primer and data  | Girard | TBA        |
-|     | C    | Cross-validation           | Wang   | TBA        |
-|     | D    | Fitting models             | Wang   | TBA        |
-| 2   | A    | Workflows and recipes      | Girard | TBA        |
-|     | B    | Performance evaluation     | Girard | TBA        |
-|     | C    | Resampling                 | Wang   | TBA        |
-|     | D    | Linear model example       | Wang   | TBA        |
-| 3   | A    | GLMNET algorithm           | Wang   | TBA        |
-|     | B    | Example and tuning         | Girard | TBA        |
-|     | C    | Random forest algorithm    | Wang   | TBA        |
-|     | D    | Example and deployment     | Girard | TBA        |
-| 4   | A    | SVM algorithm and example  | Girard | TBA        |
-|     | B    | Preview of advanced topics | Wang   | TBA        |
-|     | C    | Consulting                 |        |            |
-|     | D    | Consulting                 |        |            |
+| Day | Part | Topic                             | Lead   | Video Link |
+| :-: | :--: | :-------------------------------- | :----- | :--------- |
+| 1   | A    | Conceptual introductions          | Girard | TBA        |
+|     | B    | Tidyverse primer and data         | Girard | TBA        |
+|     | C    | Data partitioning or splitting    | Wang   | TBA        |
+|     | D    | Model fitting and prediction      | Wang   | TBA        |
+| 2   | A    | Workflows and recipes             | Girard | TBA        |
+|     | B    | Performance evaluation            | Girard | TBA        |
+|     | C    | Resampling and cross-validation   | Wang   | TBA        |
+|     | D    | Resampling example and deployment | Wang   | TBA        |
+| 3   | A    | GLMNET algorithm                  | Wang   | TBA        |
+|     | B    | GLMNET example and tuning         | Girard | TBA        |
+|     | C    | Random forest (RF) algorithm      | Wang   | TBA        |
+|     | D    | RF example and reporting          | Girard | TBA        |
+| 4   | A    | SVM algorithm and example         | Girard | TBA        |
+|     | B    | Preview of advanced topics        | Wang   | TBA        |
+|     | C    | Consulting                        |        |            |
+|     | D    | Consulting                        |        |            |
 
 
 Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). It may take up to 6 hours for the high definition versions of the videos to be ready on YouTube. In order to access the videos, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.
@@ -37,7 +37,7 @@ Video recordings of the course meetings are posted as private YouTube videos (se
 
 ## Course Communication
 
-Important announcements will be emailed to registered attendees. However, attendees are strongly encouraged to join the course's Slack workspace. This workspace will provide a place for questions, answers, comments, and other discussions to occur in a more permanent place. We will monitor the Zoom chat window but this disappears when you leave a meeting, so Slack is the preferred method for communication. There will be several channels for discussion different topics (i.e., `announcements`, `general`, `questions`, `resources`, and `random`). More personal or sensitive communications should occur via email or Slack direct messages.
+Important announcements will be emailed to registered attendees. However, attendees are strongly encouraged to join the course's Slack workspace. This workspace will provide a place for questions, answers, comments, and other discussions to occur in a more permanent place. We will monitor the Zoom chat window but this disappears when you leave a meeting, so Slack is the preferred method for communication. There will be several channels for discussion of different topics (i.e., `#announcements` for news and updates related to the course, `#general` for questions and comments related to the course, and `#random` for questions and comments unrelated to the course). More personal or sensitive communications should occur via email or Slack direct messages.
 
 - An invitation to join this Slack workspace was emailed to registered attendees.
 
