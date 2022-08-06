@@ -5,7 +5,7 @@ author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Serie
 date: 'Day 1D &emsp; &emsp; August 8, 2022'
 output:
   xaringan::moon_reader:
-    css: ["xaringan-themer.css", "styles.css"]
+    css: [../css/xaringan-themer.css, ../css/styles.css]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github

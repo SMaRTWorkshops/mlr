@@ -63,11 +63,11 @@ This lecture aims to tie it all together and .imp[build a model from start to fi
 
 --
 
-<p style="padding-top:30px;">We will tackle a classification problem by **adapt familiar (statistical) algorithms** to a predictive modeling framework.
+<p style="padding-top:30px;">We will adapt **familiar classification algorithms** to a predictive modeling framework.
 
 This will **ease the transition to ML** and highlight its similarities with classical statistics.
 
-Finally, we will have a **hands-on coding activity** for you to build your own predictive model from scratch.
+Finally, we have a **hands-on coding activity** to build your own predictive model.
 
 ---
 class: onecol
@@ -135,7 +135,7 @@ class: onecol
 survived_workflow <- 
   workflow() %>%
   add_model(log_reg) %>%
-  add_recipe(survive_recipe)
+  add_recipe(survived_recipe)
 
 survived_workflow
 ```
@@ -143,7 +143,7 @@ survived_workflow
 
 ---
 class: onecol
-## Fit Model with Resampling
+## Configure Resampling
 
 ```{r}
 set.seed(2022)
@@ -155,20 +155,24 @@ survived_folds <- vfold_cv(data = titanic,
                            strata = 'survived')
 ```
 
+--
+
+The goal of `fit_resamples()` is to .imp[measure model importance]. 
+
+Therefore, by default, the models trained are not saved or used later.
+
 ---
 class: onecol
-## Fit Model with Resampling
+## Configure Resampling
 
-Because the goal of `fit_resamples()` is to .imp[measure model importance], the models trained are not saved or used later by default.
+To save model coefficients, we need to .imp[extract] the underlying model object (engine fit). 
 
-To save model coefficients from each resample, we need to .imp[extract] the underlying model object (i.e., the engine fit). 
-
-This can be done with a custom function, and specified in `control_resamples()`: 
+We can do this with a custom function, and specify it in `control_resamples()`: 
 
 --
 
 ```{r}
-get_glm_coefs <- function(x) {
+get_resample_coefs <- function(x) {
   x %>% 
     # get the lm model object
     extract_fit_engine() %>% 
@@ -177,22 +181,26 @@ get_glm_coefs <- function(x) {
 }
 
 # save predictions from resampling
-keep_pred <- control_resamples(save_pred = TRUE, extract = get_lm_coefs)
+keep_pred <- control_resamples(save_pred = TRUE, extract = get_resample_coefs)
 ```
 
 ---
 class: onecol
 ## Fit Model with Resampling
 
-Now that we have set up the workflow and configured resampling, we are ready to fit the model! 
+Now that we've set the workflow & configured resampling, we're ready to fit the model! 
 
 --
 
+.scroll65[
 ```{r}
 # train the model using the recipe, data, and method 
-survived_results <- survived_workflow %>%
-  fit_resamples(resamples = survived_folds, control = keep_pred)
+#survived_results <- survived_workflow %>%
+#  fit_resamples(resamples = survived_folds, control = keep_pred)
+
+survived_results
 ```
+]
 
 ---
 class: twocol
@@ -211,9 +219,11 @@ This means that we only have training and test sets (N = 30).
 
 We have no separate validation sets. 
 
-Model evaluation will occur for each cross-validated test set. 
+We will obtain metrics for each test set. 
 
-We will average performance metrics, and use these to evaluate the model. 
+We will average performance metrics across all resamples.
+
+These averages serve as model evaluation. 
 ] 
 
 ---
@@ -226,61 +236,23 @@ class: onecol
 
 The object created by `fit_resamples()` will contain lots of information.
 
-We can view the predictions made in each cross-validated test set with `collect_predictions()`.
+We can view the predictions made in each test set with `collect_predictions()`.
 
 --
 
 ```{r, eval = FALSE}
-collect_predictions(popular_results)
+collect_predictions(survived_results)
 ```
 
 ```{r, echo = FALSE}
-collect_predictions(popular_results) %>% kable() %>% scroll_box(height = "250px")
-```
-
----
-class: onecol
-## Cross-Validated Test Performance 
-
-We can plot these predictions against the observed values.
-
-```{r, eval = FALSE}
-popular_predictions <- collect_predictions(popular_results)
-
-popular_predictions %>%
-  ggplot(aes(x = popularity, y = .pred)) + 
-  geom_point(alpha = .15) + 
-  geom_abline(color = 'red')
-```
-
-```{r, echo = FALSE}
-config <-   
-  theme_xaringan(text_font_size = 14, title_font_size = 18,
-                 css_file = "xaringan-themer.css") +
-  theme(
-    panel.grid.minor = element_blank(),
-    panel.background = element_rect(fill = "white")
-  )
-
-popular_predictions <- collect_predictions(popular_results)
-
-popular_predictions %>%
-  ggplot(aes(x = popularity, y = .pred)) + 
-  geom_point(alpha = .15) + 
-  geom_abline(color = 'red') + 
-  coord_obs_pred() + 
-  ylab("Predicted") + 
-  xlab("Observed") + 
-  config
+collect_predictions(survived_results) %>% kable() %>% scroll_box(height = "300px")
 ```
 
 ---
 class: onecol
 ## Cross-Validated Test Performance
 
-We can view a summary of training set performance with `collect_metrics()`.
-
-These results include the mean and standard error of each metric across resamples<sup>1</sup>.
+We can view a summary of the test set performance with `collect_metrics()`<sup>1</sup>.
 
 .footnote[
 [1] To see metrics for each fold, include `summarize = FALSE` in `collect_metrics()`.
@@ -289,14 +261,67 @@ These results include the mean and standard error of each metric across resample
 --
 
 ```{r, eval = FALSE}
-collect_metrics(popular_results)
+collect_metrics(survived_results)
 ```
 
 
 ```{r, echo = FALSE}
-collect_metrics(popular_results) %>% kable()
+collect_metrics(survived_results) %>% kable()
 ```
 
+--
+
+These accuracy and AUC values look pretty good! 
+
+---
+class: onecol
+## Cross-Validated Test Performance 
+
+Let's look at a .imp[confusion matrix] for a better understanding of model performance.
+
+```{r, eval = FALSE}
+survived_cm <- collect_predictions(survived_results) %>%
+  conf_mat(truth = survived, estimate = .pred_class)
+
+autoplot(survived_cm, type = "mosaic")
+autoplot(survived_cm, type = "heatmap")
+```
+
+--
+
+.pull-left[
+```{r, echo = FALSE}
+survived_cm <- 
+  collect_predictions(survived_results) %>%
+  conf_mat(truth = survived, estimate = .pred_class)
+
+autoplot(survived_cm, type = "mosaic")
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
+autoplot(survived_cm, type = "heatmap")
+```
+]
+
+---
+class: onecol
+## Cross-Validated Test Performance
+
+Finally, let's calculate all confusion matrix metrics. 
+
+```{r, eval = FALSE}
+summary(survived_cm)
+```
+
+```{r, echo = FALSE}
+summary(survived_cm) %>% kable() %>% scroll_box(height = "300px")
+```
+
+---
+class: inverse, center, middle
+# Model Interpretation
 
 ---
 class: onecol
@@ -310,63 +335,159 @@ Predictive **accuracy** is emphasized in ML over interpretability and inference
 
 However, some algorithms can provide insight into their decision-making
 
-- As a model usually used for inference, linear regression has strong interpretability
+- As a model usually used for inference, logistic regression has strong interpretability
 
 - We can examine the model coefficients (intercept and slopes)
 
-The `get_lm_coefs()` function we wrote earlier will allow us to do this!
+The `get_resample_coefs()` function we wrote earlier will allow us to do this!
 
 ---
 class: onecol
-## Model Interpretation
+## Model Coefficients
 
-Extracting the coefficients we need is a bit messy.
+Extracting the coefficients we need is a bit messy, but let's walk through it.
 
-Let's take a look at the output from our resampled model `popular_results`:
+Let's take a look at the output from our resampled model `survived_results`:
+
+--
+.scroll40[
+```{r}
+survived_results
+```
+]
 
 --
 
-```{r, eval = FALSE}
-popular_results
+The output of `get_resample_coefs()` is contained in the column `.extracts`.
+
+
+---
+class: twocol
+## Model Coefficients
+
+Inside `survived_results$.extracts` is *another* `.extracts` column.
+
+```{r}
+survived_results$.extracts[[1]]
 ```
 
-```{r, echo = FALSE}
-popular_results %>% kable() %g it>% scroll_box(height = "300px")
+--
+
+This nested column has the coefficients from each k-fold!
+
+.scroll40[
+```{r}
+survived_results$.extracts[[1]]$.extracts
+```
+]
+
+---
+class: twocol
+## Model Coefficients
+
+We can tidy up these results with the {tidyr} `unnest()` function.
+
+.scroll65[
+```{r}
+survived_coefs <- 
+  survived_results %>% 
+  select(id, id2, .extracts) %>%
+  unnest(.extracts) %>% 
+  unnest(.extracts) %>% 
+  mutate(resample = paste0(survived_coefs$id, "_", survived_coefs$id2))
+
+survived_coefs
+```
+]
+
+---
+class: twocol
+## Model Coefficients
+
+Now we can plot the model coefficients across each k-fold resample: 
+```{r, eval = FALSE}
+# plot coefficients across each resample
+survived_coefs %>% filter(term != "(Intercept)") %>%
+  ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
+  geom_hline(yintercept = 0, lty = 3) + 
+  geom_line(alpha = 0.3, lwd = 0.5)
+```
+
+```{r, echo = FALSE, out.width = "60%"}
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18,
+                 css_file = "../css/xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+
+# make a column indicating each resample 
+survived_coefs$resample <-  
+  paste0(survived_coefs$id, "_", survived_coefs$id2)
+
+# plot coefficients across each resample
+survived_coefs %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
+  geom_hline(yintercept = 0, lty = 3) + 
+  geom_line(alpha = 0.3, lwd = 0.5) + 
+  labs(y = "Coefficient", x = "Feature") + 
+  theme(legend.position = "none") + 
+  config
 ```
 
 ---
 class: onecol
 ## Variable Importance
 
-We can also plot variable importance using the {vip} package.
+Another way of interpreting a model is with .imp[variable importance] in the {vip} package.
 
-```{r, out.width = "50%"}
-#library(vip)
-#vip(fare_fit)
-```
+This is particularly helpful for **complex ML models** that are less interpretable<sup>1</sup>. 
+
+{vip} requires a **final model**, so we can re-fit a logistic regression on the full dataset.
 
 .footnote[
-Other algorithms have different ways to estimate variable importance, but `vip()` will take care of it.
+Unlike logistic regression, which has coefficients with straightforward interpretation. Other models have different methods to estimate variable importance, but `vip()` will take care of it.
 ]
-
-
----
-class: onecol
-## A Final Model
-
-Importantly, the goal of `fit_resamples()` is to .imp[measure model importance].
-
-The models trained in `fit_resamples()` are not saved or used later. 
-
-It also doesn't perform hyperparameter tuning (which we will learn about tomorrow).
 
 --
 
-<p style="padding-top:30px;"> We need a **final model** for interpretation and prediction on new data. 
+```{r}
+library(vip)
 
-For OLS regression, so we can go back and fit a model on the entire data set.
+# fit final model using the workflow specified previously
+survived_final <- 
+  survived_workflow %>% 
+  fit(titanic)
+```
 
-For tuning hyperparameters, we first use `tune_grid()` and then fit a final model.
+---
+class: onecol
+## Variable Importance
+
+From this final model, we can **extract the fit** and visualize the most important features. 
+
+--
+
+```{r, out.width = "90%"}
+survived_final %>% extract_fit_parsnip() %>% vip()
+```
+
+---
+class: onecol 
+## Hands-On Coding Activity
+
+Today we've gone through a **full walkthrough** of building a predictive model.
+
+Now it's time to practice the methods we've learned! 
+
+In this hands-on activity, you will build a regression model from start to finish.
+
+<p style="padding-top:30px;">You can find the activity at https://pittmethods.github.io/ under `Day 2D - Activity`.
+
+If you have questions, please post them in the chat or Slack channel. 
+
 
 ---
 class: inverse, center, middle
