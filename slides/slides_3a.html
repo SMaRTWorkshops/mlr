@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Regularized Regression</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pittsburgh Summer Methodology Series" />
+    <script src="slides_3a_files/header-attrs/header-attrs.js"></script>
+    <link href="slides_3a_files/tachyons/tachyons.min.css" rel="stylesheet" />
+    <script src="slides_3a_files/clipboard/clipboard.min.js"></script>
+    <link href="slides_3a_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="slides_3a_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="slides_3a_files/countdown/countdown.css" rel="stylesheet" />
+    <script src="slides_3a_files/countdown/countdown.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <span style="font-size:48pt;">Regularized Regression</span>
+]
+.subtitle[
+## .big[⛰ 🤠 🕸️ ]
+]
+.author[
+### Pittsburgh Summer Methodology Series
+]
+.date[
+### Day 3A     August 10, 2022
+]
+
+---
+
+
+
+
+
+
+
+
+
+
+class: inverse, center, middle
+# Overview
+
+---
+class: onecol
+## Lecture Topics
+
+.pull-left[
+**Linear Regression Review**
+- Ordinary least squares 
+- Minimizing sum-of-squared-errors
+- Limitations of OLS regression
+
+**Introduction to Regularization**
+- Why regularize? 
+- Bias-variance tradeoff 
+- Coefficient paths
+- Feature selection
+- Tuning hyperparameters
+]
+
+.pull-right[
+**Ridge**
+- `\(L_2\)` penalty
+- Parameter shrinkage towards zero
+
+**Lasso**
+- `\(L_1\)` penalty
+- Some parameters actually go to zero
+
+**Elastic Net**
+- Combining penalty terms
+- `\(\lambda\)` and `\(\alpha\)` tuning parameters
+]
+
+---
+class: inverse, center, middle
+# Linear Regression Review
+
+---
+class: onecol
+## Linear Regression
+
+Linear regression and closely related models (ridge, lasso, elastic net) can be written as:
+
+`$$y_i = b_0 + b_1x_{i1} + b_2x_{i2} + ... + b_Px_{iP} + e_i$$`
+where: 
+- `\(y_i\)`: value of the response for the `\(i\)`th observation
+- `\(b_0\)`: estimated intercept 
+- `\(b_j\)`: estimated coefficient for the `\(j\)`th predictor
+- `\(x_{ij}\)`: value of the `\(j\)`th predictor for the `\(i\)`th observation
+- `\(e_i\)`: random error unexplained by the model for the `\(i\)`th observation
+
+---
+class: onecol 
+## Ordinary Least Squares Regression 
+
+In OLS regression, the parameters are estimated to .imp[minimize model bias].
+
+Unfortunately, this comes at the expense of .imp[increasing model variance]&lt;sup&gt;/1&lt;sup&gt;.
+
+.footnote[
+[1] Remember that model bias is a lack of predictive accuracy in original data, whereas model variance is a lack of predictive accuracy in new data.  
+]
+
+--
+
+&lt;p style="padding-top:30px;"&gt;Specifically, OLS regression aims to minimize the **sum-of-squared errors (SSE)**:
+
+`$$SSE = \sum\limits_{i = 1}^n(y_i - \hat{y_i})^2$$`
+
+That is, it always attempts to **minimize error** between observed vs. predicted values.
+
+---
+class: onecol
+## A Problem
+
+Any dataset is influenced by the underlying data-generating process and sampling error.
+
+By definition, sampling error varies between samples drawn from the same population.
+
+Therefore, the sampling error in one dataset may not generalize to new data.
+
+--
+
+&lt;p style="padding-top:30px;"&gt;Aiming to make our predictions as close to observed data as possible can be risky. 
+
+We might be .imp[overfitting] to sampling error or other forms of noise.
+
+---
+class: onecol
+## A Problem
+
+&lt;img src="../figs/overfit_meme.jpeg" width="20%" /&gt;
+
+---
+class: onecol
+## Some Considerations
+
+---
+class: inverse, center, middle
+# Time for a Break!
+<div class="countdown" id="timer_62ededa1" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current% / %total%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

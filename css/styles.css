@@ -99,6 +99,11 @@ iframe.slide-deck {
 
 /* Scrollbox classes */
 
+.imp {
+  font-weight: bold;
+  color: darkred;
+}
+
 .scroll25 {
   height: 25%;
   overflow-y: scroll;
@@ -129,9 +134,14 @@ iframe.slide-deck {
   overflow-x: scroll;
 }
 
+.scroll65 {
+  height: 65%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
 .scroll70 {
   height: 70%;
   overflow-y: scroll;
   overflow-x: scroll;
 }
-

@@ -1,0 +1,170 @@
+---
+title: '<span style="font-size:48pt;">Regularized Regression</span>'
+subtitle: '.big[⛰ 🤠 🕸️ ]'
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Day 3A &emsp; &emsp; August 10, 2022'
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+---
+class: onecol
+## Lecture Topics
+
+.pull-left[
+**Linear Regression Review**
+- Ordinary least squares 
+- Minimizing sum-of-squared-errors
+- Limitations of OLS regression
+
+**Introduction to Regularization**
+- Why regularize? 
+- Bias-variance tradeoff 
+- Coefficient paths
+- Feature selection
+- Tuning hyperparameters
+]
+
+.pull-right[
+**Ridge**
+- $L_2$ penalty
+- Parameter shrinkage towards zero
+
+**Lasso**
+- $L_1$ penalty
+- Some parameters actually go to zero
+
+**Elastic Net**
+- Combining penalty terms
+- $\lambda$ and $\alpha$ tuning parameters
+]
+
+---
+class: inverse, center, middle
+# Linear Regression Review
+
+---
+class: onecol
+## Linear Regression
+
+Linear regression and closely related models (ridge, lasso, elastic net) can be written as:
+
+$$y_i = b_0 + b_1x_{i1} + b_2x_{i2} + ... + b_Px_{iP} + e_i$$
+where: 
+- $y_i$: value of the response for the $i$th observation
+- $b_0$: estimated intercept 
+- $b_j$: estimated coefficient for the $j$th predictor
+- $x_{ij}$: value of the $j$th predictor for the $i$th observation
+- $e_i$: random error unexplained by the model for the $i$th observation
+
+---
+class: onecol 
+## Ordinary Least Squares Regression 
+
+In OLS regression, the parameters are estimated to .imp[minimize model bias].
+
+Unfortunately, this comes at the expense of .imp[increasing model variance]<sup>/1<sup>.
+
+.footnote[
+[1] Remember that model bias is a lack of predictive accuracy in original data, whereas model variance is a lack of predictive accuracy in new data.  
+]
+
+--
+
+<p style="padding-top:30px;">Specifically, OLS regression aims to minimize the **sum-of-squared errors (SSE)**:
+
+$$SSE = \sum\limits_{i = 1}^n(y_i - \hat{y_i})^2$$
+
+That is, it always attempts to **minimize error** between observed vs. predicted values.
+
+---
+class: onecol
+## A Problem
+
+Any dataset is influenced by the underlying data-generating process and sampling error.
+
+By definition, sampling error varies between samples drawn from the same population.
+
+Therefore, the sampling error in one dataset may not generalize to new data.
+
+--
+
+<p style="padding-top:30px;">Aiming to make our predictions as close to observed data as possible can be risky. 
+
+We might be .imp[overfitting] to sampling error or other forms of noise.
+
+---
+class: onecol
+## A Problem
+
+```{r, echo = FALSE, out.width = "20%"}
+include_graphics("../figs/overfit_meme.jpeg")
+```
+
+---
+class: onecol
+## Some Considerations
+
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```
