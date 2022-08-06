@@ -27,7 +27,8 @@ knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE, 
   warning = FALSE,
-  hiline = TRUE
+  hiline = TRUE,
+  collapse = TRUE
 )
 ```
 
@@ -44,25 +45,252 @@ library(kableExtra)
 library(countdown)
 library(patchwork)
 library(xaringanthemer)
+library(tidymodels)
+tidymodels_prefer()
 ```
 
 class: inverse, center, middle
-# Section 1
+# Parameter Tuning
+---
+## Slide 1
 
 ---
-class: twocol
+## Slide 2
+
+---
+## Slide 3
+
+---
+## Slide 4
+
+---
+## Slide 5
+
+---
+class: inverse, center, middle
+# GLMNET Example
+---
+
+## Live Coding: Prepare data and folds
+
+```{r, eval=FALSE}
+# Load data
+titanic <- read_csv("https://tinyurl.com/titanic-pm")
+
+# Create data splits, stratified by fare
+
+set.seed(2022)
+fare_folds <- vfold_cv(data = titanic, v = 10, repeats = 3, strata = "fare")
+```
+
+---
+
+## Live Coding: Set up model and parameters
+
+```{r, eval=FALSE}
+# Set up model (linear regression using glmnet)
+
+glmnet_model <- 
+  linear_reg(penalty = tune(), mixture = tune()) %>%
+  set_mode("regression") %>% 
+  set_engine("glmnet")
+glmnet_model
+```
+
+---
+
+## Live Coding: Prepare workflow and metrics
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+fare_recipe <- 
+  recipe(titanic) %>% 
+  update_role(fare, new_role = "outcome") %>% 
+  update_role(pclass:parch, new_role = "predictor") %>% 
+  update_role(survived, new_role = "ignore") %>% 
+  step_naomit(fare) %>% 
+  step_mutate(
+    pclass = factor(pclass),
+    sex = factor(sex)
+  ) %>% 
+  step_dummy(all_nominal_predictors()) %>%
+  step_impute_linear(age) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_numeric_predictors()) %>%
+  step_lincomb(all_numeric_predictors()) %>% 
+  step_normalize(all_predictors())
+
+# Prepare workflow
+
+fare_wflow <-
+  workflow() %>% 
+  add_model(glmnet_model) %>% 
+  add_recipe(fare_recipe)
+
+# Set up metric set
+
+fare_ms <- metric_set(rmse, rsq, huber_loss, ccc)
+```
+]
+
+---
+
+## Live Coding: Set up the parameter dials
+
+```{r}
+# Extract the parameters to tune and finalize with the data folds
+
+glmnet_param <-
+  glmnet_model %>%
+  extract_parameter_set_dials() %>% 
+  finalize(fare_folds) 
+
+# View the finalized grids (not necessary, just to look)
+
+glmnet_param %>% extract_parameter_dials("penalty")
+
+glmnet_param %>% extract_parameter_dials("mixture")
+```
+
+---
+
+## Live Coding: Configure grid search and tune grid
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Set up resampling to save predictions and workflows
+
+control_keep <- control_resamples(save_pred = TRUE, save_workflow = TRUE)
+
+# Perform tuning by searching over space-filling grid
+
+set.seed(2022)
+fare_tune <- 
+  fare_wflow %>%
+  tune_grid(
+    resamples = fare_folds,
+    grid = 10,
+    param_info = glmnet_param,
+    metrics = fare_ms,
+    control = control_keep
+  )
+fare_tune
+
+# View the performance by parameter values (averaged across folds and repeats)
+
+collect_metrics(fare_tune)
+
+# Plot the marginal performance by parameter values
+
+autoplot(fare_tune, metric = "rmse")
+```
+]
+
+---
+
+## Live Coding: Finalize the workflow
+
+```{r, eval=FALSE}
+# Select the best parameters values
+
+fare_param_final <- select_best(fare_tune, metric = "rmse")
+fare_param_final
+
+# Finalize the workflow with best parameter values
+
+fare_wflow_final <- 
+  fare_wflow %>% 
+  finalize_workflow(fare_param_final)
+fare_wflow_final
+```
+
+---
+
+## Live Coding: Fit the finalized workflow to resamples
+
+```{r, eval=FALSE}
+fare_fit <-
+  fare_wflow_final %>% 
+  fit_resamples(
+    resamples = fare_folds,
+    metrics = fare_ms,
+    control = control_keep
+  )
+```
+
+---
+
+## Live Coding: View performance across resamples
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# View the metrics (averaged across folds and repetitions)
+
+collect_metrics(fare_fit, summarize = TRUE)
+
+# View and plot the metrics (per fold and repetition)
+
+fare_perf_fold <- collect_metrics(fare_fit, summarize = FALSE)
+fare_perf_fold
+
+# Simpler version (one metric only)
+
+fare_perf_fold %>% 
+  filter(.metric == "ccc") %>% 
+  ggplot(aes(x = .estimate, y = id)) +
+  geom_boxplot() +
+  labs(x = "CCC", y = NULL)
+
+# Advanced version (all metrics)
+
+fare_perf_fold %>% 
+  ggplot(aes(x = .estimate, y = id)) +
+  facet_wrap(~.metric, scales = "free") +
+  geom_boxplot() +
+  labs(y = NULL)
+
+# Plot the predictions (averaged across folds and predictions)
+
+fare_pred <- collect_predictions(fare_fit, summarize = TRUE)
+
+ggplot(fare_pred, aes(x = fare, y = .pred)) + 
+  geom_point(alpha = 0.1) +
+  geom_abline(color = "darkred") +
+  coord_obs_pred()
+```
+]
+
+---
+
+## Live Coding: Deployment and Interpretation
+
+```{r, eval=FALSE}
+# Fit the final model to the entire dataset for interpretation and deployment
+
+fare_deploy <- 
+  fare_wflow_final %>% 
+  fit(titanic)
+
+# Deployment: If new data comes in, use this model to make predictions
+
+titanic2 <- titanic # replace with actually different dataset
+predict(fare_deploy, titanic2)
+
+# Interpretation: How important was each predictor in the final model?
+library(vip)
+fare_deploy %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+```
 
 ---
 
 class: inverse, center, middle
-# Section 2
 
----
-class: inverse, center, middle
 # Time for a Break!
 ```{r countdown, echo=FALSE}
 countdown(
-  minutes = 10, 
+  minutes = 60, 
   seconds = 0, 
   right = "33%", 
   left = "33%",
@@ -71,6 +299,6 @@ countdown(
   color_text = "black",
   color_running_background = "white",
   color_running_text = "black",
-  warn_when = 60
+  warn_when = 120
 )
 ```
