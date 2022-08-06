@@ -253,8 +253,8 @@ class: twocol
 ]
 
 .pull-right.lh-copy[
-- **Missing value imputation:**<br />
-  `step_impute_linear()`, ...
+- **Missing values:**<br />
+  `step_naomit()`, `step_impute_*()`, ...
 - **Near-zero variance:**<br />
   `step_nzv()`
 - **Multicollinearity:**<br />
@@ -565,9 +565,11 @@ fare_recipe %>%
   
 ---
 class: onecol
-## Missing value imputation
+## Missing values
 
 -   It is not uncommon for outcomes and predictors to have missing values
+
+--
 
 -   If we have marked these values correctly as `NA`, we can impute them
 
@@ -579,28 +581,31 @@ class: onecol
   
   -   We will use a linear imputation model via `step_impute_linear()`
   
+--
+
 -   Imputing predictor values is fine when you are using cross-validation
 
-  -   The jury is still out about how to handle missing outcome values...
+  -   But omit observations with missing outcome values using `step_naomit()`
 
 .footnote[*Note.* You can even impute via machine learning models (e.g., `step_impute_bag()`). Inception!]
 
 ---
 
-## Missing value imputation
+## Missing values
 
 ```{r}
-si_recipe <- 
+na_recipe <- 
   fare_recipe %>% 
-  step_impute_linear(age, impute_with = imp_vars(all_predictors())) #<<
+  step_naomit(fare) %>% #<<
+  step_impute_linear(age) #<<
 ```
 
-.footnote[*Note.* The default is to use all other predictor variables, so we can omit `impute_with`.]
+.footnote[*Note.* The default is to include all other predictor variables in the imputation model but we can customize that.]
 
 --
 
 ```{r echo=FALSE}
-si_recipe %>% 
+na_recipe %>% 
   prep() %>% 
   bake(NULL) %>%
   head(100) %>% 
@@ -736,16 +741,17 @@ fare_recipe <-
   update_role(fare, new_role = "outcome") %>% 
   update_role(pclass:parch, new_role = "predictor") %>% 
   update_role(survived, new_role = "ignore") %>% 
+  step_naomit(fare) %>% 
   step_mutate(
     pclass = factor(pclass),
     sex = factor(sex)
   ) %>% 
-  step_normalize(all_numeric_predictors()) %>%
   step_dummy(all_nominal_predictors()) %>%
   step_impute_linear(age) %>%
   step_nzv(all_predictors()) %>%
   step_corr(all_numeric_predictors()) %>%
-  step_lincomb(all_numeric_predictors())
+  step_lincomb(all_numeric_predictors()) %>% 
+  step_normalize(all_predictors())
 
 # Prepare workflow
 
