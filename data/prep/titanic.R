@@ -8,12 +8,12 @@ titanic <-
   as_tibble() |> 
   select(
     survived,
+    fare,
     pclass,
     sex,
     age,
     sibsp,
-    parch,
-    fare
+    parch
   ) |> 
   print()
 
