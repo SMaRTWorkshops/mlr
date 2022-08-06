@@ -33,7 +33,7 @@ left:
        - text: "[3A] GLMNET algorithm"
          href: wip.html #day_3a.html
        - text: "[3B] GLMNET example and tuning"
-         href: wip.html #day_3b.html
+         href: day_3b.html
        - text: "[3C] Random Forest (RF) algorithm"
          href: wip.html #day_3c.html
        - text: "[3D] RF example and reporting"

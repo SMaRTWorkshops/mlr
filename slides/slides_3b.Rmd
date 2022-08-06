@@ -49,22 +49,180 @@ library(tidymodels)
 tidymodels_prefer()
 ```
 
+```{r data, echo=FALSE, message=FALSE}
+titanic <- read_csv("../data/titanic.csv")
+```
+
+
 class: inverse, center, middle
 # Parameter Tuning
 ---
-## Slide 1
+class: twocol
+## Model and tuning parameters
+.pull-left[
+#### Model Parameters
+
+-   Often specify the learned .imp[relationships]
+
+-   **LM:** intercept and slope(s)
+
+-   **GLMNET:** intercept and slope(s)
+
+-   To "fit" a model is to estimate the model parameter values using training data
+]
+
+--
+
+.pull-right[
+#### Tuning Parameters
+
+-   Often control the model's .imp[complexity]
+
+-   **LM:** *(none)* 
+
+-   **GLMNET:** penalty and mixture
+
+-   Unfortunately, tuning parameter values .underline[cannot be estimated] using training data
+]
+
+--
+.pv3[
+.bg-light-yellow.b--light-red.ba.bw1.br3.ph4[
+**Caution:** The "default" values of many tuning parameters often perform quite poorly...
+]
+]
+
+.footnote[
+[1] Different algorithms may have different model parameters and tuning parameters.<br />
+[2] Tuning parameters are sometimes also called "hyperparameters."
+]
+---
+class: onecol
+## Parameter Tuning
+.pull-left[
+-   Recall that we need to find a balance
+
+  -   Too simple a model will **underfit**
+  
+  -   Too complex a model will **overfit**
+  
+  -   Both lead to poor generalizability
+
+-   To find this optimal balance, we...
+
+  -   Try various hyperparameter values
+  
+  -   Select those that best generalize
+  
+  -   (This is done during resampling)
+]
+
+--
+
+.pull-right.pv3.tc[
+![](../figs/overfitting.png)
+
+.flex.items-center.justify-center.nt3[
+.f3[Complexity Dial:]
+
+<img src="../figs/knob.gif" width="100" height="100" />
+
+]
+]
 
 ---
-## Slide 2
+class: onecol
+## Determining which values to try
+
+.lh-copy[
+-   .imp[Grid Search] is the approach we will use in this course
+  1.   Start with some reasonable boundaries<sup>1</sup> for each tuning parameter
+  2.   Generate a list of possible values within those boundaries
+  3.   Create a list of all (or some) combinations of these values
+  4.   Try all of these values and then select the best
+]
+
+--
+.lh-copy[
+-   .imp[Iterative Search] is a more advanced approach
+  1.    Start with some reasonable value<sup>1</sup> for each tuning parameter
+  2.    Fit a model with those values and examine performance
+  3.    Try slightly different values and compare performance
+  4.    Continue until performance barely changes anymore
+]
+
+.footnote[[1] But what are "reasonable" values? Tidymodels has us covered!]
+---
+## Determining which values to try
+
+.pull-left[
+![](../figs/grid_search.png)
+]
+
+--
+
+.pull-right[
+![](../figs/iterative_search.png)
+]
 
 ---
-## Slide 3
+class: onecol
+## Steps in parameter tuning
+
+1.    Split your data (full or training set) into resamples
+
+--
+
+2.    Determine which parameters to tune (often all)
+
+--
+
+3.    Create a list of tuning parameter values to try
+
+--
+
+4.    Try each combination of values during resampling
+  -   Train a model on some of the data with these values
+  -   Test the model just described on the rest of the data
+  -   *Optional:* Repeat several times and average the results
+
+--
+
+5.    Find the combination of values with the best performance
+
+--
+
+6.    Train a final, "tuned" model on all your data with the best values...
 
 ---
-## Slide 4
+class: twocol
+## Key functions for tuning
 
----
-## Slide 5
+-   `tune()`: Tell tidymodels which parameters to tune
+
+--
+
+.pt1[
+-   `extract_parameter_dials()`: Extract information about one parameter
+
+-   `extract_parameter_set_dials()`: Extract information about all parameters
+]
+
+--
+
+.pt1[
+-   `finalize()`: Determine reasonable boundaries for each parameter (automatically)
+
+-   `tune_grid()`: Create a list of value combinations (within boundaries) and try them
+]
+
+--
+
+.pt1[
+-   `select_best()`: Determine which combination of values was the best
+
+-   `finalize_workflow()`: Store the best values in the workflow object
+]
 
 ---
 class: inverse, center, middle
@@ -292,7 +450,7 @@ fare_deploy %>%
 # Get some boilerplate for GLMNET to start with and then modify
 
 library(usemodels)
-use_glmnet(formula = fare ~ ., data = titanic, tune = TRUE)
+use_glmnet(formula = fare ~ ., data = titanic)
 
 # Add code to do resampling
 
