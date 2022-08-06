@@ -17,6 +17,8 @@ library(tidyverse)
 
 Real data on the satisfaction and experience of 10,000 customers of an airline <a href="https://www.kaggle.com/datasets/teejmahal20/airline-passenger-satisfaction" class="badge badge-info">Info</a>
 
+  -   Classification task: predict `satisfaction`
+
 ```{r, eval=FALSE}
 # install.packages("readr")
 airsat <- readr::read_csv("https://tinyurl.com/airsat-pm")
@@ -27,21 +29,21 @@ airsat <- readr::read_csv("https://tinyurl.com/airsat-pm")
 read_csv("./data/airsat.csv", show_col_types = FALSE)
 ```
 
-<!-- --- -->
+---
 
-<!-- ## spotify -->
+## penguins
 
-<!-- Real data on the popularity and acoustic properties of 5,000 songs from Spotify <a href="https://www.kaggle.com/datasets/yasserh/song-popularity-dataset" class="badge badge-info">Info</a> -->
+Real data on 344 penguins observed at Palmer Station, Antarctica <a href="https://allisonhorst.github.io/palmerpenguins/" class="badge badge-info">Info</a>
 
-<!-- ```{r, eval=FALSE} -->
-<!-- # install.packages("readr") -->
-<!-- spotify <- readr::read_csv("https://rb.gy/gmzeyv") -->
-<!-- ``` -->
-
-<!-- ```{r, echo=FALSE, message=FALSE} -->
-<!-- # https://github.com/PittMethods/appliedml/raw/main/data/spotify.csv -->
-<!-- read_csv("./data/spotify.csv", show_col_types = FALSE) -->
-<!-- ``` -->
+  - Classification task: predict `species`
+  
+  - Regression task: predict `body_mass_g`
+  
+```{r}
+# install.packages("palmerpenguins")
+library(palmerpenguins)
+penguins
+```
 
 ---
 
@@ -49,6 +51,9 @@ read_csv("./data/airsat.csv", show_col_types = FALSE)
 
 Real data on 1,309 passengers on the Titanic <a href="https://www.openml.org/search?type=data&sort=runs&id=40945&status=active" class="badge badge-info">Info</a>
 
+  - Classification task: predict `survived`
+  
+  - Regression task: predict `fare`
 
 ```{r, eval=FALSE}
 # install.packages("readr")
@@ -66,6 +71,8 @@ read_csv("./data/titanic.csv", show_col_types = FALSE)
 
 Real data on the potability and chemical properties of 3,276 water bodies <a href="https://www.kaggle.com/adityakadiwal/water-potability" class="badge badge-info">Info</a>
 
+  - Classification task: predict `Potability`
+  
 ```{r, eval=FALSE}
 # install.packages("readr")
 water <- readr::read_csv("https://tinyurl.com/water-pm")
