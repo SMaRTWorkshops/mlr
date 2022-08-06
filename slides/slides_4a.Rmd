@@ -38,6 +38,7 @@ library(xaringanthemer)
 ```{r xaringan-tachyons, echo=FALSE}
 xaringanExtra::use_tachyons()
 xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
 ```
 
 ```{r packages, echo=FALSE, message=FALSE}

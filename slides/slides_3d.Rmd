@@ -32,6 +32,7 @@ knitr::opts_chunk$set(
 ```{r xaringanExtra, echo=FALSE}
 xaringanExtra::use_tachyons()
 xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
 ```
 
 ```{r packages, echo=FALSE, message=FALSE}
