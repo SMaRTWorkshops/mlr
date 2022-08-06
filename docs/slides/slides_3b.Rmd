@@ -137,7 +137,7 @@ fare_ms <- metric_set(rmse, rsq, huber_loss, ccc)
 
 ## Live Coding: Set up the parameter dials
 
-```{r}
+```{r, eval=FALSE}
 # Extract the parameters to tune and finalize with the data folds
 
 glmnet_param <-
@@ -282,6 +282,25 @@ fare_deploy %>%
   extract_fit_parsnip() %>% 
   vip()
 ```
+
+---
+
+## Some helpful boilerplate
+
+.scroll.h-0l[
+```{r}
+# Get some boilerplate for GLMNET to start with and then modify
+
+library(usemodels)
+use_glmnet(formula = fare ~ ., data = titanic, tune = TRUE)
+
+# Add code to do resampling
+
+# Adjust recipe as needed
+
+# Add code to finalize and fit the model
+```
+]
 
 ---
 
