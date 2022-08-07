@@ -452,9 +452,13 @@ Once we fit a model, we can examine the model by printing or plotting it.
 
 Some useful functions:
 
-- `tidy()`: return model summary (coefficient values, std error, *p* value) in a tibble
+`tidy()`: return model summary (coefficient values, std error, *p* value) in a tibble.
 
-- `glance()`: return performance metrics from the training data (e.g., $r^2$)
+- This is helpful for simple models that are easily interpretable (e.g., LM/GLM)
+
+`vip()`: plot variable importance. 
+
+- This is helpful for both simple models and complex models (e.g., random forests) that do not have interpretable coefficients.
 
 ---
 class: onecol
@@ -511,6 +515,105 @@ We will also learn more advanced **cross-validation** for a full ML **workflow**
 ---
 class: inverse, center, middle
 # Live Coding
+
+---
+class: onecol
+## Live Coding: Data Preparation
+
+```{r, eval = FALSE}
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  mutate(
+    survived = factor(survived),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  ) %>% 
+  na.omit()
+
+# view
+head(titanic)
+```
+
+---
+class: onecol
+## Live Coding: Split Data
+
+```{r, eval = FALSE}
+titanic_split <- initial_split(titanic, prop = 0.8, strata = 'survived')
+titanic_train <- training(titanic_split)
+titanic_test <- testing(titanic_split)
+
+dim(titanic_train)
+dim(titanic_test)
+```
+
+---
+class: onecol
+## Live Coding: Specify Model
+
+```{r, eval = FALSE}
+log_reg <- 
+  logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+
+log_reg
+```
+
+---
+class: onecol
+## Live Coding: Fit Model 
+
+```{r, eval = FALSE}
+survived_fit <- 
+  log_reg %>% 
+  fit(survived ~ ., data = titanic_train)
+
+survived_fit
+```
+
+---
+class: onecol
+## Live Coding: Inspect Results
+
+```{r, eval = FALSE}
+# coefficients 
+tidy(survived_fit)
+
+# variable importance
+vip(survived_fit)
+```
+
+---
+class: onecol
+## Live Coding: Make Predictions
+
+```{r, eval = FALSE}
+# make predictions
+survived_test_preds <- predict(survived_fit, new_data = titanic_test)
+survived_test_preds
+
+# merge predictions with test data 
+survived_preds <- titanic_test %>% 
+  select(survived) %>%
+  bind_cols(survived_test_preds)
+
+survived_preds
+```
+
+---
+class: onecol
+## Live Coding: Examine Predictions
+
+```{r, eval = FALSE}
+# compare predicted to actual values 
+conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
+
+# plot the confusion matrix 
+survived_cm <- conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
+autoplot(survived_cm, type = "mosaic")
+autoplot(survived_cm, type = "heatmap")
+```
 
 
 ---
