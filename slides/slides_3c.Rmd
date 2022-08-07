@@ -1,0 +1,187 @@
+---
+title: '<span style="font-size:48pt;">Decision Trees and Random Forests</span>'
+subtitle: '.big[🤔 🌴 🍂️]'
+author: 'Pittsburgh Summer Methodology Series'
+date: 'Day 3C &emsp; &emsp; August 10, 2022'
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+---
+class: twocol
+## Lecture Topics
+
+.pull-left[
+**Simple Decision Trees**
+- Motivation (modeling nonlinearity)
+- Classification trees
+- Regression trees
+- Recursive partitioning
+- Pruning
+- Stopping criteria 
+
+**Ensemble Methods**
+- Random forests 
+- Aggregating predictions
+- Accuracy vs interpretability  
+]
+
+.pull-right[
+```{r, echo = FALSE, out.height=450, out.width = 400}
+include_graphics("../figs/flowchart2.jpg")
+```
+]
+
+---
+class: onecol
+## Geometry of Data
+
+So far, we've modeled linear relationships with linear boundaries between classes, e.g.: 
+
+```{r, echo = FALSE, fig.showtext=TRUE}
+set.seed(1)
+x = rnorm(400)
+y = rnorm(400)
+simdat <- data.frame(x, y)
+simdat$group_lin <- ifelse(simdat$x < simdat$y, 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_lin)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+class: onecol
+## Geometry of Data
+
+But what about other types of relationships? 
+
+```{r, echo = FALSE}
+simdat$group_circle <- ifelse(simdat$x < 1 & simdat$x > -1 & simdat$y < 1 & simdat$y > -1, 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_circle)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+class: onecol
+## Geometry of Data
+
+But what about other types of relationships? 
+
+```{r, echo = FALSE}
+simdat$group_quadrants <- ifelse((simdat$x < -0.5 & simdat$y > 0) | (simdat$x > 0.5 & simdat$y < 0), 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_quadrants)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+class: onecol
+## Geometry of Data
+
+Whereas these classes are very clearly separated, it's no longer easy to use a **single equation** to describe the boundaries between them. 
+
+.pull-left[
+```{r, echo = FALSE}
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_circle)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_quadrants)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+]
+
+--
+
+.imp[Decision trees] allow us to build models that are capable of describing these complex decision boundaries while maintaining ease of interpretability.
+
+
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```
+
+
