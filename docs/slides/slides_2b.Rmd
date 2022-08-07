@@ -179,7 +179,7 @@ We will be learning the {recipes} package from {tidymodels}
 # Option 1: Set roles using a formula
 
 fare_recipe <- 
-  recipe(titanic, formula = fare ~ pclass + sex + age + sibsp + parch)
+  recipe(fare_train, formula = fare ~ pclass + sex + age + sibsp + parch)
 ```
 
 --
@@ -188,7 +188,7 @@ fare_recipe <-
 # Option 2: Set roles using update_role()
 
 fare_recipe <-
-  recipe(titanic) %>% 
+  recipe(fare_train) %>% 
   update_role(fare, new_role = "outcome") %>% 
   update_role(pclass:parch, new_role = "predictor") %>% 
   update_role(survived, new_role = "ignore")
