@@ -94,24 +94,30 @@ Let's train a classification model on the `titanic` data to predict survival.
 
 ---
 class: onecol
-## Load Data and Create Recipe
+## Load Data, Create Splits and Recipe
 
 ```{r}
 library(tidymodels)
 titanic <- read.csv("https://tinyurl.com/titanic-pm")
 
-survived_recipe <- 
-  titanic %>% 
-  recipe(survived ~ .) %>% 
-  step_mutate(survived = factor(survived),
-              pclass = factor(pclass, levels = c(1, 2, 3)),
-              sex = factor(sex, levels = c("female", "male"))) %>% 
-  step_normalize(all_numeric_predictors()) %>%
-  step_dummy(pclass, sex) %>%
+surv_split <- initial_split(titanic, prop = 0.8, strata = survived)
+surv_train <- training(surv_split)
+surv_test <- testing(surv_split)
+
+surv_recipe <- 
+  recipe(titanic, formula = survived ~ .) %>%
+  step_naomit(survived) %>% 
+  step_mutate(
+    survived = factor(survived),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  ) %>% 
+  step_dummy(all_nominal_predictors()) %>%
   step_impute_linear(age, fare) %>%
   step_nzv(all_predictors()) %>%
   step_corr(all_predictors()) %>%
-  step_lincomb(all_predictors())
+  step_lincomb(all_predictors()) %>% 
+  step_normalize(all_numeric_predictors())
 ```
 
 ---
@@ -133,12 +139,12 @@ class: onecol
 
 .scroll70[
 ```{r}
-survived_workflow <- 
+surv_wflow <- 
   workflow() %>%
   add_model(log_reg) %>%
-  add_recipe(survived_recipe)
+  add_recipe(surv_recipe)
 
-survived_workflow
+surv_wflow
 ```
 ]
 
@@ -150,15 +156,17 @@ class: onecol
 set.seed(2022)
 
 # configure resampling
-survived_folds <- vfold_cv(data = titanic, 
-                           v = 10, 
-                           repeats = 3,
-                           strata = 'survived')
+surv_folds <- vfold_cv(
+  data = surv_train,
+  v = 10, 
+  repeats = 3,
+  strata = survived
+)
 ```
 
 --
 
-The goal of `fit_resamples()` is to .imp[measure model importance]. 
+The goal of `fit_resamples()` is to .imp[estimate model performance]. 
 
 Therefore, by default, the models trained are not saved or used later.
 
@@ -196,10 +204,14 @@ Now that we've set the workflow & configured resampling, we're ready to fit the 
 .scroll65[
 ```{r}
 # train the model using the recipe, data, and method 
-survived_results <- survived_workflow %>%
-  fit_resamples(resamples = survived_folds, control = keep_pred)
+surv_fitr <- 
+  surv_wflow %>%
+  fit_resamples(
+    resamples = surv_folds, 
+    control = keep_pred
+  )
 
-survived_results
+surv_fitr
 ```
 ]
 
@@ -209,51 +221,45 @@ class: twocol
 
 .pull-left[
 ```{r, echo = FALSE}
-include_graphics("../figs/kfold5.png")
+include_graphics("../figs/kfold4_jg.png")
 ```
 ]
 
 .pull-right[
-Note: we are resampling the **entire data set**.
+Note: we are resampling the **training set**.
 
-This means that we only have training and test sets (N = 30). 
+This means that we have analysis and assessment sets (N = 30). 
 
-We have no separate validation sets. 
+We will obtain performance metrics for each assessment set. 
 
-We will obtain metrics for each test set. 
+We can average performance metrics across all resamples.
 
-We will average performance metrics across all resamples.
-
-These averages serve as model evaluation. 
+These averages serve as a preview for model evaluation. 
 ] 
 
 ---
-class: inverse, center, middle 
-# Model Evaluation 
-
----
 class: onecol
-## Cross-Validated Test Performance
+## Performance during Cross-Validation
 
 The object created by `fit_resamples()` will contain lots of information.
 
-We can view the predictions made in each test set with `collect_predictions()`.
+We can view the predictions made in each assessment set with `collect_predictions()`.
 
 --
 
 ```{r, eval = FALSE}
-collect_predictions(survived_results)
+collect_predictions(surv_fitr)
 ```
 
 ```{r, echo = FALSE}
-collect_predictions(survived_results) %>% kable() %>% scroll_box(height = "300px")
+collect_predictions(surv_fitr) %>% kable() %>% scroll_box(height = "300px")
 ```
 
 ---
 class: onecol
-## Cross-Validated Test Performance
+## Performance during Cross-Validation
 
-We can view a summary of the test set performance with `collect_metrics()`<sup>1</sup>.
+We can view a summary of the CV performance with `collect_metrics()`<sup>1</sup>.
 
 .footnote[
 [1] To see metrics for each fold, include `summarize = FALSE` in `collect_metrics()`.
@@ -262,12 +268,12 @@ We can view a summary of the test set performance with `collect_metrics()`<sup>1
 --
 
 ```{r, eval = FALSE}
-collect_metrics(survived_results)
+collect_metrics(surv_fitr)
 ```
 
 
 ```{r, echo = FALSE}
-collect_metrics(survived_results) %>% kable()
+collect_metrics(surv_fitr) %>% kable()
 ```
 
 --
@@ -276,48 +282,48 @@ These accuracy and AUC values look pretty good!
 
 ---
 class: onecol
-## Cross-Validated Test Performance 
+## Performance during Cross-Validation
 
 Let's look at a .imp[confusion matrix] for a better understanding of model performance.
 
 ```{r, eval = FALSE}
-survived_cm <- collect_predictions(survived_results) %>%
+surv_cm <- collect_predictions(surv_fitr) %>%
   conf_mat(truth = survived, estimate = .pred_class)
 
-autoplot(survived_cm, type = "mosaic")
-autoplot(survived_cm, type = "heatmap")
+autoplot(surv_cm, type = "mosaic")
+autoplot(surv_cm, type = "heatmap")
 ```
 
 --
 
 .pull-left[
 ```{r, echo = FALSE}
-survived_cm <- 
-  collect_predictions(survived_results) %>%
+surv_cm <- 
+  collect_predictions(surv_fitr) %>%
   conf_mat(truth = survived, estimate = .pred_class)
 
-autoplot(survived_cm, type = "mosaic")
+autoplot(surv_cm, type = "mosaic")
 ```
 ]
 
 .pull-right[
 ```{r, echo = FALSE}
-autoplot(survived_cm, type = "heatmap")
+autoplot(surv_cm, type = "heatmap")
 ```
 ]
 
 ---
 class: onecol
-## Cross-Validated Test Performance
+## Performance during Cross-Validation
 
 Finally, let's calculate all confusion matrix metrics. 
 
 ```{r, eval = FALSE}
-summary(survived_cm)
+summary(surv_cm)
 ```
 
 ```{r, echo = FALSE}
-summary(survived_cm) %>% kable() %>% scroll_box(height = "300px")
+summary(surv_cm) %>% kable() %>% scroll_box(height = "300px")
 ```
 
 ---
@@ -348,12 +354,12 @@ class: onecol
 
 Extracting the coefficients we need is a bit messy, but let's walk through it.
 
-Let's take a look at the output from our resampled model `survived_results`:
+Let's take a look at the output from our resampled model `surv_fitr`:
 
 --
 .scroll40[
 ```{r}
-survived_results
+surv_fitr
 ```
 ]
 
@@ -366,10 +372,10 @@ The output of `get_resample_coefs()` is contained in the column `.extracts`.
 class: twocol
 ## Model Coefficients
 
-Inside `survived_results$.extracts` is *another* `.extracts` column.
+Inside `surv_fitr$.extracts` is *another* `.extracts` column.
 
 ```{r}
-survived_results$.extracts[[1]]
+surv_fitr$.extracts[[1]]
 ```
 
 --
@@ -378,7 +384,7 @@ This nested column has the coefficients from each k-fold!
 
 .scroll40[
 ```{r}
-survived_results$.extracts[[1]]$.extracts
+surv_fitr$.extracts[[1]]$.extracts
 ```
 ]
 
@@ -390,14 +396,14 @@ We can tidy up these results with the {tidyr} `unnest()` function.
 
 .scroll65[
 ```{r}
-survived_coefs <- 
-  survived_results %>% 
+surv_coefs <- 
+  surv_fitr %>% 
   select(id, id2, .extracts) %>%
   unnest(.extracts) %>% 
   unnest(.extracts) %>% 
   mutate(resample = paste0(id, "_", id2))
 
-survived_coefs
+surv_coefs
 ```
 ]
 
@@ -408,7 +414,7 @@ class: twocol
 Now we can plot the model coefficients across each k-fold resample: 
 ```{r, eval = FALSE}
 # plot coefficients across each resample
-survived_coefs %>% filter(term != "(Intercept)") %>%
+surv_coefs %>% filter(term != "(Intercept)") %>%
   ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
   geom_hline(yintercept = 0, lty = 3) + 
   geom_line(alpha = 0.3, lwd = 0.5)
@@ -424,11 +430,11 @@ config <-
   )
 
 # make a column indicating each resample 
-survived_coefs$resample <-  
-  paste0(survived_coefs$id, "_", survived_coefs$id2)
+surv_coefs$resample <-  
+  paste0(surv_coefs$id, "_", surv_coefs$id2)
 
 # plot coefficients across each resample
-survived_coefs %>%
+surv_coefs %>%
   filter(term != "(Intercept)") %>%
   ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
   geom_hline(yintercept = 0, lty = 3) + 
@@ -458,9 +464,9 @@ Unlike logistic regression, which has coefficients with straightforward interpre
 library(vip)
 
 # fit final model using the workflow specified previously
-survived_final <- 
-  survived_workflow %>% 
-  fit(titanic)
+surv_final <- 
+  surv_wflow %>% 
+  last_fit(surv_split)
 ```
 
 ---
@@ -472,7 +478,7 @@ From this final model, we can **extract the fit** and visualize the most importa
 --
 
 ```{r, out.width = "90%"}
-survived_final %>% extract_fit_parsnip() %>% vip()
+surv_final %>% extract_fit_parsnip() %>% vip()
 ```
 
 ---
