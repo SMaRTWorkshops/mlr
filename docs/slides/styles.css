@@ -21,7 +21,7 @@ iframe.slide-deck {
 /* Set appearance of code chunks */
 
 .remark-code {
-  font-size: 24px;
+  font-size: 20px;
   border: 1px solid grey;
 }
 
@@ -29,6 +29,8 @@ iframe.slide-deck {
 
 .remark-inline-code {
   background-color: white;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 
 /* Set appearance of hyperlinks */
@@ -37,8 +39,65 @@ iframe.slide-deck {
   background-color: lightblue;
 }
 
+/* Style footer */
+
+.footer {
+  text-align: center;
+  padding-top: 2.0rem;
+  color: grey;
+}
+
+/* Slide Footnote */
+
+.remark-slide .footnote {
+  bottom: 24px;
+}
+
+.remark-slide .footnote p {
+  margin-bottom:0;
+}
 
 /* Custom class for emphasizing text as important */
+
+.imp {
+  font-weight: bold;
+  color: darkred;
+}
+
+.left-column img {
+  border: 2px solid black;
+}
+
+.pad-table th,td {
+  padding-left:0.5rem;
+  padding-right:0.5rem;
+}
+
+/* scrollable codebox */
+
+.scroll .remark-code {
+  overflow-y: scroll;
+}
+
+/* Use with .scroll when 0 lines of text above code */
+.h-0l .remark-code {
+  height: 460px;
+  max-height: 460px;
+}
+
+/* Use with .scroll when 1 line of text above code */
+.h-1l .remark-code {
+  height: 420px;
+  max-height: 420px;
+}
+
+/* Use with .scroll when 2 lines of text above code  */
+.h-2l .remark-code {
+  height: 380px;
+  max-height: 380px;
+}
+
+/* Scrollbox classes */
 
 .imp {
   font-weight: bold;
@@ -86,4 +145,3 @@ iframe.slide-deck {
   overflow-y: scroll;
   overflow-x: scroll;
 }
-
