@@ -413,6 +413,79 @@ For this reason, regularized regression remains very **interpretable**.
 
 ---
 class: onecol
+## Regularization for Classification
+
+Regularization works for .imp[both regression and classification problems]. 
+
+Recall that **logistic regression** predicts the probability of a binary event, e.g.:
+
+- Email is spam or not spam.
+
+- This photo contains or does not contain a dog.
+
+- A patient has or does not have a disease.
+
+--
+
+<p style="padding-top:30px;">We typically<sup>1</sup> classify observations where $P(Y = 1) \geq 0.5$ in the $Y = 1$ group.
+
+Observations where $P(Y = 1) < 0.5$ are typically classified in $Y = 0$ group.
+
+.footnote[
+[1] However, thresholds other than 0.5 can be chosen. 
+]
+
+---
+class: onecol
+## Regularization for Classification
+
+Logistic regression uses a different loss function, as the outcome is dichotomous.
+
+.pull-left[
+.center[**Linear Regression**]
+```{r, echo = FALSE}
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18,
+                 css_file = "../css/xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white"),
+    axis.title = element_text(size = 20)
+  )
+
+set.seed(2022)
+x <- rnorm(200)
+ylin <- 1 + 4*x + 0.5*rnorm(200)
+lin_df <- data.frame(y = ylin, x = x)
+ggplot(lin_df, aes(x = x, y = ylin)) + 
+  geom_point(alpha = 0.5, size = 3) + 
+  stat_smooth(method = "lm", se = FALSE, color = 'darkred', lwd = 1.5) + 
+  labs(x = "Feature", y = "Label") + config
+```
+
+]
+.pull-right[
+.center[**Logistic Regression**]
+```{r, echo = FALSE}
+pr <- 1/(1+exp(-ylin))
+ylog <- rbinom(200, 1, pr)
+
+log_df <- data.frame(y = ylog, x = x)
+ggplot(log_df, aes(x = x, y = ylog)) + 
+  geom_point(alpha = 0.5, size = 3) + 
+  stat_smooth(method = "glm", method.args = list(family=binomial), se = FALSE, color = 'darkred', lwd = 1.5) + 
+  labs(x = "Feature", y = "Label") + config
+```
+]
+
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[Ridge, lasso, and elastic net penalties can also be added to the logistic loss function.
+
+These will have the same effect of .imp[shrinking coefficients towards zero].
+]
+---
+class: onecol
 ## Comprehension Check \#2
 
 .pull-left[
