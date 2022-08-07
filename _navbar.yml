@@ -14,7 +14,7 @@ left:
          href: day_1a.html
        - text: "[1B] Tidyverse primer and data"
          href: day_1b.html
-       - text: "[1C] Data partitioning or splitting"
+       - text: "[1C] Data partitioning and validation"
          href: day_1c.html
        - text: "[1D] Model fitting and prediction"
          href: day_1d.html
