@@ -1,5 +1,5 @@
 ---
-title: '<span style="font-size:48pt;">Regularized Regression</span>'
+title: '<span style="font-size:48pt;">Regularization and Elastic Net</span>'
 subtitle: '.big[ ⛰️ 🤠 🕸️ ]'
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 3A &emsp; &emsp; August 10, 2022'

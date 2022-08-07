@@ -1,5 +1,5 @@
 ---
-title: '<span style="font-size:48pt;">Data Partitioning and Validation</span>'
+title: '<span style="font-size:48pt;">Data Splitting and Validation</span>'
 subtitle: '👥  📊️  🪓' 
 author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
 date: 'Day 1C &emsp; &emsp; August 8, 2022'

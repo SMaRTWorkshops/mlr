@@ -15,17 +15,17 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 | :-: | :--: | :-------------------------------- | :----- | :--------- |
 | 1   | A    | Conceptual introductions          | Girard | TBA        |
 |     | B    | Tidyverse primer and data         | Girard | TBA        |
-|     | C    | Data partitioning or splitting    | Wang   | TBA        |
+|     | C    | Data splitting and validation     | Wang   | TBA        |
 |     | D    | Model fitting and prediction      | Wang   | TBA        |
 | 2   | A    | Workflows and recipes             | Girard | TBA        |
 |     | B    | Performance evaluation            | Girard | TBA        |
 |     | C    | Resampling and cross-validation   | Wang   | TBA        |
 |     | D    | Resampling example and deployment | Wang   | TBA        |
-| 3   | A    | GLMNET algorithm                  | Wang   | TBA        |
+| 3   | A    | Regularization and elastic net    | Wang   | TBA        |
 |     | B    | GLMNET example and tuning         | Girard | TBA        |
-|     | C    | Random forest (RF) algorithm      | Wang   | TBA        |
+|     | C    | Decision trees and random forests | Wang   | TBA        |
 |     | D    | RF example and reporting          | Girard | TBA        |
-| 4   | A    | SVM algorithm and example         | Girard | TBA        |
+| 4   | A    | Support vector machines           | Girard | TBA        |
 |     | B    | Preview of advanced topics        | Wang   | TBA        |
 |     | C    | Consulting                        |        |            |
 |     | D    | Consulting                        |        |            |
