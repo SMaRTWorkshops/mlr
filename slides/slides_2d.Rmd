@@ -174,23 +174,13 @@ Therefore, by default, the models trained are not saved or used later.
 class: onecol
 ## Configure Resampling
 
-To save model coefficients, we need to .imp[extract] the underlying model object (engine fit). 
-
-We can do this with a custom function, and specify it in `control_resamples()`: 
+To save each predictions from each resampled model, we need to specify it in `control_resamples()`: 
 
 --
 
 ```{r}
-get_resample_coefs <- function(x) {
-  x %>% 
-    # get the lm model object
-    extract_fit_engine() %>% 
-    # transform its format
-    tidy()
-}
-
 # save predictions from resampling
-keep_pred <- control_resamples(save_pred = TRUE, extract = get_resample_coefs)
+keep_pred <- control_resamples(save_pred = TRUE)
 ```
 
 ---
@@ -340,123 +330,30 @@ Predictive **accuracy** is emphasized in ML over interpretability and inference
 
 --
 
-However, some algorithms can provide insight into their decision-making
+But, we can get insight into an algorithm's decision-making via .imp[variable importance]. 
+
+- Variable importance shows how much a model "uses" features to make  predictions.
 
 - As a model usually used for inference, logistic regression has strong interpretability
 
-- We can examine the model coefficients (intercept and slopes)
+- However, other models (e.g., random forests) are less directly interpretable.
 
-The `get_resample_coefs()` function we wrote earlier will allow us to do this!
-
----
-class: onecol
-## Model Coefficients
-
-Extracting the coefficients we need is a bit messy, but let's walk through it.
-
-Let's take a look at the output from our resampled model `surv_fitr`:
-
---
-.scroll40[
-```{r}
-surv_fitr
-```
-]
+- Variable importance is helpful for understanding what's going on in models.
 
 --
 
-The output of `get_resample_coefs()` is contained in the column `.extracts`.
+The `vip()` function in the {vip} package illustrates variable importance for ML models.
 
 
----
-class: twocol
-## Model Coefficients
-
-Inside `surv_fitr$.extracts` is *another* `.extracts` column.
-
-```{r}
-surv_fitr$.extracts[[1]]
-```
-
---
-
-This nested column has the coefficients from each k-fold!
-
-.scroll40[
-```{r}
-surv_fitr$.extracts[[1]]$.extracts
-```
+.footnote[
+See a full list of how {vip} creates variable importance scores [here](https://koalaverse.github.io/vip/reference/vi_model.html): 
 ]
-
----
-class: twocol
-## Model Coefficients
-
-We can tidy up these results with the {tidyr} `unnest()` function.
-
-.scroll65[
-```{r}
-surv_coefs <- 
-  surv_fitr %>% 
-  select(id, id2, .extracts) %>%
-  unnest(.extracts) %>% 
-  unnest(.extracts) %>% 
-  mutate(resample = paste0(id, "_", id2))
-
-surv_coefs
-```
-]
-
----
-class: twocol
-## Model Coefficients
-
-Now we can plot the model coefficients across each k-fold resample: 
-```{r, eval = FALSE}
-# plot coefficients across each resample
-surv_coefs %>% filter(term != "(Intercept)") %>%
-  ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
-  geom_hline(yintercept = 0, lty = 3) + 
-  geom_line(alpha = 0.3, lwd = 0.5)
-```
-
-```{r, echo = FALSE, out.width = "60%"}
-config <-   
-  theme_xaringan(text_font_size = 14, title_font_size = 18,
-                 css_file = "../css/xaringan-themer.css") +
-  theme(
-    panel.grid.minor = element_blank(),
-    panel.background = element_rect(fill = "white")
-  )
-
-# make a column indicating each resample 
-surv_coefs$resample <-  
-  paste0(surv_coefs$id, "_", surv_coefs$id2)
-
-# plot coefficients across each resample
-surv_coefs %>%
-  filter(term != "(Intercept)") %>%
-  ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
-  geom_hline(yintercept = 0, lty = 3) + 
-  geom_line(alpha = 0.3, lwd = 0.5) + 
-  labs(y = "Coefficient", x = "Feature") + 
-  theme(legend.position = "none") + 
-  config
-```
 
 ---
 class: onecol
 ## Variable Importance
 
-Another way of interpreting a model is with .imp[variable importance] in the {vip} package.
-
-This is particularly helpful for **complex ML models** that are less interpretable<sup>1</sup>. 
-
 {vip} requires a **final model**, so we can re-fit a logistic regression on the full dataset.
-
-.footnote[
-Unlike logistic regression, which has coefficients with straightforward interpretation. Other models have different methods to estimate variable importance, but `vip()` will take care of it.
-]
 
 --
 
