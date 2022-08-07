@@ -54,7 +54,7 @@ class: inverse, center, middle
 
 ---
 
-## Live Coding: Read in 
+## Live Coding: Read in data
 
 ```{r, eval=FALSE}
 library(tidyverse)

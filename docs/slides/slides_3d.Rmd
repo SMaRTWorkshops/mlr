@@ -12,6 +12,8 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: false
     self_contained: true
 ---
 
@@ -43,6 +45,8 @@ library(kableExtra)
 library(countdown)
 library(patchwork)
 library(xaringanthemer)
+library(tidymodels)
+tidymodels_prefer()
 ```
 
 class: inverse, center, middle
@@ -50,93 +54,100 @@ class: inverse, center, middle
 
 ---
 
-## Live Coding: Read in 
+## Live Coding: Read in data
 
-```{r}
-library(tidymodels)
+```{r, eval=FALSE}
 library(tidyverse)
+library(tidymodels)
 tidymodels_prefer()
 
 water <- read_csv("https://tinyurl.com/water-pm")
-water
+head(water)
+```
+
+```{r, echo=FALSE}
+water <- read_csv("../data/water.csv")
+water %>% 
+  head() %>% 
+  kable(digits = 2) %>% 
+  kable_styling(font_size = 17)
 ```
 
 
+<!-- pot_split <- initial_split(water, prop = 0.8, strata = Potability) -->
 
-pot_split <- initial_split(water, prop = 0.8, strata = Potability)
+<!-- pot_train <- training(pot_split) -->
+<!-- pot_test <- testing(pot_split) -->
 
-pot_train <- training(pot_split)
-pot_test <- testing(pot_split)
+<!-- pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability) -->
+<!-- pot_folds -->
 
-pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability)
-pot_folds
+<!-- pot_recipe <-  -->
+<!--   recipe(pot_train, Potability ~ .) %>%  -->
+<!--   step_mutate(Potability = factor(Potability)) %>%  -->
+<!--   step_dummy(all_nominal_predictors()) %>% -->
+<!--   step_nzv(all_predictors()) %>% -->
+<!--   step_corr(all_numeric_predictors()) %>% -->
+<!--   step_lincomb(all_numeric_predictors()) %>%  -->
+<!--   step_normalize(all_predictors()) -->
 
-pot_recipe <- 
-  recipe(pot_train, Potability ~ .) %>% 
-  step_mutate(Potability = factor(Potability)) %>% 
-  step_dummy(all_nominal_predictors()) %>%
-  step_nzv(all_predictors()) %>%
-  step_corr(all_numeric_predictors()) %>%
-  step_lincomb(all_numeric_predictors()) %>% 
-  step_normalize(all_predictors())
-
-rf_model <- 
-  rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>% 
-  set_mode("classification") %>% 
-  set_engine("ranger", importance = "impurity")
-  
-
-pot_wflow <- 
-  workflow() %>% 
-  add_recipe(pot_recipe) %>% 
-  add_model(rf_model)
-
-pot_param <- 
-  rf_model %>% 
-  extract_parameter_set_dials() %>% 
-  finalize(pot_folds)
-
-pot_tune <- 
-  pot_wflow %>% 
-  tune_grid(
-    resamples = pot_folds,
-    grid = 10,
-    param_info = pot_param
-  )
-
-autoplot(pot_tune)
-
-# Select the best parameters values
-
-pot_param_final <- select_best(pot_tune, metric = "roc_auc")
-pot_param_final
-
-# Finalize the workflow with best parameter values
-
-pot_wflow_final <- 
-  pot_wflow %>% 
-  finalize_workflow(pot_param_final)
-pot_wflow_final
-
-pot_fitr <- 
-  pot_wflow_final %>% 
-  fit_resamples(
-    resamples = pot_folds
-  )
-
-collect_metrics(pot_fitr)
+<!-- rf_model <-  -->
+<!--   rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%  -->
+<!--   set_mode("classification") %>%  -->
+<!--   set_engine("ranger", importance = "impurity") -->
 
 
-pot_final <- 
-  pot_wflow_final %>% 
-  last_fit(pot_split)
+<!-- pot_wflow <-  -->
+<!--   workflow() %>%  -->
+<!--   add_recipe(pot_recipe) %>%  -->
+<!--   add_model(rf_model) -->
 
-collect_metrics(pot_final)
+<!-- pot_param <-  -->
+<!--   rf_model %>%  -->
+<!--   extract_parameter_set_dials() %>%  -->
+<!--   finalize(pot_folds) -->
 
-library(vip)
-pot_final %>% 
-  extract_fit_parsnip() %>% 
-  vip()
+<!-- pot_tune <-  -->
+<!--   pot_wflow %>%  -->
+<!--   tune_grid( -->
+<!--     resamples = pot_folds, -->
+<!--     grid = 10, -->
+<!--     param_info = pot_param -->
+<!--   ) -->
+
+<!-- autoplot(pot_tune) -->
+
+<!-- # Select the best parameters values -->
+
+<!-- pot_param_final <- select_best(pot_tune, metric = "roc_auc") -->
+<!-- pot_param_final -->
+
+<!-- # Finalize the workflow with best parameter values -->
+
+<!-- pot_wflow_final <-  -->
+<!--   pot_wflow %>%  -->
+<!--   finalize_workflow(pot_param_final) -->
+<!-- pot_wflow_final -->
+
+<!-- pot_fitr <-  -->
+<!--   pot_wflow_final %>%  -->
+<!--   fit_resamples( -->
+<!--     resamples = pot_folds -->
+<!--   ) -->
+
+<!-- collect_metrics(pot_fitr) -->
+
+
+<!-- pot_final <-  -->
+<!--   pot_wflow_final %>%  -->
+<!--   last_fit(pot_split) -->
+
+<!-- collect_metrics(pot_final) -->
+
+<!-- library(vip) -->
+<!-- pot_final %>%  -->
+<!--   extract_fit_parsnip() %>%  -->
+<!--   vip() -->
 
 
 
