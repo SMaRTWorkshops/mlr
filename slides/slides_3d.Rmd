@@ -62,25 +62,28 @@ library(tidymodels)
 tidymodels_prefer()
 
 water <- read_csv("https://tinyurl.com/water-pm")
-head(water)
+water
 ```
 
-```{r, echo=FALSE}
-water <- read_csv("../data/water.csv")
-water %>% 
-  head() %>% 
-  kable(digits = 2) %>% 
-  kable_styling(font_size = 17)
+---
+
+## Live Coding: Split data
+
+```{r, eval=FALSE}
+# Create initial split
+
+pot_split <- initial_split(water, prop = 0.8, strata = Potability)
+pot_train <- training(pot_split)
+pot_test <- testing(pot_split)
+
+# Create 10-fold CV within training set
+
+pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability)
 ```
 
+---
 
-<!-- pot_split <- initial_split(water, prop = 0.8, strata = Potability) -->
 
-<!-- pot_train <- training(pot_split) -->
-<!-- pot_test <- testing(pot_split) -->
-
-<!-- pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability) -->
-<!-- pot_folds -->
 
 <!-- pot_recipe <-  -->
 <!--   recipe(pot_train, Potability ~ .) %>%  -->
