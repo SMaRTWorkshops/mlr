@@ -1,0 +1,144 @@
+---
+title: "Day 2D Activity<br />(Resampling Example)"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  df_print = "paged"
+)
+```
+
+# Load packages
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(vip)
+library(readr)
+library(palmerpenguins)
+penguins <- penguins %>% na.omit
+```
+
+# Hands-on Activity
+
+Our goal is to build a model predicting `body_mass_g`. 
+
+1. Create an initial split, stratified by the label.
+
+2. Create a recipe:
+      a. Create dummy variables for categorical features 
+      b. Normalize all numeric features
+      c. Remove features with near-zero variance
+      d. Remove features with large absolute correlations with other features
+      e. Remove features that are a linear combination of other features
+
+<p style="padding-top:0.01px;">3. Specify a linear regression model 
+
+4. Build a workflow
+
+5. Fit a model on the training data with 10-fold cross-validation, repeated three times, stratified by the label
+
+6. Examine performance during cross-validation 
+
+7. Fit a final model on the training data and plot variable importance
+
+8. Evaluate performance in the final, hold-out test set. 
+
+---
+ 
+## Answer key
+
+<details><summary>Click here to view the answer key to the hands-on activity</summary>
+
+```{r}
+# 1
+bmg_split <- initial_split(penguins, prop = 0.8, strata = body_mass_g)
+bmg_train <- training(bmg_split)
+bmg_test <- testing(bmg_split)
+```
+
+```{r}
+# 2
+bmg_recipe <- 
+  recipe(bmg_train, formula = body_mass_g ~ .) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors()) %>% 
+  step_normalize(all_numeric_predictors())
+```
+
+```{r}
+# 3 
+lin_reg <- linear_reg() %>% 
+  set_engine("lm") %>% 
+  set_mode("regression")
+
+# 4
+bmg_wflow <- 
+  workflow() %>% 
+  add_model(lin_reg) %>% 
+  add_recipe(bmg_recipe)
+```
+
+```{r}
+#5
+set.seed(2022)
+bmg_folds <- vfold_cv(
+  data = bmg_train,
+  v = 10, 
+  repeats = 3,
+  strata = body_mass_g
+)
+
+bmg_fitr <- 
+  bmg_wflow %>%
+  fit_resamples(
+    resamples = bmg_folds
+  )
+```
+
+```{r}
+# 6
+collect_metrics(bmg_fitr)
+
+# 7
+bmg_final <- 
+  bmg_wflow %>% 
+  last_fit(bmg_split)
+
+bmg_final %>% extract_fit_parsnip() %>% vip()
+```
+
+```{r}
+# 8. 
+collect_metrics(bmg_final)
+
+bmg_pred <- 
+  bmg_final %>% 
+  collect_predictions() 
+
+bmg_pred %>%
+  ggplot(aes(x = body_mass_g, y = .pred)) + 
+  geom_point(alpha = .15) + 
+  geom_abline(color = 'darkred') + 
+  coord_obs_pred() + 
+  labs(x = "Observed", 
+       y = "Predicted")
+```
+
+</details>
+
+
+
+
