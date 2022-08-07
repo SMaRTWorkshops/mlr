@@ -184,12 +184,9 @@ library(tidymodels)
 titanic <- read_csv("https://tinyurl.com/titanic-pm")
 
 set.seed(2022)
-
 fare_split <- initial_split(titanic, prop = 0.8, strata = fare)
-
 fare_train <- training(fare_split)
 fare_test <- testing(fare_split)
-
 fare_folds <- vfold_cv(fare_train, v = 10, repeats = 3, strata = fare)
 fare_folds
 ```
@@ -255,9 +252,7 @@ There are three possible interfaces to `fit_resamples()` and `tune_grid()`:
 
 ```{r, eval = FALSE}
 model_spec %>% fit_resamples(formula, resamples, ...)
-
 model_spec %>% fit_resamples(recipe, resamples, ...)
-
 workflow %>% fit_resamples(resamples, ...)
 ```
 
@@ -437,7 +432,7 @@ class: inverse, center, middle
 class: onecol
 ## Applied Example: Feature Engineering
 
-Let's use `titanic_folds` to fit a resampled model in R predicting `fare`. 
+Let's use `fare_folds` to fit a resampled model in R predicting `fare`. 
 
 First, we'll make a preprocessing {recipe} (without prepping or baking).
 
@@ -493,7 +488,6 @@ Finally, we can fit a resampled model with our {workflow} and `fare_folds`.
 ```{r}
 # configure sampling to save predictions from each k-fold
 keep_pred <- control_resamples(save_pred = TRUE)
-
 fare_fit <- 
   fare_wflow %>% 
   fit_resamples(resamples = fare_folds, control = keep_pred)
@@ -517,14 +511,17 @@ We can also plot **predicted** against **observed** values to get a better under
 
 .pull-left[
 ```{r, eval = FALSE}
-fare_pred <- collect_predictions(fare_fit)
+fare_pred <- 
+  fare_fit %>% 
+  collect_predictions() 
 
 fare_pred %>%
   ggplot(aes(x = fare, y = .pred)) + 
   geom_point(alpha = .15) + 
   geom_abline(color = 'darkred') + 
   coord_obs_pred() + 
-  labs(x = "Observed Fare", y = "Predicted Fare")
+  labs(x = "Observed Fare", 
+       y = "Predicted Fare")
 ```
 
 ```{r, echo = FALSE, fig.show = 'hide'}
@@ -535,9 +532,7 @@ config <-
     panel.grid.minor = element_blank(),
     panel.background = element_rect(fill = "white")
   )
-
 fare_pred <- collect_predictions(fare_fit)
-
 fare_plot_2c <- fare_pred %>%
   ggplot(aes(x = fare, y = .pred)) + 
   geom_point(alpha = .15) + 
@@ -546,7 +541,6 @@ fare_plot_2c <- fare_pred %>%
   ylab("Predicted") + 
   xlab("Observed") + 
   config
-
 ggsave("../figs/fare_pred_2c.png", width = 3.5, height = 3.5, units = 'in')
 ```
 ]
@@ -558,7 +552,7 @@ include_graphics("../figs/fare_pred_2c.png")
 ]
 
 ---
-
+class: onecol
 ## Final Performance
 
 Remember that we have just looked at performance within the training set

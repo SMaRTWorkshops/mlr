@@ -1,0 +1,10 @@
+---
+title: "Day 2D Activity"
+output: 
+  html_document:
+    toc: FALSE
+    self-contained: true
+---
+
+<iframe class="slide-deck" src="activities/activity_2d.html" title="Day 2D Activity"></iframe>
+
