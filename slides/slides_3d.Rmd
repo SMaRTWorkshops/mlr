@@ -1,6 +1,6 @@
 ---
-title: '<span style="font-size:48pt;">Example and Deployment</span>'
-subtitle: 'X Y Z'
+title: '<span style="font-size:48pt;">RF Example and Reporting</span>'
+subtitle: '🌲  ✍️   📝 '
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 3D &emsp; &emsp; August 10, 2022'
 output:
@@ -50,16 +50,24 @@ tidymodels_prefer()
 ```
 
 class: inverse, center, middle
-# Section 1
+# Random Forest Example
 
 ---
 
-## Live Coding: Read in data
+## Live Coding: Prepare packages and data
 
 ```{r, eval=FALSE}
+# Load packages
+
 library(tidyverse)
 library(tidymodels)
 tidymodels_prefer()
+
+# Install model package (if needed)
+
+install.packages("ranger")
+
+# Load and view data
 
 water <- read_csv("https://tinyurl.com/water-pm")
 water
@@ -70,109 +78,168 @@ water
 ## Live Coding: Split data
 
 ```{r, eval=FALSE}
-# Create initial split
+# Set random number generation seed for reproducibility
+
+set.seed(2022)
+
+# Create initial split for holdout validation
 
 pot_split <- initial_split(water, prop = 0.8, strata = Potability)
 pot_train <- training(pot_split)
 pot_test <- testing(pot_split)
 
-# Create 10-fold CV within training set
+# Create 10-fold CV within training set for tuning
 
 pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability)
 ```
 
 ---
 
+## Live Coding: Set up workflow
 
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Set up recipe based on the data and model
 
-<!-- pot_recipe <-  -->
-<!--   recipe(pot_train, Potability ~ .) %>%  -->
-<!--   step_mutate(Potability = factor(Potability)) %>%  -->
-<!--   step_dummy(all_nominal_predictors()) %>% -->
-<!--   step_nzv(all_predictors()) %>% -->
-<!--   step_corr(all_numeric_predictors()) %>% -->
-<!--   step_lincomb(all_numeric_predictors()) %>%  -->
-<!--   step_normalize(all_predictors()) -->
+pot_recipe <-
+  recipe(pot_train, formula = Potability ~ .) %>%
+  step_mutate(Potability = factor(Potability)) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_numeric_predictors()) %>%
+  step_lincomb(all_numeric_predictors()) %>%
+  step_normalize(all_predictors())
 
-<!-- rf_model <-  -->
-<!--   rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%  -->
-<!--   set_mode("classification") %>%  -->
-<!--   set_engine("ranger", importance = "impurity") -->
+# Set up model with tuning parameters and variable importance configuration
 
+rf_model <-
+  rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("ranger", importance = "impurity")
 
-<!-- pot_wflow <-  -->
-<!--   workflow() %>%  -->
-<!--   add_recipe(pot_recipe) %>%  -->
-<!--   add_model(rf_model) -->
+# Combine recipe and model specification into a workflow
 
-<!-- pot_param <-  -->
-<!--   rf_model %>%  -->
-<!--   extract_parameter_set_dials() %>%  -->
-<!--   finalize(pot_folds) -->
-
-<!-- pot_tune <-  -->
-<!--   pot_wflow %>%  -->
-<!--   tune_grid( -->
-<!--     resamples = pot_folds, -->
-<!--     grid = 10, -->
-<!--     param_info = pot_param -->
-<!--   ) -->
-
-<!-- autoplot(pot_tune) -->
-
-<!-- # Select the best parameters values -->
-
-<!-- pot_param_final <- select_best(pot_tune, metric = "roc_auc") -->
-<!-- pot_param_final -->
-
-<!-- # Finalize the workflow with best parameter values -->
-
-<!-- pot_wflow_final <-  -->
-<!--   pot_wflow %>%  -->
-<!--   finalize_workflow(pot_param_final) -->
-<!-- pot_wflow_final -->
-
-<!-- pot_fitr <-  -->
-<!--   pot_wflow_final %>%  -->
-<!--   fit_resamples( -->
-<!--     resamples = pot_folds -->
-<!--   ) -->
-
-<!-- collect_metrics(pot_fitr) -->
-
-
-<!-- pot_final <-  -->
-<!--   pot_wflow_final %>%  -->
-<!--   last_fit(pot_split) -->
-
-<!-- collect_metrics(pot_final) -->
-
-<!-- library(vip) -->
-<!-- pot_final %>%  -->
-<!--   extract_fit_parsnip() %>%  -->
-<!--   vip() -->
-
-
-
----
-
-class: inverse, center, middle
-# Section 2
-
----
-class: inverse, center, middle
-# Time for a Break!
-```{r countdown, echo=FALSE}
-countdown(
-  minutes = 10, 
-  seconds = 0, 
-  right = "33%", 
-  left = "33%",
-  bottom = "15%",
-  color_background = "white",
-  color_text = "black",
-  color_running_background = "white",
-  color_running_text = "black",
-  warn_when = 60
-)
+pot_wflow <-
+  workflow() %>%
+  add_recipe(pot_recipe) %>%
+  add_model(rf_model)
 ```
+]
+
+---
+
+## Live Coding: Set up and run tuning
+
+```{r, eval=FALSE}
+# Pick reasonable boundaries for the tuning parameters
+
+pot_param <-
+  rf_model %>%
+  extract_parameter_set_dials() %>%
+  finalize(pot_folds)
+
+# Create list of values within boundaries and grid search (may take a bit)
+
+pot_tune <-
+  pot_wflow %>%
+  tune_grid(
+    resamples = pot_folds,
+    grid = 10,
+    param_info = pot_param
+  )
+
+# If desired, plot the tuning results
+
+autoplot(pot_tune)
+```
+
+---
+
+## Live Coding: Finalize the workflow
+
+```{r, eval=FALSE}
+# Select the best parameters values
+
+pot_param_final <- select_best(pot_tune, metric = "roc_auc")
+pot_param_final
+
+# Finalize the workflow with the best parameter values
+
+pot_wflow_final <-
+  pot_wflow %>%
+  finalize_workflow(pot_param_final)
+pot_wflow_final
+
+# Fit the finalized workflow to the training set and evaluate in testing set
+
+pot_final <-
+  pot_wflow_final %>%
+  last_fit(pot_split)
+```
+
+---
+
+## Live Coding: Explore performance
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# View the metrics (from the holdout test set)
+
+collect_metrics(pot_final)
+
+# Collect the predictions
+
+pot_pred <- collect_predictions(pot_final)
+pot_pred
+
+# Calculate and plot confusion matrix
+
+pot_cm <- conf_mat(pot_pred, truth = Potability, estimate = .pred_class)
+pot_cm
+
+autoplot(pot_cm, type = "mosaic")
+autoplot(pot_cm, type = "heatmap")
+
+summary(pot_cm)
+
+# Plot the predicted class probabilities
+
+ggplot(pot_pred, aes(x = .pred_safe, y = Potability)) + 
+  geom_boxplot()
+
+# Plot the ROC curve
+
+pot_rc <- roc_curve(pot_pred, truth = Potability, estimate = .pred_safe)
+
+autoplot(pot_rc)
+```
+]
+
+---
+
+## Live Coding: Interpretation
+
+```{r, eval=FALSE}
+# Plot the variable importance measure (requires setting importance earlier)
+
+library(vip)
+pot_final %>%
+  extract_fit_parsnip() %>%
+  vip()
+```
+
+
+
+
+
+
+
+---
+
+class: inverse, center, middle
+# Reporting
+
+---
+
+class: inverse, center, middle
+
+# End of Day 3
