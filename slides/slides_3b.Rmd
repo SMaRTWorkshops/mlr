@@ -237,8 +237,12 @@ titanic <- read_csv("https://tinyurl.com/titanic-pm")
 
 # Create data splits, stratified by fare
 
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = fare)
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+
 set.seed(2022)
-fare_folds <- vfold_cv(data = titanic, v = 10, repeats = 3, strata = "fare")
+fare_folds <- vfold_cv(data = fare_train, v = 10, repeats = 3, strata = fare)
 ```
 
 ---
@@ -420,7 +424,26 @@ ggplot(fare_pred, aes(x = fare, y = .pred)) +
 
 ---
 
-## Live Coding: Deployment and Interpretation
+## Live Coding: Final performance and interpretation
+
+```{r, eval=FALSE}
+# Fit the final model to the entire training set and test in testing set
+
+fare_final <- 
+  fare_wflow_final %>% 
+  last_fit(fare_split)
+
+collect_metrics(fare_final)
+
+library(vip)
+fare_final %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+```
+
+---
+
+## Live Coding: Deployment
 
 ```{r, eval=FALSE}
 # Fit the final model to the entire dataset for interpretation and deployment
@@ -431,14 +454,8 @@ fare_deploy <-
 
 # Deployment: If new data comes in, use this model to make predictions
 
-titanic2 <- titanic # replace with actually different dataset
+titanic2 <- titanic # replace with new dataset with same feature variables
 predict(fare_deploy, titanic2)
-
-# Interpretation: How important was each predictor in the final model?
-library(vip)
-fare_deploy %>% 
-  extract_fit_parsnip() %>% 
-  vip()
 ```
 
 ---

@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
 ```{r, message=FALSE}
 library(tidyverse)
 library(tidymodels)
+library(readr)
 ```
 
 ---
@@ -30,57 +31,53 @@ library(tidymodels)
 # Data Preparation
 
 ```{r}
-affect <- read.csv("./data/affect.csv")
-
-# select variables 
-affect <- affect %>% 
-  select(ext, neur, imp, soc, BDI) %>% 
-  drop_na()
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  mutate(
+    survived = factor(survived),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  ) %>% 
+  na.omit()
 
 # view
-head(affect)
+head(titanic)
 ```
-
-
----
-
-# Goal:
-
-We will aim to predict `BDI` (depression) scores from personality variables, including: 
-
-- Extraversion
-
-- Neuroticism
-
-- Impulsivity
-
-- Sociability 
 
 ---
 
 # Split Data 
 
 ```{r}
-affect_split <- initial_split(affect, prop = 0.8, strata = 'BDI')
-affect_train <- training(affect_split)
-affect_test <- testing(affect_split)
+titanic_split <- initial_split(titanic, prop = 0.8, strata = 'survived')
+titanic_train <- training(titanic_split)
+titanic_test <- testing(titanic_split)
 
-dim(affect_train)
-dim(affect_test)
+dim(titanic_train)
+dim(titanic_test)
 ```
 
 ---
 
-# Specify and Fit Model
+# Specify Model
 
 ```{r}
-# specify model
-ols_reg <- linear_reg() %>% 
-  set_engine("lm")
+log_reg <- logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
 
-# fit model
-bdi_fit <- ols_reg %>% 
-  fit(BDI ~ ., data = affect_train)
+log_reg
+```
+
+---
+
+# Fit Model
+
+```{r}
+survived_fit <- log_reg %>% 
+  fit(survived ~ ., data = titanic_train)
+
+survived_fit
 ```
 
 ---
@@ -89,10 +86,7 @@ bdi_fit <- ols_reg %>%
 
 ```{r}
 # coefficients 
-tidy(bdi_fit)
-
-# training performance
-glance(bdi_fit)
+tidy(survived_fit)
 ```
 
 ---
@@ -100,7 +94,7 @@ glance(bdi_fit)
 # Training Set Performance
 
 ```{r}
-glance(bdi_fit)
+glance(survived_fit)
 ```
 
 ---
@@ -108,35 +102,25 @@ glance(bdi_fit)
 # Make Predictions on Test Set
 
 ```{r}
-bdi_test_preds <- predict(bdi_fit, new_data = affect_test)
-bdi_test_preds
-
+survived_test_preds <- predict(survived_fit, new_data = titanic_test)
+survived_test_preds
+```
+```{r}
 # merge predictions with test data 
 
-bdi_preds <- affect_test %>% 
-  select(BDI) %>%
-  bind_cols(bdi_test_preds)
+survived_preds <- titanic_test %>% 
+  select(survived) %>%
+  bind_cols(survived_test_preds)
+survived_preds
 ```
 
 ---
 
-# Visualize Predicted vs Trusted Data
+# Examine Predicted vs Trusted Data
 
 ```{r, warning=FALSE}
-qplot(x = bdi_preds$BDI, y = bdi_preds$.pred) + geom_abline()
+conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
 ```
-
----
-
-# Estimating Test Set Performance 
-
-```{r}
-# create a performance metrics set 
-affect_metrics <- metric_set(rmse, rsq, mae)
-
-affect_metrics(bdi_preds, truth = BDI, estimate = .pred)
-```
-
 
 
 

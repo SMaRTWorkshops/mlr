@@ -183,13 +183,13 @@ The main approach, however, is to use .imp[cross-validation]:
 ]
 
 ---
-## Holdout Cross-Validation
+## Holdout Set Validation
 ```{r, echo=FALSE}
 include_graphics("../figs/holdout.png")
 ```
 
 ---
-## Holdout Cross-Validation
+## Holdout Set Validation
 ```{r, echo=FALSE}
 include_graphics("../figs/holdout2.png")
 ```
@@ -208,7 +208,7 @@ b) Some patients are in both training and testing
 
 c) The two subsets of data have different sizes
 
-d) He did not use k-fold cross-validation 
+d) He does not have enough data
 ]
 
 .pull-right[
@@ -227,7 +227,7 @@ d) Model Evaluation
 ---
 class: inverse, center, middle
 
-## Holdout Cross-Validation in R
+## Holdout Set Validation in R
 
 ---
 ## Example Dataset: `titanic`
