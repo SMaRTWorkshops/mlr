@@ -27,7 +27,7 @@ left:
        - text: "[2C] Resampling and cross-validation"
          href: day_2c.html
        - text: "[2D] Resampling example and deployment"
-         href: wip.html #day_2d.html
+         href: day_2d.html
   - text: "Day 3"
     menu:
        - text: "[3A] Regularization and elastic net"
