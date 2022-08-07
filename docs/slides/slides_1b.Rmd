@@ -704,9 +704,16 @@ airsat <- readr::read_csv("https://tinyurl.com/airsat-pm")
 
 ```{r, echo=FALSE}
 airsat <- readr::read_csv("../data/airsat.csv")
+airsat %>% 
+  head(8) %>% 
+  kable(digits = 2) %>% 
+  kable_styling(font_size = 17) %>% 
+  scroll_box(height="360")
 ```
 
-![](../figs/airsat.png)
+.footnote[
+$N=10000$
+]
 
 ---
 
@@ -727,36 +734,45 @@ airsat <- readr::read_csv("../data/airsat.csv")
 -   **Ratings (0–5):** `seat_comfort`, `time_convenience`, `food_drink`, `gate_location`, `inflight_wifi`, `inflight_entertainment`, `online_support`, `ease_booking`, `onboard_service`, `leg_room`, `baggage_handling`, `checkin_service`, `cleanliness`, `online_baording`
 ]
 
-<!-- --- -->
+---
 
-<!-- ## Spotify Song Popularity (spotify) -->
+## Palmer Penguins (penguins)
 
-<!-- ```{r, eval=FALSE} -->
-<!-- spotify <- readr::read_csv("https://rb.gy/gmzeyv") -->
-<!-- ``` -->
+```{r, eval=FALSE}
+# install.packages("palmerpenguins")
+library(palmerpenguins)
+penguins
+```
 
-<!-- ```{r, echo=FALSE} -->
-<!-- spotify <- readr::read_csv("../data/spotify.csv") -->
-<!-- ``` -->
+```{r, echo=FALSE}
+library(palmerpenguins)
+palmerpenguins::penguins %>% 
+  head(8) %>% 
+  kable(digits = 2) %>% 
+  kable_styling(font_size = 17)
+```
 
-<!-- ![](../figs/spotify.png) -->
+.footnote[
+$N=344$
+]
 
-<!-- --- -->
+---
 
-<!-- ## Spotify Song Popularity (spotify) -->
+## Palmer Penguins (penguins)
 
-<!-- ### Labels -->
+### Labels
+.lh-copy[
+-   **Species:** `species` \{Adelie, Chinstrap, Gentoo\}
 
-<!-- -   **Popularity:** `popularity` (0, 100) -->
+-   **Body mass:** `body_mass_g` \[2700, 6300\]
+]
 
-<!-- ### Features -->
-<!-- .lh-copy[ -->
-<!-- -   **Timing:** `duration`, `tempo`, `time_signature` -->
+### Features
+.lh-copy[
+-   **Body measurements:** `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`
 
-<!-- -   **Acoustics:** `energy`, `key`, `loudness`, `mode` \{major, minor\} -->
-
-<!-- -   **Qualities:** `acousticness`, `danceability`, `instrumentalness`, `liveliness`, `speechiness`, `valence` -->
-<!-- ] -->
+-   **Other:** `island` \{Bisoe, Dream, Torgersen\}, `sex` \{female, male\}, `year` \{2007, 2008, 2009\}
+]
 
 ---
 
@@ -768,9 +784,15 @@ titanic <- readr::read_csv("https://tinyurl.com/titanic-pm")
 
 ```{r, echo=FALSE}
 titanic <- readr::read_csv("../data/titanic.csv")
+titanic %>% 
+  head(8) %>% 
+  kable(digits = 2) %>% 
+  kable_styling(font_size = 17)
 ```
 
-![](../figs/titanic.png)
+.footnote[
+$N=1309$
+]
 
 ---
 
@@ -800,9 +822,15 @@ water <- readr::read_csv("https://tinyurl.com/water-pm")
 
 ```{r, echo=FALSE}
 water <- readr::read_csv("../data/water.csv")
+water %>% 
+  head(8) %>% 
+  kable(digits = 2) %>% 
+  kable_styling(font_size = 17)
 ```
 
-![](../figs/water.png)
+.footnote[
+$N=2011$
+]
 
 ---
 
