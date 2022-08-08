@@ -77,44 +77,6 @@ include_graphics("../figs/scrapbook.jpg")
 
 ---
 
-## Live Coding: R Markdown
-
-.scroll.h-0l[
-```{r, eval=FALSE}
-# Optionally create an RStudio Project
-# - File > New Project...
-
-# Create an RMarkdown Document
-# - File > New File > R Markdown...
-# - Keep the defaults (HTML Document) and hit "Ok"
-# - File > Save
-# - Give it a name like "Day 1" (or whatever)
-# - Note that the file extension is .Rmd
-
-# Remove the boilerplate content
-# - The top part of the notebook is called the "Header"
-# - Don't delete the header or the notebook won't work
-# - You can change the title but keep it in quotes
-# - Highlight and delete everything below the header
-
-# Add Formatted Text (i.e., Markdown)
-# - Below the header you can add formatted text
-# - Show how to add bold, italics, headers, etc.
-
-# Add R Chunks (i.e., R code)
-# - Click the green "Insert a new code chunk" button (top right)
-# - Inside the chunk, you can type R commands like a mini console
-# - Try doing some calculations in the chunk and hit the green arrow
-# - The answer appears right below the chunk!
-# - If we knit the document, it appears there too
-# - We can share the .html file with others
-# - It will include all the formatted text, code, and R's answers
-# - Knitting will fail if your Rmd contains any errors
-```
-]
-
----
-
 ## Live Coding: R Refresher
 
 .scroll.h-0l[
@@ -197,7 +159,6 @@ class: onecol
 
 .left-column.pv3[
 ```{r tidyverse, echo=FALSE}
-# TODO: Replace this image with one of tidyverse
 include_graphics("../figs/tidyverse.jpg")
 ```
 
@@ -226,7 +187,7 @@ include_graphics("../figs/tidyverse.jpg")
 
 # Read data from web link
 
-titanic <- read_csv("https://rb.gy/hm7p84")
+titanic <- read_csv("https://tinyurl.com/titanic-pm")
 titanic
 glimpse(titanic)
 View(titanic)
@@ -235,10 +196,10 @@ View(titanic)
 
 # Read data from local file
 
-spotify <- read_csv("../data/spotify.csv")
-spotify
-glimpse(spotify)
-View(spotify)
+dat <- read_csv("myfile.csv")
+dat
+glimpse(dat)
+View(dat)
 
 # --------------------------------------------------------------------
 
@@ -314,7 +275,7 @@ heights3
 
 # We can also convert missing values while reading in data
 
-titanic <- read_csv("https://rb.gy/hm7p84", na = c("NA", "*", -999))
+titanic <- read_csv("https://tinyurl.com/titanic-pm", na = c("NA", "*", -999))
 titanic
 
 ```
@@ -645,7 +606,7 @@ include_graphics("../figs/charts.jpg")
 # Read in titanic data and mutate survived into a labeled factor
 
 titanic <- 
-  read_csv("https://rb.gy/hm7p84") %>% 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
   mutate(
     survived = factor(
       survived, 

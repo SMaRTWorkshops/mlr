@@ -2125,45 +2125,6 @@ class: onecol
 
 ---
 
-## Live Coding: R Markdown
-
-.scroll.h-0l[
-
-```r
-# Optionally create an RStudio Project
-# - File &gt; New Project...
-
-# Create an RMarkdown Document
-# - File &gt; New File &gt; R Markdown...
-# - Keep the defaults (HTML Document) and hit &quot;Ok&quot;
-# - File &gt; Save
-# - Give it a name like &quot;Day 1&quot; (or whatever)
-# - Note that the file extension is .Rmd
-
-# Remove the boilerplate content
-# - The top part of the notebook is called the &quot;Header&quot;
-# - Don&#39;t delete the header or the notebook won&#39;t work
-# - You can change the title but keep it in quotes
-# - Highlight and delete everything below the header
-
-# Add Formatted Text (i.e., Markdown)
-# - Below the header you can add formatted text
-# - Show how to add bold, italics, headers, etc.
-
-# Add R Chunks (i.e., R code)
-# - Click the green &quot;Insert a new code chunk&quot; button (top right)
-# - Inside the chunk, you can type R commands like a mini console
-# - Try doing some calculations in the chunk and hit the green arrow
-# - The answer appears right below the chunk!
-# - If we knit the document, it appears there too
-# - We can share the .html file with others
-# - It will include all the formatted text, code, and R&#39;s answers
-# - Knitting will fail if your Rmd contains any errors
-```
-]
-
----
-
 ## Live Coding: R Refresher
 
 .scroll.h-0l[
@@ -2274,7 +2235,7 @@ class: onecol
 
 # Read data from web link
 
-titanic &lt;- read_csv(&quot;https://rb.gy/hm7p84&quot;)
+titanic &lt;- read_csv(&quot;https://tinyurl.com/titanic-pm&quot;)
 titanic
 glimpse(titanic)
 View(titanic)
@@ -2283,10 +2244,10 @@ View(titanic)
 
 # Read data from local file
 
-spotify &lt;- read_csv(&quot;../data/spotify.csv&quot;)
-spotify
-glimpse(spotify)
-View(spotify)
+dat &lt;- read_csv(&quot;myfile.csv&quot;)
+dat
+glimpse(dat)
+View(dat)
 
 # --------------------------------------------------------------------
 
@@ -2360,7 +2321,7 @@ heights3
 
 # We can also convert missing values while reading in data
 
-titanic &lt;- read_csv(&quot;https://rb.gy/hm7p84&quot;, na = c(&quot;NA&quot;, &quot;*&quot;, -999))
+titanic &lt;- read_csv(&quot;https://tinyurl.com/titanic-pm&quot;, na = c(&quot;NA&quot;, &quot;*&quot;, -999))
 titanic
 ```
 ]
@@ -2691,7 +2652,7 @@ class: onecol
 # Read in titanic data and mutate survived into a labeled factor
 
 titanic &lt;- 
-  read_csv(&quot;https://rb.gy/hm7p84&quot;) %&gt;% 
+  read_csv(&quot;https://tinyurl.com/titanic-pm&quot;) %&gt;% 
   mutate(
     survived = factor(
       survived, 
@@ -3400,7 +3361,7 @@ water &lt;- readr::read_csv(&quot;https://tinyurl.com/water-pm&quot;)
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_62f02e40" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
+<div class="countdown" id="timer_62f1685c" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
 <code class="countdown-time"><span class="countdown-digits minutes">60</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
