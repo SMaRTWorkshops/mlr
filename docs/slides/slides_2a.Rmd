@@ -62,7 +62,7 @@ tidymodels_prefer()
 titanic <- 
   read_csv("https://tinyurl.com/titanic-pm") %>% 
   mutate(
-    survived = factor(survived),
+    survived = factor(survived, levels = c(1, 0)), #<<
     pclass = factor(pclass),
     sex = factor(sex)
   )
@@ -89,7 +89,7 @@ tidymodels_prefer()
 titanic <- 
   read_csv("../data/titanic.csv") %>% 
   mutate(
-    survived = factor(survived),
+    survived = factor(survived, levels = c(1, 0)),
     pclass = factor(pclass),
     sex = factor(sex)
   )
@@ -296,7 +296,7 @@ fare_perf <- collect_metrics(fare_fit)
 fare_perf
 ```
 
-.footnote[*Note.* We will soon learn how to interpret these metrics and calculate alternatives.]
+.footnote[*Note.* We will soon learn how to interpret these metrics.]
 
 ---
 
@@ -440,14 +440,14 @@ include_graphics("../figs/target.jpg")
 
 .right-column[
 
-**Metrics for Supervised Regression**
+**Metrics for Regression**
 
 - .imp[Distance] between predicted and trusted values
 
 - .imp[Correlation] between predicted and trusted values
 
 .pt1[
-**Metrics for Supervised Classification**
+**Metrics for Classification**
 ]
 - .imp[Confusion matrix] between predicted and trusted classes
 
@@ -462,7 +462,7 @@ class: onecol
 **Root Mean Squared Error (RMSE)**
 - Based on squared loss
 
-- Penalizes severe errors harsher, Sensitive to outliers
+- Penalizes severe errors harsher
 
 - Ranges from $0$ to $+\infty$, lower is better
 
@@ -491,17 +491,16 @@ tibble(
 ```
 ]
 
-.footnote[*Note.* My preferred distance metric is the Huber loss `huber_loss()`.]
-
 ---
 class: onecol
 ## Default correlation metric for regression
 
 **R-Squared $(R^2$ or RSQ)**
 - Calculated in ML as the **squared correlation** between the predictions and labels
+
 - Ranges from $0$ to $1$, higher is better
 
-$$R^2 = \left(\frac{\text{cov}(y, p)}{\sigma_y\sigma_p}\right)^2 = \left(\frac{\sum(y_i - \bar{y})(p_i - \bar{p})}{\sqrt{\sum (y_i-\bar{y})^2}\sqrt{\sum(p_i-\bar{p})^2}}\right)^2$$
+$$R^2 = \left(\frac{\text{cov}(y, \hat{y})}{\sigma_y\sigma_{\hat{y}}}\right)^2 = \left(\frac{\sum(y_i - \bar{y})(\hat{y}_i - \bar{\hat{y}})}{\sqrt{\sum (y_i-\bar{y})^2}\sqrt{\sum(\hat{y}_i-\bar{\hat{y}})^2}}\right)^2$$
 
 --
 
@@ -509,92 +508,39 @@ $$R^2 = \left(\frac{\text{cov}(y, p)}{\sigma_y\sigma_p}\right)^2 = \left(\frac{\
 + RSQ is a measure of *consistency* (i.e., linear association) and not distance
 + RSQ can become unstable or undefined when data variability is low
 + RSQ can become unstable when applied in small samples (e.g., test sets)
-
 ]
 
-.footnote[*Note.* My preferred correlation metric is the Concordance Correlation Coefficient `ccc()`.]
 
 ---
 
-## Calculating other regression metrics
-
-.scroll.h-0l[
-```{r}
-# Set up a metric set
-fare_ms <- metric_set(rmse, huber_loss, rsq, ccc) #<<
-
-# Add that metric set to the fitting function
-fare_fit <- last_fit(fare_wflow, split = fare_split, 
-                     metrics = fare_ms) #<<
-
-# Collect and print testing set metrics
-fare_perf <- collect_metrics(fare_fit)
-fare_perf
-```
-]
-
----
 class: twocol
 ## Default confusion matrix metric for classification
 
- | Trusted = No<br /> $(y=0)$ | Trusted = Yes<br /> $(y=1)$
-:--:| :--: | :--:
-**Predicted = No**&emsp;<br /> $(\hat{y}=0)$ | True Negatives (TN) | False Negative (FN)
-**Predicted = Yes**&emsp;<br /> $(\hat{y}=1)$ | False Positive (FP) | True Positive (TP)
+|                                               | Truth = $+$<br /> $(y=1)$ | Truth = $-$<br /> $(y=0)$ |
+|:---------------------------------------------:|:-------------------------:|:-------------------------:|
+| **Predicted = $+$**&emsp;<br /> $(\hat{y}=1)$ | True Positive (TP)        | False Positive (FP)       |
+| **Predicted = $-$**&emsp;<br /> $(\hat{y}=0)$ | False Negative (FN)       | True Negative (TN)        |
+
+.footnote[*Note.* There are many, many confusion matrix metrics to choose from.]
 
 --
 
-.mt4[
+.mt3.pull-left[
 $$\text{Accuracy} = \frac{TN + TP}{TN + FN + FP + TP}$$
-]
-.tc[
+.tc.mt4[
 Ranges from $0$ to $1$, higher is better
 ]
-
-.footnote[*Note.* My preferred confusion matrix metric in ML is the Matthews Correlation Coefficient `mcc()`.]
-
----
-## Confusion matrix metrics examples
-
-.bg-light-yellow.b--light-red.ba.bw1.br3.mt4.pl4[
-Accuracy can be misleading when the classes are highly imbalanced (e.g., more $0$s than $1$s)
 ]
 
 --
 
-.pull-left.tc.mt4.pt4[
-&emsp;**Balanced**&emsp; | &emsp; $y=0$ &emsp; | &emsp; $y=1$ &emsp;
-:--:| :--: | :--:
-** $\hat{y}=0$ ** | 101 | 20
-** $\hat{y}=1$ ** | 12 | 105
+.mt3.pull-right[
+$$\text{Sensitivity}=\frac{TP}{TP+FN}=\frac{TP}{P}$$
 
-.pt3.f5[
-$$\begin{split}
-\text{Accuracy} &= 0.87 \\
-\text{MCC} &= 0.73 \\
-\end{split}$$
+$$\text{Specificity}=\frac{TN}{TN+FP}=\frac{TN}{N}$$
 
 ]
-]
 
---
-
-.pull-right.tc.mt4.pt4[
-&emsp;**Imbalanced**&emsp; | &emsp; $y=0$ &emsp; | &emsp; $y=1$ &emsp;
-:--:| :--: | :--:
-** $p=0$ ** | 256 | 11
-** $p=1$ ** | 6 | 2
-
-.pt3.f5[
-
-$$\begin{split}
-\text{Accuracy} &= 0.94 \\ 
-\text{MCC} &= 0.17 \\
-\end{split}$$
-]
-]
-
-.footnote[*Note.* There are many, many other confusion matrix metrics to choose from.]
 
 ---
 
@@ -602,13 +548,9 @@ $$\begin{split}
 
 .scroll.h-0l[
 ```{r, eval=FALSE}
-# Set up a metric set
-
-surv_ms <- metric_set(accuracy, mcc, roc_auc, mn_log_loss)
-
 # Add that metric set to the fitting function
 
-surv_fit <- last_fit(surv_wflow, split = surv_split, metrics = surv_ms)
+surv_fit <- last_fit(surv_wflow, split = surv_split)
 
 # Collect and print testing set metrics
 
@@ -655,12 +597,10 @@ class: onecol
 --
 
 .pt1[
-- We can plot and view the **Receiver Operating Characteristic** (ROC) Curve
+- A popular option is the **Receiver Operating Characteristic** (ROC) Curve
 
-- Finally, the **area under the curve (AUC)** is often used as a performance metric
+- The **area under the curve (AUC)** condenses the ROC Curve into a single metric
 ]
-
-.footnote[*Note.* My preferred probability metric is the Mean Log Loss `mn_log_loss()`.]
 
 ---
 class: onecol
@@ -669,20 +609,20 @@ class: onecol
 .pull-left[
 Each point in a ROC curve corresponds to a possible decision threshold
 
-- Sensitivity is $TP / (TP + FN)$
-- Specificity is $TN / (TN + FP)$
+- Sensitivity is $TP / P$
+- Specificity is $TN / N$
 
 Better curves are closer to the top-left
 
 The area under the ROC curve (AUC) ranges from $0.5$ to $1.0$, higher is better.
 
-ROC AUC is the probability that a random positive example has a higher estimate than a random negative example.
+*ROC AUC is the probability that a random positive example has a higher estimate than a random negative example.*
 
 ]
 
 .pull-right[
 ```{r rocex, echo=FALSE, fig.width=7, fig.height=6.8, out.width='95%'}
-yardstick::roc_curve(surv_pred, truth = survived, .pred_1, event_level = "second") %>% 
+yardstick::roc_curve(surv_pred, truth = survived, .pred_1) %>% 
   arrange(sensitivity) %>% 
   ggplot(aes(x = 1 - specificity, y = sensitivity)) + 
   geom_abline(slope = 1, intercept = 0, linetype = "dotted", size = 2, color = "grey") +
@@ -721,7 +661,6 @@ surv_roc <-
     data = surv_pred, 
     truth = survived, 
     .pred_1, 
-    event_level = "second"
   )
 surv_roc
 
