@@ -644,16 +644,139 @@ pot_final %&gt;%
   vip()
 ```
 
-
-
-
-
-
-
 ---
 
 class: inverse, center, middle
 # Reporting
+
+---
+
+class: onecol
+## Introduction Section
+
+-   What is the applied goal?
+
+&gt; *&quot;Our goal is to predict whether each patient will complete trauma-focused therapy (i.e., CPT) from information gathered at intake (i.e., pre-treatment). Specifically, we will estimate each patient&#39;s dropout risk or probability of not completing therapy.&quot;*
+
+-   What are current practices related to this goal?
+
+&gt; *&quot;Monitoring of patients&#39; dropout risk is not standardized. Previous work trying to predict dropout risk mostly used logistic regression and demographic features. One study used ML to predict dropout from any therapy (AUC=0.59).&quot;*
+
+-   Identify how the model may benefit the applied goal
+
+&gt; *&quot;Prediction of dropout risk would enable scarce clinical resources to be allocated to those in greatest need. Increased retention = better outcomes.&quot;*
+  
+---
+class: onecol
+## Methods Section
+
+-   What is an observation (person, place, thing)?
+
+&gt; *&quot;Each observation represents one patient.&quot;*
+
+-   How is the outcome variable measured?
+
+&gt; *&quot;The outcome variable was based on the health record: either completed 5 or more sessions (completed, 54%) or completed fewer than 5 sessions (dropout, 46%). This threshold was selected as the &#39;minimum adequate dosage&#39; based on... [rationale].&quot;*
+
+-   Where do the features come from?
+
+&gt; *&quot;Features include self-report and clinician-ratings at intake (pre-treatment). Specific features include item-level responses and scale scores from... [psychological assessments] as well as... [demographic and socioeconomic assessments].&quot;*
+
+---
+class: onecol
+## Methods Section
+
+-   What are the costs of prediction errors?
+
+&gt; *&quot;Over-prediction might lead to inefficiency in the provision of care, but under-prediction might lead to early termination and dangerous outcomes. Thus, we consider under-prediction to be the more costly type of prediction error here.&quot;*
+
+-   Define performance metrics
+
+&gt; *&quot;Because we are primarily interested in the estimated class probabilities (rather than predicted classes), we will focus on examining the ROC Curve and its AUC.&quot;*
+
+-   Define success criteria
+
+&gt; *&quot;Any ROC AUC significantly greater than 0.50 would be an encouraging start, but we would consider 0.60 or higher to be a success (the previous study achieved 0.59).&quot;*
+
+---
+class: onecol
+## Methods Section
+
+-   Where did the data come from?
+
+&gt; *&quot;Participants were recruited from the University Stress Center at intake for PTSD treatment. Co-authors include the clinic director and database manager.&quot;*
+
+-   Inclusion and exclusion criteria
+
+&gt; *&quot;Participants had to be 18 years or older to participate in the study. Participants also had to meet DSM-5 criteria for PTSD and consent to therapy in the clinic.&quot;*
+
+-   Ethical approval and considerations
+
+&gt; *&quot;This study was approved by the IRB at University. Given the sensitive nature of this data and population, we will... [protect privacy]. This kind of model could be used to... [bad stuff], so we will take steps to mitigate those risks, including... [strategies].&quot;*
+
+---
+class: onecol
+## Methods Section
+
+-   What is the sample size (and demographics, if relevant)?
+
+&gt; *&quot;The entire sample consists of 700 patients (76% female, 74% White, 18–74 years).&quot;*
+
+-   Define the population of interest
+
+&gt; *&quot;Our population of interest is American civilians seeking therapy for PTSD. Further research will be required to determine if we can generalize beyond this group.&quot;*
+  
+-   Match of sample to population of interest
+
+&gt; *&quot;Our sample is largely representative of our population of interest (note that female civilians are much more likely to experience PTSD than males). A notable limitation is that all participants were drawn from a single geographical area.&quot;*
+
+---
+class: onecol
+## Methods Section
+
+-   Describe feature engineering/preprocessing
+
+&gt; *&quot;All continuous predictors were normalized and all nominal predictors were dummy coded. Missing predictor values were imputed during CV using a linear model. We dropped predictors with near-zero variance and high correlations `\((|r|&gt;0.9)\)`.&quot;*
+
+-   Describe model development
+
+&gt; *&quot;We selected two ML algorithms appropriate for our sample size: (1) logistic regression with elastic net regularization and (2) random forest classification.&quot;*
+
+-   Describe model validation and tuning
+
+&gt; *&quot;A 20% holdout set (n=140) was created using a random split stratified by class. Model tuning was performed via grid search (size=30) within stratified 10-fold CV.&quot;*
+
+---
+class: onecol
+## Results Section
+
+-   Report the final model and tuning parameters
+
+&gt; *&quot;The random forest model had superior performance during the internal 10-fold CV (RF AUC = 0.XX, LR AUC = 0.XX) and was selected as our final model. The best tuning parameter values were: mtry = X, trees = X, min_n = X (see parnsip documentation).&quot;*
+
+-   Report the performance estimates from the testing set
+
+&gt; *&quot;The final model&#39;s performance in the holdout validation set was AUC = 0.XX (SE = 0.XX). The model&#39;s full ROC Curve is depicted in Figure X. Although ROC AUC was our primary performance metric, we also calculated... [secondary metrics here].&quot;*
+
+-   Interpret the model (if desired)
+
+&gt; *&quot;The most important predictors (by GINI impurity) were... [list top predictors]. A visualization of the top X predictors&#39; importance is provided in Figure X.&quot;*
+
+---
+class: onecol
+## Discussion Section
+
+-   Discuss applied implications
+
+&gt; *&quot;Given our model&#39;s estimated performance, we conclude that... [did we meet our success criteria?]. Given that the most important features were... [does this match clinical theory?]. [What does this mean for trauma-focused therapy?]&quot;*
+
+-   Discuss limitations of the model
+
+&gt; *&quot;[How widely available are the features used by your model?] [Could your sample be affected by sampling bias?] [How generalizable do you think your results are?]&quot;*
+
+-   Discuss potential pitfalls of interpretation
+
+&gt; *&quot;It may be tempting for readers to conclude from these results that..., but we would urge them to consider... A more appropriate conclusion would be...&quot;*
 
 ---
 

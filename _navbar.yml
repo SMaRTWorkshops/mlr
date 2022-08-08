@@ -37,7 +37,7 @@ left:
        - text: "[3C] Decision trees and random forests"
          href: day_3c.html
        - text: "[3D] RF example and reporting"
-         href: wip.html #day_3d.html
+         href: day_3d.html
   - text: "Day 4"
     menu:
        - text: "[4A] Support vector machines"
