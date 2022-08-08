@@ -339,7 +339,7 @@ class: onecol
 
 -   Report the performance estimates from the testing set
 
-> *"The final model's performance in the holdout validation set was AUC = 0.XX (SE = 0.XX). The model's full ROC Curve is depicted in Figure X. Although ROC AUC was our primary performance metric, we also calculated... [secondary metrics here]."*
+> *"The final model's performance in the holdout validation set was AUC = 0.XX. The model's full ROC Curve is depicted in Figure X. Although ROC AUC was our primary performance metric, we also calculated... [secondary metrics here]."*
 
 -   Interpret the model (if desired)
 
