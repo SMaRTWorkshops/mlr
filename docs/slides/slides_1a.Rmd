@@ -132,12 +132,12 @@ Communicate the pros and cons of choices
 timeline <- tribble(
   ~Day, ~Parts, ~Topics,
   "1", "A,B", "Concepts, tidyverse, data", 
-  "", "C,D", "Crossvalidation, model fitting", 
-  "2", "A,B", "Workflows, recipes, evaluation", 
-  "", "C,D", "Resampling, GLM", 
-  "3", "A,B", "GLMNET, hyperparameter tuning", 
-  "", "C,D", "Random forest, deployment", 
-  "4", "A,B", "SVM, explainability, previews",
+  "", "C,D", "Validation, model fitting", 
+  "2", "A,B", "Workflows, metrics, recipes", 
+  "", "C,D", "Resampling, cross-validation", 
+  "3", "A,B", "GLMNET, tuning", 
+  "", "C,D", "Random forest, reporting", 
+  "4", "A,B", "SVM, practical matters",
   "", "C,D", "Q&A, consultation"
 )
 kable(timeline, format = "html") %>% kable_styling(font_size = 20)
@@ -176,60 +176,7 @@ A few inspirations for this workshop include:
 
 .footnote[*Note.* Breaks are meant to provide both a rest and a time buffer (e.g., to allow questions and longwindedness).]
 
----
-class: twocol
-## Course Behavior
-.pull-left[
-.imp[Rights:]
-- Be **treated with respect** at all times
 
-- Turn your **camera on or off**
-
-- **Arrive and depart** whenever needed
-
-- **Ask for help** with workshop content
-
-- **Reuse materials** according to the license
-
-- Receive **reasonable accommodations**
-]
---
-.pull-right[
-.imp[Responsibilities:]
-
-- **Treat others with respect** at all times
-
-- **Stay muted** when not asking a question
-
-- Stay on topic and **minimize distractions**
-
-- Ask **questions** in Slack or "Raise Hand"
-
-- **Accept if we defer** answering a question
-
-- **Ask for accommodations** well before
-
-]
-<!-- --- -->
-<!-- class: inverse, center, middle -->
-<!-- # Icebreakers -->
-<!-- --- -->
-<!-- class: onecol -->
-<!-- ## Icebreakers -->
-<!-- We will randomly assign everyone to one of two breakout rooms -->
-
-<!-- Each person will have *up to one minute* to introduce themselves -->
-
-<!-- In addition to **sharing your name**, please answer these questions: -->
-
-<!-- 1. Where are you joining us from? -->
-<!-- 2. What field(s) do you work in? -->
-<!-- 3. What is one of your research interests? -->
-<!-- 4. What is one of your personal interests? -->
-
-<!-- The instructor will go first and call on attendees to go next -->
-
-<!-- If you would prefer not to share, please indicate that in chat -->
 ---
 class: inverse, center, middle
 # Conceptual Introduction
@@ -947,6 +894,62 @@ c) Variance
 
 d) All of the above
 ]
+
+---
+class: onecol
+
+## Use Cases for Machine Learning
+
+1)    You are more interested in .imp[prediction] than understanding
+
+2)    Your goals are more .imp[practical] than scientific
+
+--
+
+.pv1[
+3)    You have a lot of observations (e.g., $n>625$)
+
+4)    You have a lot of predictor variables (e.g., $p>10$)
+]
+
+--
+
+5)    Many predictor variables are related to one another
+
+6)    The relationships between outcomes and predictors are **complex**
+
+--
+
+.pv3[
+.bg-light-green.b--dark-green.ba.bw1.br3.ph4[
+**Note:** You can still publish papers about prediction and practical efforts!
+]
+]
+
+---
+class: onecol
+## But I want *both* prediction and understanding!
+
+-   We will learn some tools for explaining models and predictions
+  
+--
+
+.pv1[
+-   Machine learning is really designed for prediction
+  
+-   Statistical modeling is really designed for inference
+]
+
+--
+
+-   Advanced methods combine both prediction and inference
+
+  -   Statistically compare performance of different models
+  
+  -   Statistically compare performance of different feature sets
+  
+  -   Statistically compare performance for participant groups
+
 
 ---
 ## Activity: Icebreakers
