@@ -137,7 +137,9 @@ ggplot(simdat, aes(x, y)) +
 class: onecol
 ## Geometry of Data
 
-Whereas these classes are very clearly separated, it's no longer easy to use a **single equation** to describe the boundaries between them. 
+These classes are very clearly separated.
+
+However, we can't use a **single equation** to describe the boundaries between them. 
 
 .pull-left[
 ```{r, echo = FALSE}
@@ -163,8 +165,644 @@ ggplot(simdat, aes(x, y)) +
 
 --
 
-.imp[Decision trees] allow us to build models that are capable of describing these complex decision boundaries while maintaining ease of interpretability.
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+Decision trees capture complex decision boundaries and maintain interpretability.
+]
 
+---
+class: inverse, center, middle
+# Decision Trees
+
+---
+class: onecol
+## Decision Trees
+
+Decision trees use `if-then` logic to partition data into .imp[homogeneous groups], e.g.,:
+
+--
+
+`if has legs` </br>
+`| if barks then animal = dog` </br>
+`| else animal = cat` </br>
+`else animal = fish`
+
+--
+
+<p style="padding-top:30px;">This is a simple **classification tree**, but decision trees are also used for regression.
+
+Benefits and drawbacks of decision trees include: 
+
+- Pros: **highly interpretable** and able to model nonlinear relationships 
+
+- Cons: typically having **poorer accuracy** than other methods (e.g., random forests).
+
+---
+class: twocol
+## Decision Trees
+
+.pull-left[
+Trees are often visualized graphically.
+
+If a statement is .imp[true], you go to the left. 
+
+If a statement is .imp[false], you go to the right.
+
+The top node is called the **root node**.
+
+Subsequent splitting nodes are **branches**.
+
+Output labels are **terminal nodes** or **leaves**.
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("../figs/simpletree.png")
+```
+]
+
+---
+class: inverse, center, middle
+# Classification Trees
+
+---
+class: onecol
+## Building a Classification Tree
+
+The goal of classification trees are to partition data into homogeneous groups.
+
+This is defined by .imp[purity] (including more of one class than another class per node).
+
+We use .imp[recursive partioning] to find data splits that maximize purity of each node.
+
+--
+
+<p style="padding-top:30px;">The .imp[Gini index]<sup>[1]</sup> is the most commonly-used metric for quantifying purity.
+
+$$Gini = 1 - \sum\limits_{i = 1}^C(p_i)^2$$
+
+where $p_i$ = the probability of being in the $i$th class and $C$ = total number of classes
+
+.footnote[
+The Gini index ranges from 0 - 1, with smaller values indicating greater purity.
+]
+
+---
+class: onecol
+## Building a Classification Tree
+
+Let's walk through an example classification tree, with a toy depression risk dataset. 
+
+Stressful Event&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+No | No | 12 | Low
+Yes | Yes | 16 | High
+Yes | Yes | 22 | High
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | No | 46 | Low
+
+--
+
+The first thing to do is choose the .imp[root node] (feature that best predicts depression risk). 
+
+---
+class: twocol
+## Choosing the Root Node
+
+.pull-left[
+Start: find **Gini index** of stressful life events.
+
+.imp[Stressful Event]&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | .imp[Depression Risk]&emsp;
+:------- | :-------- | :------- |:------- |
+.imp[No] | Yes | 10 | .imp[Low] 
+.imp[No] | No | 12 | .imp[Low]
+.imp[Yes] | Yes | 16 | .imp[High]
+.imp[Yes] | Yes | 22 | .imp[High]
+.imp[No] | Yes | 30 | .imp[High] 
+.imp[No] | No | 38 | .imp[Low]
+.imp[Yes] | No | 46 | .imp[Low]
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+---
+class: twocol
+## Choosing the Root Node
+
+.pull-left[
+Both terminal nodes are **impure**, with people having high and low depression risk. 
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+---
+count: false
+class: twocol
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes are **impure**, with people having high and low depression risk. 
+
+Let's calculate the **Gini impurity** of each leaf: 
+
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+
+---
+count: false
+class: twocol
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes are **impure**, with people having high and low depression risk. 
+
+Let's calculate the **Gini impurity** of each leaf: 
+
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
+
+$Gini_{left} = 1 - (0.666)^2  - (0.333)^2 = 0.444$
+
+$Gini_{right} = 1 - (0.25)^2 - (0.75)^2 = 0.375$
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+---
+count: false
+class: twocol
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes are **impure**, with people having high and low depression risk. 
+
+Let's calculate the **Gini impurity** of each leaf: 
+
+$Gini_{leaf} = 1 - P(High)^2 - P(Low)^2$
+
+$Gini_{left} = 1 - (0.666)^2  - (0.333)^2 = 0.444$
+
+$Gini_{right} = 1 - (0.25)^2 - (0.75)^2 = 0.375$
+
+The total Gini index is the weighted average:
+
+$Gini_{stress} = (\frac{3}{7})*0.444 + (\frac{4}{7})*0.375 = 0.405$
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+
+---
+class: twocol
+## Choosing the Root Node
+
+We can compare this to the Gini index for family history, which comes to:
+
+.pull-left[
+$Gini_{family} = 0.214$
+
+Stressful Event&emsp; | .imp[Family History]&emsp; | Age&emsp;&emsp;&emsp; | .imp[Depression Risk]&emsp;
+:------- | :-------- | :------- |:------- |
+No | .imp[Yes] | 10 | .imp[Low] 
+No | .imp[No] | 12 | .imp[Low]
+Yes | .imp[Yes] | 16 | .imp[High]
+Yes | .imp[Yes] | 22 | .imp[High]
+No | .imp[Yes] | 30 | .imp[High] 
+No | .imp[No] | 38 | .imp[Low]
+Yes | .imp[No] | 46 | .imp[Low]
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/familytree.png')
+```
+]
+
+---
+class: twocol
+## Choosing the Root Node
+
+Calculating the Gini index for **numerical features** is slightly more complicated. 
+
+We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index. The lowest Gini index is for `age < 14.5` (Gini = 0.343): 
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | .imp[Age]&emsp;&emsp;&emsp; | .imp[Depression Risk]&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | .imp[10] | .imp[Low] 
+No | No | .imp[13] | .imp[Low]
+Yes | Yes | .imp[16] | .imp[High]
+Yes | Yes | .imp[22] | .imp[High]
+No | Yes | .imp[30] | .imp[High] 
+No | No | .imp[38] | .imp[Low]
+Yes | No | .imp[46] | .imp[Low]
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics("../figs/agetree.png")
+```
+]
+
+---
+class: twocol
+## Recursive Partioning
+
+.pull-left[
+Family history has the lowest Gini index of all features (i.e., highest purity).
+
+Thus, we set family history as the root node. 
+
+We then .imp[continue partioning the data] to find the next split from an impure node.
+
+We can continue this process until we are left with .imp[only pure leaves]. 
+
+If we are left with an impure leaf, the label is set to the mode of all observations within the leaf.
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics("../figs/familytree2.png")
+```
+]
+
+---
+class: inverse, center, middle
+# Regression Trees
+
+---
+class: onecol
+## Building a Regression Tree
+
+Let's say we have data that look like this. How should we model these data? 
+
+```{r, echo = FALSE}
+set.seed(2021)
+x <- seq(0, 11)
+y <- c(runif(3, 0, 2), runif(5, 5, 9), runif(4, 3, 4))
+regtree <- data.frame(x, y)
+  
+ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 20) +
+  labs(x = "feature", y = 'outcome') +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+
+---
+## Building a Regression Tree
+
+```{r, echo = FALSE}
+p1 <- 
+  ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 12) +
+  stat_smooth(
+    aes(x = x, y = y), 
+    method = "lm",
+    se = FALSE,
+    color = "blue",
+    size = 1.5
+  ) +
+  labs(title = "Linear Regression: Poor Fit", x = "feature") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p2 <- 
+  ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 12) +
+  stat_smooth(
+    aes(x = x, y = y), 
+    method = "lm",
+    formula = y ~ poly(x, 2), 
+    se = FALSE,
+    color = "purple",
+    size = 1.5
+  ) +
+  labs(title = "Simple Polynomial: Still Poor", x = "feature") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p3 <- 
+  ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 12) +
+  stat_smooth(
+    aes(x = x, y = y), 
+    method = "lm",
+    formula = y ~ poly(x, 8), 
+    se = FALSE,
+    color = "red",
+    size = 1.5
+  ) +
+  labs(title = "Higher Degree Polynomial: Overfit", x = "feature") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+(p1 | p2 | p3) + 
+  plot_annotation(
+    theme = theme(
+      plot.background = element_rect(fill = "#E9EBEE", color = NA)
+    )
+  )
+```
+
+---
+class: onecol
+## Building a Regression Tree
+
+A regression tree solves this problem by partioning data into homogeneous groups.
+
+.pull-left[
+```{r, echo = FALSE, fig.width=12, fig.height=8}
+ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  geom_segment(aes(x = 0, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred') + 
+  geom_segment(aes(x = 3, y = mean(y[4:8]), xend = 7, yend = mean(y[4:8])), col = 'darkred') +
+  geom_segment(aes(x = 8, y = mean(y[9:12]), xend = 11, yend = mean(y[9:12])), col = 'darkred') +
+  theme_xaringan(text_font_size = 30, title_font_size = 40) +
+  labs(title = "Regression Tree: Simple Example", x = "feature", y = 'outcome') +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width = "80%"}
+include_graphics("../figs/regtree.png")
+```
+]
+
+---
+class: onecol
+## Decision Trees Summary
+
+A single tree has **excellent interpretability** and is easy to explain to people. 
+
+Decision trees closely mirror the **human decision-making processes**! 
+
+However, a single tree is typically **not flexible enough** to accurately predict new data. 
+
+**Single trees are unstable**; they change dramatically with a small shift in training data.
+
+--
+
+<p style="padding-top:30px;">One solution is to .imp[aggregate predictions from many decision trees together]. 
+
+This may help us **improve predictive accuracy and model stability**. 
+
+---
+class: inverse, center, middle
+# Random Forests
+
+---
+class: twocol
+## Random Forests
+
+.left-column.pv3[
+```{r, echo = FALSE}
+include_graphics("../figs/randomforest.png")
+```
+]
+
+.right-column[
+Random forests aim to combine the simplicity of a single tree with greater model **flexibility**. 
+
+We do this by building **multiple decision trees**.
+
+We then **aggregate their predictions** together for one final prediction. 
+
+This is called an **ensemble method**. 
+
+By using multiple trees (rather than just one), we can achieve greater **predictive accuracy** in new datasets.
+
+However, this comes at the cost of **lower interpretability**.
+]
+
+---
+class: onecol
+## Random Forests
+
+Random forests use **bootstrapped aggregation** (bagging) to combine predictions from many  trees. Each tree is fit with a bootstrapped dataset and predictions are aggregated. 
+
+```{r, echo = FALSE, out.width = "70%"}
+include_graphics("../figs/bagging.png")
+```
+
+---
+class: onecol
+## Random Forests
+
+Random forests also  **decorrelate** trees by only using a subset of features at each split.
+
+This increases **model stability** for more reliable and less variable predictions. 
+
+.pull-left[
+```{r, echo = FALSE}
+include_graphics("../figs/decorrelate_1.png")
+```
+]
+
+---
+class: onecol
+## Random Forests
+
+Random forests also  **decorrelate** trees by only using a subset of features at each split.
+
+This increases **model stability** for more reliable and less variable predictions. 
+
+.pull-left[
+```{r, echo = FALSE}
+include_graphics("../figs/decorrelate_2.png")
+```
+]
+
+--
+
+.pull-right[
+<p style="padding-top:190px;">The number of *m* features chosen at each split is a .imp[hyperparameter]. 
+
+We can tune this during cross-validation to find the optimal value. 
+]
+
+---
+class: onecol
+## Building a Random Forest
+
+Let's return to this toy dataset to walk through building a random forest model.
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+No | No | 12 | Low
+Yes | Yes | 16 | High
+Yes | Yes | 22 | High
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | No | 46 | Low
+]
+
+--
+
+.pull-right[
+Step 1 is making **bootstrapped dataset**. 
+
+We randomly draw (with replacement) samples, to create a bootstrapped dataset of the same size. 
+
+This bootstrapped dataset will include some observations more than once. 
+
+Other observations will be left out (note: this is called the **out-of-bag dataset**).
+]
+
+---
+class: twocol
+## Building a Random Forest
+
+**Step 2**: Using bootstrapped data, build decision tree with a random subset of features per split. 
+
+--
+
+.pull-left[
+
+.imp[Stressful Event]&emsp; | Family History&emsp; | .imp[Age]&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+Yes | Yes | 22 | High
+No | No | 38 | Low
+Yes | Yes | 16 | High
+No | No | 12 | Low
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | Yes | 22 | High
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width="80%"}
+include_graphics("../figs/forest_split1.png")
+```
+]
+
+---
+class: twocol
+## Building a Random Forest
+
+**Step 2**: Using bootstrapped data, build decision tree with a random subset of features per split. 
+
+.pull-left[
+
+Stressful Event&emsp; | .imp[Family History]&emsp; | .imp[Age]&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+Yes | Yes | 22 | High
+No | No | 38 | Low
+Yes | Yes | 16 | High
+No | No | 12 | Low
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | Yes | 22 | High
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="80%"}
+include_graphics("../figs/forest_split2.png")
+```
+]
+
+---
+class: onecol
+## Building a Random Forest
+
+**Step 3**: Repeat steps 1 and 2! 
+
+Generate another bootstrapped dataset and build another decision tree, using only a random subset of $m$ features at each split. Repeat for many (e.g., 1000) trees. <pstyle="padding-bottom:20px;">
+
+```{r, echo = FALSE}
+include_graphics("../figs/manytrees.png")
+```
+
+---
+class: onecol
+## Building a Random Forest
+
+**Step 4**: Evaluate accuracy via out-of-bag (OOB) samples that are correctly classified. 
+
+--
+
+These are the two observations **not selected** in the 1st bootstrapped dataset. We can run these through all the trees built without them, and see if they get correctly classified.
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+Yes | No | 46 | Low
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE}
+include_graphics("../figs/manytrees.png")
+```
+]
+
+--
+
+We do this for all the other OOB observations for all the trees in our random forest and examine the proportion of correctly classified OOB observations.
+
+---
+class: onecol
+
+## Random Forests Summary
+
+Random forests are a .imp[powerful ML algorithm] that can model nonlinearity in data. 
+
+By only using a random subset of features at each tree split, **RF trees are decorrelated**.
+
+Aggregating many bootstrapped, uncorrelated trees is effective at **reducing variance**.
+
+Random forests tend to have .imp[higher accuracy] than single decision trees.
+
+--
+
+<p style="padding-top:30px;">When building random forests, tuning parameters include: 
+
+- The number of features to consider at each split
+
+- The number of decision trees in the forest
+
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+The next section will walk through building random forest models in R.
+]
 
 ---
 class: inverse, center, middle

@@ -31,11 +31,11 @@ left:
   - text: "Day 3"
     menu:
        - text: "[3A] Regularization and elastic net"
-         href: wip.html #day_3a.html
+         href: day_3a.html
        - text: "[3B] GLMNET example and tuning"
          href: day_3b.html
        - text: "[3C] Decision trees and random forests"
-         href: wip.html #day_3c.html
+         href: day_3c.html
        - text: "[3D] RF example and reporting"
          href: wip.html #day_3d.html
   - text: "Day 4"
