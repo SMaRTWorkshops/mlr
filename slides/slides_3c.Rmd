@@ -535,9 +535,9 @@ p3 <-
 
 ---
 class: onecol
-## Simple Regression Tree
+## Building a Regression Tree
 
-A regression tree can solve this problem by partioning data into homogeneous groups.
+A regression tree solves this problem by partioning data into homogeneous groups.
 
 .pull-left[
 ```{r, echo = FALSE, fig.width=12, fig.height=8}
@@ -559,131 +559,6 @@ ggplot(regtree, aes(x, y)) +
 ```{r, echo = FALSE, out.width = "80%"}
 include_graphics("../figs/regtree.png")
 ```
-]
-
----
-class: onecol
-## Building a Regression Tree
-
-We start with the entire data set $S$ to find the .imp[optimal feature and splitting value that partitions the data] into two groups $S_1$ and $S_2$ to minimize the sum of squared errors: 
-
-$$SSE = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2$$
-where
-- $\bar{y}_1$ = mean of training set outcomes in group $S_1$
-- $\bar{y}_2$ = mean of training set outcomes in group $S_2$
-
---
-
-Within each $S_1$ and $S_2$ group, we repeat recursive partitioning until the number of samples in each terminal node falls below some threshold (typically, $n=20$).
-
-The predicted value of a terminal node is then the mean of all observations in that node. 
-
----
-class: onecol
-## Comprehension Check 
-
-**Let's say we continued this recursive partioning process until we were left only with pure nodes (classification tree) or minimal SSE (regression tree). </br> </br> What are some problems that could arise?**
-
---
-
-Some answers: 
-
-- Overfitting training data
-
-- Poor prediction on test data/future/new data
-- Instability of model (if data are slightly altered, you may find entirely different splits)
-
-- Small number of participants in leaves
-
-- Selection bias: features with higher number of distinct values are favored
-
-- Poorer interpretation
-
----
-class: inverse, center, middle
-# Preventing Overfitting
-
----
-class: twocol
-## Preventing Overfitting
-
-.pull-left[
-Trees will continue to grow until each terminal node is entirely homogeneous.
-
-This inevitably leads to **poor prediction** on testing data and any future datasets.
-
-To prevent this, we need to **stop the algorithm at some point**, before it overfits. 
-
-There are two main methods that can prevent overfitting in trees: stopping criteria and pruning.
-
-]
-.pull-right[
-```{r, echo = FALSE, fig.width=12, fig.height=8}
-ggplot(regtree, aes(x, y)) + 
-  geom_point(shape = 16, size = 3) +
-  geom_segment(aes(x = 0, y = mean(y[0:1]), xend = 1, yend = mean(y[0:1])), col = 'darkred') + 
-  geom_segment(aes(x = 1, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred') +
-  geom_segment(aes(x = 3, y = mean(y[4:5]), xend = 5, yend = mean(y[4:5])), col = 'darkred') +
-  geom_segment(aes(x = 5, y = mean(y[5:7]), xend = 8, yend = mean(y[5:7])), col = 'darkred') +
-  geom_segment(aes(x = 8, y = mean(y[9:10]), xend = 10, yend = mean(y[9:10])), col = 'darkred') +
-  geom_segment(aes(x = 10, y = mean(y[11:12]), xend = 12, yend = mean(y[11:12])), col = 'darkred') +
-  
-  geom_segment(aes(x = 1, y = mean(y[0:1]), xend = 1, yend = mean(y[1:3])), col = 'darkred') +
-  geom_segment(aes(x = 3, y = mean(y[1:3]), xend = 3, yend = mean(y[4:5])), col = 'darkred') +
-  geom_segment(aes(x = 5, y = mean(y[4:5]), xend = 5, yend = mean(y[5:7])), col = 'darkred') +
-  geom_segment(aes(x = 8, y = mean(y[5:7]), xend = 8, yend = mean(y[9:10])), col = 'darkred') +
-  geom_segment(aes(x = 10, y = mean(y[9:10]), xend = 10, yend = mean(y[11:12])), col = 'darkred') +
-  theme_xaringan(text_font_size = 30, title_font_size = 40) +
-  labs(title = "Regression Tree: Overfit", x = "feature", y = 'outcome') +
-  theme(panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "white"))
-```
-]
-
----
-class: twocol
-## Stopping Criteria 
-
-.left-column.pv3[
-```{r, echo = FALSE}
-include_graphics("../figs/stop.png")
-```
-]
-
-.right-column[
-Stopping criteria prevent trees from growing in certain conditions:
-
-1) Standard: if the leaf is homogenous (standard)
-
-2) Standard: if the leaf will have too few observations, typically $n=20$
-
-3) If the total number of leaves in the tree is above some threshold
-
-We can determine the number of leaves to stop at by using **hyperperamter tuning**! 
-
-Thus, stopping criteria prevent us from overfitting a full tree. 
-]
-
----
-class: twocol
-## Pruning
-
-.left-column.pv3[
-```{r, echo = FALSE}
-include_graphics("../figs/pruning.png")
-```
-]
-.right-column[
-
-An alternative to stopping criterion is pruning a fully-grown tree.
-
-Rather than preventing a complex tree from growing, we can **impose a penalty** on complex trees with cost complexity pruning. 
-
-This is a similar to concept to $\lambda$ in regularized regression. 
-
-The pruning penalty allows us to sacrifice some training accuracy to improve test accuracy. 
-
-We also **tune the penalty hyperparameter** in {tune}.
 ]
 
 ---

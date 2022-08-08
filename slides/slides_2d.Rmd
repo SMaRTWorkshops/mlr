@@ -137,7 +137,7 @@ log_reg
 class: onecol
 ## Build Workflow with {workflows}
 
-.scroll70[
+.scroll.h-0l[
 ```{r}
 surv_wflow <- 
   workflow() %>%
@@ -191,7 +191,7 @@ Now that we've set the workflow & configured resampling, we're ready to fit the 
 
 --
 
-.scroll65[
+.scroll.h-1l[
 ```{r}
 # train the model using the recipe, data, and method 
 surv_fitr <- 
