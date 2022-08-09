@@ -5,7 +5,7 @@ author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2C &emsp; &emsp; August 9, 2022'
 output:
   xaringan::moon_reader:
-    css: [../css/xaringan-themer.css, ../css/styles.css]
+    css: [xaringan-themer.css, styles.css]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
@@ -141,6 +141,7 @@ $k$-fold CV can also be .imp[repeated] to avoid problems with any single split.
 .bg-light-green.b--dark-green.ba.bw1.br3.pl4[
 **Advice**: The bias-variance trade-off is optimized around $k=10$, but researchers sometimes use $k=5$ when their $N$ is small (to make the assessment sets larger).
 ]
+
 ---
 
 ## Our Recommended Analysis Scheme
@@ -150,6 +151,7 @@ include_graphics("../figs/kfold4_jg.png")
 ```
 
 .footnote[*Note.* We recommend $k=10$ but are showing 3 folds for visual simplicity.]
+
 ---
 class: onecol
 ## $k$-fold Cross-Validation in R 
@@ -222,7 +224,7 @@ fare_folds$splits[[1]] %>% assessment()
 
 ---
 class: onecol
-## k-fold Cross-Validation in R
+## $k$-fold Cross-Validation in R
 
 However, we generally don't need to extract the individual folds.
 
@@ -310,19 +312,22 @@ LOOCV is not generally recommended. It's usually better to stick with k-fold CV.
 ]
 
 ---
+class: onecol
 ## Comprehension Check \#1
+
+**Jamie builds an ML model using 10-fold stratified cross-validation, with 3 repeats.**
 
 .pull-left[
 ### Question 1
-**Which is the best data splitting method for ML?**
+**How many assessment results will they produce?**
 
-a) A single training and a single test set
+a) 1
 
-b) *k*-fold cross-validation
+b) 3
 
-c) Repeated *k*-fold cross-validation
+c) 10
 
-d) Leave-one-out cross-validation
+d) 30
 ]
 
 .pull-right[
@@ -331,11 +336,11 @@ d) Leave-one-out cross-validation
 
 a) Each *k* fold contains 1/2 of the data
 
-b) Some data are withheld from cross-validation
+b) Some training data are not used in CV
 
-c) Each *k* fold has a similar distribution of data
+c) Each *k* fold has similar data distribution
 
-d) Multiple iterations of *k* folds are created
+d) Multiple iterations of *k* folds are made
 ]
 
 ---
