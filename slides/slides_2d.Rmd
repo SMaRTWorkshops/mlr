@@ -1,6 +1,6 @@
 ---
 title: '<span style="font-size:48pt;">Building a Model: Start to Finish</span>'
-subtitle: '📈  💻  🤖️' 
+subtitle: '.big[⚙️  🎬  ✅️]' 
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2D &emsp; &emsp; August 9, 2022'
 output:
