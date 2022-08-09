@@ -146,7 +146,7 @@ $k$-fold CV can also be .imp[repeated] to avoid problems with any single split.
 
 ## Our Recommended Analysis Scheme
 
-```{r, echo=FALSE, out.width="85%"}
+```{r, echo=FALSE, out.width="75%"}
 include_graphics("../figs/kfold4_jg.png")
 ```
 
