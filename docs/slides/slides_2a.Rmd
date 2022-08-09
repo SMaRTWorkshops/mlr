@@ -54,33 +54,58 @@ class: inverse, center, middle
 
 # Setup
 
-.scroll.h-0l[
 ```{r, eval=FALSE}
+# Set up packages
+
 library(tidyverse)
 library(tidymodels)
 tidymodels_prefer()
+```
+
+--
+
+```{r, eval=FALSE}
+# Read in and tidy data
+
 titanic <- 
   read_csv("https://tinyurl.com/titanic-pm") %>% 
   mutate(
-    survived = factor(survived, levels = c(1, 0)), #<<
+    survived = factor(survived, levels = c(1, 0)),
     pclass = factor(pclass),
     sex = factor(sex)
   )
+```
 
+---
+
+## Data Splitting and Model Setup
+
+```{r, eval=FALSE}
 # Create train/test split, stratified by fare
+
 set.seed(2022)
-fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = fare)
+```
+
+--
+
+```{r, eval=FALSE}
+# Extract training and testing sets
 
 fare_train <- training(fare_split)
 fare_test <- testing(fare_split)
+```
 
+--
+
+```{r, eval=FALSE}
 # Set up model (linear regression using lm)
+
 lm_model <- 
   linear_reg() %>% 
   set_mode("regression") %>% 
   set_engine("lm")
 ```
-]
 
 ```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
@@ -122,8 +147,13 @@ lm_model <-
 ```{r}
 fare_wflow <-
   workflow() %>% 
-  add_model(lm_model) %>% 
-  print()
+  add_model(lm_model)
+```
+
+--
+
+```{r}
+fare_wflow
 ```
 
 ---
@@ -137,8 +167,13 @@ fare_wflow <-
 ```{r}
 fare_wflow <- 
   fare_wflow %>% 
-  add_formula(fare ~ pclass + sex + age + sibsp + parch) %>% 
-  print()
+  add_formula(fare ~ pclass + sex + age + sibsp + parch)
+```
+
+--
+
+```{r}
+fare_wflow
 ```
 
 .footnote[*Note.* We will soon learn to use "recipes" as more powerful preprocessors]
@@ -151,12 +186,17 @@ fare_wflow <-
 -   We can explicitly fit the model to the training data using `fit()`
 ]
 
-.scroll.h-1l[
 ```{r}
-fare_fit <- 
-  fit(fare_wflow, fare_train) %>% 
-  print()
+fare_fit <- fit(fare_wflow, fare_train)
 ```
+
+--
+
+.scroll.h-2l[
+```{r}
+fare_fit
+```
+
 ]
 
 ---
@@ -167,12 +207,18 @@ fare_fit <-
 -   We can explicitly make predictions in the testing set using `predict()`
 ]
 
-.scroll.h-1l[
+
 ```{r, message=FALSE}
-fare_pred <- 
-  predict(fare_fit, fare_test) %>% 
-  print()
+fare_pred <- predict(fare_fit, fare_test)
 ```
+
+--
+
+.scroll.h-2l[
+```{r}
+fare_pred
+```
+
 ]
 
 ---
@@ -185,12 +231,15 @@ fare_pred <-
   -   This will fit to the (entire) training set and predict the testing set
 ]
 
-.scroll.h-2l[
 ```{r}
 fare_fit <- last_fit(fare_wflow, split = fare_split)
+```
+
+--
+
+```{r}
 fare_fit
 ```
-]
 
 ---
 
@@ -200,9 +249,15 @@ fare_fit
 -   We can gather the testing set predictions with `collect_predictions()`
 ]
 
-.scroll.h-1l[
+
 ```{r}
 fare_pred <- collect_predictions(fare_fit)
+```
+
+--
+
+.scroll.h-2l[
+```{r}
 fare_pred
 ```
 
@@ -293,8 +348,14 @@ ggsave("../figs/fare_pred2.png", width = 3.5, height = 3.5, units = "in")
 
 ```{r}
 fare_perf <- collect_metrics(fare_fit)
+```
+
+--
+
+```{r}
 fare_perf
 ```
+
 
 .footnote[*Note.* We will soon learn how to interpret these metrics.]
 
