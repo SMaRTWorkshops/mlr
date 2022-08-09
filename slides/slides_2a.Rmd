@@ -192,7 +192,7 @@ fare_fit <- fit(fare_wflow, fare_train)
 
 --
 
-.scroll.h-2l[
+.scroll.h-3l[
 ```{r}
 fare_fit
 ```
@@ -214,7 +214,7 @@ fare_pred <- predict(fare_fit, fare_test)
 
 --
 
-.scroll.h-2l[
+.scroll.h-3l[
 ```{r}
 fare_pred
 ```
@@ -256,7 +256,7 @@ fare_pred <- collect_predictions(fare_fit)
 
 --
 
-.scroll.h-2l[
+.scroll.h-3l[
 ```{r}
 fare_pred
 ```
@@ -386,6 +386,8 @@ titanic <-
 
 set.seed(2022)
 fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
 
 # Set up model (linear regression using lm)
 
@@ -435,6 +437,8 @@ titanic <-
 
 set.seed(2022)
 surv_split <- initial_split(titanic, prop = 0.8, strata = 'survived') #<<
+surv_train <- training(surv_split)
+surv_test <- testing(surv_split)
 
 # Set up model (logistic regression using glm)
 
@@ -463,7 +467,9 @@ surv_perf <- collect_metrics(surv_fit)
 ```{r, echo=FALSE}
 # Create data splits, stratified by survived
 set.seed(2022)
-surv_split <- initial_split(titanic, prop = 0.8, strata = 'survived') #<<
+surv_split <- initial_split(titanic, prop = 0.8, strata = 'survived')
+surv_train <- training(surv_split)
+surv_test <- testing(surv_split)
 
 # Set up model (logistic regression using glm)
 glm_model <- #<<
@@ -475,7 +481,7 @@ glm_model <- #<<
 surv_wflow <-
   workflow() %>% 
   add_model(glm_model) %>% #<<
-  add_formula(survived ~ pclass + sex + age + sibsp + parch + fare) #<<
+  add_formula(survived ~ pclass + sex + age + sibsp + parch + fare)
 
 # Fit workflow and make predictions using data splits
 surv_fit <- last_fit(surv_wflow, split = surv_split)
