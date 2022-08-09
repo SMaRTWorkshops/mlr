@@ -252,6 +252,8 @@ fare_folds <- vfold_cv(data = fare_train, v = 10, repeats = 3, strata = fare)
 ```{r, eval=FALSE}
 # Set up model (linear regression using glmnet)
 
+?linear_reg
+
 glmnet_model <- 
   linear_reg(penalty = tune(), mixture = tune()) %>%
   set_mode("regression") %>% 

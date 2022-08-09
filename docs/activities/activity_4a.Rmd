@@ -1,0 +1,170 @@
+---
+title: "AMLR Day 4A<br/>Hands-on Activity"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+
+
+```{r, eval=FALSE}
+# Load packages
+
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+
+# Install model package (if needed)
+
+install.packages("kernlab")
+
+# Load and view data
+
+water <- read_csv("https://tinyurl.com/water-pm")
+water
+```
+
+---
+## Live Coding: Split data
+
+```{r, eval=FALSE}
+# Set random number generation seed for reproducibility
+
+set.seed(2022)
+
+# Create initial split for holdout validation
+
+pot_split <- initial_split(water, prop = 0.8, strata = Potability)
+pot_train <- training(pot_split)
+pot_test <- testing(pot_split)
+
+# Create 10-fold CV within training set for tuning
+
+pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability)
+```
+
+---
+## Live Coding: Set up workflow
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Set up recipe based on the data and model
+
+summary(water)
+
+pot_recipe <-
+  recipe(pot_train, formula = Potability ~ .) %>%
+  step_mutate(Potability = factor(Potability, levels = c("unsafe", "safe"))) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors()) %>%
+  step_normalize(all_predictors()) %>%
+  step_YeoJohnson(all_predictors())
+
+# Set up model with tuning parameters
+
+svm_model <-
+  svm_rbf(cost = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("kernlab")
+
+# Combine recipe and model specification into a workflow
+
+pot_wflow <-
+  workflow() %>%
+  add_recipe(pot_recipe) %>%
+  add_model(svm_model)
+```
+]
+
+---
+class: onecol
+## Live Coding: Set up and run tuning
+
+```{r, eval=FALSE}
+# Pick reasonable boundaries for the tuning parameters
+
+pot_param <-
+  svm_model %>%
+  extract_parameter_set_dials() %>%
+  finalize(pot_folds)
+
+# If desired, view the reasonable boundary values for the tuning parameters
+
+extract_parameter_dials(pot_param, "cost")
+
+# Create list of values within boundaries and grid search (may take a bit)
+
+pot_tune <-
+  pot_wflow %>%
+  tune_grid(
+    resamples = pot_folds,
+    grid = 20,
+    param_info = pot_param
+  )
+
+# If desired, plot the tuning results
+
+autoplot(pot_tune)
+```
+
+---
+## Live Coding: Finalize the workflow
+
+```{r, eval=FALSE}
+# Select the best parameters values
+
+pot_param_final <- select_best(pot_tune, metric = "accuracy")
+pot_param_final
+
+# Finalize the workflow with the best parameter values
+
+pot_wflow_final <-
+  pot_wflow %>%
+  finalize_workflow(pot_param_final)
+pot_wflow_final
+
+# Fit the finalized workflow to the training set and evaluate in testing set
+
+pot_final <-
+  pot_wflow_final %>%
+  last_fit(pot_split)
+```
+
+---
+## Live Coding: Explore performance
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# View the metrics (from the holdout test set)
+
+collect_metrics(pot_final)
+
+# Collect the predictions
+
+pot_pred <- collect_predictions(pot_final)
+pot_pred
+
+# Calculate and plot confusion matrix
+
+pot_cm <- conf_mat(pot_pred, truth = Potability, estimate = .pred_class)
+pot_cm
+
+autoplot(pot_cm, type = "mosaic")
+autoplot(pot_cm, type = "heatmap")
+
+summary(pot_cm)
+
+# Plot the predicted class probabilities
+
+ggplot(pot_pred, aes(x = .pred_unsafe, y = Potability)) + 
+  geom_boxplot()
+
+# Plot the ROC curve
+
+pot_rc <- roc_curve(pot_pred, truth = Potability, estimate = .pred_unsafe,
+                    event_level = "first")
+
+autoplot(pot_rc)
+```

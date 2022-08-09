@@ -1,11 +1,11 @@
 ---
 title: '<span style="font-size:48pt;">Resampling and Cross-Validation</span>'
-subtitle: '📚 ⚒️ 🤓️' 
+subtitle: '.big[🔁  ⚒️️ 📚 ]' 
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 2C &emsp; &emsp; August 9, 2022'
 output:
   xaringan::moon_reader:
-    css: [xaringan-themer.css, styles.css]
+    css: [../css/xaringan-themer.css, ../css/styles.css]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
@@ -146,7 +146,7 @@ $k$-fold CV can also be .imp[repeated] to avoid problems with any single split.
 
 ## Our Recommended Analysis Scheme
 
-```{r, echo=FALSE, out.width="85%"}
+```{r, echo=FALSE, out.width="75%"}
 include_graphics("../figs/kfold4_jg.png")
 ```
 

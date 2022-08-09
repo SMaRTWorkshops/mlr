@@ -17,10 +17,10 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 |     | B    | Tidyverse primer and data         | Girard | <https://youtu.be/7ex-Ylu4grs> |
 |     | C    | Data splitting and validation     | Wang   | <https://youtu.be/CbfxZRWlTkI> |
 |     | D    | Model fitting and prediction      | Wang   | <https://youtu.be/CbfxZRWlTkI> |
-| 2   | A    | Workflows and recipes             | Girard | TBA                            |
-|     | B    | Performance evaluation            | Girard | TBA                            |
-|     | C    | Resampling and cross-validation   | Wang   | TBA                            |
-|     | D    | Resampling example and deployment | Wang   | TBA                            |
+| 2   | A    | Workflows and recipes             | Girard | <https://youtu.be/0xkuhznD60U> |
+|     | B    | Performance evaluation            | Girard | <https://youtu.be/0xkuhznD60U> |
+|     | C    | Resampling and cross-validation   | Wang   | <https://youtu.be/0Nkli0B0jC8> |
+|     | D    | Building a model: start to finish | Wang   | <https://youtu.be/0Nkli0B0jC8> |
 | 3   | A    | Regularization and elastic net    | Wang   | TBA                            |
 |     | B    | GLMNET example and tuning         | Girard | TBA                            |
 |     | C    | Decision trees and random forests | Wang   | TBA                            |
