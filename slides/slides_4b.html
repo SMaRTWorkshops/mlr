@@ -749,6 +749,16 @@ height: 380px;
 max-height: 380px;
 }
 
+.h-3l .remark-code {
+height: 340px;
+max-height: 340px;
+}
+
+.h-4l .remark-code {
+height: 300px;
+max-height: 300px;
+}
+
 .imp {
 font-weight: bold;
 color: darkred;
@@ -798,7 +808,7 @@ class: center, middle, inverse, title-slide
 # <span style="font-size:48pt;">Practical Issues</span>
 ]
 .subtitle[
-## .big[🎨 🔬 👷‍♀️️]
+## .big[🎨 🔬 👷️️]
 ]
 .author[
 ### Pittsburgh Summer Methodology Series
@@ -1041,19 +1051,6 @@ Elastic Net | Ridge-like regression with lasso-like feature selection | does not
 Decision Trees | easily interpretable; models nonlinearity | unstable; poor prediction in new datasets (not often used in practice) 
 Random Forests | models nonlinearity, good prediction in new data | not easily interpretable, requires larger sample sizes  
 SVM | can handle `\(p&gt;n\)`; models nonlinearity  | not easily interpretable; can be difficult to choose a &#39;good&#39; kernel function
-
----
-class: onecol
-## Algorithm Assumptions 
-
-Algorithm&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp; | Assumptions 
-:------- | :-------- 
-Ridge / Lasso / Elastic Net| Linear relationship between features and outcome. Features should be on the same scale (normalize!). Dummy code nominal features.
-Decision Trees / Random Forests | No formal assumptions; they are non-parametric. Features don&#39;t have to be on the same scale. One-hot encoding of nominal features. 
-SVM | Features should be on the same scale (normalize!). Dummy code nominal features. 
-
-&lt;/br&gt; 
-Note: unlike familiar statistical methods (e.g., linear regression models), these methods have no distributional assumptions about error terms. 
 
 ---
 class: inverse, center, middle
@@ -1313,7 +1310,7 @@ To continue learning more, we recommend:
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_62f1d018" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_62f2e429" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
 <code class="countdown-time"><span class="countdown-digits minutes">60</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
 

@@ -1,6 +1,6 @@
 ---
 title: '<span style="font-size:48pt;">Practical Issues</span>'
-subtitle: '.big[🎨 🔬 👷‍♀️️]'
+subtitle: '.big[🎨 🔬 👷️️]'
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 4B &emsp; &emsp; August 11, 2022'
 output:
@@ -279,19 +279,6 @@ Elastic Net | Ridge-like regression with lasso-like feature selection | does not
 Decision Trees | easily interpretable; models nonlinearity | unstable; poor prediction in new datasets (not often used in practice) 
 Random Forests | models nonlinearity, good prediction in new data | not easily interpretable, requires larger sample sizes  
 SVM | can handle $p>n$; models nonlinearity  | not easily interpretable; can be difficult to choose a 'good' kernel function
-
----
-class: onecol
-## Algorithm Assumptions 
-
-Algorithm&emsp;&emsp;&emsp;&emsp; | Assumptions 
-:------- | :-------- 
-Ridge / Lasso / Elastic Net| Linear relationship between features and outcome. Features should be on the same scale (normalize!). Dummy code nominal features.
-Decision Trees / Random Forests | No formal assumptions; they are non-parametric. Features don't have to be on the same scale. One-hot encoding of nominal features. 
-SVM | Features should be on the same scale (normalize!). Dummy code nominal features. 
-
-</br> 
-Note: unlike familiar statistical methods (e.g., linear regression models), these methods have no distributional assumptions about error terms. 
 
 ---
 class: inverse, center, middle

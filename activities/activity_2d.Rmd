@@ -62,6 +62,7 @@ Our goal is to build a model predicting `body_mass_g`.
 
 ```{r}
 # 1
+set.seed(2022)
 bmg_split <- initial_split(penguins, prop = 0.8, strata = body_mass_g)
 bmg_train <- training(bmg_split)
 bmg_test <- testing(bmg_split)
@@ -93,7 +94,6 @@ bmg_wflow <-
 
 ```{r}
 #5
-set.seed(2022)
 bmg_folds <- vfold_cv(
   data = bmg_train,
   v = 10, 
