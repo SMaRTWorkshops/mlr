@@ -1,11 +1,11 @@
 ---
 title: '<span style="font-size:48pt;">Practical Issues</span>'
-subtitle: '.big[🎨 🔬 📝️]'
+subtitle: '.big[🎨 🔬 👷‍♀️️]'
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 4B &emsp; &emsp; August 11, 2022'
 output:
   xaringan::moon_reader:
-    css: [xaringan-themer.css, styles.css]
+    css: [../css/xaringan-themer.css, ../css/styles.css]
     nature:
       slideNumberFormat: "%current% / %total%"
       highlightStyle: github
@@ -61,13 +61,15 @@ This lecture will cover some **practical issues** involved in applied ML researc
 
 We will also highlight **advanced topics** for future learning beyond this course. 
 
-We will discuss:
+--
+
+<p style="padding-top:30px;">We will discuss:
 
 - Considerations for study design 
 
 - Selecting and comparing algorithms 
 
-- Bias, justice, and representativeness 
+- Algorithmic bias, fairness, and representativeness 
 
 - Critically evaluating results from ML models
 
@@ -85,7 +87,9 @@ The goal of supervised ML is to .imp[predict values] of important variables in n
 
 We focus less on **inference** (e.g., finding features that significantly predict outcomes).
 
-**Features** used to predict tend to be cheaper or easier to measure in new data. 
+--
+
+<p style="padding-top:30px;">**Features** used to predict tend to be cheaper or easier to measure in new data. 
 
 **Outcomes** to be predicted tend to be expensive or difficult to measure in new data. 
 
@@ -139,7 +143,13 @@ However, this does not mean that it is **atheoretical**.
 
 Models are more accurate if features are **causes** rather than **effects** of the outcome<sup>1</sup>.
 
-Design of ML studies should be driven by strong theory
+Design of ML studies should be driven by strong theory, including:
+
+- Feature selection
+
+- Measurement 
+
+- Time frame (for longitudinal prediction)
 
 .footnote[
 [1] See Piccininni et al. (2020) for theoretical explanation and simulation results: https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-020-01058-z
@@ -186,7 +196,7 @@ Flake & Fried (2020); *Advances in Methods and Practices in Psychological Scienc
 class: onecol
 ## Sample Size
 
-One of the most common questions we hear is .imp["how much data do I need for ML"?] 
+One of the most common questions we hear is .imp["how much data do I need for ML?"] 
 
 There's no straightforward or universal answer, and this is an active area of research.
 
@@ -194,12 +204,11 @@ However, here are some important principles and general guidelines.
 
 --
 
-</br>
-When working with smaller sample sizes, use simpler models.
+<p style="padding-top:30px;">1) When working with smaller sample sizes, use simpler models.
 
-Use k-fold CV on the full dataset for smaller samples rather than one held-out test set. 
+2) Use k-fold CV on the full dataset for smaller samples rather than one held-out test set. 
 
-Better yet, use nested CV for smaller samples! 
+3) Better yet, use nested CV for smaller samples! 
 
 ---
 class: onecol
@@ -492,6 +501,62 @@ include_graphics("../figs/target.jpg")
 - Limitations adequately stated 
 ]
 
+---
+class: twocol
+## Comprehension check
+
+**Identify a concern with each sentence in a paper you're reading.**
+
+.pull-left[
+**Question 1**
+
+"*We used ridge regularization to detect and model complex nonlinear relationships*"
+
+a) Ridge is not a useful predictive algorithm.
+
+b) Ridge is not a form of regularization.
+
+c) Ridge isn't well-suited for modeling non-linearities; other algorithms are better.
+
+d) Ridge is not a machine learning method.
+
+]
+
+.pull-right[
+**Question 2**
+
+"*Our model provided excellent predictions, with an AUC of 0.59.*"
+
+a) AUC is not a good performance metric.
+
+b) An AUC of 0.59 isn't very good.
+
+c) An AUC of 0.59 is not within the range of possible AUC values. 
+
+c) AUC does not provide useful information about predictive accuracy.
+]
+
+---
+class: onecol
+## Summary & Wrap-Up
+
+Throughout this course, we have learned the **fundamentals of machine learning**. 
+
+We learned ML **methods** (feature engineering, cross-validation, performance evaluation)
+
+We also learned ML **algorithms** (ridge, lasso, elastic net, trees, random forests, SVM)
+
+--
+
+<p style="padding-top:30px;">We used {tidymodels} and learned to **train, tune, test, and visualize ML models**.
+
+You can now fit your own ML models, evaluate ML papers, and learn advanced methods!
+
+To continue learning more, we recommend: 
+
+- [Applied Predictive Modeling](http://appliedpredictivemodeling.com/) (Kuhn & Johnson, 2013)
+
+- [Introduction to Statistical Learning](https://link.springer.com/book/10.1007/978-1-0716-1418-1) (James, Witten, Hastie, & Tibshirani, 2021)
 
 ---
 class: inverse, center, middle
