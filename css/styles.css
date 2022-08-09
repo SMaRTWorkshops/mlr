@@ -97,6 +97,18 @@ iframe.slide-deck {
   max-height: 380px;
 }
 
+/* Use with .scroll when 3 lines of text above code  */
+.h-3l .remark-code {
+  height: 340px;
+  max-height: 340px;
+}
+
+/* Use with .scroll when 4 lines of text above code  */
+.h-4l .remark-code {
+  height: 300px;
+  max-height: 300px;
+}
+
 /* Scrollbox classes */
 
 .imp {
