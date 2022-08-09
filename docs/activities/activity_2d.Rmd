@@ -21,12 +21,15 @@ knitr::opts_chunk$set(
 # Load packages
 
 ```{r, message=FALSE}
+# Set all of this to get the EXACT SAME results on all platforms
+set.seed(2022, "Mersenne-Twister", "Inversion", "Rejection")
+
 library(tidyverse)
 library(tidymodels)
 library(vip)
 library(readr)
 library(palmerpenguins)
-penguins <- penguins %>% na.omit
+penguins <- penguins %>% na.omit()
 ```
 
 # Hands-on Activity
@@ -93,7 +96,6 @@ bmg_wflow <-
 
 ```{r}
 #5
-set.seed(2022)
 bmg_folds <- vfold_cv(
   data = bmg_train,
   v = 10, 
@@ -138,7 +140,3 @@ bmg_pred %>%
 ```
 
 </details>
-
-
-
-
