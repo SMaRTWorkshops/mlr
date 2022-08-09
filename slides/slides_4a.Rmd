@@ -12,6 +12,8 @@ output:
       highlightLines: true
       ratio: 16:9
       countIncrementalSlides: false
+      navigation:
+        scroll: FALSE
     self_contained: true
 ---
 
@@ -50,6 +52,7 @@ library(patchwork)
 library(caret)
 library(skimr)
 library(tidymodels)
+tidymodels_prefer()
 ```
 
 class: inverse, center, middle
@@ -60,7 +63,7 @@ class: onecol
 ## Roadmap
 
 .left-column[
-.pt4[
+.pt3[
 ```{r, echo=FALSE}
 include_graphics("../figs/map.jpg")
 ```
@@ -68,19 +71,18 @@ include_graphics("../figs/map.jpg")
 ]
 
 .right-column[
-1. Maximal Margin Classifier 🚶
+1. Lecture: Maximal Margin Classifier 🚶
 
-1. Support Vector Classifier 🏃
+1. Lecture: Support Vector Classifier 🏃
 
-1. Support Vector Machine 🚴
+1. Lecture: Support Vector Machine 🚴
 
-1. Support Vector Regression 🚵
+1. Lecture: Support Vector Regression 🚵
 
-1. Applied Example
+1. Live Coding: SVM Regression
 
-1. Live Coding
+1. Live Coding: SVM Classification
 
-1. Hands-on Activity
 ]
 
 
@@ -105,8 +107,6 @@ However, there is a lot of *terminology* and *math* involved... 😱
 - That means there will be some things I need to "hand waive"
 
 - I may also need to skip questions with very technical answers
-
-- Finally, it may be tough to follow along since training takes a while
 
 --
 
@@ -471,9 +471,11 @@ The intuition here is that similarity is weighted by how *close* the observation
 
 --
 
+.pt1[
 The RBF kernel computes similarity between points in *infinite* dimensions 🤯
 
 - It is considered an ideal "general purpose" nonlinear kernel<sup>2</sup> 
+]
 
 --
 
@@ -543,7 +545,7 @@ All the benefits of the SVM algorithm can be applied to the regression problem
 
 - Efficiently expanding the feature space through the use of **various kernels**
 
-We can use the same {caret} `method` and hyperparameters for SVM and SVR
+We can use the same model type(s) and hyperparameters for SVM and SVR
 
 - We will use $C$ to control the softness vs. hardness of the margin
 
@@ -559,249 +561,248 @@ class: onecol
 include_graphics("../figs/epsilonsvr.png")
 ```
 
+---
 
+class: inverse, middle, center
+# Live Coding
 
 ---
-class: onecol
-## Applied Example
+## Live Coding: SVM Regression
 
-Let's train three classification models to predict Titanic survival
-
-1. A logistic regression (using "glm")
-
-1. A linear SVM (using "svmLinear")
-
-1. A radial SVM (using "svmRadial")
-
-We can practice setting up tuning grids and also learn to compare models<sup>1</sup>
-
-We will also show using CV only (and not nesting it inside of a holdout CV)<sup>2</sup>
-
-Finally, we will train an SVR regression model to predict Titanic fare
-
-.footnote[
-[1] Note that this is a relatively small dataset with few predictors, so we may not really need the power of SVM.<br />
-[2] Note that nesting a $k$-fold CV inside another $k$-fold CV would give better estimates (but take even longer).]
-
----
-class: onecol
-## Applied Example
-
-```{r, message=FALSE}
-titanic <- read_csv("https://bit.ly/amlr-titanic")
-```
-
---
-
-```{r}
-# Create the recipe and configure resampling
-surv_recipe <- 
-  titanic %>% 
-  recipe(survived ~ .) %>% 
-  step_normalize(all_numeric_predictors()) %>% 
-  step_dummy(all_nominal_predictors())
-
-surv_tc <- trainControl(method = "cv", number = 10)
-```
-
----
-class: onecol
-## Training the Logistic Regression and CV Performance
-
-```{r glm, cache=TRUE}
-set.seed(2021)
-
-# glm has no hyperparameters
-surv_glm <- train(
-  surv_recipe, 
-  data = titanic, #<<
-  method = "glm",
-  trControl = surv_tc
-)
-```
-
+.scroll.h-0l[
 ```{r, eval=FALSE}
-surv_glm$results
-```
+# Set random number generation seed for reproducibility
 
-```{r, echo=FALSE}
-surv_glm$results %>% kable(digits = 3)
-```
+set.seed(2022)
 
----
-class: onecol
-## Training the Linear SVM
+# Read in dataset
 
-```{r linsvm, cache=TRUE}
-set.seed(2021)
+penguins <- palmerpenguins::penguins %>% na.omit()
 
-# Let's create a tuning grid manually
-surv_linsvm <- train(
-  surv_recipe, 
-  data = titanic,
-  method = "svmLinear", #<<
-  tuneGrid = expand.grid(C = c(1/4, 1/2, 1, 2, 4)), #<<
-  trControl = surv_tc
-)
-```
+# Create initial split for holdout validation
 
----
-class: onecol
-## CV Performance of the Linear SVM
+bmg_split <- initial_split(penguins, prop = 0.8, strata = body_mass_g)
+bmg_train <- training(bmg_split)
+bmg_test <- testing(bmg_split)
 
-```{r, eval=FALSE}
-surv_linsvm$results
-```
+# Create 10-fold CV within training set for tuning
 
-```{r, echo=FALSE}
-surv_linsvm$results %>% kable(digits = 3)
-```
+bmg_folds <- vfold_cv(bmg_train, v = 10, repeats = 1, strata = body_mass_g)
 
----
-class: onecol
-## Training the Radial SVM
-```{r rbfsvm, cache=TRUE}
-set.seed(2021)
+# Set up recipe based on the data and model
 
-# Let's let caret set up the tuning grid on this one
-surv_rbfsvm <- train(
-  surv_recipe, 
-  data = titanic,
-  method = "svmRadialSigma", #<<
-  tuneLength = 5, #<<
-  trControl = surv_tc
-)
-```
-
-
----
-class: onecol
-## CV Performance of the Radial SVM
-
-```{r, eval=FALSE}
-surv_rbfsvm$results
-```
-
-```{r, echo=FALSE}
-surv_rbfsvm$results %>% kable(digits = 3) %>% scroll_box(height = '400px')
-```
-
----
-class: onecol
-## Plotting Accuracy Against $C$ and $\sigma$ Values
-
-```{r rbfhp, out.width='90%'}
-ggplot(surv_rbfsvm)
-```
-
----
-## Comparing the Algorithms' CV Performance
-
-```{r, echo=FALSE}
-summary.resamples <- function(x, metric) {
-  output <- caret:::summary.resamples(x, metric = metric)
-  output$statistics$Accuracy <- round(output$statistics$Accuracy, digits = 3)
-  output
-}
-```
-
-```{r}
-surv_res <- resamples(list(LogisticGLM = surv_glm, 
-                           LinearSVM = surv_linsvm, 
-                           RadialSVM = surv_rbfsvm))
-summary(surv_res, metric = "Accuracy")
-```
-
----
-## Comparing the Algorithms' CV Performance
-
-```{r}
-bwplot(surv_res)
-```
-
-
----
-class: onecol
-## Quick SVR Example
-
-```{r}
-svr_recipe <- 
-  titanic %>% 
-  recipe(fare ~ .) %>% 
-  step_rm(survived) %>% 
+bmg_recipe <-
+  recipe(bmg_train, formula = body_mass_g ~ .) %>%
+  step_mutate(year = factor(year)) %>% 
   step_dummy(all_nominal_predictors()) %>% 
-  step_normalize(all_numeric_predictors())
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors()) %>%
+  step_normalize(all_predictors()) %>%
+  step_YeoJohnson(all_predictors())
+
+# Set up model with tuning parameters
+
+svr_model <-
+  svm_rbf(cost = tune(), margin = tune()) %>%
+  set_mode("regression") %>%
+  set_engine("kernlab")
+
+# Combine recipe and model specification into a workflow
+
+bmg_wflow <-
+  workflow() %>%
+  add_recipe(bmg_recipe) %>%
+  add_model(svr_model)
+
+# Pick reasonable boundaries for the tuning parameters
+
+bmg_param <-
+  svr_model %>%
+  extract_parameter_set_dials() %>%
+  finalize(bmg_folds)
+
+# If desired, view the reasonable boundary values for the tuning parameters
+
+extract_parameter_dials(bmg_param, "cost")
+extract_parameter_dials(bmg_param, "margin")
+
+# Create list of values within boundaries and grid search (may take a bit)
+
+bmg_tune <-
+  bmg_wflow %>%
+  tune_grid(
+    resamples = bmg_folds,
+    grid = 20,
+    param_info = bmg_param
+  )
+
+# If desired, plot the tuning results
+
+autoplot(bmg_tune)
+
+# Select the best parameters values
+
+bmg_param_final <- select_best(bmg_tune, metric = "rmse")
+bmg_param_final
+
+# Finalize the workflow with the best parameter values
+
+bmg_wflow_final <-
+  bmg_wflow %>%
+  finalize_workflow(bmg_param_final)
+bmg_wflow_final
+
+# Fit the finalized workflow to the training set and evaluate in testing set
+
+bmg_final <-
+  bmg_wflow_final %>%
+  last_fit(bmg_split)
+
+# View the metrics (from the holdout test set)
+
+collect_metrics(bmg_final)
+
+# Collect the predictions
+
+bmg_pred <- collect_predictions(bmg_final)
+bmg_pred
+
+# Create regression prediction plot
+
+ggplot(bmg_pred, aes(x = body_mass_g, y = .pred)) +
+  geom_point(alpha = 0.33) +
+  geom_abline(color = "darkred") +
+  coord_obs_pred() +
+  labs(x = "Observed Body Mass (g)", y = "Predicted Body Mass (g)")
+
+# Note that vip doesn't work with SVM currently
 ```
+]
 
 ---
-## Quick SVR Example
+## Live Coding: SVM Classification
 
+.scroll.h-0l[
 ```{r, eval=FALSE}
-fare_svr <- train(
-  svr_recipe,
-  data = titanic,
-  method = "svmRadial",
-  tuneLength = 5,
-  trControl = surv_tc
-)
-fare_svr$results
+# Set random number generation seed for reproducibility
+
+set.seed(2022)
+
+# Read in dataset
+
+peng <- palmerpenguins::penguins
+
+# Create initial split for holdout validation
+
+psp_split <- initial_split(peng, prop = 0.8, strata = species)
+psp_train <- training(psp_split)
+psp_test <- testing(psp_split)
+
+# Create 10-fold CV within training set for tuning
+
+psp_folds <- vfold_cv(psp_train, v = 10, repeats = 1, strata = species)
+
+# Set up recipe based on the data and model
+
+summary(peng)
+
+psp_recipe <-
+  recipe(psp_train) %>%
+  update_role(species, new_role = "outcome") %>% 
+  update_role(island, sex, year, new_role = "predictor") %>% 
+  update_role(bill_length_mm:body_mass_g, new_role = "ignore") %>% 
+  step_mutate(year = factor(year)) %>% 
+  step_impute_knn(sex) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_nzv(all_predictors()) %>%
+  step_corr(all_predictors()) %>%
+  step_lincomb(all_predictors())
+
+# Set up model with tuning parameters
+
+svm_model <-
+  svm_rbf(cost = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("kernlab")
+
+# Combine recipe and model specification into a workflow
+
+psp_wflow <-
+  workflow() %>%
+  add_recipe(psp_recipe) %>%
+  add_model(svm_model)
+
+# Pick reasonable boundaries for the tuning parameters
+
+psp_param <-
+  svm_model %>%
+  extract_parameter_set_dials() %>%
+  finalize(psp_folds)
+
+# If desired, view the reasonable boundary values for the tuning parameters
+
+extract_parameter_dials(psp_param, "cost")
+
+# Create list of values within boundaries and grid search (may take a bit)
+
+psp_tune <-
+  psp_wflow %>%
+  tune_grid(
+    resamples = psp_folds,
+    grid = 20,
+    param_info = psp_param
+  )
+
+# If desired, plot the tuning results
+
+autoplot(psp_tune)
+
+# Select the best parameters values
+
+psp_param_final <- select_best(psp_tune, metric = "roc_auc")
+psp_param_final
+
+# Finalize the workflow with the best parameter values
+
+psp_wflow_final <-
+  psp_wflow %>%
+  finalize_workflow(psp_param_final)
+psp_wflow_final
+
+# Fit the finalized workflow to the training set and evaluate in testing set
+
+psp_final <-
+  psp_wflow_final %>%
+  last_fit(psp_split)
+
+# View the metrics (from the holdout test set)
+
+collect_metrics(psp_final)
+
+# Collect the predictions
+
+psp_pred <- collect_predictions(psp_final)
+psp_pred
+
+ # Calculate and plot confusion matrix
+
+psp_cm <- conf_mat(psp_pred, truth = species, estimate = .pred_class)
+psp_cm
+
+autoplot(psp_cm, type = "heatmap")
+
+summary(psp_cm)
+
+# Plot the ROC curve
+
+psp_rc <- roc_curve(psp_pred, truth = species, .pred_Adelie:.pred_Gentoo)
+
+autoplot(psp_rc)
+
+# Note that vip doesn't work with SVM currently
 ```
-
-```{r svr, cache=TRUE, echo=FALSE}
-fare_svr <- train(
-  svr_recipe,
-  data = titanic,
-  method = "svmRadial",
-  tuneLength = 5,
-  trControl = surv_tc
-)
-fare_svr$results %>% kable(digits = 3)
-```
-
----
-## Quick SVR Example
-
-```{r}
-densityplot(fare_svr, metric = "Rsquared")
-```
-
----
-class: onecol
-## Live Coding
-
-Let's try to predict whether it is safe or unsafe for humans to drink from a water source based on its chemical properties (e.g., pH, hardness, sulfate content).
-
-We will recap how to **train SVM classifiers** with RBF kernels
-
-We will also compare **two approaches** to selecting the $\sigma$ hyperparameter:
-
- 1. Tuning it via grid search (i.e., trying and comparing many values)
- 
- 1. Letting the {kernlab} package automatically estimate it
- 
-Finally, I can also show you an example of **imputing missing values** with {recipes}
-
----
-class: onecol
-## Hands-on Activity
-
-Let's try to predict whether an employee with quit their job based on various measures.
-
-1. Load the `attrition` dataset<sup>1</sup> from the {modeldata} package (Hint: use `data(...)`)
-
-1. Explore the data and create a recipe that includes normalization and dummy coding
-
-1. Configure your resampling to be a single 10-fold cross-validation
-
-1. Train models using the following algorithms and settings to classify `Potability`
-
-    + GLMNET with a `tuneLength` of 5 for $\alpha$ and $\lambda$
-    
-    + SVM with RBF kernel with a `tuneLength` of 5 for $C$ (let {kernlab} estimate $\sigma$)
-    
-1. Collect the resampling results using `resamples()` and plot them using `bwplot()`
-
-.footnote[[1] Note that this is simulated (i.e., not real) data from the IBM Watson group.]
+]
 
 ---
 class: inverse, center, middle
@@ -817,6 +818,6 @@ countdown(
   color_text = "black",
   color_running_background = "white",
   color_running_text = "black",
-  warn_when = 60
+  warn_when = 120
 )
 ```

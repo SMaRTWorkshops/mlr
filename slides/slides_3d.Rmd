@@ -111,6 +111,9 @@ pot_recipe <-
 
 # Set up model with tuning parameters and variable importance configuration
 
+?rand_forest
+show_engines("rand_forest")
+
 rf_model <-
   rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%
   set_mode("classification") %>%

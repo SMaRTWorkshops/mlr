@@ -41,9 +41,9 @@ left:
   - text: "Day 4"
     menu:
        - text: "[4A] Support vector machines"
-         href: wip.html #day_4a.html
+         href: day_4a.html
        - text: "[4B] Preview of advanced topics"
-         href: wip.html #day_4b.html
+         href: day_4b.html
 right:
   - icon: fa-github fa-lg
     href: https://github.com/pittmethods/appliedml
