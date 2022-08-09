@@ -49,29 +49,6 @@ library(tidymodels)
 tidymodels_prefer()
 ```
 
-```{r data, echo=FALSE, message=FALSE}
-# Load and tidy data
-titanic <- 
-  read_csv("https://tinyurl.com/titanic-pm") %>% 
-  mutate(
-    survived = factor(survived),
-    pclass = factor(pclass),
-    sex = factor(sex)
-  )
-
-# Create data splits, stratified by fare
-
-set.seed(2022)
-fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
-
-# Set up model (linear regression using lm)
-
-lm_model <- 
-  linear_reg() %>% 
-  set_mode("regression") %>% 
-  set_engine("lm")
-```
-
 
 class: inverse, center, middle
 # Recipes
@@ -96,54 +73,6 @@ include_graphics("../figs/engineer.jpg")
 - *Select* and drop predictors
 ]
 
----
-class: onecol
-
-## Motivation
-
-**Features** are descriptions of the data points that help to predict the outcomes
-
-  -   We may need to extract features from "raw" or "low-level" data (e.g., images)
-
-  -   We may need to address issues with missing data and feature distributions
-
---
-
-.pt1[
-There are many potential ways to **encode** or "represent" the features/predictors
-
-  -   e.g., adding, dropping, transforming, and combining predictors<sup>1</sup>
-
-  -   predictor encoding can have a big .imp[impact on predictive performance]<sup>2</sup>
-
-  -   The optimal encoding depends on both the **algorithm** and the **relationships**
-]
-
-.footnote[
-[1] Some algorithms can learn their own, complex feature representations<br />
-[2] Some algorithms are more sensitive to feature encoding than others
-]
-
----
-class: onecol
-## Issues to Navigate in Feature Engineering
-
-.left-column.pv3[
-```{r, echo=FALSE}
-include_graphics("../figs/cones.jpg")
-```
-]
-.right-column.lh-copy[
-- Predictors with **non-normal** distributions
-- Predictors with vastly **different scales**
-- Predictors with extreme **outliers**
-- Predictors with **missing** or censored values
-- Predictors that are **correlated** with one another
-- Predictors that are **redundant** with one another
-- Predictors that have zero or **near-zero variance**
-- Predictors that are **uninformative** for a task
-- Predictors with **uncertainty** or unreliability
-]
 
 ---
 
@@ -173,6 +102,53 @@ We will be learning the {recipes} package from {tidymodels}
 
 ---
 
+## Two approaches to tidying
+
+#### The old way (mutate the original data frame)
+
+```{r, message=FALSE}
+# Load and tidy data
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% #<<
+  mutate( #<<
+    survived = factor(survived), #<<
+    pclass = factor(pclass), #<<
+    sex = factor(sex) #<<
+  ) #<<
+```
+
+--
+
+#### The new way (deal with it later using recipes)
+
+```{r}
+# Load data without tidying
+titanic <- read_csv("https://tinyurl.com/titanic-pm") #<<
+```
+
+---
+
+## Setting up the data splits
+
+```{r}
+# Create data splits, stratified by fare
+
+set.seed(2022)
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+
+# Set up model (linear regression using lm)
+
+lm_model <- 
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+```
+
+
+---
+
 ## Initiating a recipe
 
 ```{r}
@@ -197,20 +173,24 @@ fare_recipe <-
 .footnote[*Note.* I like `update_roles()` because it enables tidy selection and "ignored" variables.]
 
 ---
-
+class: onecol
 ## Including preprocessing steps
 
 ```{r}
-# Instead of mutating titanic directly, we can add a mutate step to the recipe
+# New recipe-based version
 
 fare_recipe <- 
   fare_recipe %>% 
   step_mutate( #<<
-    survived = factor(survived),
-    pclass = factor(pclass),
-    sex = factor(sex)
-  )
+    survived = factor(survived, levels = c(1, 0)), #<<
+    pclass = factor(pclass), #<<
+    sex = factor(sex) #<<
+  ) #<<
 ```
+
+The benefit of making this a recipe step (instead of applying it to the original data)...
+
+...is that it will now affect *any data* that you apply the recipe/workflow to!
 
 ---
 
@@ -279,14 +259,10 @@ class: onecol
 
   -   You may choose to calculate sums, means, counts, proportions, etc.
 
---
+.pv1[
+-   We can use `step_mutate()` for these purposes as well
+]
 
--  The recipe step usually used here is `step_mutate()`
-
-  -   Use this function the same way we used `mutate()` in Day 1B
-  
-  -   We already used it to transform our categorical variables into factors
-  
 ---
 ## Calculate and transform
 
@@ -294,9 +270,9 @@ class: onecol
 cp_recipe <- 
   fare_recipe %>% 
   step_mutate( #<<
-    numfamily = sibsp + parch,
-    over70 = age > 70
-  )
+    numfamily = sibsp + parch, #<<
+    fa_ratio = fare / age #<<
+  ) #<<
 ```
 
 --
@@ -346,9 +322,6 @@ With dummy coding, you end up with $g-1$ binary predictors $(g$ is number of lev
 
 ]
 
-.footnote[
-*Note.* For tree-based models, we can alternatively use one-hot encoding to create $g$ binary predictors.
-]
 ---
 ## Categorical predictors
 
@@ -369,8 +342,6 @@ dc_recipe %>%
   kable_styling() %>% 
   scroll_box(height="300px")
 ```
-
-.footnote[*Note.* To use one-hot encoding, change to `step_dummy(..., one_hot = TRUE)`]
 
 ---
 class: onecol
@@ -395,7 +366,7 @@ nr_recipe <-
   step_normalize(age) #<<
 ```
 
-.footnote[*Note.* We (and tidymodels) use the *training set* mean and SD to avoid data leakage.]
+.footnote[*Note.* {tidymodels} will use the *training set's* mean and SD to avoid data leakage from the testing set.]
 
 ---
 ## Center and rescale
@@ -438,7 +409,7 @@ p2 <- ggplot(tibble(x_n), aes(x_n)) + geom_density(na.rm = TRUE) +
 p1 | p2
 ```
 
-.footnote[The mean is now 0 and the SD is now 1, but the shape of the distribution is unchanged.]
+.footnote[The mean is now 0.0 and the SD is now 1.0, but the shape of the distribution is unchanged.]
 
 ---
 class: onecol
@@ -494,7 +465,7 @@ $$x_{(yj)}^\star=\begin{cases}((x+1)^\lambda-1)/\lambda & \text{if } \lambda\ne0
 \end{cases}$$
 
 .footnote[
-*Note.* The $\lambda$ parameter will be estimated in the *training set* only.
+*Note.* The $\lambda$ parameter will be estimated from the *training set* only.
 ]
 
 ---
@@ -551,9 +522,7 @@ class: onecol
 
 --
 
--   We can also chain together multiple sequential steps via pipes
-
-  -   The steps will be applied in pipeline order, so be careful!
+-   We can also chain together multiple sequential steps via pipes<sup>1</sup>
 
 --
 
@@ -563,6 +532,8 @@ fare_recipe %>%
   step_dummy(all_nominal_predictors())
 ```
   
+  
+.footnote[[1] The steps will be applied in *sequential* order, so build your recipe pipeline thoughtfully.]
 ---
 class: onecol
 ## Missing values
@@ -571,7 +542,7 @@ class: onecol
 
 --
 
--   If we have marked these values correctly as `NA`, we can impute them
+-   If we have marked these values correctly as `NA`, we can "impute" them
 
   -   *To impute a missing value is to fill it in with a plausible value*
 
@@ -587,7 +558,7 @@ class: onecol
 
   -   But omit observations with missing outcome values using `step_naomit()`
 
-.footnote[*Note.* You can even impute via machine learning models (e.g., `step_impute_bag()`). Inception!]
+.footnote[*Note.* You can specify which variables to use in your imputation model via the `impute_with` argument.]
 
 ---
 
@@ -600,7 +571,7 @@ na_recipe <-
   step_impute_linear(age) #<<
 ```
 
-.footnote[*Note.* The default is to include all other predictor variables in the imputation model but we can customize that.]
+.footnote[*Note.* The default is to include all other predictor variables in the imputation model.]
 
 --
 
@@ -623,9 +594,11 @@ class: onecol
 
 --
 
+.pv1[
 .imp[Near-zero variance predictors] take on only a few unique values with low frequencies
 
 - These predictors can easily become zero-variance predictors during resampling
+]
 
 --
 
@@ -640,7 +613,6 @@ class: onecol
 nzv_recipe <- 
   fare_recipe %>% 
   step_mutate(
-    nfamily = sibsp + parch, # will have unproblematic variance
     species = "homo sapiens",  # will have zero variance
     over70 = age > 70 # will have near-zero variance
   ) %>% 
@@ -673,10 +645,12 @@ class: onecol
 
 --
 
+.pv1[
 Predictors that are .imp[linear combinations] of other predictors are similarly problematic
 
 - Occurs if a predictor variable can be predicted from the other predictor variables
-- This is why dummy coding is preferred to one-hot encoding for some algorithms
+- (This is why dummy coding creates $g-1$ instead of $g$ binary variables)
+]
 
 --
 
@@ -726,6 +700,8 @@ titanic <- read_csv("https://tinyurl.com/titanic-pm")
 
 set.seed(2022)
 fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
 
 # Set up model (linear regression using lm)
 
@@ -737,7 +713,7 @@ lm_model <-
 # Prepare recipe
 
 fare_recipe <- 
-  recipe(titanic) %>% 
+  recipe(fare_train) %>% 
   update_role(fare, new_role = "outcome") %>% 
   update_role(pclass:parch, new_role = "predictor") %>% 
   update_role(survived, new_role = "ignore") %>% 
