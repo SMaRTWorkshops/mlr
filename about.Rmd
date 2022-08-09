@@ -11,24 +11,24 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 
 ## Course Schedule
 
-| Day | Part | Topic                             | Lead   | Video Link |
-| :-: | :--: | :-------------------------------- | :----- | :--------- |
-| 1   | A    | Conceptual introductions          | Girard | TBA        |
-|     | B    | Tidyverse primer and data         | Girard | TBA        |
-|     | C    | Data splitting and validation     | Wang   | TBA        |
-|     | D    | Model fitting and prediction      | Wang   | TBA        |
-| 2   | A    | Workflows and recipes             | Girard | TBA        |
-|     | B    | Performance evaluation            | Girard | TBA        |
-|     | C    | Resampling and cross-validation   | Wang   | TBA        |
-|     | D    | Resampling example and deployment | Wang   | TBA        |
-| 3   | A    | Regularization and elastic net    | Wang   | TBA        |
-|     | B    | GLMNET example and tuning         | Girard | TBA        |
-|     | C    | Decision trees and random forests | Wang   | TBA        |
-|     | D    | RF example and reporting          | Girard | TBA        |
-| 4   | A    | Support vector machines           | Girard | TBA        |
-|     | B    | Preview of advanced topics        | Wang   | TBA        |
-|     | C    | Consulting                        |        |            |
-|     | D    | Consulting                        |        |            |
+| Day | Part | Topic                             | Lead   | Video Link                     |
+| :-: | :--: | :-------------------------------- | :----- | :----------------------------- |
+| 1   | A    | Conceptual introductions          | Girard | <https://youtu.be/7ex-Ylu4grs> |
+|     | B    | Tidyverse primer and data         | Girard | <https://youtu.be/7ex-Ylu4grs> |
+|     | C    | Data splitting and validation     | Wang   | <https://youtu.be/CbfxZRWlTkI> |
+|     | D    | Model fitting and prediction      | Wang   | <https://youtu.be/CbfxZRWlTkI> |
+| 2   | A    | Workflows and recipes             | Girard | TBA                            |
+|     | B    | Performance evaluation            | Girard | TBA                            |
+|     | C    | Resampling and cross-validation   | Wang   | TBA                            |
+|     | D    | Resampling example and deployment | Wang   | TBA                            |
+| 3   | A    | Regularization and elastic net    | Wang   | TBA                            |
+|     | B    | GLMNET example and tuning         | Girard | TBA                            |
+|     | C    | Decision trees and random forests | Wang   | TBA                            |
+|     | D    | RF example and reporting          | Girard | TBA                            |
+| 4   | A    | Support vector machines           | Girard | TBA                            |
+|     | B    | Preview of advanced topics        | Wang   | TBA                            |
+|     | C    | Consulting                        |        | NA                             |
+|     | D    | Consulting                        |        | NA                             |
 
 
 Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). It may take up to 6 hours for the high definition versions of the videos to be ready on YouTube. In order to access the videos, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.
