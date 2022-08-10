@@ -142,10 +142,11 @@ However, we can't use a **single equation** to describe the boundaries between t
 ```{r, echo = FALSE}
 ggplot(simdat, aes(x, y)) + 
   geom_point(aes(color = group_circle)) +
-  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme_xaringan(text_font_size = 20, title_font_size = 16) +
   theme(panel.grid.minor = element_blank(),
         panel.background = element_rect(fill = "white"),
-        legend.position = "none")
+        legend.position = "none",
+        axis.title = element_text(size = 24))
 ```
 ]
 
@@ -153,10 +154,11 @@ ggplot(simdat, aes(x, y)) +
 ```{r, echo = FALSE}
 ggplot(simdat, aes(x, y)) + 
   geom_point(aes(color = group_quadrants)) +
-  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme_xaringan(text_font_size = 20, title_font_size = 16) +
   theme(panel.grid.minor = element_blank(),
         panel.background = element_rect(fill = "white"),
-        legend.position = "none")
+        legend.position = "none",
+        axis.title = element_text(size = 24))
 ```
 ]
 
@@ -439,16 +441,18 @@ class: onecol
 A regression tree can solve this problem by partioning data into homogeneous groups.
 
 .pull-left[
+.center[**Regression Tree: Simple Example**]
 ```{r, echo = FALSE, fig.width=12, fig.height=8}
 ggplot(regtree, aes(x, y)) + 
   geom_point(shape = 16, size = 3) +
-  geom_segment(aes(x = 0, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred') + 
-  geom_segment(aes(x = 3, y = mean(y[4:8]), xend = 7, yend = mean(y[4:8])), col = 'darkred') +
-  geom_segment(aes(x = 8, y = mean(y[9:12]), xend = 11, yend = mean(y[9:12])), col = 'darkred') +
+  geom_segment(aes(x = 0, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred', lwd = 3) + 
+  geom_segment(aes(x = 3, y = mean(y[4:8]), xend = 7, yend = mean(y[4:8])), col = 'darkred', lwd = 3) +
+  geom_segment(aes(x = 8, y = mean(y[9:12]), xend = 11, yend = mean(y[9:12])), col = 'darkred', lwd = 3) +
   theme_xaringan(text_font_size = 30, title_font_size = 40) +
-  labs(title = "Regression Tree: Simple Example", x = "feature", y = 'outcome') +
+  labs(x = "feature", y = 'outcome') +
   theme(panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "white"))
+        panel.background = element_rect(fill = "white"),
+        axis.title = element_text(size = 40))
 ```
 ]
 
