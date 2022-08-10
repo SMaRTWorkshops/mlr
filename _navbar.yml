@@ -26,7 +26,7 @@ left:
          href: day_2b.html
        - text: "[2C] Resampling and cross-validation"
          href: day_2c.html
-       - text: "[2D] Building a model (without tuning)"
+       - text: "[2D] Predictive modeling with (G)LM"
          href: day_2d.html
   - text: "Day 3"
     menu:
