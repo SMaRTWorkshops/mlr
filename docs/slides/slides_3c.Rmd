@@ -753,6 +753,18 @@ include_graphics("../figs/manytrees.png")
 class: onecol
 ## Building a Random Forest
 
+**Note**: These trees will all look different! 
+
+This diversity of tree is what makes random forests so powerful. 
+
+```{r, echo = FALSE}
+include_graphics("../figs/manytrees.png")
+```
+
+---
+class: onecol
+## Building a Random Forest
+
 **Step 4**: Evaluate accuracy via out-of-bag (OOB) samples that are correctly classified. 
 
 --
