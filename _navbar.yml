@@ -26,7 +26,7 @@ left:
          href: day_2b.html
        - text: "[2C] Resampling and cross-validation"
          href: day_2c.html
-       - text: "[2D] Resampling example and deployment"
+       - text: "[2D] Building a model (without tuning)"
          href: day_2d.html
   - text: "Day 3"
     menu:
@@ -42,7 +42,7 @@ left:
     menu:
        - text: "[4A] Support vector machines"
          href: day_4a.html
-       - text: "[4B] Preview of advanced topics"
+       - text: "[4B] Practical issues"
          href: day_4b.html
 right:
   - icon: fa-github fa-lg
