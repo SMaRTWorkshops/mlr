@@ -21,12 +21,12 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 |     | B    | Performance evaluation            | Girard | <https://youtu.be/0xkuhznD60U> |
 |     | C    | Resampling and cross-validation   | Wang   | <https://youtu.be/0Nkli0B0jC8> |
 |     | D    | Building a model: start to finish | Wang   | <https://youtu.be/0Nkli0B0jC8> |
-| 3   | A    | Regularization and elastic net    | Wang   | TBA                            |
-|     | B    | GLMNET example and tuning         | Girard | TBA                            |
-|     | C    | Decision trees and random forests | Wang   | TBA                            |
-|     | D    | RF example and reporting          | Girard | TBA                            |
+| 3   | A    | Regularization and elastic net    | Wang   | <https://youtu.be/g51MRN9E6yk> |
+|     | B    | GLMNET example and tuning         | Girard | <https://youtu.be/g51MRN9E6yk> |
+|     | C    | Decision trees and random forests | Wang   | <https://youtu.be/XCqL9UAuDF8> |
+|     | D    | RF example and reporting          | Girard | <https://youtu.be/XCqL9UAuDF8> |
 | 4   | A    | Support vector machines           | Girard | TBA                            |
-|     | B    | Preview of advanced topics        | Wang   | TBA                            |
+|     | B    | Practical issues                  | Wang   | TBA                            |
 |     | C    | Consulting                        |        | NA                             |
 |     | D    | Consulting                        |        | NA                             |
 
