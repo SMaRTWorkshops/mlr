@@ -527,6 +527,8 @@ pot_recipe &lt;-
 ?rand_forest
 show_engines(&quot;rand_forest&quot;)
 
+install.packages(&quot;ranger&quot;)
+
 rf_model &lt;-
   rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %&gt;%
   set_mode(&quot;classification&quot;) %&gt;%

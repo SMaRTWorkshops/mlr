@@ -1,6 +1,6 @@
 ---
 title: '<span style="font-size:48pt;">GLMNET Example and Tuning</span>'
-subtitle: '🎛️  🎚️     🏇'
+subtitle: '🥅  🎛️  🎚️ '
 author: 'Pittsburgh Summer Methodology Series'
 date: 'Day 3B &emsp; &emsp; August 10, 2022'
 output:
@@ -253,6 +253,8 @@ fare_folds <- vfold_cv(data = fare_train, v = 10, repeats = 3, strata = fare)
 # Set up model (linear regression using glmnet)
 
 ?linear_reg
+
+install.packages("glmnet")
 
 glmnet_model <- 
   linear_reg(penalty = tune(), mixture = tune()) %>%

@@ -6,96 +6,119 @@ output:
     highlight: github
 ---
 
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+```
 
+## Setup
 
-```{r, eval=FALSE}
-# Load packages
+```{r, message=FALSE}
+# Set all of this to get the EXACT SAME results on all platforms
+set.seed(2022, "Mersenne-Twister", "Inversion", "Rejection")
 
 library(tidyverse)
 library(tidymodels)
+library(kernlab) # install this if you don't have it
 tidymodels_prefer()
 
-# Install model package (if needed)
-
-install.packages("kernlab")
-
-# Load and view data
-
 water <- read_csv("https://tinyurl.com/water-pm")
-water
 ```
 
+## Hands-on Activity
+
+Our goal is to build a model to predict `Potability`.
+
+
+<ol>
+  <li>Split the data into 80% training and 20% testing, stratified by the outcome variable.</li>
+  <li>Prepare a 10-fold cross-validation within the training set, similarly stratified.</li>
+  <li>Create a recipe that predicts the outcome variable from all other variables.</li>
+  <ul>
+    <li>Add a step to drop all predictors with near-zero variance.</li>
+    <li>Add a step to drop all highly correlated predictors.</li>
+    <li>Add a step to drop all linear combination predictors.</li>
+    <li>Add a step to transform all predictors using the Yeo-Johnson approach.</li>
+  </ul>
+  <li>Set up a model using `svm_linear()`</li>
+  <ul>
+    <li>Tune the `cost` parameter</li>
+    <li>Set the mode to classification</li>
+    <li>Set the engine to `"kernlab"`</li>
+  </ul>
+  <li>Combine the model and recipe into a workflow.</li>
+  <li>Prepare the hyperparameters for tuning.</li>
+  <li>Tune the hyperparameters using a grid search of size 20.</li>
+  <ul>
+    <li>If you are on a weak computer, maybe reduce to size 10.</li>
+    <li>(For reference, my desktop finished size=20 in around 2 minutes.)</li>
+  </ul>
+  <li>Finalize the workflow using the parameters with the best AUC ROC.</li>
+  <li>Calculate and examine the final model's testing set metrics. Did it do okay?</li>
+  <li>Repeat this process but change the model to `svm_rbf()`. Was this better?</li>
+  <ul>
+    <li>You may want to give these new objects new names (to avoid overwriting the older ones).</li>
+  </ul>
+</ol>
+
 ---
-## Live Coding: Split data
 
-```{r, eval=FALSE}
-# Set random number generation seed for reproducibility
+## Answer key
 
-set.seed(2022)
+<p><details><summary>Click here to view the answer key</summary><blockquote>
+#### Part 1
 
-# Create initial split for holdout validation
-
+```{r}
 pot_split <- initial_split(water, prop = 0.8, strata = Potability)
 pot_train <- training(pot_split)
 pot_test <- testing(pot_split)
-
-# Create 10-fold CV within training set for tuning
-
-pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability)
 ```
 
----
-## Live Coding: Set up workflow
+#### Part 2
 
-.scroll.h-0l[
-```{r, eval=FALSE}
-# Set up recipe based on the data and model
+```{r}
+pot_folds <- vfold_cv(pot_train, v = 10, strata = Potability)
+```
 
-summary(water)
-
+#### Part 3
+```{r}
 pot_recipe <-
   recipe(pot_train, formula = Potability ~ .) %>%
   step_mutate(Potability = factor(Potability, levels = c("unsafe", "safe"))) %>%
   step_nzv(all_predictors()) %>%
   step_corr(all_predictors()) %>%
   step_lincomb(all_predictors()) %>%
-  step_normalize(all_predictors()) %>%
   step_YeoJohnson(all_predictors())
+```
 
-# Set up model with tuning parameters
-
+#### Part 4
+```{r}
 svm_model <-
-  svm_rbf(cost = tune()) %>%
+  svm_linear(cost = tune()) %>%
   set_mode("classification") %>%
   set_engine("kernlab")
+```
 
-# Combine recipe and model specification into a workflow
-
+#### Part 5
+```{r}
 pot_wflow <-
   workflow() %>%
   add_recipe(pot_recipe) %>%
   add_model(svm_model)
 ```
-]
 
----
-class: onecol
-## Live Coding: Set up and run tuning
-
-```{r, eval=FALSE}
-# Pick reasonable boundaries for the tuning parameters
-
+#### Part 6
+```{r}
 pot_param <-
   svm_model %>%
   extract_parameter_set_dials() %>%
   finalize(pot_folds)
+```
 
-# If desired, view the reasonable boundary values for the tuning parameters
-
-extract_parameter_dials(pot_param, "cost")
-
-# Create list of values within boundaries and grid search (may take a bit)
-
+#### Part 7
+```{r pot, cache=TRUE}
 pot_tune <-
   pot_wflow %>%
   tune_grid(
@@ -104,67 +127,58 @@ pot_tune <-
     param_info = pot_param
   )
 
-# If desired, plot the tuning results
-
 autoplot(pot_tune)
 ```
 
----
-## Live Coding: Finalize the workflow
+#### Part 8
+```{r}
+pot_param_final <- select_best(pot_tune, metric = "roc_auc")
 
-```{r, eval=FALSE}
-# Select the best parameters values
-
-pot_param_final <- select_best(pot_tune, metric = "accuracy")
-pot_param_final
-
-# Finalize the workflow with the best parameter values
-
-pot_wflow_final <-
-  pot_wflow %>%
-  finalize_workflow(pot_param_final)
-pot_wflow_final
-
-# Fit the finalized workflow to the training set and evaluate in testing set
-
-pot_final <-
-  pot_wflow_final %>%
-  last_fit(pot_split)
+pot_wflow_final <- finalize_workflow(pot_wflow, pot_param_final)
 ```
 
----
-## Live Coding: Explore performance
-
-.scroll.h-0l[
-```{r, eval=FALSE}
-# View the metrics (from the holdout test set)
+#### Part 9
+```{r}
+pot_final <- last_fit(pot_wflow_final, pot_split)
 
 collect_metrics(pot_final)
-
-# Collect the predictions
-
-pot_pred <- collect_predictions(pot_final)
-pot_pred
-
-# Calculate and plot confusion matrix
-
-pot_cm <- conf_mat(pot_pred, truth = Potability, estimate = .pred_class)
-pot_cm
-
-autoplot(pot_cm, type = "mosaic")
-autoplot(pot_cm, type = "heatmap")
-
-summary(pot_cm)
-
-# Plot the predicted class probabilities
-
-ggplot(pot_pred, aes(x = .pred_unsafe, y = Potability)) + 
-  geom_boxplot()
-
-# Plot the ROC curve
-
-pot_rc <- roc_curve(pot_pred, truth = Potability, estimate = .pred_unsafe,
-                    event_level = "first")
-
-autoplot(pot_rc)
 ```
+An ROC AUC of 0.51 is not very good at all! The accuracy is nearly 60% but then again, around 60% of the water sources were unsafe (so if you just guessed that they were all unsafe, your accuracy would be 60%).
+
+### Part 10
+```{r rbf, cache=TRUE}
+rbf_model <-
+  svm_rbf(cost = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("kernlab")
+
+rbf_wflow <-
+  workflow() %>%
+  add_recipe(pot_recipe) %>%
+  add_model(rbf_model)
+
+rbf_param <-
+  rbf_model %>%
+  extract_parameter_set_dials() %>%
+  finalize(pot_folds)
+
+rbf_tune <-
+  rbf_wflow %>%
+  tune_grid(
+    resamples = pot_folds,
+    grid = 20,
+    param_info = rbf_param
+  )
+
+rbf_param_final <- select_best(rbf_tune, metric = "roc_auc")
+
+rbf_wflow_final <- finalize_workflow(rbf_wflow, rbf_param_final)
+
+rbf_final <- last_fit(rbf_wflow_final, pot_split)
+
+collect_metrics(rbf_final)
+```
+
+An ROC AUC of 0.73 looks a lot better. The RBF kernel seemed to help a lot.
+
+</blockquote></details></p>

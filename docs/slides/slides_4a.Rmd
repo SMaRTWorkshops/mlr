@@ -571,6 +571,14 @@ class: inverse, middle, center
 
 .scroll.h-0l[
 ```{r, eval=FALSE}
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+
+# Install model package (if needed)
+
+install.packages("kernlab")
+
 # Set random number generation seed for reproducibility
 
 set.seed(2022)
