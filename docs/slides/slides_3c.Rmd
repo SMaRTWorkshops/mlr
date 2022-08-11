@@ -40,6 +40,7 @@ library(xaringanthemer)
 ```{r xaringanExtra, echo=FALSE}
 xaringanExtra::use_tachyons()
 xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
 ```
 
 ```{r packages, echo=FALSE, message=FALSE}
@@ -90,7 +91,7 @@ simdat$group_lin <- ifelse(simdat$x < simdat$y, 1, 0)
 
 ggplot(simdat, aes(x, y)) + 
   geom_point(aes(color = group_lin)) +
-  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16, css_file = "../css/xaringan-themer.css") +
   theme(panel.grid.minor = element_blank(),
         panel.background = element_rect(fill = "white"),
         legend.position = "none")
@@ -124,7 +125,7 @@ simdat$group_quadrants <- ifelse((simdat$x < -0.5 & simdat$y > 0) | (simdat$x > 
 
 ggplot(simdat, aes(x, y)) + 
   geom_point(aes(color = group_quadrants)) +
-  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16, css_file = "../css/xaringan-themer.css") +
   theme(panel.grid.minor = element_blank(),
         panel.background = element_rect(fill = "white"),
         legend.position = "none")

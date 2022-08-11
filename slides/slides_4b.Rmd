@@ -40,6 +40,7 @@ library(xaringanthemer)
 ```{r xaringanExtra, echo=FALSE}
 xaringanExtra::use_tachyons()
 xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
 ```
 
 ```{r packages, echo=FALSE, message=FALSE}
@@ -508,7 +509,7 @@ countdown(
   color_text = "black",
   color_running_background = "white",
   color_running_text = "black",
-  warn_when = 60
+  warn_when = 120
 )
 ```
 
