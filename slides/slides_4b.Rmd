@@ -81,22 +81,6 @@ class: inverse, center, middle
 
 ---
 class: onecol
-## Back to Basics
-
-The goal of supervised ML is to .imp[predict values] of important variables in new data. 
-
-We focus less on **inference** (e.g., finding features that significantly predict outcomes).
-
---
-
-<p style="padding-top:30px;">**Features** used to predict tend to be cheaper or easier to measure in new data. 
-
-**Outcomes** to be predicted tend to be expensive or difficult to measure in new data. 
-
-ML models can be used for both **regression and classification** problems.
-
----
-class: onecol
 ## Asking Predictive Questions 
 
 As social & behavioral scientists, we aim to **explain and predict** behavior. 
@@ -198,7 +182,7 @@ class: onecol
 
 One of the most common questions we hear is .imp["how much data do I need for ML?"] 
 
-There's no straightforward or universal answer, and this is an active area of research.
+Unfortunately, there is no straightforward or universal answer.
 
 However, here are some important principles and general guidelines.
 
@@ -265,7 +249,7 @@ When designing a study, pay attention to who is included in the sample & who is 
 
 ---
 class: inverse, center, middle
-## Modeling Decisions
+# Modeling Decisions
 
 ---
 class: twocol
@@ -489,41 +473,6 @@ include_graphics("../figs/target.jpg")
 ]
 
 ---
-class: twocol
-## Comprehension check
-
-**Identify a concern with each sentence in a paper you're reading.**
-
-.pull-left[
-**Question 1**
-
-"*We used ridge regularization to detect and model complex nonlinear relationships*"
-
-a) Ridge is not a useful predictive algorithm.
-
-b) Ridge is not a form of regularization.
-
-c) Ridge isn't well-suited for modeling non-linearities; other algorithms are better.
-
-d) Ridge is not a machine learning method.
-
-]
-
-.pull-right[
-**Question 2**
-
-"*Our model provided excellent predictions, with an AUC of 0.59.*"
-
-a) AUC is not a good performance metric.
-
-b) An AUC of 0.59 isn't very good.
-
-c) An AUC of 0.59 is not within the range of possible AUC values. 
-
-c) AUC does not provide useful information about predictive accuracy.
-]
-
----
 class: onecol
 ## Summary & Wrap-Up
 
@@ -563,4 +512,190 @@ countdown(
 )
 ```
 
+---
+class: inverse, center, middle 
+# Resampled Model Coefficients
 
+---
+class: onecol
+## Prepare Data and Folds, Set up Workflow
+
+.scroll.h-0l[
+```{r}
+library(tidymodels)
+library(tidyverse)
+
+# Load data
+titanic <- read_csv("https://tinyurl.com/titanic-pm")
+
+# Create data splits, stratified by fare
+set.seed(2022)
+
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = fare)
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+
+fare_folds <- vfold_cv(data = fare_train, v = 10, repeats = 3, strata = fare)
+
+# Specify model
+lin_reg <- linear_reg() %>%
+  set_engine("lm") %>% 
+  set_mode("regression")
+
+# Feature engineering
+fare_recipe <- 
+  recipe(titanic) %>% 
+  update_role(fare, new_role = "outcome") %>% 
+  update_role(pclass:parch, new_role = "predictor") %>% 
+  update_role(survived, new_role = "ignore") %>% 
+  step_naomit(fare) %>% 
+  step_mutate(
+    pclass = factor(pclass),
+    sex = factor(sex)
+  ) %>% 
+  step_dummy(all_nominal_predictors()) %>%
+  step_impute_linear(age) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_numeric_predictors()) %>%
+  step_lincomb(all_numeric_predictors()) %>% 
+  step_normalize(all_predictors())
+
+# Prepare workflow
+fare_wflow <-
+  workflow() %>% 
+  add_model(lin_reg) %>% 
+  add_recipe(fare_recipe)
+
+```
+]
+
+---
+class: onecol
+## Extract Coefficients
+
+The goal of `fit_resamples()` is to .imp[measure model importance]. 
+
+Therefore, by default, the models trained are not saved or used later.
+
+To save model coefficients, we need to .imp[extract] the underlying model object (engine fit). 
+
+We can do this with a custom function, and specify it in `control_resamples()`: 
+
+--
+
+```{r}
+get_resample_coefs <- function(x) {
+  x %>% 
+    # get the lm model object
+    extract_fit_engine() %>% 
+    # transform its format
+    tidy()
+}
+# save predictions from resampling
+get_coefs <- control_resamples(save_pred = TRUE, extract = get_resample_coefs)
+```
+
+---
+class: onecol
+## Fit Model with Resampling
+
+Now that we've set the workflow & configured resampling, we're ready to fit the model! 
+
+--
+
+```{r}
+#train the model using the recipe, data, and method 
+fare_fitr <- fare_wflow %>%
+  fit_resamples(resamples = fare_folds, control = get_coefs)
+```
+
+---
+class: onecol
+## Model Coefficients
+
+Extracting the coefficients we need is a bit messy, but let's walk through it.
+
+The output of `get_resample_coefs()` is contained in the column `.extracts`.
+
+--
+.scroll.h-2l[
+```{r}
+fare_fitr
+```
+]
+
+---
+class: onecol
+## Model Coefficients
+
+Inside `fare_fitr$.extracts` is *another* `.extracts` column.
+
+```{r}
+fare_fitr$.extracts[[1]]
+```
+
+---
+class: onecol
+## Model Coefficients
+
+This nested column has the coefficients from each k-fold!
+
+.scroll.h-1l[
+```{r}
+fare_fitr$.extracts[[1]]$.extracts
+```
+]
+
+---
+class: onecol
+## Model Coefficients
+
+We can tidy up these results with the {tidyr} `unnest()` function.
+
+.scroll.h-1l[
+```{r}
+fare_coefs <- 
+  fare_fitr %>% 
+  select(id, id2, .extracts) %>%
+  unnest(.extracts) %>% 
+  unnest(.extracts) %>% 
+  mutate(resample = paste0(id, "_", id2))
+fare_coefs
+```
+]
+
+---
+class: onecol
+## Model Coefficients
+
+Now we can plot the model coefficients across each k-fold resample: 
+
+```{r, eval = FALSE}
+# plot coefficients across each resample
+fare_coefs %>% filter(term != "(Intercept)") %>%
+  ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
+  geom_hline(yintercept = 0, lty = 3) + 
+  geom_line(alpha = 0.3, lwd = 0.5)
+```
+
+```{r, echo = FALSE, out.width = "70%"}
+config <-   
+  theme_xaringan(text_font_size = 14, title_font_size = 18,
+                 css_file = "../css/xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  )
+# make a column indicating each resample 
+fare_coefs$resample <-  
+  paste0(fare_coefs$id, "_", fare_coefs$id2)
+# plot coefficients across each resample
+fare_coefs %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = term, y = estimate, group = resample, col = resample)) + 
+  geom_hline(yintercept = 0, lty = 3) + 
+  geom_line(alpha = 0.3, lwd = 0.5) + 
+  labs(y = "Coefficient", x = "Feature") + 
+  theme(legend.position = "none") + 
+  config
+```
