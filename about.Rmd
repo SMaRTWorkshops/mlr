@@ -25,10 +25,10 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 |     | B    | GLMNET example and tuning         | Girard | <https://youtu.be/g51MRN9E6yk> |
 |     | C    | Decision trees and random forests | Wang   | <https://youtu.be/XCqL9UAuDF8> |
 |     | D    | RF example and reporting          | Girard | <https://youtu.be/XCqL9UAuDF8> |
-| 4   | A    | Support vector machines           | Girard | TBA                            |
-|     | B    | Practical issues                  | Wang   | TBA                            |
-|     | C    | Consulting                        |        | NA                             |
-|     | D    | Consulting                        |        | NA                             |
+| 4   | A    | Support vector machines           | Girard | <https://youtu.be/lAB7cVcmfz0> |
+|     | B    | Practical issues                  | Wang   | <https://youtu.be/lAB7cVcmfz0> |
+|     | C    | Consulting                        |        | <https://youtu.be/2cCqJ5RLZ3g> |
+|     | D    | Consulting                        |        | <https://youtu.be/2cCqJ5RLZ3g> |
 
 
 Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). It may take up to 6 hours for the high definition versions of the videos to be ready on YouTube. In order to access the videos, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.
