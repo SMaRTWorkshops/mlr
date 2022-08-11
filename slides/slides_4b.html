@@ -149,73 +149,6 @@ window.xaringanExtraClipboard = function (selector, text) {
 }
 </script>
     <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
-<<<<<<< HEAD
-    <style type="text/css">.countdown {
-background: white;
-position: absolute;
-cursor: pointer;
-font-size: 3em;
-line-height: 1;
-border-color: #ddd;
-border-width: 3px;
-border-style: solid;
-border-radius: 15px;
-box-shadow: 0px 4px 10px 0px rgba(50, 50, 50, 0.4);
--webkit-box-shadow: 0px 4px 10px 0px rgba(50, 50, 50, 0.4);
-margin: 0.6em;
-padding: 10px 15px;
-text-align: center;
-}
-.countdown {
-display: flex;
-align-items: center;
-justify-content: center;
-}
-.countdown .countdown-time {
-background: none;
-font-size: 100%;
-padding: 0;
-}
-.countdown-digits {
-color: black;
-}
-.countdown.running {
-border-color: #E5E5E5;
-background-color: white;
-}
-.countdown.running .countdown-digits {
-color: black;
-}
-.countdown.finished {
-border-color: #D83A20;
-background-color: #F04124;
-}
-.countdown.finished .countdown-digits {
-color: #3C1099;
-}
-.countdown.running.warning {
-border-color: #CFAE24;
-background-color: #E6C229;
-}
-.countdown.running.warning .countdown-digits {
-color: #3930AA;
-}
-@-webkit-keyframes blink {
-from {opacity: 1}
-50% {opacity: 0.1}
-to {opacity: 1}
-}
-@keyframes blink {
-from {opacity: 1}
-50% {opacity: 0.1}
-to {opacity: 1}
-}
-.countdown.running.blink-colon .countdown-digits.colon {
--webkit-animation: blink 2s steps(1, end) 0s infinite;
-animation: blink 2s steps(1, end) 0s infinite;
-}
-</style>
-=======
     <style type="text/css">.remark__tile-view * {
 box-sizing: border-box;
 }
@@ -439,8 +372,71 @@ opacity: 1;
   })
 })()
 </script>
-    <style type="text/css">.countdown {background: white;position: absolute;cursor: pointer;font-size: 3em;line-height: 1;border-color: #ddd;border-width: 3px;border-style: solid;border-radius: 15px;box-shadow: 0px 4px 10px 0px rgba(50, 50, 50, 0.4);-webkit-box-shadow: 0px 4px 10px 0px rgba(50, 50, 50, 0.4);margin: 0.6em;padding: 10px 15px;text-align: center;}.countdown {display: flex;align-items: center;justify-content: center;}.countdown .countdown-time {background: none;font-size: 100%;padding: 0;}.countdown-digits {color: black;}.countdown.running {border-color: #E5E5E5;background-color: white;}.countdown.running .countdown-digits {color: black;}.countdown.finished {border-color: #D83A20;background-color: #F04124;}.countdown.finished .countdown-digits {color: #3C1099;}.countdown.running.warning {border-color: #CFAE24;background-color: #E6C229;}.countdown.running.warning .countdown-digits {color: #3930AA;}@-webkit-keyframes blink {from {opacity: 1}50% {opacity: 0.1}to {opacity: 1}}@keyframes blink {from {opacity: 1}50% {opacity: 0.1}to {opacity: 1}}.countdown.running.blink-colon .countdown-digits.colon {-webkit-animation: blink 2s steps(1, end) 0s infinite;animation: blink 2s steps(1, end) 0s infinite;}</style>
->>>>>>> 58a98e05f1ba48861e150c7e5da56843cc71098b
+    <style type="text/css">.countdown {
+background: white;
+position: absolute;
+cursor: pointer;
+font-size: 3em;
+line-height: 1;
+border-color: #ddd;
+border-width: 3px;
+border-style: solid;
+border-radius: 15px;
+box-shadow: 0px 4px 10px 0px rgba(50, 50, 50, 0.4);
+-webkit-box-shadow: 0px 4px 10px 0px rgba(50, 50, 50, 0.4);
+margin: 0.6em;
+padding: 10px 15px;
+text-align: center;
+}
+.countdown {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.countdown .countdown-time {
+background: none;
+font-size: 100%;
+padding: 0;
+}
+.countdown-digits {
+color: black;
+}
+.countdown.running {
+border-color: #E5E5E5;
+background-color: white;
+}
+.countdown.running .countdown-digits {
+color: black;
+}
+.countdown.finished {
+border-color: #D83A20;
+background-color: #F04124;
+}
+.countdown.finished .countdown-digits {
+color: #3C1099;
+}
+.countdown.running.warning {
+border-color: #CFAE24;
+background-color: #E6C229;
+}
+.countdown.running.warning .countdown-digits {
+color: #3930AA;
+}
+@-webkit-keyframes blink {
+from {opacity: 1}
+50% {opacity: 0.1}
+to {opacity: 1}
+}
+@keyframes blink {
+from {opacity: 1}
+50% {opacity: 0.1}
+to {opacity: 1}
+}
+.countdown.running.blink-colon .countdown-digits.colon {
+-webkit-animation: blink 2s steps(1, end) 0s infinite;
+animation: blink 2s steps(1, end) 0s infinite;
+}
+</style>
     <script>var counters = {timer: {}};
 var update_timer = function(timer, force = false) {
 	var secs = timer.value;
@@ -1486,7 +1482,7 @@ To continue learning more, we recommend:
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_62f514dc" style="right:33%;bottom:15%;left:33%;" data-warnwhen="60">
+<div class="countdown" id="timer_62f514f1" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
 <code class="countdown-time"><span class="countdown-digits minutes">60</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
 
@@ -1642,7 +1638,6 @@ class: onecol
 
 This nested column has the coefficients from each k-fold!
 
-.scroll.h-1l[
 
 ```r
 fare_fitr$.extracts[[1]]$.extracts
@@ -1658,10 +1653,8 @@ fare_fitr$.extracts[[1]]$.extracts
 #&gt; 6 pclass_X3    -36.7        1.80   -20.4   5.25e- 77
 #&gt; 7 sex_male      -4.37       1.34    -3.27  1.10e-  3
 ```
-]
 
 ---
-<<<<<<< HEAD
 class: onecol
 ## Model Coefficients
 
@@ -1700,13 +1693,6 @@ class: onecol
 
 Now we can plot the model coefficients across each k-fold resample: 
 
-=======
-class: inverse, center, middle
-# Time for a Break!
-<div class="countdown" id="timer_62f50f76" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
-<code class="countdown-time"><span class="countdown-digits minutes">60</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
-</div>
->>>>>>> 58a98e05f1ba48861e150c7e5da56843cc71098b
 
 ```r
 # plot coefficients across each resample

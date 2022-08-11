@@ -641,11 +641,9 @@ class: onecol
 
 This nested column has the coefficients from each k-fold!
 
-.scroll.h-1l[
 ```{r}
 fare_fitr$.extracts[[1]]$.extracts
 ```
-]
 
 ---
 class: onecol
