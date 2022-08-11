@@ -1003,6 +1003,13 @@ library(vip)
 fare_final %&gt;% 
   extract_fit_parsnip() %&gt;% 
   vip()
+
+fare_wflow_final %&gt;% 
+  fit(fare_train) %&gt;% 
+  tidy(
+    penalty = fare_param_final$penalty, 
+    return_zeros = TRUE
+  )
 ```
 
 ---
@@ -1071,7 +1078,7 @@ use_glmnet(formula = fare ~ ., data = titanic)
 class: inverse, center, middle
 
 # Time for a Break!
-<div class="countdown" id="timer_62f2fc4a" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
+<div class="countdown" id="timer_62f56b04" style="right:33%;bottom:15%;left:33%;" data-warnwhen="120">
 <code class="countdown-time"><span class="countdown-digits minutes">60</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
     </textarea>
@@ -1184,9 +1191,9 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
 })(document);</script>
 <script>(function(data, token) {
   // data is an object of the form { path: base64 data }; we need to move base64
-  // data back to HTML nodes (e.g., into the 'src' attribute of <img>)
+  // data back to HTML nodes (e.g., into the 'src' attribute of <img>, <audio>, <video>, <source>)
   var i, s, d, el, els;
-  els = document.querySelectorAll('img[src^="' + token + '"], source[src^="' + token + '"]');
+  els = document.querySelectorAll(['img', 'audio', 'video', 'source'].map(x => x + '[src^="' + token + '"]').join(','));
   for (i = 0; i < els.length; i++) {
     el = els[i]; s = el.src.replace(token, ''); d = data[s];
     if (d) el.src = d;

@@ -439,10 +439,20 @@ fare_final <-
 
 collect_metrics(fare_final)
 
-library(vip)
 fare_final %>% 
   extract_fit_parsnip() %>% 
-  vip()
+  vip::vip()
+
+fare_final %>% 
+  extract_fit_parsnip() %>% 
+  vip::vi()
+
+fare_wflow_final %>% 
+  fit(fare_train) %>% 
+  tidy(
+    penalty = fare_param_final$penalty, 
+    return_zeros = TRUE
+  )
 ```
 
 ---
