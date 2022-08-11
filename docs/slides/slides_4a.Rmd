@@ -545,6 +545,7 @@ All the benefits of the SVM algorithm can be applied to the regression problem
 
 - Efficiently expanding the feature space through the use of **various kernels**
 
+.pv1[
 We can use the same model type(s) and hyperparameters for SVM and SVR
 
 - We will use $C$ to control the softness vs. hardness of the margin
@@ -552,6 +553,7 @@ We can use the same model type(s) and hyperparameters for SVM and SVR
 - If we use an RBF kernel, we will use $\sigma$ to control the kernel scaling
 
 - Optionally, we can tune the $\varepsilon$ hyperparameter to control the margin size
+]
 
 ---
 class: onecol
