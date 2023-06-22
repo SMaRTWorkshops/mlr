@@ -1,8 +1,8 @@
 ---
 title: '<span style="font-size:48pt;">Conceptual Introductions</span>'
 subtitle: '👩‍💻️ 🤖 👨‍🏫️' 
-author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
-date: 'Day 1A &emsp; &emsp; August 8, 2022'
+author: 'Applied Machine Learning in R <br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 1A &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:
     css: [../css/xaringan-themer.css, ../css/styles.css]
@@ -70,7 +70,7 @@ University of Kansas
 include_graphics("../figs/jg_headshot.jpeg")
 ```
 
-[www.jmgirard.com](https://www.jmgirard.com)<br />
+[www.jmgirard.com](https://affcom.ku.edu/girard)<br />
 [jmgirard@ku.edu](mailto:jmgirard@ku.edu)<br />
 [@jeffreymgirard](https://twitter.com/jeffreymgirard)
 
@@ -166,7 +166,7 @@ Course materials are on the course website:
 - <https://pittmethods.github.io/appliedml/>
 
 Chat will take place in our Slack channel:
-- <https://amlr2022.slack.com>
+- <https://amlr2023.slack.com>
 
 A few inspirations for this workshop include:
 - [Applied Predictive Modeling](http://appliedpredictivemodeling.com/)

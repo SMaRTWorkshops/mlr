@@ -1,8 +1,8 @@
 ---
 title: '<span style="font-size:48pt;">Data Splitting and Validation</span>'
 subtitle: '👥  📊️  🪓' 
-author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
-date: 'Day 1C &emsp; &emsp; August 8, 2022'
+author: 'Applied Machine Learning in R <br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 1C &emsp; &emsp; Shirley Wang'
 output:
   xaringan::moon_reader:
     css: [../css/xaringan-themer.css, ../css/styles.css]
