@@ -5,7 +5,7 @@ output:
     toc: FALSE
 ---
 
-This is a synchronous, online course taking place as part of the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) on August 8-11, 2022. Each of these four days will run for between 10:30am - 3:30pm (New York Time/EDT/UTC-4:00) with an hour lunch break from 12:30pm - 1:30pm (approximately). Enrollment in the course and access to the video recordings requires registration, which can be purchased through the [Pitt Methods website](https://www.pittmethods.com/applied-ml); we are pleased to offer a discounted rate for students and trainees. However, materials (slides and activities) are freely available through this website and may be re-used according to the [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt).
+This is a synchronous, online course taking place as part of the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) on June 26-29, 2023. Each of these four days will run for between 10:30am - 3:30pm (New York Time/EDT/UTC-4:00) with an hour lunch break from 12:30pm - 1:30pm (approximately). Enrollment in the course and access to the video recordings requires registration, which can be purchased through the [Pitt Methods website](https://www.pittmethods.com/applied-ml); we are pleased to offer a discounted rate for students and trainees. However, materials (slides and activities) are freely available through this website and may be re-used according to the [CC-BY License](https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt).
 
 ---
 
@@ -13,22 +13,22 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 
 | Day | Part | Topic                             | Lead   | Video Link                     |
 | :-: | :--: | :-------------------------------- | :----- | :----------------------------- |
-| 1   | A    | Conceptual introductions          | Girard | <https://youtu.be/7ex-Ylu4grs> |
-|     | B    | Tidyverse primer and data         | Girard | <https://youtu.be/7ex-Ylu4grs> |
-|     | C    | Data splitting and validation     | Wang   | <https://youtu.be/CbfxZRWlTkI> |
-|     | D    | Model fitting and prediction      | Wang   | <https://youtu.be/CbfxZRWlTkI> |
-| 2   | A    | Workflows and recipes             | Girard | <https://youtu.be/0xkuhznD60U> |
-|     | B    | Performance evaluation            | Girard | <https://youtu.be/0xkuhznD60U> |
-|     | C    | Resampling and cross-validation   | Wang   | <https://youtu.be/0Nkli0B0jC8> |
-|     | D    | Building a model: start to finish | Wang   | <https://youtu.be/0Nkli0B0jC8> |
-| 3   | A    | Regularization and elastic net    | Wang   | <https://youtu.be/g51MRN9E6yk> |
-|     | B    | GLMNET example and tuning         | Girard | <https://youtu.be/g51MRN9E6yk> |
-|     | C    | Decision trees and random forests | Wang   | <https://youtu.be/XCqL9UAuDF8> |
-|     | D    | RF example and reporting          | Girard | <https://youtu.be/XCqL9UAuDF8> |
-| 4   | A    | Support vector machines           | Girard | <https://youtu.be/lAB7cVcmfz0> |
-|     | B    | Practical issues                  | Wang   | <https://youtu.be/lAB7cVcmfz0> |
-|     | C    | Consulting                        |        | <https://youtu.be/2cCqJ5RLZ3g> |
-|     | D    | Consulting                        |        | <https://youtu.be/2cCqJ5RLZ3g> |
+| 1   | A    | Conceptual introductions          | Girard | TBA                            |
+|     | B    | Tidyverse primer and data         | Girard | TBA                            |
+|     | C    | Data splitting and validation     | Wang   | TBA                            |
+|     | D    | Model fitting and prediction      | Wang   | TBA                            |
+| 2   | A    | Workflows and recipes             | Girard | TBA                            |
+|     | B    | Performance evaluation            | Girard | TBA                            |
+|     | C    | Resampling and cross-validation   | Wang   | TBA                            |
+|     | D    | Building a model: start to finish | Wang   | TBA                            |
+| 3   | A    | Regularization and elastic net    | Wang   | TBA                            |
+|     | B    | GLMNET example and tuning         | Girard | TBA                            |
+|     | C    | Decision trees and random forests | Wang   | TBA                            |
+|     | D    | RF example and reporting          | Girard | TBA                            |
+| 4   | A    | Support vector machines           | Girard | TBA                            |
+|     | B    | Practical issues                  | Wang   | TBA                            |
+|     | C    | Consulting                        |        | TBA                            |
+|     | D    | Consulting                        |        | TBA                            |
 
 
 Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). It may take up to 6 hours for the high definition versions of the videos to be ready on YouTube. In order to access the videos, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.
