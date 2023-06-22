@@ -5,7 +5,7 @@ output:
     toc: FALSE
 ---
 
-This course was developed by [Jeffrey Girard](https://github.com/jmgirard) and [Shirley Wang](https://github.com/ShirleyBWang) for the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) (August 8-11, 2022).
+This course was developed by [Jeffrey Girard](https://github.com/jmgirard) and [Shirley Wang](https://github.com/ShirleyBWang) for the [Pittsburgh Summer Methodology Series](https://www.pittmethods.com) (June 26--29, 2023).
 
 ---
 

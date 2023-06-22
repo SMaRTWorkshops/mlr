@@ -44,6 +44,3 @@ left:
          href: day_4a.html
        - text: "[4B] Practical issues"
          href: day_4b.html
-right:
-  - icon: fa-github fa-lg
-    href: https://github.com/pittmethods/appliedml
