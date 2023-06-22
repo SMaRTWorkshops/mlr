@@ -1,8 +1,8 @@
 ---
 title: '<span style="font-size:48pt;">Support Vector Machines</span>'
 subtitle: '🚧  🛣️  🦿 ' 
-author: 'Applied Machine Learning in R <br />Pittsburgh Summer Methodology Series'
-date: 'Day 4A &emsp; &emsp; August 11, 2022'
+author: 'Applied Machine Learning in R <br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 4A &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:
     css: [../css/xaringan-themer.css, ../css/styles.css]

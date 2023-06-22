@@ -1,8 +1,8 @@
 ---
 title: '<span style="font-size:48pt;">GLMNET Example and Tuning</span>'
 subtitle: '🥅  🎛️  🎚️ '
-author: 'Pittsburgh Summer Methodology Series'
-date: 'Day 3B &emsp; &emsp; August 10, 2022'
+author: 'Applied Machine Learning in R<br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 3B &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:
     css: [../css/xaringan-themer.css, ../css/styles.css]

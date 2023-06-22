@@ -17,8 +17,8 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 |     | B    | Tidyverse primer and data         | Girard | TBA                            |
 |     | C    | Data splitting and validation     | Wang   | TBA                            |
 |     | D    | Model fitting and prediction      | Wang   | TBA                            |
-| 2   | A    | Workflows and recipes             | Girard | TBA                            |
-|     | B    | Performance evaluation            | Girard | TBA                            |
+| 2   | A    | Workflows and metrics             | Girard | TBA                            |
+|     | B    | Feature engineering recipes       | Girard | TBA                            |
 |     | C    | Resampling and cross-validation   | Wang   | TBA                            |
 |     | D    | Building a model: start to finish | Wang   | TBA                            |
 | 3   | A    | Regularization and elastic net    | Wang   | TBA                            |

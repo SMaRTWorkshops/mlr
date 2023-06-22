@@ -1,8 +1,8 @@
 ---
 title: '<span style="font-size:48pt;">Workflows and Metrics</span>'
 subtitle: '🚣  💯  📏 '
-author: 'Applied Machine Learning in R<br />Pittsburgh Summer Methodology Series'
-date: 'Day 2A &emsp; &emsp; August 9, 2022'
+author: 'Applied Machine Learning in R<br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 2A &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:
     css: [../css/xaringan-themer.css, ../css/styles.css]
