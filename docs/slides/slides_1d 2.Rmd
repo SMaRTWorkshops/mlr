@@ -1,0 +1,622 @@
+---
+title: '<span style="font-size:48pt;">Model Fitting and Prediction</span>'
+subtitle: '🥼 💥 💻 ️' 
+author: 'Applied Machine Learning in R <br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 1D &emsp; &emsp; Shirley Wang'
+output:
+  xaringan::moon_reader:
+    css: [../css/xaringan-themer.css, ../css/styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+---
+class: onecol
+## Plan for Today
+
+First will be a lecture focusing on .imp[training models and making predictions] in R.
+
+All modeling will be done with **{parsnip}**, part of the {tidymodels} meta-package.
+
+Specifically, we will learn to `fit()` and `predict()` models with a common interface.
+
+--
+
+<p style="padding-top:30px;"> We will end with a **live coding activity**. 
+
+This will put everything we have learned today into practice. 
+
+We will build a basic model and use it to predict out-of-sample testing data.
+
+This will ease the transition to full ML {workflows}, which we will learn tomorrow.
+
+---
+class: onecol
+## Motivation
+
+Suppose we have collected data that are now ready to be fit to a statistical model. 
+
+Let's say that a linear regression model is our first choice: 
+
+$$y_i = \beta_0 + \beta_1x1_i+...+\beta_px_{pi}$$
+--
+
+There are **many statistical methods available** for estimating these model parameters:
+- Ordinary least squares (OLS) regression 
+
+- Regularized linear regression<sup>1</sup>, such as lasso, ridge, and elastic net regression.
+
+.footnote[
+[1] No need to be familiar with regularization yet; we will learn about these algorithms in detail on Day 3! 
+]
+
+--
+
+<p style="padding-top:30px;">However, they use different R packages with **varying syntax, arguments, and output**. 
+
+---
+class: onecol
+## A Problem
+
+The {stats} package implements **OLS regression** using .imp[formula notation], with data accepted in a dataframe or vector.
+
+```{r, eval = FALSE}
+model <- lm(outcome ~ predictor, data = df, ...)
+```
+
+--
+
+<p style="padding-top:30px;"> The {glmnet} package implements **regularized regression** using .imp[x/y notation], with predictors required to be formatted as a numeric matrix and the outcome as a vector.
+
+```{r, eval = FALSE}
+model <- glmnet(x = outcome, y = predictor, ...)
+```
+
+--
+
+<p style="padding-top:30px;"> This makes it a **pain** to switch between models! 
+
+---
+class: onecol
+## A Problem
+
+Different packages also require different syntax to obtain **model predictions**.
+
+Some examples of these inconsistencies for various classification models:
+
+--
+
+```{r timeline, echo=FALSE} 
+timeline <- tribble( 
+  ~FUNCTION, ~PACKAGE, ~CODE, 
+  "glm", "stats", "predict(obj, type = 'response')", 
+  "lda", "MASS", "predict(obj)", 
+  "gbm", "gbm", "predict(obj, type = 'response', n.trees)", 
+  "mda", "mda", "predict(obj, type = 'posterior')", 
+  "rpart", "rpart", "predict(obj, type = 'prob')", 
+  "Weka", "RWeka", "predict(obj, type = 'probability')", 
+  "logitboost", "LogitBoost", "predict(obj, type = 'raw', nIter)", 
+  "pamr.train", "pamr", "pamr.predict(obj, type = 'posterior')" 
+) 
+kable(timeline, format = "html", table.attr = "style='width:80%;'") %>% kable_styling(font_size = 20, html_font = "courier new") 
+``` 
+
+---
+class: twocol
+## A Solution
+
+.left-column[
+<br />
+```{r, echo = FALSE}
+include_graphics("../figs/parsnip.png")
+```
+]
+
+--
+
+.right-column[
+The {parsnip} package provides a **unified interface** for model fitting.
+
+There are functions to:
+- Specify models
+- Fit models 
+- Inspect model results
+- Make predictions
+
+We can fit any model with the **same syntax and data format**.
+
+We **don't need to memorize** package-specific details!
+]
+
+---
+class: inverse, center, middle
+# Introduction to {parsnip}
+
+---
+## A {parsnip} roadmap
+</br>
+
+```{r, echo = FALSE}
+include_graphics("../figs/parsnip_workflow.png")
+```
+
+---
+class: onecol
+## 1. Specify Model Details
+
+Before fitting an ML model, we need to **specify the model details**.
+
+--
+
+<p style="padding-top:30px;">All models are specified with the same **syntactical structure** in {parsnip}.
+
+- **Model Type**: the mathematical structure (e.g., linear regression, random forests)
+
+- **Model Mode**: the mode of prediction (e.g., regression, classification)<sup>1</sup>.
+
+- **Computational Engine**: how the actual model is fit (often a specific R package)
+
+.footnote[
+[1] Sometimes the model mode is already determined by the model type (e.g., linear regression) and so specifying a mode is not needed.
+]
+
+--
+
+<p style="padding-top:30px;">These details are specified *before* even referencing the data. 
+
+
+---
+class: onecol
+## Example: Linear Regression
+
+.pull-left[
+To specify an OLS regression in {parsnip}, we designate:
+
+- The model type as `linear_reg()` 
+
+- The model mode as `"regression"`<sup>1</sup>.
+
+- The computational engine as `"lm"`.
+]
+
+.footnote[
+[1] Technically this is redundant because `linear_reg()` already implies `mode = regression`. Therefore, this `set_mode()` line could be dropped. 
+]
+
+--
+
+.pull-right[
+```{r}
+library(tidymodels)
+tidymodels_prefer()
+
+# specify model details
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>% 
+  set_mode("regression")
+
+```
+]
+
+---
+class: twocol 
+## The power of {parsnip}
+
+{parsnip} makes it easy to build many different models .imp[without memorizing the idiosyncracies of various R packages].
+
+To illustrate, let's specify frequentist and bayesian forms of linear and logistic regression:
+
+--
+
+.pull-left[
+```{r}
+reg_freq <-
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+
+reg_bayes <-
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("stan")
+```
+]
+
+.pull-right[
+```{r}
+log_freq <-
+  logistic_reg() %>% 
+  set_mode("classification") %>% 
+  set_engine("glm")
+
+log_bayes <-
+  logistic_reg() %>% 
+  set_mode("classification") %>% 
+  set_engine("stan")
+```
+]
+
+---
+class: onecol
+## More Computational Engines 
+
+To see all the computational engines that exist for a model type, use `show_engines()`. 
+
+--
+
+.pull-left[
+```{r, eval = FALSE}
+show_engines("linear_reg")
+```
+
+```{r, echo = FALSE}
+show_engines("linear_reg") %>% kable() %>% kable_styling(position = "left") %>% scroll_box(height = "300px")
+```
+]
+
+--
+
+.pull-right[
+```{r, eval = FALSE}
+show_engines("logistic_reg")
+```
+
+```{r, echo = FALSE}
+show_engines("logistic_reg") %>% kable() %>% scroll_box(height = "300px")
+```
+]
+
+---
+class: onecol 
+## A World of Possibilities
+
+There are **hundreds** of machine learning models available in {parsnip}.
+
+Many models can be implemented in different ways (different computational engines).
+
+You can explore all the options on the [tidymodels website](https://www.tidymodels.org/find/parsnip/).
+
+--
+
+<p style="padding-top:30px;">To fit different ML models, you just change the **model type** and `set_engine()`.
+
+This makes it *super* easy to implement new algorithms and explore the world of ML!
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+**Caution:** Be sure you understand an algorithm before writing a paper with it.
+]
+
+---
+class: onecol 
+## Comprehension Check \#1
+
+### Question 1
+**Which is *not* a part of specifying model details with {parsnip}?**
+
+a) Model Mode
+
+b) Model Form 
+
+c) Computational Engine
+
+d) Model Type
+
+
+---
+class: onecol
+## Comprehension Check \#1
+
+### Question 2
+**What error was made in this code?**
+
+```{r, eval = FALSE}
+my_model <- linear_reg() %>% 
+  set_engine("regression") %>% 
+  set_mode("lm")
+```
+
+a) The name of the dataset is missing.
+
+b) We forgot to specify frequentist vs bayesian regression.
+
+c) The `set_engine()` function does not exist.
+
+d) The arguments for `set_engine()` and `set_mode()` are reversed.
+
+
+---
+class: onecol
+## 2. Fit Model
+
+Once we have specified model details, we can fit the model using the `fit()` function.
+
+--
+
+`fit()` allows us to always use formula notation: 
+
+ - `fit(y ~ x, data = training_data)`
+ 
+ - `fit(y ~ x1 + x2 + x3, data = training_data)`
+ 
+ - `fit(y ~ ., data = training_data)`
+ 
+--
+
+This is possible regardless of whether the underlying package function uses formula or `x/y` interface, making it much easier to switch between models.
+
+
+---
+class: onecol
+## 2. Fit Model
+
+Let's walk through fitting a linear regression example with some pseudocode! 
+
+--
+
+```{r, eval = FALSE}
+reg_freq <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
+```
+
+--
+
+```{r, eval = FALSE}
+ols_reg_fit <- reg_freq %>% 
+  fit(outcome ~ predictor, data = training_data)
+```
+
+---
+class: twocol
+## 2. Fit Model
+
+We don't have to use formula notation. `x/y` notation is also available with `fit_xy()`: 
+
+--
+
+```{r, eval = FALSE}
+ols_reg_fit <- ols_reg %>% 
+  fit_xy(x = predictor, y = outcome)
+```
+
+--
+
+What is the difference between `fit()` and `fit_xy()`? 
+
+- `fit_xy()` will pass your data **as is** to the underlying model function. 
+
+- It will not create dummy variables for categorical predictors before doing so. 
+
+- On the other hand, `fit()` will create dummy variables used with a model specification. 
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
+We recommend preprocessing (e.g., creating dummy variables) before model fitting. 
+
+We'll learn how to do this with {recipes} tomorrow!
+]
+
+
+---
+class: onecol 
+## 3. Inspect Model Results
+
+Once we fit a model, we can examine the model by printing or plotting it.
+
+Some useful functions:
+
+`tidy()`: return model summary (coefficient values, std error, *p* value) in a tibble.
+
+- This is helpful for simple models that are easily interpretable (e.g., LM/GLM)
+
+`vip()`: plot variable importance. 
+
+- This is helpful for both simple models and complex models (e.g., random forests) that do not have interpretable coefficients.
+
+---
+class: onecol
+## 4. Make Model Predictions 
+
+Getting predictions for `parsnip` models is easy and *tidy* with `predict()`:
+
+Argument&emsp; | Description
+:------- | :----------
+object | A trained model object created by `fit()`
+new_data | A data frame with the same features as training
+type | Data type (numeric, classes, probabilities, etc.)
+
+---
+class: onecol
+## 4. Make Model Predictions
+
+The `predict()` function will always return: 
+
+- Predictions as a tibble
+
+- The same number of rows as the data being predicted 
+
+- Interpretable column names (e.g., `.pred`, `.pred_lower`, `.pred_upper`) 
+
+- Consistent column names across all model types and engines 
+
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+These rules make it easier to merge predictions with the original data!
+]
+
+---
+class: onecol
+## Summary
+
+Today started with a **conceptual overview** of the goals and methods of ML.
+
+We reviewed **tidyverse** principles and datasets used in the course. 
+
+We introduced the basic goals of **data splitting** with {rsample}.
+
+We learned how to fit models and make predictions with {parsnip}.
+
+--
+
+<p style="padding-top:30px;"> We will wrap up with a **live coding activity** to tie everything together. 
+
+Tomorrow will dive into **feature engineering** and **performance evaluation**.
+
+We will also learn more advanced **cross-validation** for a full ML **workflow**.
+
+---
+class: inverse, center, middle
+# Live Coding
+
+---
+class: onecol
+## Live Coding: Data Preparation
+
+```{r, eval = FALSE}
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  mutate(
+    survived = factor(survived),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  ) %>% 
+  na.omit()
+
+# view
+head(titanic)
+```
+
+---
+class: onecol
+## Live Coding: Split Data
+
+```{r, eval = FALSE}
+titanic_split <- initial_split(titanic, prop = 0.8, strata = 'survived')
+titanic_train <- training(titanic_split)
+titanic_test <- testing(titanic_split)
+
+dim(titanic_train)
+dim(titanic_test)
+```
+
+---
+class: onecol
+## Live Coding: Specify Model
+
+```{r, eval = FALSE}
+log_reg <- 
+  logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+
+log_reg
+```
+
+---
+class: onecol
+## Live Coding: Fit Model 
+
+```{r, eval = FALSE}
+survived_fit <- 
+  log_reg %>% 
+  fit(survived ~ ., data = titanic_train)
+
+survived_fit
+```
+
+---
+class: onecol
+## Live Coding: Inspect Results
+
+```{r, eval = FALSE}
+# coefficients 
+tidy(survived_fit)
+
+# variable importance
+vip(survived_fit)
+```
+
+---
+class: onecol
+## Live Coding: Make Predictions
+
+```{r, eval = FALSE}
+# make predictions
+survived_test_preds <- predict(survived_fit, new_data = titanic_test)
+survived_test_preds
+
+# merge predictions with test data 
+survived_preds <- titanic_test %>% 
+  select(survived) %>%
+  bind_cols(survived_test_preds)
+
+survived_preds
+```
+
+---
+class: onecol
+## Live Coding: Examine Predictions
+
+```{r, eval = FALSE}
+# compare predicted to actual values 
+conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
+
+# plot the confusion matrix 
+survived_cm <- conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
+autoplot(survived_cm, type = "mosaic")
+autoplot(survived_cm, type = "heatmap")
+```
+
+
+---
+class: inverse, center, middle
+# End of Day 1
+

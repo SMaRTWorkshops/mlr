@@ -1,0 +1,373 @@
+---
+title: '<span style="font-size:48pt;">RF Example and Reporting</span>'
+subtitle: '🌲  ✍️   📝 '
+author: 'Applied Machine Learning in R<br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 3D &emsp; &emsp; Jeffrey Girard'
+output:
+  xaringan::moon_reader:
+    css: [../css/xaringan-themer.css, ../css/styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  collapse = TRUE
+)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+library(xaringanthemer)
+library(tidymodels)
+tidymodels_prefer()
+```
+
+class: inverse, center, middle
+# Random Forest Example
+
+---
+
+## Live Coding: Prepare packages and data
+
+```{r, eval=FALSE}
+# Load packages
+
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+
+# Install model package (if needed)
+
+install.packages("ranger")
+
+# Load and view data
+
+water <- read_csv("https://tinyurl.com/water-pm")
+water
+```
+
+---
+
+## Live Coding: Split data
+
+```{r, eval=FALSE}
+# Set random number generation seed for reproducibility
+
+set.seed(2022)
+
+# Create initial split for holdout validation
+
+pot_split <- initial_split(water, prop = 0.8, strata = Potability)
+pot_train <- training(pot_split)
+pot_test <- testing(pot_split)
+
+# Create 10-fold CV within training set for tuning
+
+pot_folds <- vfold_cv(pot_train, v = 10, repeats = 1, strata = Potability)
+```
+
+---
+
+## Live Coding: Set up workflow
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Set up recipe based on the data and model
+
+pot_recipe <-
+  recipe(pot_train, formula = Potability ~ .) %>%
+  step_mutate(Potability = factor(Potability)) %>%
+  step_nzv(all_predictors()) %>%
+  step_corr(all_numeric_predictors()) %>%
+  step_lincomb(all_numeric_predictors()) %>%
+  step_normalize(all_predictors())
+
+# Set up model with tuning parameters and variable importance configuration
+
+?rand_forest
+show_engines("rand_forest")
+
+install.packages("ranger")
+
+rf_model <-
+  rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("ranger", importance = "impurity")
+
+# Combine recipe and model specification into a workflow
+
+pot_wflow <-
+  workflow() %>%
+  add_recipe(pot_recipe) %>%
+  add_model(rf_model)
+```
+]
+
+---
+
+## Live Coding: Set up and run tuning
+
+```{r, eval=FALSE}
+# Pick reasonable boundaries for the tuning parameters
+
+pot_param <-
+  rf_model %>%
+  extract_parameter_set_dials() %>%
+  finalize(pot_folds)
+
+# Create list of values within boundaries and grid search (may take a bit)
+
+pot_tune <-
+  pot_wflow %>%
+  tune_grid(
+    resamples = pot_folds,
+    grid = 10,
+    param_info = pot_param
+  )
+
+# If desired, plot the tuning results
+
+autoplot(pot_tune)
+```
+
+---
+
+## Live Coding: Finalize the workflow
+
+```{r, eval=FALSE}
+# Select the best parameters values
+
+pot_param_final <- select_best(pot_tune, metric = "roc_auc")
+pot_param_final
+
+# Finalize the workflow with the best parameter values
+
+pot_wflow_final <-
+  pot_wflow %>%
+  finalize_workflow(pot_param_final)
+pot_wflow_final
+
+# Fit the finalized workflow to the training set and evaluate in testing set
+
+pot_final <-
+  pot_wflow_final %>%
+  last_fit(pot_split)
+```
+
+---
+
+## Live Coding: Explore performance
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# View the metrics (from the holdout test set)
+
+collect_metrics(pot_final)
+
+# Collect the predictions
+
+pot_pred <- collect_predictions(pot_final)
+pot_pred
+
+# Calculate and plot confusion matrix
+
+pot_cm <- conf_mat(pot_pred, truth = Potability, estimate = .pred_class)
+pot_cm
+
+autoplot(pot_cm, type = "mosaic")
+autoplot(pot_cm, type = "heatmap")
+
+summary(pot_cm)
+
+# Plot the predicted class probabilities
+
+ggplot(pot_pred, aes(x = .pred_safe, y = Potability)) + 
+  geom_boxplot()
+
+# Plot the ROC curve
+
+pot_rc <- roc_curve(pot_pred, truth = Potability, estimate = .pred_safe)
+
+autoplot(pot_rc)
+```
+]
+
+---
+
+## Live Coding: Interpretation
+
+```{r, eval=FALSE}
+# Plot the variable importance measure (requires setting importance earlier)
+
+library(vip)
+pot_final %>%
+  extract_fit_parsnip() %>%
+  vip()
+```
+
+---
+
+class: inverse, center, middle
+# Reporting
+
+---
+
+class: onecol
+## Introduction Section
+
+-   What is the applied goal?
+
+> *"Our goal is to predict whether each patient will complete trauma-focused therapy (i.e., CPT) from information gathered at intake (i.e., pre-treatment). Specifically, we will estimate each patient's dropout risk or probability of not completing therapy."*
+
+-   What are current practices related to this goal?
+
+> *"Monitoring of patients' dropout risk is not standardized. Previous work trying to predict dropout risk mostly used logistic regression and demographic features. One study used ML to predict dropout from any therapy (AUC=0.59)."*
+
+-   Identify how the model may benefit the applied goal
+
+> *"Prediction of dropout risk would enable scarce clinical resources to be allocated to those in greatest need. Increased retention = better outcomes."*
+  
+---
+class: onecol
+## Methods Section
+
+-   What is an observation (person, place, thing)?
+
+> *"Each observation represents one patient."*
+
+-   How is the outcome variable measured?
+
+> *"The outcome variable was based on the health record: either completed 5 or more sessions (completed, 54%) or completed fewer than 5 sessions (dropout, 46%). This threshold was selected as the 'minimum adequate dosage' based on... [rationale]."*
+
+-   Where do the features come from?
+
+> *"Features include self-report and clinician-ratings at intake (pre-treatment). Specific features include item-level responses and scale scores from... [psychological assessments] as well as... [demographic and socioeconomic assessments]."*
+
+---
+class: onecol
+## Methods Section
+
+-   What are the costs of prediction errors?
+
+> *"Over-prediction might lead to inefficiency in the provision of care, but under-prediction might lead to early termination and dangerous outcomes. Thus, we consider under-prediction to be the more costly type of prediction error here."*
+
+-   Define performance metrics
+
+> *"Because we are primarily interested in the estimated class probabilities (rather than predicted classes), we will focus on examining the ROC Curve and its AUC."*
+
+-   Define success criteria
+
+> *"Any ROC AUC significantly greater than 0.50 would be an encouraging start, but we would consider 0.60 or higher to be a success (the previous study achieved 0.59)."*
+
+---
+class: onecol
+## Methods Section
+
+-   Where did the data come from?
+
+> *"Participants were recruited from the University Stress Center at intake for PTSD treatment. Co-authors include the clinic director and database manager."*
+
+-   Inclusion and exclusion criteria
+
+> *"Participants had to be 18 years or older to participate in the study. Participants also had to meet DSM-5 criteria for PTSD and consent to therapy in the clinic."*
+
+-   Ethical approval and considerations
+
+> *"This study was approved by the IRB at University. Given the sensitive nature of this data and population, we will... [protect privacy]. This kind of model could be used to... [bad stuff], so we will take steps to mitigate those risks, including... [strategies]."*
+
+---
+class: onecol
+## Methods Section
+
+-   What is the sample size (and demographics, if relevant)?
+
+> *"The entire sample consists of 700 patients (76% female, 74% White, 18–74 years)."*
+
+-   Define the population of interest
+
+> *"Our population of interest is American civilians seeking therapy for PTSD. Further research will be required to determine if we can generalize beyond this group."*
+  
+-   Match of sample to population of interest
+
+> *"Our sample is largely representative of our population of interest (note that female civilians are much more likely to experience PTSD than males). A notable limitation is that all participants were drawn from a single geographical area."*
+
+---
+class: onecol
+## Methods Section
+
+-   Describe feature engineering/preprocessing
+
+> *"All continuous predictors were normalized and all nominal predictors were dummy coded. Missing predictor values were imputed during CV using a linear model. We dropped predictors with near-zero variance and high correlations $(|r|>0.9)$."*
+
+-   Describe model development
+
+> *"We selected two ML algorithms appropriate for our sample size: (1) logistic regression with elastic net regularization and (2) random forest classification."*
+
+-   Describe model validation and tuning
+
+> *"A 20% holdout set (n=140) was created using a random split stratified by class. Model tuning was performed via grid search (size=30) within stratified 10-fold CV."*
+
+---
+class: onecol
+## Results Section
+
+-   Report the final model and tuning parameters
+
+> *"The random forest model had superior performance during the internal 10-fold CV (RF AUC = 0.XX, LR AUC = 0.XX) and was selected as our final model. The best tuning parameter values were: mtry = X, trees = X, min_n = X (see parnsip documentation)."*
+
+-   Report the performance estimates from the testing set
+
+> *"The final model's performance in the holdout validation set was AUC = 0.XX. The model's full ROC Curve is depicted in Figure X. Although ROC AUC was our primary performance metric, we also calculated... [secondary metrics here]."*
+
+-   Interpret the model (if desired)
+
+> *"The most important predictors (by GINI impurity) were... [list top predictors]. A visualization of the top X predictors' importance is provided in Figure X."*
+
+---
+class: onecol
+## Discussion Section
+
+-   Discuss applied implications
+
+> *"Given our model's estimated performance, we conclude that... [did we meet our success criteria?]. Given that the most important features were... [does this match clinical theory?]. [What does this mean for trauma-focused therapy?]"*
+
+-   Discuss limitations of the model
+
+> *"[How widely available are the features used by your model?] [Could your sample be affected by sampling bias?] [How generalizable do you think your results are?]"*
+
+-   Discuss potential pitfalls of interpretation
+
+> *"It may be tempting for readers to conclude from these results that..., but we would urge them to consider... A more appropriate conclusion would be..."*
+
+---
+
+class: inverse, center, middle
+
+# End of Day 3

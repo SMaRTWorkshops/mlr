@@ -1,0 +1,787 @@
+---
+title: '<span style="font-size:48pt;">Workflows and Metrics</span>'
+subtitle: '🚣  💯  📏 '
+author: 'Applied Machine Learning in R<br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 2A &emsp; &emsp; Jeffrey Girard'
+output:
+  xaringan::moon_reader:
+    css: [../css/xaringan-themer.css, ../css/styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  collapse = TRUE
+)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+library(xaringanthemer)
+```
+
+class: inverse, center, middle
+# Workflows
+
+---
+
+# Setup
+
+```{r, eval=FALSE}
+# Set up packages
+
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+```
+
+--
+
+```{r, eval=FALSE}
+# Read in and tidy data
+
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  mutate(
+    survived = factor(survived, levels = c(1, 0)),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  )
+```
+
+---
+
+## Data Splitting and Model Setup
+
+```{r, eval=FALSE}
+# Create train/test split, stratified by fare
+
+set.seed(2022)
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = fare)
+```
+
+--
+
+```{r, eval=FALSE}
+# Extract training and testing sets
+
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+```
+
+--
+
+```{r, eval=FALSE}
+# Set up model (linear regression using lm)
+
+lm_model <- 
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+```
+
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+titanic <- 
+  read_csv("../data/titanic.csv") %>% 
+  mutate(
+    survived = factor(survived, levels = c(1, 0)),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  )
+
+# Create initial split, stratified by fare
+set.seed(2022)
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+
+# Set up model
+lm_model <- 
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+```
+
+---
+
+## Create a simple workflow
+
+.onecol[
+-   A .imp[workflow] collects various specifications for your ML experiment
+
+  -   The **model** specifies the algorithm, mode, engine, and tuning steps
+  
+  -   The **preprocessor** specifies the formula and feature engineering steps
+]
+
+```{r}
+fare_wflow <-
+  workflow() %>% 
+  add_model(lm_model)
+```
+
+--
+
+```{r}
+fare_wflow
+```
+
+---
+
+## Add a formula as a simple preprocessor
+
+.onecol[
+-   We can use a .imp[formula] as a simple preprocessor (without feature engineering)
+]
+
+```{r}
+fare_wflow <- 
+  fare_wflow %>% 
+  add_formula(fare ~ pclass + sex + age + sibsp + parch)
+```
+
+--
+
+```{r}
+fare_wflow
+```
+
+.footnote[*Note.* We will soon learn to use "recipes" as more powerful preprocessors]
+
+---
+
+## Fit a model using a workflow
+
+.onecol[
+-   We can explicitly fit the model to the training data using `fit()`
+]
+
+```{r}
+fare_fit <- fit(fare_wflow, fare_train)
+```
+
+--
+
+.scroll.h-3l[
+```{r}
+fare_fit
+```
+
+]
+
+---
+
+## Make predictions using the fit model
+
+.onecol[
+-   We can explicitly make predictions in the testing set using `predict()`
+]
+
+
+```{r, message=FALSE}
+fare_pred <- predict(fare_fit, fare_test)
+```
+
+--
+
+.scroll.h-3l[
+```{r}
+fare_pred
+```
+
+]
+
+---
+
+## A helpful shortcut
+
+.onecol[
+-   Or we can do both automatically using `last_fit()` and the "split" object
+
+  -   This will fit to the (entire) training set and predict the testing set
+]
+
+```{r}
+fare_fit <- last_fit(fare_wflow, split = fare_split)
+```
+
+--
+
+```{r}
+fare_fit
+```
+
+---
+
+## Collecting the predictions
+
+.onecol[
+-   We can gather the testing set predictions with `collect_predictions()`
+]
+
+
+```{r}
+fare_pred <- collect_predictions(fare_fit)
+```
+
+--
+
+.scroll.h-3l[
+```{r}
+fare_pred
+```
+
+]
+
+---
+
+## Plotting the predictions (basic)
+
+.pull-left[
+```{r, eval=FALSE}
+ggplot(
+  fare_pred, 
+  aes(x = fare, y = .pred)
+) + 
+  geom_point()
+```
+
+```{r, echo=FALSE, fig.show="hide"}
+ggplot(fare_pred, aes(x = fare, y = .pred)) + 
+  geom_point() +
+  theme_xaringan(css_file = "../css/xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+ggsave("../figs/fare_pred1.png", width = 3.5, height = 3.5, units = "in")
+```
+
+]
+
+.pull-right[
+![](../figs/fare_pred1.png)
+]
+
+---
+
+## Plotting the predictions (advanced)
+
+.pull-left[
+```{r, eval=FALSE}
+ggplot(
+  fare_pred, 
+  aes(x = fare, y = .pred)
+) + 
+  geom_point(alpha = .2) +
+  geom_abline(color = "darkred") +
+  coord_obs_pred() +
+  labs(
+    x = "Observed Fare", 
+    y = "Predicted Fare"
+  )
+```
+
+```{r, echo=FALSE, fig.show="hide"}
+ggplot(
+  fare_pred, 
+  aes(x = fare, y = .pred)
+) + 
+  geom_point(alpha = .2) +
+  geom_abline(color = "darkred") +
+  coord_obs_pred() +
+  labs(
+    x = "Observed Fare", 
+    y = "Predicted Fare"
+  ) +
+  theme_xaringan(css_file = "../css/xaringan-themer.css") +
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+ggsave("../figs/fare_pred2.png", width = 3.5, height = 3.5, units = "in")
+```
+
+]
+
+.pull-right[
+![](../figs/fare_pred2.png)
+]
+
+---
+
+## Collecting the performance metrics
+
+.onecol[
+-   We can gather the testing set predictions with `collect_metrics()`
+]
+
+```{r}
+fare_perf <- collect_metrics(fare_fit)
+```
+
+--
+
+```{r}
+fare_perf
+```
+
+
+.footnote[*Note.* We will soon learn how to interpret these metrics.]
+
+---
+
+## Live Coding: Putting it all together
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Load packages 
+
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+
+
+# Load and tidy data
+
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  mutate(
+    survived = factor(survived),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  )
+
+# Create data splits, stratified by fare
+
+set.seed(2022)
+fare_split <- initial_split(data = titanic, prop = 0.8, strata = 'fare')
+fare_train <- training(fare_split)
+fare_test <- testing(fare_split)
+
+# Set up model (linear regression using lm)
+
+lm_model <- 
+  linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+
+# Set up workflow with simple formula preprocessor
+
+fare_wflow <-
+  workflow() %>% 
+  add_model(lm_model) %>% 
+  add_formula(fare ~ pclass + sex + age + sibsp + parch)
+
+# Fit workflow and make predictions using data splits
+
+fare_fit <- last_fit(fare_wflow, split = fare_split)
+
+# Collect predictions and performance metrics
+
+fare_pred <- collect_predictions(fare_fit)
+fare_perf <- collect_metrics(fare_fit)
+```
+]
+
+---
+
+## Live Coding: Modifying it for classification
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Load packages and data
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
+
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  mutate(
+    survived = factor(survived),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  )
+
+# Create data splits, stratified by survived
+
+set.seed(2022)
+surv_split <- initial_split(titanic, prop = 0.8, strata = 'survived') #<<
+surv_train <- training(surv_split)
+surv_test <- testing(surv_split)
+
+# Set up model (logistic regression using glm)
+
+glm_model <- 
+  logistic_reg() %>% #<<
+  set_mode("classification") %>% #<<
+  set_engine("glm") #<<
+
+# Set up workflow with simple formula preprocessor
+
+surv_wflow <-
+  workflow() %>% 
+  add_model(glm_model) %>% #<<
+  add_formula(survived ~ pclass + sex + age + sibsp + parch + fare) #<<
+
+# Fit workflow and make predictions using data splits
+
+surv_fit <- last_fit(surv_wflow, split = surv_split)
+
+# Collect predictions and performance metrics
+
+surv_pred <- collect_predictions(surv_fit)
+surv_perf <- collect_metrics(surv_fit)
+```
+
+```{r, echo=FALSE}
+# Create data splits, stratified by survived
+set.seed(2022)
+surv_split <- initial_split(titanic, prop = 0.8, strata = 'survived')
+surv_train <- training(surv_split)
+surv_test <- testing(surv_split)
+
+# Set up model (logistic regression using glm)
+glm_model <- #<<
+  logistic_reg() %>% #<<
+  set_mode("classification") %>% #<<
+  set_engine("glm") #<<
+
+# Set up workflow with simple formula preprocessor
+surv_wflow <-
+  workflow() %>% 
+  add_model(glm_model) %>% #<<
+  add_formula(survived ~ pclass + sex + age + sibsp + parch + fare)
+
+# Fit workflow and make predictions using data splits
+surv_fit <- last_fit(surv_wflow, split = surv_split)
+
+# Collect predictions and performance metrics
+surv_pred <- collect_predictions(surv_fit)
+surv_perf <- collect_metrics(surv_fit)
+```
+]
+
+---
+class: inverse, center, middle
+# Performance Metrics
+---
+class: onecol
+## Performance Metrics
+
+.left-column.pt3[
+```{r target, echo=FALSE}
+include_graphics("../figs/target.jpg")
+```
+]
+
+.right-column[
+
+**Metrics for Regression**
+
+- .imp[Distance] between predicted and trusted values
+
+- .imp[Correlation] between predicted and trusted values
+
+.pt1[
+**Metrics for Classification**
+]
+- .imp[Confusion matrix] between predicted and trusted classes
+
+- Compare predicted .imp[class probabilities] to trusted classes
+]
+
+---
+class: onecol
+## Default distance metric for regression
+
+.pull-left[
+**Root Mean Squared Error (RMSE)**
+- Based on squared loss
+
+- Penalizes severe errors harsher
+
+- Ranges from $0$ to $+\infty$, lower is better
+
+.pt1[
+$$RMSE=\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2}$$
+]
+]
+
+.pull-right.pt4[
+```{r rmse, echo=FALSE, fig.height=4, fig.width=6}
+tibble(
+  error = seq(-2, 2, length.out = 100), 
+  sq_err = error^2
+) %>% 
+  ggplot(aes(x = error, y = sq_err)) + 
+  geom_line(size = 1.5) + 
+  labs(x = latex2exp::TeX("Error $(y_i - \\hat{y}_i)$"), y = "Squared Loss") +
+  theme_xaringan(text_font_size = 18, title_font_size = 20,
+                 css_file = "../css/xaringan-themer.css") +
+  theme(
+    axis.title = element_text(size = 20),
+    legend.position = "none",
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+]
+
+---
+class: onecol
+## Default correlation metric for regression
+
+**R-Squared $(R^2$ or RSQ)**
+- Calculated in ML as the **squared correlation** between the predictions and labels
+
+- Ranges from $0$ to $1$, higher is better
+
+$$R^2 = \left(\frac{\text{cov}(y, \hat{y})}{\sigma_y\sigma_{\hat{y}}}\right)^2 = \left(\frac{\sum(y_i - \bar{y})(\hat{y}_i - \bar{\hat{y}})}{\sqrt{\sum (y_i-\bar{y})^2}\sqrt{\sum(\hat{y}_i-\bar{\hat{y}})^2}}\right)^2$$
+
+--
+
+.bg-light-yellow.b--light-red.ba.bw1.br3.pl4[
++ RSQ is a measure of *consistency* (i.e., linear association) and not distance
++ RSQ can become unstable or undefined when data variability is low
++ RSQ can become unstable when applied in small samples (e.g., test sets)
+]
+
+
+---
+
+class: twocol
+## Default confusion matrix metric for classification
+
+|                                               | Truth = $+$<br /> $(y=1)$ | Truth = $-$<br /> $(y=0)$ |
+|:---------------------------------------------:|:-------------------------:|:-------------------------:|
+| **Predicted = $+$**&emsp;<br /> $(\hat{y}=1)$ | True Positive (TP)        | False Positive (FP)       |
+| **Predicted = $-$**&emsp;<br /> $(\hat{y}=0)$ | False Negative (FN)       | True Negative (TN)        |
+
+.footnote[*Note.* There are many, many confusion matrix metrics to choose from.]
+
+--
+
+.mt3.pull-left[
+$$\text{Accuracy} = \frac{TN + TP}{TN + FN + FP + TP}$$
+.tc.mt4[
+Ranges from $0$ to $1$, higher is better
+]
+]
+
+--
+
+.mt3.pull-right[
+$$\text{Sensitivity}=\frac{TP}{TP+FN}=\frac{TP}{P}$$
+
+$$\text{Specificity}=\frac{TN}{TN+FP}=\frac{TN}{N}$$
+
+]
+
+
+---
+
+## Live Coding: Classification metrics
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Add that metric set to the fitting function
+
+surv_fit <- last_fit(surv_wflow, split = surv_split)
+
+# Collect and print testing set metrics
+
+surv_perf <- collect_metrics(surv_fit)
+surv_perf
+
+# Calculate raw confusion matrix
+
+surv_cm <- 
+  collect_predictions(surv_fit) %>% 
+  conf_mat(truth = survived, estimate = .pred_class)
+surv_cm
+
+# Plot confusion matrix
+
+autoplot(surv_cm, type = "mosaic")
+autoplot(surv_cm, type = "heatmap")
+
+# Calculate all confusion matrix metrics
+
+summary(surv_cm)
+```
+]
+
+---
+
+class: onecol
+## Default probability metric for classification
+
+- When a classifier outputs class probabilities, we can choose any **decision threshold**
+
+- We might naturally consider any probability over 50% positive and all others negative
+
+- But we could choose a threshold more conservative (e.g., 75%) or liberal (e.g., 25%)
+
+--
+
+.pt1[
+- **Performance curves** plot the characteristics of different decision thresholds
+
+- This gives us an overview of how the classification system performs *overall*
+]
+
+--
+
+.pt1[
+- A popular option is the **Receiver Operating Characteristic** (ROC) Curve
+
+- The **area under the curve (AUC)** condenses the ROC Curve into a single metric
+]
+
+---
+class: onecol
+## Interpreting a ROC curve and its AUC
+
+.pull-left[
+Each point in a ROC curve corresponds to a possible decision threshold
+
+- Sensitivity is $TP / P$
+- Specificity is $TN / N$
+
+Better curves are closer to the top-left
+
+The area under the ROC curve (AUC) ranges from $0.5$ to $1.0$, higher is better.
+
+*ROC AUC is the probability that a random positive example has a higher estimate than a random negative example.*
+
+]
+
+.pull-right[
+```{r rocex, echo=FALSE, fig.width=7, fig.height=6.8, out.width='95%'}
+yardstick::roc_curve(surv_pred, truth = survived, .pred_1) %>% 
+  arrange(sensitivity) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) + 
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted", size = 2, color = "grey") +
+  geom_line(size = 2, color = "darkblue") +
+  annotate(geom = "text", x = 0.75, y = 0.125, size = 12, label = "AUC = 0.85", 
+           color = "darkblue") +
+  coord_fixed() +
+  labs(x = "1 - Specificity", y = "Sensitivity") +
+  theme_xaringan(text_font_size = 20) +
+  theme(
+    axis.title = element_text(size = 26),
+    panel.grid.minor = element_blank(), 
+    panel.background = element_rect(fill = "white")
+  )
+```
+]
+
+---
+
+## Live Coding: ROC Curves
+
+.scroll.h-0l[
+```{r, eval=FALSE}
+# Examine predictions
+
+surv_pred
+
+# Examine outcome level ordering
+
+levels(surv_pred$survived)
+
+# Calculate per-threshold performance
+
+surv_roc <- 
+  roc_curve(
+    data = surv_pred, 
+    truth = survived, 
+    .pred_1, 
+  )
+surv_roc
+
+# Plot the ROC curve
+
+autoplot(surv_roc)
+```
+]
+
+---
+class: twocol
+## Comprehension Check \#1
+
+<span style="font-size:30px;">Bindi trains Model [A] to predict how many kilometers each bird will migrate this year and Model [B] to predict whether or not it will reproduce this year.</span>
+
+.pull-left[
+**1. Which combination of performance metrics would be appropriate to use?**
+
+a) Accuracy for [A] and [B]
+
+b) RMSE for [A] and [B]
+
+c) Accuracy for [A] and RMSE for [B]
+
+d) RMSE for [A] and Accuracy for [B]
+
+]
+
+.pull-right[
+**2. Which combination of performance scores should Bindi hope to see?**
+
+a) RSQ = 0.10 and ROC AUC = 0.04
+
+b) RSQ = 0.45 and ROC AUC = 0.92
+
+c) RSQ = 0.10 and ROC AUC = 0.92
+
+d) RSQ = 0.45 and ROC AUC = 0.04
+]
+
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 120
+)
+```
