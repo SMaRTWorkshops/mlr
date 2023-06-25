@@ -429,14 +429,14 @@ Observations in multilevel data are not .imp[independent].
 
 Resampling should occur at the **level of the experimental unit**.
 
-In this case, resampling would be at the level of **hospitals**. 
+In this example, resampling should be at the level of **hospitals**. 
 
 We can use the `group_initial_split()` function in {rsample} to create an initial split of multilevel data.
 
 ]
 
 .footnote[
-[1] For example, some patients from hospital 1 may end up in the training set and others in the testing set).
+[1] For example, some patients from hospital 1 may end up in the training set and others in the testing set.
 ]
 
 ---
@@ -445,8 +445,10 @@ class: onecol
 
 
 ```{r, eval = FALSE}
-
-## TODO
+covid_ema <- read.csv("data/covid_ema.csv", stringsAsFactors = TRUE)
+ema_split <- group_initial_split(covid_ema, group = "id")
+ema_train <- training(ema_split)
+ema_test <- testing(ema_split)
 ```
 
 --
