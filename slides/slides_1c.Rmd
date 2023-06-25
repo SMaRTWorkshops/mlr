@@ -301,7 +301,7 @@ Its simplest use case requires 2 arguments:
  
 ---
 class: onecol
-## Live Coding: Simple Random Split in R
+## Simple Random Split in R
 ```{r, message = FALSE}
 # set random seed so results are reproducible
 set.seed(2022) 
@@ -319,7 +319,7 @@ The resulting `initial_split` object **only contains partitioning information**.
 
 ---
 class: onecol
-## Live Coding: Simple Random Split in R
+## Simple Random Split in R
 
 To get the actual training and testing data subsets, we need two more functions.
 
@@ -328,14 +328,12 @@ We will use the `training()` and `testing()` functions, also from {rsample}.
 --
 
 ```{r, message = FALSE}
-# create and save an 80/20 data split
-titanic_split_simple <- initial_split(data = titanic, prop = 0.80)
-
-# create training set 
+# create training and testing sets 
 titanic_train_simple <- training(titanic_split_simple)
-
-# create testing set 
 titanic_test_simple <- testing(titanic_split_simple)
+
+dim(titanic_train_simple)
+dim(titanic_test_simple)
 ```
 
 ---
@@ -384,7 +382,7 @@ This ensures that the **distribution of the outcome variable** is preserved.
 
 ---
 class: onecol
-## Live Coding: Stratified Sampling in R
+## Stratified Sampling in R
 
 To create a stratified random sample, we can use the same `initial_split()` function.
 
