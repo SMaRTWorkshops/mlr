@@ -407,7 +407,7 @@ titanic_test_strat <- testing(titanic_split_strat)
 
 ---
 class: inverse, center, middle
-# Additional Considerations
+# Advanced Considerations
 
 ---
 class: onecol
@@ -427,7 +427,7 @@ Observations in multilevel data are not .imp[independent].
 
 **Random resampling of rows** may cause biased train/test sets<sup>1</sup>.
 
-Resampling should occur at the **level of the experimental unit**.
+Therefore, when working with multilevel data, resampling should occur at the **level of the experimental unit**.
 
 In this example, resampling should be at the level of **hospitals**. 
 
@@ -441,28 +441,79 @@ We can use the `group_initial_split()` function in {rsample} to create an initia
 
 ---
 class: onecol
-## What about Multilevel Data?
+## Splitting Multilevel Data in R
 
+The `group_initial_split()` function has three main arguments:
+- `data`: dataset
+
+- `group`: group to split on (e.g., participants in an EMA study)
+
+- `prop`: proportion of data to use for training
+
+--
 
 ```{r, eval = FALSE}
-covid_ema <- read.csv("data/covid_ema.csv", stringsAsFactors = TRUE)
-ema_split <- group_initial_split(covid_ema, group = "id")
+# load EMA data 
+ema <- readr::read_csv("https://tinyurl.com/ema-data-pm")
+
+# initial split 
+ema_split <- group_initial_split(covid_ema, group = "id", prop = 0.8)
+
+# create training and testing datasets
 ema_train <- training(ema_split)
 ema_test <- testing(ema_split)
 ```
 
---
+```{r, echo=FALSE, message=FALSE}
+# load data
+ema <- readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"), show_col_types = FALSE)
 
-<p style="padding-top:30px;">The `group_initial_split()` function has three arguments:
-- `data`: dataset
+# initial split 
+ema_split <- group_initial_split(covid_ema, group = "id", prop = 0.8)
 
-- `group`: group to split on (e.g.. hospitals)
-
-- `prop`: proportion of data to use for training
-
+# create training and testing datasets
+ema_train <- training(ema_split)
+ema_test <- testing(ema_split)
+```
 
 ---
-class: twocol
+class: onecol
+## Splitting Multilevel Data in R
+
+.pull-left[
+```{r, eval = FALSE}
+# training data 
+ema_train %>% select(id) %>% unique()
+```
+
+```{r, echo = FALSE}
+ema_train %>% 
+  select(id) %>% 
+  unique() %>% 
+  kable() %>% 
+  kable_styling(font_size = 25) %>% 
+  scroll_box(height = "350px")
+```
+]
+
+.pull-right[
+```{r, eval = FALSE}
+# testing data 
+ema_test %>% select(id) %>% unique()
+```
+
+```{r, echo = FALSE}
+ema_test %>% 
+  select(id) %>% 
+  unique() %>% 
+  kable() %>% 
+  kable_styling(font_size = 25) %>% 
+  scroll_box(height = "350px")
+```
+]
+
+---
+class: onecol
 ## What about Time Series Data?
 
 .left-column[
@@ -475,36 +526,73 @@ include_graphics('../figs/time.png')
 .right-column[
 Random resampling is also not appropriate for **time series data**.
 
-.imp[Data from the future] can't be used to predict the past! 
+We can't use .imp[data from the future] to predict data from the past! 
 
-Rather, it is typical to use the most **recent data** for a test set. 
+Instead, we should use the most **recent data** for a test set. 
+
+When working with time series data, it's common to use the first portion of data for training, and the last portion for testing. 
+
+We can use the `initial_time_split()` function in {rsample} to create an initial split of time series data.
 ]
 
 ---
-class: twocol
-count: false
-## What about Time Series Data?
+class: onecol
+## Splitting Time Series Data in R
 
-.left-column[
-<br />
-```{r, echo=FALSE}
-include_graphics('../figs/time.png')
-```
-]
-
-.right-column[
-Random resampling is also not appropriate for **time series data**.
-
-.imp[Data from the future] can't be used to predict the past! 
-
-Rather, it is typical to use the most **recent data** for a test set. 
-
-The {rsample} package has a function for **splitting time series data**.
-
-`initial_time_split()`:
+The `initial_time_split()` function has three main arguments:
 - `data`: dataset
 - `prop`: proportion of first part of data for training
 - `lag`: lag value if using lagged predictors 
+
+.footnote[
+Note: the `initial_time_split()` function assumes that your data are sorted in an appropriate order.
+]
+
+--
+
+```{r}
+# example: subset data to a single participant 
+idiographic <- ema %>% filter(id == "user_2")
+
+# initial split 
+idiographic_split <- initial_time_split(idiographic, prop = 0.8, lag = 1)
+
+# create training and testing datasets
+idiographic_train <- training(idiographic_split)
+idiographic_test <- testing(idiographic_split)
+
+```
+
+---
+class: onecol
+## Splitting Time Series Data in R
+
+.pull-left[
+```{r, eval = FALSE}
+# training data 
+idiographic_train
+```
+
+```{r, echo = FALSE}
+idiographic_train %>% 
+  kable() %>% 
+  kable_styling(font_size = 17) %>% 
+  scroll_box(height = "350px")
+```
+]
+
+.pull-right[
+```{r, eval = FALSE}
+# testing data 
+idiographic_test
+```
+
+```{r, echo = FALSE}
+idiographic_test %>% 
+  kable() %>% 
+  kable_styling(font_size = 17) %>% 
+  scroll_box(height = "350px")
+```
 ]
 
 ---
