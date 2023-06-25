@@ -1,0 +1,825 @@
+---
+title: '<span style="font-size:48pt;">Decision Trees and Random Forests</span>'
+subtitle: '.big[🤔 🌴 🍂️]'
+author: 'Applied Machine Learning in R<br /><i>Pittsburgh Summer Methodology Series</i>'
+date: 'Day 3C &emsp; &emsp; Shirley Wang'
+output:
+  xaringan::moon_reader:
+    css: [../css/xaringan-themer.css, ../css/styles.css]
+    nature:
+      slideNumberFormat: "%current% / %total%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  fig.showtext = TRUE,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+```
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_tachyons()
+xaringanExtra::use_clipboard()
+xaringanExtra::use_tile_view()
+```
+
+```{r packages, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(countdown)
+library(patchwork)
+```
+
+class: inverse, center, middle
+# Overview
+
+---
+class: onecol
+## Lecture Topics
+
+.pull-left[
+**Simple Decision Trees**
+- Classification trees
+- Regression trees
+- Recursive partitioning
+- Stopping criteria 
+
+**Random Forests**
+- Aggregating bootstrapped predictions
+- Accuracy vs interpretability  
+]
+
+.pull-right[
+```{r, echo = FALSE, out.height=450, out.width = 400}
+include_graphics("../figs/flowchart2.jpg")
+```
+]
+
+---
+class: onecol
+## Geometry of Data
+
+So far, we've modeled linear relationships with linear boundaries between classes, e.g.: 
+
+```{r, echo = FALSE, fig.showtext=TRUE}
+set.seed(1)
+x = rnorm(400)
+y = rnorm(400)
+simdat <- data.frame(x, y)
+simdat$group_lin <- ifelse(simdat$x < simdat$y, 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_lin)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16, css_file = "../css/xaringan-themer.css") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+class: onecol
+## Geometry of Data
+
+But what about other types of relationships? 
+
+```{r, echo = FALSE}
+simdat$group_circle <- ifelse(simdat$x < 1 & simdat$x > -1 & simdat$y < 1 & simdat$y > -1, 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_circle)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+class: onecol
+## Geometry of Data
+
+But what about other types of relationships? 
+
+```{r, echo = FALSE}
+simdat$group_quadrants <- ifelse((simdat$x < -0.5 & simdat$y > 0) | (simdat$x > 0.5 & simdat$y < 0), 1, 0)
+
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_quadrants)) +
+  theme_xaringan(text_font_size = 14, title_font_size = 16, css_file = "../css/xaringan-themer.css") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none")
+```
+
+---
+class: onecol
+## Geometry of Data
+
+These classes are very clearly separated.
+
+However, we can't use a **single equation** to describe the boundaries between them. 
+
+.pull-left[
+```{r, echo = FALSE}
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_circle)) +
+  theme_xaringan(text_font_size = 20, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none",
+        axis.title = element_text(size = 24))
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
+ggplot(simdat, aes(x, y)) + 
+  geom_point(aes(color = group_quadrants)) +
+  theme_xaringan(text_font_size = 20, title_font_size = 16) +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "none",
+        axis.title = element_text(size = 24))
+```
+]
+
+--
+
+.bg-light-green.b--dark-green.ba.bw1.br3.pl4[
+Decision trees capture complex decision boundaries and maintain interpretability.
+]
+
+---
+class: inverse, center, middle
+# Classification Trees
+
+---
+class: onecol
+## Building a Classification Tree
+
+The goal of classification trees are to partition data into homogeneous groups.
+
+This is defined by .imp[purity] (including more of one class than another class per node).
+
+We use .imp[recursive partioning] to find data splits that maximize purity of each node.
+
+--
+
+<p style="padding-top:30px;">The .imp[Gini index]<sup>[1]</sup> is the most commonly-used metric for quantifying purity.
+
+$$Gini = 1 - \sum\limits_{i = 1}^C(p_i)^2$$
+
+where $p_i$ = the probability of being in the $i$th class and $C$ = total number of classes
+
+.footnote[
+The Gini index ranges from 0 - 1, with smaller values indicating greater purity.
+]
+
+---
+class: onecol
+## Building a Classification Tree
+
+Let's walk through an example classification tree, with a toy depression risk dataset. 
+
+Stressful Event&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+No | No | 12 | Low
+Yes | Yes | 16 | High
+Yes | Yes | 22 | High
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | No | 46 | Low
+
+--
+
+The first thing to do is choose the .imp[root node] (feature that best predicts depression risk). 
+
+---
+class: twocol
+## Choosing the Root Node
+
+.pull-left[
+Start: find **Gini index** of stressful life events.
+
+.imp[Stressful Event]&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | .imp[Depression Risk]&emsp;
+:------- | :-------- | :------- |:------- |
+.imp[No] | Yes | 10 | .imp[Low] 
+.imp[No] | No | 12 | .imp[Low]
+.imp[Yes] | Yes | 16 | .imp[High]
+.imp[Yes] | Yes | 22 | .imp[High]
+.imp[No] | Yes | 30 | .imp[High] 
+.imp[No] | No | 38 | .imp[Low]
+.imp[Yes] | No | 46 | .imp[Low]
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+---
+class: twocol
+## Choosing the Root Node
+
+.pull-left[
+Both terminal nodes are **impure**, with people having high and low depression risk. 
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+---
+count: false
+class: twocol
+## Choosing the Root Node
+.pull-left[
+Both terminal nodes are **impure**, with people having high and low depression risk.
+
+We can quantify this impurity by calculating the **Gini index**.
+
+In this case, the **Gini impurity** of `stressful life event` is 0.405.
+
+To decide whether this variable should be our **root node**, we need to compare it to all other features in this dataset.
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/stresstree.png')
+```
+]
+
+---
+class: twocol
+## Choosing the Root Node
+
+We'll next calculate the Gini index for family history, which comes to:
+
+.pull-left[
+$Gini_{family} = 0.214$
+
+Stressful Event&emsp; | .imp[Family History]&emsp; | Age&emsp;&emsp;&emsp; | .imp[Depression Risk]&emsp;
+:------- | :-------- | :------- |:------- |
+No | .imp[Yes] | 10 | .imp[Low] 
+No | .imp[No] | 12 | .imp[Low]
+Yes | .imp[Yes] | 16 | .imp[High]
+Yes | .imp[Yes] | 22 | .imp[High]
+No | .imp[Yes] | 30 | .imp[High] 
+No | .imp[No] | 38 | .imp[Low]
+Yes | .imp[No] | 46 | .imp[Low]
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics('../figs/familytree.png')
+```
+]
+
+---
+class: twocol
+## Choosing the Root Node
+
+Calculating the Gini index for **numerical features** is slightly more complicated. 
+
+We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index. The lowest Gini index is for `age < 14.5` (Gini = 0.343): 
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | .imp[Age]&emsp;&emsp;&emsp; | .imp[Depression Risk]&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | .imp[10] | .imp[Low] 
+No | No | .imp[13] | .imp[Low]
+Yes | Yes | .imp[16] | .imp[High]
+Yes | Yes | .imp[22] | .imp[High]
+No | Yes | .imp[30] | .imp[High] 
+No | No | .imp[38] | .imp[Low]
+Yes | No | .imp[46] | .imp[Low]
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics("../figs/agetree.png")
+```
+]
+
+---
+class: twocol
+## Recursive Partioning
+
+.pull-left[
+Family history has the lowest Gini index of all features, so we set it as the root node. 
+
+We then .imp[continue partioning the data] to find the next split from an impure node.
+
+We can continue this process until we are left with .imp[only pure leaves]. 
+
+
+Note: this is all done automatically in R! 
+
+You don't need to make these calculations by hand, but it's helpful to have an understanding of how the algorithm works. 
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="90%"}
+include_graphics("../figs/familytree2.png")
+```
+]
+
+---
+class: inverse, center, middle
+# Regression Trees
+
+---
+class: onecol
+## Building a Regression Tree
+
+Let's say we have data that look like this. How should we model these data? 
+
+```{r, echo = FALSE}
+set.seed(2021)
+x <- seq(0, 11)
+y <- c(runif(3, 0, 2), runif(5, 5, 9), runif(4, 3, 4))
+regtree <- data.frame(x, y)
+  
+ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 20) +
+  labs(x = "feature", y = 'outcome') +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+
+---
+## Building a Regression Tree
+
+```{r, echo = FALSE}
+p1 <- 
+  ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 12) +
+  stat_smooth(
+    aes(x = x, y = y), 
+    method = "lm",
+    se = FALSE,
+    color = "blue",
+    size = 1.5
+  ) +
+  labs(title = "Linear Regression: Poor Fit", x = "feature") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p2 <- 
+  ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 12) +
+  stat_smooth(
+    aes(x = x, y = y), 
+    method = "lm",
+    formula = y ~ poly(x, 2), 
+    se = FALSE,
+    color = "purple",
+    size = 1.5
+  ) +
+  labs(title = "Simple Polynomial: Still Poor", x = "feature") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+p3 <- 
+  ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  theme_xaringan(text_font_size = 16, title_font_size = 12) +
+  stat_smooth(
+    aes(x = x, y = y), 
+    method = "lm",
+    formula = y ~ poly(x, 8), 
+    se = FALSE,
+    color = "red",
+    size = 1.5
+  ) +
+  labs(title = "Higher Degree Polynomial: Overfit", x = "feature") +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+(p1 | p2 | p3) + 
+  plot_annotation(
+    theme = theme(
+      plot.background = element_rect(fill = "#E9EBEE", color = NA)
+    )
+  )
+```
+
+---
+class: onecol
+## Simple Regression Tree
+
+A regression tree can solve this problem by partioning data into homogeneous groups.
+
+.pull-left[
+.center[**Regression Tree: Simple Example**]
+```{r, echo = FALSE, fig.width=12, fig.height=8}
+ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  geom_segment(aes(x = 0, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred', lwd = 3) + 
+  geom_segment(aes(x = 3, y = mean(y[4:8]), xend = 7, yend = mean(y[4:8])), col = 'darkred', lwd = 3) +
+  geom_segment(aes(x = 8, y = mean(y[9:12]), xend = 11, yend = mean(y[9:12])), col = 'darkred', lwd = 3) +
+  theme_xaringan(text_font_size = 30, title_font_size = 40) +
+  labs(x = "feature", y = 'outcome') +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        axis.title = element_text(size = 40))
+```
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width = "80%"}
+include_graphics("../figs/regtree.png")
+```
+]
+
+---
+class: onecol
+## Building a Regression Tree
+
+We start with the entire data set $S$ to find the .imp[optimal feature and splitting value that partitions the data] into two groups $S_1$ and $S_2$. 
+
+The goal is to minimize the sum of squared errors: 
+
+$$SSE = \sum\limits_{i \in S_1}(y_i-\bar{y}_1)^2 + \sum\limits_{i \in S_2}(y_i-\bar{y}_2)^2$$
+
+--
+
+Within each group, we repeat recursive partitioning to find the next split.
+
+The predicted value of a terminal node is the mean of all observations in that node. 
+
+---
+class: onecol
+## Comprehension Check 
+
+**Let's say we continued this recursive partioning process until we were left only with pure nodes (classification tree) or minimal SSE (regression tree). </br> </br> What are some problems that could arise?**
+
+--
+
+Some answers: 
+
+- Overfitting training data
+
+- Poor prediction on test data/future/new data
+- Instability of model (if data are slightly altered, you may find entirely different splits)
+
+- Small number of participants in leaves
+
+- Selection bias: features with higher number of distinct values are favored
+
+- Poorer interpretation
+
+---
+class: inverse, center, middle
+# Preventing Overfitting
+
+---
+class: twocol
+## Preventing Overfitting
+
+.pull-left[
+Trees will continue to grow until each terminal node is entirely homogeneous.
+
+This inevitably leads to **poor prediction** on testing data and any future datasets.
+
+To prevent this, we need to **stop the algorithm at some point**, before it overfits. 
+
+**Stopping criteria** can help us to prevent overfitting a decision tree.
+
+]
+.pull-right[
+```{r, echo = FALSE, fig.width=12, fig.height=8}
+ggplot(regtree, aes(x, y)) + 
+  geom_point(shape = 16, size = 3) +
+  geom_segment(aes(x = 0, y = mean(y[0:1]), xend = 1, yend = mean(y[0:1])), col = 'darkred') + 
+  geom_segment(aes(x = 1, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred') +
+  geom_segment(aes(x = 3, y = mean(y[4:5]), xend = 5, yend = mean(y[4:5])), col = 'darkred') +
+  geom_segment(aes(x = 5, y = mean(y[5:7]), xend = 8, yend = mean(y[5:7])), col = 'darkred') +
+  geom_segment(aes(x = 8, y = mean(y[9:10]), xend = 10, yend = mean(y[9:10])), col = 'darkred') +
+  geom_segment(aes(x = 10, y = mean(y[11:12]), xend = 12, yend = mean(y[11:12])), col = 'darkred') +
+  
+  geom_segment(aes(x = 1, y = mean(y[0:1]), xend = 1, yend = mean(y[1:3])), col = 'darkred') +
+  geom_segment(aes(x = 3, y = mean(y[1:3]), xend = 3, yend = mean(y[4:5])), col = 'darkred') +
+  geom_segment(aes(x = 5, y = mean(y[4:5]), xend = 5, yend = mean(y[5:7])), col = 'darkred') +
+  geom_segment(aes(x = 8, y = mean(y[5:7]), xend = 8, yend = mean(y[9:10])), col = 'darkred') +
+  geom_segment(aes(x = 10, y = mean(y[9:10]), xend = 10, yend = mean(y[11:12])), col = 'darkred') +
+  theme_xaringan(text_font_size = 30, title_font_size = 40) +
+  labs(title = "Regression Tree: Overfit", x = "feature", y = 'outcome') +
+  theme(panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+]
+
+---
+class: twocol
+## Stopping Criteria 
+
+.left-column.pv3[
+```{r, echo = FALSE}
+include_graphics("../figs/stop.png")
+```
+]
+
+.right-column[
+Stopping criteria prevent trees from growing in certain conditions:
+
+- Standard: if the leaf is homogenous (no need to split if the leaf is already homogenous).
+
+- If the leaf has too few observations for another split.
+
+What counts as "too few observations"?
+
+This is a **hyperparameter** (`min_n` in {tidymodels}).
+
+We can determine the optimal value of `min_n`  by tuning! 
+
+]
+
+---
+class: onecol
+## Decision Trees Summary
+
+A single tree has **excellent interpretability** and is easy to explain to people. 
+
+Decision trees closely mirror the **human decision-making processes**! 
+
+However, a single tree is typically **not flexible enough** to accurately predict new data. 
+
+**Single trees are unstable**; they change dramatically with a small shift in training data.
+
+--
+
+<p style="padding-top:30px;">One solution is to .imp[aggregate predictions from many decision trees together]. 
+
+This may help us **improve predictive accuracy and model stability**. 
+
+---
+class: inverse, center, middle
+# Random Forests
+
+---
+class: twocol
+## Random Forests
+
+.left-column.pv3[
+```{r, echo = FALSE}
+include_graphics("../figs/randomforest.png")
+```
+]
+
+.right-column[
+Random forests aim to combine the simplicity of a single tree with greater model **flexibility**. 
+
+We do this by building **multiple decision trees**.
+
+We then **aggregate their predictions** together for one final prediction. 
+
+This is called an **ensemble method**. 
+
+By using multiple trees (rather than just one), we can achieve greater **predictive accuracy** in new datasets.
+
+However, this comes at the cost of **lower interpretability**.
+]
+
+---
+class: onecol
+## Random Forests
+
+Random forests use **bootstrapped aggregation** (bagging) to combine predictions from many  trees. Each tree is fit with a bootstrapped dataset and predictions are aggregated. 
+
+```{r, echo = FALSE, out.width = "70%"}
+include_graphics("../figs/bagging.png")
+```
+
+---
+class: onecol
+## Random Forests
+
+Random forests also  **decorrelate** trees by only using a subset of features at each split.
+
+This increases **model stability** for more reliable and less variable predictions. 
+
+.pull-left[
+```{r, echo = FALSE}
+include_graphics("../figs/decorrelate_1.png")
+```
+]
+
+---
+class: onecol
+## Random Forests
+
+Random forests also  **decorrelate** trees by only using a subset of features at each split.
+
+This increases **model stability** for more reliable and less variable predictions. 
+
+.pull-left[
+```{r, echo = FALSE}
+include_graphics("../figs/decorrelate_2.png")
+```
+]
+
+--
+
+.pull-right[
+<p style="padding-top:190px;">The number of *m* features chosen at each split is another .imp[hyperparameter]. 
+
+We can tune this during cross-validation to find the optimal value. 
+]
+
+---
+class: onecol
+## Building a Random Forest
+
+Let's return to this toy dataset to walk through building a random forest model.
+
+.pull-left[
+Stressful Event&emsp; | Family History&emsp; | Age&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+No | Yes | 10 | Low 
+No | No | 12 | Low
+Yes | Yes | 16 | High
+Yes | Yes | 22 | High
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | No | 46 | Low
+]
+
+--
+
+.pull-right[
+Step 1 is making **bootstrapped dataset** from each CV analysis set. 
+
+We randomly draw (with replacement) samples, to create a bootstrapped dataset of the same size. 
+
+This bootstrapped dataset will include some observations more than once. 
+
+Other observations will be left out (note: this is called the **out-of-bag dataset**).
+]
+
+---
+class: twocol
+## Building a Random Forest
+
+**Step 2**: Using bootstrapped data, build decision tree with a random subset of features per split. 
+
+--
+
+.pull-left[
+
+.imp[Stressful Event]&emsp; | Family History&emsp; | .imp[Age]&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+Yes | Yes | 22 | High
+No | No | 38 | Low
+Yes | Yes | 16 | High
+No | No | 12 | Low
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | Yes | 22 | High
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, out.width="80%"}
+include_graphics("../figs/forest_split1.png")
+```
+]
+
+---
+class: twocol
+## Building a Random Forest
+
+**Step 2**: Using bootstrapped data, build decision tree with a random subset of features per split. 
+
+.pull-left[
+
+Stressful Event&emsp; | .imp[Family History]&emsp; | .imp[Age]&emsp;&emsp;&emsp; | Depression Risk&emsp;
+:------- | :-------- | :------- |:------- |
+Yes | Yes | 22 | High
+No | No | 38 | Low
+Yes | Yes | 16 | High
+No | No | 12 | Low
+No | Yes | 30 | High 
+No | No | 38 | Low
+Yes | Yes | 22 | High
+]
+
+.pull-right[
+```{r, echo = FALSE, out.width="80%"}
+include_graphics("../figs/forest_split2.png")
+```
+]
+
+---
+class: onecol
+## Building a Random Forest
+
+**Step 3**: Repeat steps 1 and 2! Create another bootstrapped dataset, build another tree, using  a random subset of $m$ features at each split. Repeat for many (e.g., 1000) trees.
+
+Note: the number of total number of trees is *another hyperparameter*.
+<pstyle="padding-bottom:20px;">
+
+```{r, echo = FALSE}
+include_graphics("../figs/manytrees.png")
+```
+
+---
+class: onecol
+## Building a Random Forest
+
+.left-column.pv3[
+```{r, echo = FALSE}
+include_graphics("../figs/voting.jpg")
+```
+
+]
+
+.right-column[
+**Step 4**: Aggregate predictions across the many bootstrapped decision trees (i.e., **bagging**).
+
+Run each *k*-fold assessment data point through all trees:
+
+- Take the **majority vote** as the prediction for classification.
+
+- Take the **average** as the prediction for regression.
+
+Note: This diversity is what makes random forests so powerful beyond single trees!
+]
+
+---
+class: onecol
+
+## Random Forests Summary
+
+Random forests are a .imp[powerful ML algorithm] that can model nonlinearity in data. 
+
+By only using a random subset of features at each tree split, **RF trees are decorrelated**.
+
+Aggregating many bootstrapped, uncorrelated trees is effective at **reducing variance**.
+
+Random forests have .imp[higher accuracy but lower interpretability] than single  trees.
+
+--
+
+<p style="padding-top:30px;">When building random forests, tuning parameters include: 
+
+- The number of features to consider at each split (`mtry`)
+
+- The number of decision trees in the forest (`trees`)
+
+- The minimum number of data points in a node required for another split (`min_n`)
+
+
+---
+class: inverse, center, middle
+# Time for a Break!
+```{r countdown, echo=FALSE}
+countdown(
+  minutes = 10, 
+  seconds = 0, 
+  right = "33%", 
+  left = "33%",
+  bottom = "15%",
+  color_background = "white",
+  color_text = "black",
+  color_running_background = "white",
+  color_running_text = "black",
+  warn_when = 60
+)
+```
+
+

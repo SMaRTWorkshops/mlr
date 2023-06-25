@@ -98,7 +98,7 @@ It also reduces **generalizability** to future datasets or prediction problems.
 We may not get a **true understanding** of our model's accuracy or effectiveness.
 
 ---
-class: twocol
+class: onecol
 ## A Data Budget
 
 .left-column.pv3[
@@ -109,23 +109,18 @@ include_graphics('../figs/spending.jpg')
 
 .right-column[
 
-Using all the data at once **causes many problems in ML**.
+Rather than using all available data at once, in ML we need to think about **budgeting** our data for different tasks. 
 
-However, these can be addressed by **budgeting our data**.
+This is especially important when moving from **model development** into **model evaluation**.
 
-We can **spend our data** on different tasks in the ML workflow.
+Importantly, in smaller datasets, we might have to spend the same data on multiple tasks.
 
-This is particularly important in **model development to evaluation**.
-
-In smaller datasets, there may be **overlap** in how we spend our data.
-
-We need **strong methods** for how to spend data in different tasks.
-
+We need strong methods for doing so while minimizing the risk for overfitting our models!
 ]
 
 ---
-class: twocol
-## Avoiding Data Leaks
+class: onecol
+## Avoiding Data Leakage
 
 .left-column.pv3[
 ```{r, echo=FALSE}
@@ -135,17 +130,13 @@ include_graphics('../figs/leak.jpg')
 
 .right-column[
 
-All data is a mix of the true data-generating process and random noise<sup>1</sup>.
+All datasets contain a mix of the true *data-generating process* and random noise.<sup>1</sup>
 
-The modeling process includes many **decision points**. 
+The modeling process includes many decision points, and there is a risk of .imp[leaking information] from model training to evaluation.
 
-Which features to include? What algorithm to use?
+This can artificially **inflate optimism about model accuracy**.
 
-There is risk of .imp[leaking information] from model training to evaluation.
-
-This artificially **inflates optimism about model accuracy**.
-
-Carefully spending data for training or testing prevents .imp[data leakage].
+Carefully spending our data for model training vs. model can help prevent .imp[data leakage].
 
 ]
 
@@ -163,6 +154,8 @@ class: onecol
 There are some clever algorithmic tricks to prevent overfitting
 
 - For example, we can penalize the model for adding complexity
+
+--
 
 The main approach, however, is to use .imp[cross-validation]:
 
@@ -285,7 +278,7 @@ Too little data in the test set reduces **quality of model performance estimates
 ]
 
 ---
-class: twocol
+class: onecol
 ## Simple Random Split in R
 
 .left-column[
@@ -315,6 +308,7 @@ set.seed(2022)
 
 # create and save an 80/20 data split
 titanic_split_simple <- initial_split(data = titanic, prop = 0.80)
+titanic_split_simple
 ```
 
 --
@@ -334,6 +328,9 @@ We will use the `training()` and `testing()` functions, also from {rsample}.
 --
 
 ```{r, message = FALSE}
+# create and save an 80/20 data split
+titanic_split_simple <- initial_split(data = titanic, prop = 0.80)
+
 # create training set 
 titanic_train_simple <- training(titanic_split_simple)
 
@@ -413,7 +410,7 @@ class: inverse, center, middle
 # Additional Considerations
 
 ---
-class: twocol
+class: onecol
 ## What about Multilevel Data?
 
 .left-column[
@@ -422,6 +419,8 @@ class: twocol
 include_graphics('../figs/multilevel.png')
 ```
 ]
+
+--
 
 .right-column[
 Observations in multilevel data are not .imp[independent]. 
@@ -432,7 +431,7 @@ Resampling should occur at the **level of the experimental unit**.
 
 In this case, resampling would be at the level of **hospitals**. 
 
-{tidymodels} has a development version of a function to create an initial split of multilevel data.
+We can use the `group_initial_split()` function in {rsample} to create an initial split of multilevel data.
 
 ]
 
@@ -444,12 +443,10 @@ In this case, resampling would be at the level of **hospitals**.
 class: onecol
 ## What about Multilevel Data?
 
-You can access the development function `group_initial_split()` from [github](https://github.com/tidymodels/rsample).
 
 ```{r, eval = FALSE}
-# install.packages("devtools")
-library(devtools)
-install_dev("rsample")
+
+## TODO
 ```
 
 --
