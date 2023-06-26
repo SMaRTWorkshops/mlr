@@ -29,6 +29,24 @@ airsat <- readr::read_csv("https://tinyurl.com/airsat-pm")
 read_csv("./data/airsat.csv", show_col_types = FALSE)
 ```
 
+
+---
+
+## EMA
+
+Real ecological momentary assessment (EMA) data on 80 undergraduate students in the Netherlands during the start of COVID (from Fried, Papanikolaou, & Epskamp, 2021) <a href="https://eiko-fried.com/wp-content/uploads/21677026211017839.pdf" class="badge badge-info">Info</a>
+
+  - Data splitting for multilevel and time series data (1C)
+  
+```{r, eval=FALSE}
+# install.packages("readr")
+ema <- readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"))
+```
+
+```{r, echo=FALSE, message=FALSE}
+readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"), show_col_types = FALSE)
+```
+
 ---
 
 ## penguins
@@ -36,7 +54,11 @@ read_csv("./data/airsat.csv", show_col_types = FALSE)
 Real data on 344 penguins observed at Palmer Station, Antarctica <a href="https://allisonhorst.github.io/palmerpenguins/" class="badge badge-info">Info</a>
 
   - Regression task: predict `body_mass_g` (1D)
-  
+
+```{r, echo=FALSE, message=FALSE}
+conflicted::conflicts_prefer(palmerpenguins::penguins)
+```
+
 ```{r}
 # install.packages("palmerpenguins")
 library(palmerpenguins)

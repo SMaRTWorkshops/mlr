@@ -810,6 +810,28 @@ $N=2011$
 ]
 
 ---
+
+## Ecological Momentary Assessment (ema)
+
+```{r, eval=FALSE}
+# data from Fried, Papanikolaou, & Epskamp (2021)
+ema <- readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"))
+```
+
+```{r, echo=FALSE}
+ema <- readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"), show_col_types = FALSE)
+ema %>% 
+  head(100) %>% 
+  kable(digits = 2) %>% 
+  kable_styling(font_size = 17) %>% 
+  scroll_box(height = "300px")
+```
+
+.footnote[
+$N=80$, EMA Protocol: 4 prompts per day, for 14 days. Use to demonstrate multilevel data splitting.
+]
+
+---
 class: inverse, center, middle
 # Time for a Break!
 ```{r countdown, echo=FALSE}

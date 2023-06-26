@@ -3,6 +3,7 @@
 library(tidyverse)
 library(tidymodels)
 library(readr)
+library(vip)
 
 # Data Preparation
 titanic <- 
@@ -38,8 +39,9 @@ survived_fit <- log_reg %>%
 
 survived_fit
 
-# Inspect Model 
+# Inspect Results 
 tidy(survived_fit)
+vip(survived_fit)
 
 # Make Predictions on Test Set 
 survived_test_preds <- predict(survived_fit, new_data = titanic_test)
@@ -51,8 +53,13 @@ survived_preds <- titanic_test %>%
   bind_cols(survived_test_preds)
 survived_preds
 
-# Examine accuracy
+# compare predicted to actual values 
 conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
+
+# plot the confusion matrix 
+survived_cm <- conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
+autoplot(survived_cm, type = "mosaic")
+autoplot(survived_cm, type = "heatmap")
 
 
 

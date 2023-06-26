@@ -81,8 +81,8 @@ class: twocol
 ##Shirley Wang
 
 .pull-left[
-Doctoral Candidate<br />
-Harvard University
+PhD Candidate, Harvard University<br />
+Incoming Assistant Professor, Yale University
 
 **Research Areas**
 - Clinical Psychology
