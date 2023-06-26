@@ -13,10 +13,10 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 
 | Day | Part | Topic                             | Lead   | Video Link                     |
 | :-: | :--: | :-------------------------------- | :----- | :----------------------------- |
-| 1   | A    | Conceptual introductions          | Girard | TBA                            |
-|     | B    | Tidyverse primer and data         | Girard | TBA                            |
-|     | C    | Data splitting and validation     | Wang   | TBA                            |
-|     | D    | Model fitting and prediction      | Wang   | TBA                            |
+| 1   | A    | Conceptual introductions          | Girard | <https://youtu.be/Yru-DYdlqW8> |
+|     | B    | Tidyverse primer and data         | Girard | <https://youtu.be/Yru-DYdlqW8> |
+|     | C    | Data splitting and validation     | Wang   | <https://youtu.be/FbUDnjPS4fU> |
+|     | D    | Model fitting and prediction      | Wang   | <https://youtu.be/FbUDnjPS4fU> |
 | 2   | A    | Workflows and metrics             | Girard | TBA                            |
 |     | B    | Feature engineering recipes       | Girard | TBA                            |
 |     | C    | Resampling and cross-validation   | Wang   | TBA                            |
