@@ -1,0 +1,127 @@
+---
+title: "Day 1D Live Coding<br />(Fitting Models)"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  df_print = "paged"
+)
+```
+
+# Load packages
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(readr)
+```
+
+---
+
+# Data Preparation
+
+```{r}
+titanic <- 
+  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  mutate(
+    survived = factor(survived),
+    pclass = factor(pclass),
+    sex = factor(sex)
+  ) %>% 
+  na.omit()
+
+# view
+head(titanic)
+```
+
+---
+
+# Split Data 
+
+```{r}
+titanic_split <- initial_split(titanic, prop = 0.8, strata = 'survived')
+titanic_train <- training(titanic_split)
+titanic_test <- testing(titanic_split)
+
+dim(titanic_train)
+dim(titanic_test)
+```
+
+---
+
+# Specify Model
+
+```{r}
+log_reg <- logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+
+log_reg
+```
+
+---
+
+# Fit Model
+
+```{r}
+survived_fit <- log_reg %>% 
+  fit(survived ~ ., data = titanic_train)
+
+survived_fit
+```
+
+---
+
+# Inspect Results
+
+```{r}
+# coefficients 
+tidy(survived_fit)
+```
+
+---
+
+# Training Set Performance
+
+```{r}
+glance(survived_fit)
+```
+
+---
+
+# Make Predictions on Test Set
+
+```{r}
+survived_test_preds <- predict(survived_fit, new_data = titanic_test)
+survived_test_preds
+```
+```{r}
+# merge predictions with test data 
+
+survived_preds <- titanic_test %>% 
+  select(survived) %>%
+  bind_cols(survived_test_preds)
+survived_preds
+```
+
+---
+
+# Examine Predicted vs Trusted Data
+
+```{r, warning=FALSE}
+conf_mat(data = survived_preds, truth = survived, estimate = .pred_class)
+```
+
+
+
+

@@ -377,7 +377,7 @@ For every split of the outer loop, a **full inner resampling split** is conducte
 
 Let's say we use 10-fold CV on the **outer loop** and 5-fold CV on the **inner loop**.
 
-This would be a total of .imp[500 models] being fit! 
+This would be a total of .imp[50 models] being fit! 
 
 --
 
