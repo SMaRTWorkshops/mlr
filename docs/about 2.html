@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>About the Course</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="css/styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Applied ML in R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Details
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="about.html">About the Course</a>
+    </li>
+    <li>
+      <a href="datasets.html">Course Datasets</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 1
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="day_1a.html">[1A] Conceptual introductions</a>
+    </li>
+    <li>
+      <a href="day_1b.html">[1B] Tidyverse primer and data</a>
+    </li>
+    <li>
+      <a href="day_1c.html">[1C] Data splitting and validation</a>
+    </li>
+    <li>
+      <a href="day_1d.html">[1D] Model fitting and prediction</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 2
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="day_2a.html">[2A] Workflows and metrics</a>
+    </li>
+    <li>
+      <a href="day_2b.html">[2B] Feature engineering recipes</a>
+    </li>
+    <li>
+      <a href="day_2c.html">[2C] Resampling and cross-validation</a>
+    </li>
+    <li>
+      <a href="day_2d.html">[2D] Predictive modeling with (G)LM</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 3
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="day_3a.html">[3A] Regularization and elastic net</a>
+    </li>
+    <li>
+      <a href="day_3b.html">[3B] GLMNET example and tuning</a>
+    </li>
+    <li>
+      <a href="day_3c.html">[3C] Decision trees and random forests</a>
+    </li>
+    <li>
+      <a href="day_3d.html">[3D] RF example and reporting</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Day 4
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="day_4a.html">[4A] Support vector machines</a>
+    </li>
+    <li>
+      <a href="day_4b.html">[4B] Practical issues</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">About the Course</h1>
+
+</div>
+
+
+<p>This is a synchronous, online course taking place as part of the <a
+href="https://www.pittmethods.com">Pittsburgh Summer Methodology
+Series</a> on June 26-29, 2023. Each of these four days will run for
+between 10:30am - 3:30pm (New York Time/EDT/UTC-4:00) with an hour lunch
+break from 12:30pm - 1:30pm (approximately). Enrollment in the course
+and access to the video recordings requires registration, which can be
+purchased through the <a
+href="https://www.pittmethods.com/applied-ml">Pitt Methods website</a>;
+we are pleased to offer a discounted rate for students and trainees.
+However, materials (slides and activities) are freely available through
+this website and may be re-used according to the <a
+href="https://github.com/PittMethods/appliedml/blob/main/LICENSE.txt">CC-BY
+License</a>.</p>
+<hr />
+<div id="course-schedule" class="section level2">
+<h2>Course Schedule</h2>
+<table>
+<colgroup>
+<col width="3%" />
+<col width="5%" />
+<col width="43%" />
+<col width="7%" />
+<col width="39%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Day</th>
+<th align="center">Part</th>
+<th align="left">Topic</th>
+<th align="left">Lead</th>
+<th align="left">Video Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">A</td>
+<td align="left">Conceptual introductions</td>
+<td align="left">Girard</td>
+<td align="left"><a href="https://youtu.be/Yru-DYdlqW8"
+class="uri">https://youtu.be/Yru-DYdlqW8</a></td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">B</td>
+<td align="left">Tidyverse primer and data</td>
+<td align="left">Girard</td>
+<td align="left"><a href="https://youtu.be/Yru-DYdlqW8"
+class="uri">https://youtu.be/Yru-DYdlqW8</a></td>
+</tr>
+<tr class="odd">
+<td align="center"></td>
+<td align="center">C</td>
+<td align="left">Data splitting and validation</td>
+<td align="left">Wang</td>
+<td align="left"><a href="https://youtu.be/FbUDnjPS4fU"
+class="uri">https://youtu.be/FbUDnjPS4fU</a></td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">D</td>
+<td align="left">Model fitting and prediction</td>
+<td align="left">Wang</td>
+<td align="left"><a href="https://youtu.be/FbUDnjPS4fU"
+class="uri">https://youtu.be/FbUDnjPS4fU</a></td>
+</tr>
+<tr class="odd">
+<td align="center">2</td>
+<td align="center">A</td>
+<td align="left">Workflows and metrics</td>
+<td align="left">Girard</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">B</td>
+<td align="left">Feature engineering recipes</td>
+<td align="left">Girard</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="odd">
+<td align="center"></td>
+<td align="center">C</td>
+<td align="left">Resampling and cross-validation</td>
+<td align="left">Wang</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">D</td>
+<td align="left">Building a model: start to finish</td>
+<td align="left">Wang</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">A</td>
+<td align="left">Regularization and elastic net</td>
+<td align="left">Wang</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">B</td>
+<td align="left">GLMNET example and tuning</td>
+<td align="left">Girard</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="odd">
+<td align="center"></td>
+<td align="center">C</td>
+<td align="left">Decision trees and random forests</td>
+<td align="left">Wang</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">D</td>
+<td align="left">RF example and reporting</td>
+<td align="left">Girard</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="odd">
+<td align="center">4</td>
+<td align="center">A</td>
+<td align="left">Support vector machines</td>
+<td align="left">Girard</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">B</td>
+<td align="left">Practical issues</td>
+<td align="left">Wang</td>
+<td align="left">TBA</td>
+</tr>
+<tr class="odd">
+<td align="center"></td>
+<td align="center">C</td>
+<td align="left">Consulting</td>
+<td align="left"></td>
+<td align="left">TBA</td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">D</td>
+<td align="left">Consulting</td>
+<td align="left"></td>
+<td align="left">TBA</td>
+</tr>
+</tbody>
+</table>
+<p>Video recordings of the course meetings are posted as private YouTube
+videos (see the links in the table above). It may take up to 6 hours for
+the high definition versions of the videos to be ready on YouTube. In
+order to access the videos, you must log into YouTube using the email
+address that was invited to view it. If you would like us to invite a
+different email address than the one you registered for the course with,
+please let us know via email or Slack direct message.</p>
+<hr />
+</div>
+<div id="course-communication" class="section level2">
+<h2>Course Communication</h2>
+<p>Important announcements will be emailed to registered attendees.
+However, attendees are strongly encouraged to join the course’s Slack
+workspace. This workspace will provide a place for questions, answers,
+comments, and other discussions to occur in a more permanent place. We
+will monitor the Zoom chat window but this disappears when you leave a
+meeting, so Slack is the preferred method for communication. There will
+be several channels for discussion of different topics (i.e.,
+<code>#announcements</code> for news and updates related to the course,
+<code>#general</code> for questions and comments related to the course,
+and <code>#random</code> for questions and comments unrelated to the
+course). More personal or sensitive communications should occur via
+email or Slack direct messages.</p>
+<ul>
+<li><p>An invitation to join this Slack workspace was emailed to
+registered attendees.</p></li>
+<li><p>If you are new to Slack, <a
+href="https://slack.com/help/articles/218080037-Getting-started-for-new-Slack-users">click
+here for an introductory guide</a></p></li>
+</ul>
+<hr />
+</div>
+<div id="course-conduct" class="section level2">
+<h2>Course Conduct</h2>
+<p><strong>Etiquette:</strong></p>
+<ul>
+<li>Behave professionally at all times</li>
+<li>Stay on topic and minimize distractions</li>
+<li>Stay muted unless talking (to minimize noise)</li>
+<li>Ask questions in Slack or use “Raise Hand”</li>
+<li>Be respectful to everyone in the workshop</li>
+<li>Be patient with yourself and others</li>
+</ul>
+<p><strong>You have the right to:</strong></p>
+<ul>
+<li>Be treated with respect at all times</li>
+<li>Turn your camera on or off</li>
+<li>Arrive and depart whenever needed</li>
+<li>Ask for help with workshop content</li>
+<li>Share your opinions respectfully</li>
+<li>Reuse materials according to the license</li>
+<li>Receive reasonable accommodations</li>
+<li>Contact the instructors by email</li>
+</ul>
+</div>
+
+<p class="footer">Copyright &copy; 2021&#8722;2023 | Jeffrey Girard &amp; Shirley Wang</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
