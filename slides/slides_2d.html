@@ -1113,6 +1113,7 @@ Let&#39;s train a classification model on the `titanic` data to predict survival
 class: onecol
 ## Load Data, Create Splits and Recipe
 
+.scroll.h-0l[
 
 ```r
 library(tidyverse)
@@ -1139,6 +1140,7 @@ surv_recipe &lt;-
   step_lincomb(all_predictors()) %&gt;% 
   step_normalize(all_numeric_predictors())
 ```
+]
 
 ---
 class: onecol
