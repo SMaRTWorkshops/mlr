@@ -236,12 +236,12 @@ class: inverse, center, middle
 titanic <- read_csv("https://tinyurl.com/titanic-pm")
 
 # Create data splits, stratified by fare
+set.seed(2023)
 
 fare_split <- initial_split(data = titanic, prop = 0.8, strata = fare)
 fare_train <- training(fare_split)
 fare_test <- testing(fare_split)
 
-set.seed(2022)
 fare_folds <- vfold_cv(data = fare_train, v = 10, repeats = 3, strata = fare)
 ```
 
@@ -270,7 +270,7 @@ glmnet_model
 .scroll.h-0l[
 ```{r, eval=FALSE}
 fare_recipe <- 
-  recipe(titanic) %>% 
+  recipe(fare_train) %>% 
   update_role(fare, new_role = "outcome") %>% 
   update_role(pclass:parch, new_role = "predictor") %>% 
   update_role(survived, new_role = "ignore") %>% 
@@ -292,10 +292,6 @@ fare_wflow <-
   workflow() %>% 
   add_model(glmnet_model) %>% 
   add_recipe(fare_recipe)
-
-# Set up metric set
-
-fare_ms <- metric_set(rmse, rsq, huber_loss, ccc)
 ```
 ]
 
@@ -324,21 +320,14 @@ glmnet_param %>% extract_parameter_dials("mixture")
 
 .scroll.h-0l[
 ```{r, eval=FALSE}
-# Set up resampling to save predictions and workflows
-
-control_keep <- control_resamples(save_pred = TRUE, save_workflow = TRUE)
-
 # Perform tuning by searching over space-filling grid
 
-set.seed(2022)
 fare_tune <- 
   fare_wflow %>%
   tune_grid(
     resamples = fare_folds,
     grid = 10,
-    param_info = glmnet_param,
-    metrics = fare_ms,
-    control = control_keep
+    param_info = glmnet_param
   )
 fare_tune
 
@@ -372,62 +361,6 @@ fare_wflow_final
 
 ---
 
-## Live Coding: Fit the finalized workflow to resamples
-
-```{r, eval=FALSE}
-fare_fit <-
-  fare_wflow_final %>% 
-  fit_resamples(
-    resamples = fare_folds,
-    metrics = fare_ms,
-    control = control_keep
-  )
-```
-
----
-
-## Live Coding: View performance across resamples
-
-.scroll.h-0l[
-```{r, eval=FALSE}
-# View the metrics (averaged across folds and repetitions)
-
-collect_metrics(fare_fit, summarize = TRUE)
-
-# View and plot the metrics (per fold and repetition)
-
-fare_perf_fold <- collect_metrics(fare_fit, summarize = FALSE)
-fare_perf_fold
-
-# Simpler version (one metric only)
-
-fare_perf_fold %>% 
-  filter(.metric == "ccc") %>% 
-  ggplot(aes(x = .estimate, y = id)) +
-  geom_boxplot() +
-  labs(x = "CCC", y = NULL)
-
-# Advanced version (all metrics)
-
-fare_perf_fold %>% 
-  ggplot(aes(x = .estimate, y = id)) +
-  facet_wrap(~.metric, scales = "free") +
-  geom_boxplot() +
-  labs(y = NULL)
-
-# Plot the predictions (averaged across folds and predictions)
-
-fare_pred <- collect_predictions(fare_fit, summarize = TRUE)
-
-ggplot(fare_pred, aes(x = fare, y = .pred)) + 
-  geom_point(alpha = 0.1) +
-  geom_abline(color = "darkred") +
-  coord_obs_pred()
-```
-]
-
----
-
 ## Live Coding: Final performance and interpretation
 
 ```{r, eval=FALSE}
@@ -439,6 +372,12 @@ fare_final <-
 
 collect_metrics(fare_final)
 
+collect_predictions(fare_final) %>% 
+  ggplot(aes(x = fare, y = .pred)) + 
+  geom_point(alpha = 0.2) +
+  geom_abline(color = "darkred") +
+  coord_obs_pred()
+
 fare_final %>% 
   extract_fit_parsnip() %>% 
   vip::vip()
@@ -446,13 +385,6 @@ fare_final %>%
 fare_final %>% 
   extract_fit_parsnip() %>% 
   vip::vi()
-
-fare_wflow_final %>% 
-  fit(fare_train) %>% 
-  tidy(
-    penalty = fare_param_final$penalty, 
-    return_zeros = TRUE
-  )
 ```
 
 ---
