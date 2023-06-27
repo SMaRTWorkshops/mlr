@@ -97,15 +97,17 @@ class: onecol
 ## Load Data, Create Splits and Recipe
 
 ```{r}
+library(tidyverse)
 library(tidymodels)
-titanic <- read.csv("https://tinyurl.com/titanic-pm")
+titanic <- read_csv("https://tinyurl.com/titanic-pm")
 
+set.seed(2023) 
 surv_split <- initial_split(titanic, prop = 0.8, strata = survived)
 surv_train <- training(surv_split)
 surv_test <- testing(surv_split)
 
 surv_recipe <- 
-  recipe(titanic, formula = survived ~ .) %>%
+  recipe(surv_train, formula = survived ~ .) %>%
   step_naomit(survived) %>% 
   step_mutate(
     survived = factor(survived),
