@@ -21,8 +21,8 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 |     | B    | Feature engineering recipes       | Girard | <https://youtu.be/m1Y4GDKKgz0> |
 |     | C    | Resampling and cross-validation   | Wang   | <https://youtu.be/z_occ0xflBs> |
 |     | D    | Building a model: start to finish | Wang   | <https://youtu.be/z_occ0xflBs> |
-| 3   | A    | Regularization and elastic net    | Wang   | TBA                            |
-|     | B    | GLMNET example and tuning         | Girard | TBA                            |
+| 3   | A    | Regularization and elastic net    | Wang   | <https://youtu.be/ON3YWVhVKHg> |
+|     | B    | GLMNET example and tuning         | Girard | <https://youtu.be/ON3YWVhVKHg> |
 |     | C    | Decision trees and random forests | Wang   | TBA                            |
 |     | D    | RF example and reporting          | Girard | TBA                            |
 | 4   | A    | Support vector machines           | Girard | TBA                            |
