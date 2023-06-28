@@ -400,8 +400,16 @@ fare_deploy <-
 
 # Deployment: If new data comes in, use this model to make predictions
 
-titanic2 <- titanic # replace with new dataset with same feature variables
-predict(fare_deploy, titanic2)
+titanic_new <- tibble(
+  name = c("Jack Dawson", "Rose DeWitt Bukater"),
+  survived = c(0, 1),
+  pclass = c(3, 1),
+  sex = c("male", "female"),
+  age = c(20, 17),
+  sibsp = c(0, 1),
+  parch = c(0, 1)
+)
+predict(fare_deploy, titanic_new)
 ```
 
 ---
