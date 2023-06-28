@@ -177,7 +177,7 @@ class: inverse, center, middle
 class: onecol
 ## Building a Classification Tree
 
-The goal of classification trees are to partition data into homogeneous groups.
+Classification trees aim to partition data into homogeneous groups.
 
 This is defined by .imp[purity] (including more of one class than another class per node).
 
@@ -307,11 +307,11 @@ include_graphics('../figs/familytree.png')
 class: twocol
 ## Choosing the Root Node
 
-Calculating the Gini index for **numerical features** is slightly more complicated. 
-
-We sort values from lowest to highest, calculate the midpoint of adjacent rows, and use these cutoffs to find the lowest Gini index. The lowest Gini index is for `age < 14.5` (Gini = 0.343): 
+Finally, we calculate the Gini index for age, which is:
 
 .pull-left[
+$Gini_{age < 14.5} = 0.343$
+
 Stressful Event&emsp; | Family History&emsp; | .imp[Age]&emsp;&emsp;&emsp; | .imp[Depression Risk]&emsp;
 :------- | :-------- | :------- |:------- |
 No | Yes | .imp[10] | .imp[Low] 
