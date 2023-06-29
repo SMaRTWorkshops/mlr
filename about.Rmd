@@ -23,12 +23,12 @@ This is a synchronous, online course taking place as part of the [Pittsburgh Sum
 |     | D    | Building a model: start to finish | Wang   | <https://youtu.be/z_occ0xflBs> |
 | 3   | A    | Regularization and elastic net    | Wang   | <https://youtu.be/ON3YWVhVKHg> |
 |     | B    | GLMNET example and tuning         | Girard | <https://youtu.be/ON3YWVhVKHg> |
-|     | C    | Decision trees and random forests | Wang   | TBA                            |
-|     | D    | RF example and reporting          | Girard | TBA                            |
-| 4   | A    | Support vector machines           | Girard | TBA                            |
-|     | B    | Practical issues                  | Wang   | TBA                            |
-|     | C    | Consulting                        |        | TBA                            |
-|     | D    | Consulting                        |        | TBA                            |
+|     | C    | Decision trees and random forests | Wang   | <https://youtu.be/lv5PUG2GBlM> |
+|     | D    | RF example and reporting          | Girard | <https://youtu.be/lv5PUG2GBlM> |
+| 4   | A    | Support vector machines           | Girard | <https://youtu.be/69kW8IoZ7n8> |
+|     | B    | Practical issues                  | Wang   | <https://youtu.be/69kW8IoZ7n8> |
+|     | C    | Consulting                        |        | NA                             |
+|     | D    | Consulting                        |        | NA                             |
 
 
 Video recordings of the course meetings are posted as private YouTube videos (see the links in the table above). It may take up to 6 hours for the high definition versions of the videos to be ready on YouTube. In order to access the videos, you must log into YouTube using the email address that was invited to view it. If you would like us to invite a different email address than the one you registered for the course with, please let us know via email or Slack direct message.

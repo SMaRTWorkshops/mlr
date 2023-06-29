@@ -271,7 +271,7 @@ class: inverse, center, middle
 
 ---
 class: onecol
-## What is "Good" Accuracy? 
+## What is "Good" Performance? 
 
 Not all performance metrics are equally informative for all prediction problems. 
 

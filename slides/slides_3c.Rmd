@@ -84,12 +84,12 @@ So far, we've modeled linear relationships with linear boundaries between classe
 
 ```{r, echo = FALSE, fig.showtext=TRUE}
 set.seed(1)
-x = rnorm(400)
-y = rnorm(400)
-simdat <- data.frame(x, y)
-simdat$group_lin <- ifelse(simdat$x < simdat$y, 1, 0)
+x1 = rnorm(400)
+x2 = rnorm(400)
+simdat <- data.frame(x1, x2)
+simdat$group_lin <- ifelse(simdat$x1 < simdat$x2, 1, 0)
 
-ggplot(simdat, aes(x, y)) + 
+ggplot(simdat, aes(x1, x2)) + 
   geom_point(aes(color = group_lin)) +
   theme_xaringan(text_font_size = 14, title_font_size = 16, css_file = "../css/xaringan-themer.css") +
   theme(panel.grid.minor = element_blank(),
@@ -104,9 +104,9 @@ class: onecol
 But what about other types of relationships? 
 
 ```{r, echo = FALSE}
-simdat$group_circle <- ifelse(simdat$x < 1 & simdat$x > -1 & simdat$y < 1 & simdat$y > -1, 1, 0)
+simdat$group_circle <- ifelse(simdat$x1 < 1 & simdat$x1 > -1 & simdat$x2 < 1 & simdat$x2 > -1, 1, 0)
 
-ggplot(simdat, aes(x, y)) + 
+ggplot(simdat, aes(x1, x2)) + 
   geom_point(aes(color = group_circle)) +
   theme_xaringan(text_font_size = 14, title_font_size = 16) +
   theme(panel.grid.minor = element_blank(),
@@ -121,9 +121,9 @@ class: onecol
 But what about other types of relationships? 
 
 ```{r, echo = FALSE}
-simdat$group_quadrants <- ifelse((simdat$x < -0.5 & simdat$y > 0) | (simdat$x > 0.5 & simdat$y < 0), 1, 0)
+simdat$group_quadrants <- ifelse((simdat$x1 < -0.5 & simdat$x2 > 0) | (simdat$x1 > 0.5 & simdat$x2 < 0), 1, 0)
 
-ggplot(simdat, aes(x, y)) + 
+ggplot(simdat, aes(x1, x2)) + 
   geom_point(aes(color = group_quadrants)) +
   theme_xaringan(text_font_size = 14, title_font_size = 16, css_file = "../css/xaringan-themer.css") +
   theme(panel.grid.minor = element_blank(),
@@ -141,7 +141,7 @@ However, we can't use a **single equation** to describe the boundaries between t
 
 .pull-left[
 ```{r, echo = FALSE}
-ggplot(simdat, aes(x, y)) + 
+ggplot(simdat, aes(x1, x2)) + 
   geom_point(aes(color = group_circle)) +
   theme_xaringan(text_font_size = 20, title_font_size = 16) +
   theme(panel.grid.minor = element_blank(),
@@ -153,7 +153,7 @@ ggplot(simdat, aes(x, y)) +
 
 .pull-right[
 ```{r, echo = FALSE}
-ggplot(simdat, aes(x, y)) + 
+ggplot(simdat, aes(x1, x2)) + 
   geom_point(aes(color = group_quadrants)) +
   theme_xaringan(text_font_size = 20, title_font_size = 16) +
   theme(panel.grid.minor = element_blank(),
@@ -445,7 +445,7 @@ A regression tree can solve this problem by partioning data into homogeneous gro
 .center[**Regression Tree: Simple Example**]
 ```{r, echo = FALSE, fig.width=12, fig.height=8}
 ggplot(regtree, aes(x, y)) + 
-  geom_point(shape = 16, size = 3) +
+  geom_point(shape = 16, size = 5) +
   geom_segment(aes(x = 0, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred', lwd = 3) + 
   geom_segment(aes(x = 3, y = mean(y[4:8]), xend = 7, yend = mean(y[4:8])), col = 'darkred', lwd = 3) +
   geom_segment(aes(x = 8, y = mean(y[9:12]), xend = 11, yend = mean(y[9:12])), col = 'darkred', lwd = 3) +
@@ -523,19 +523,19 @@ To prevent this, we need to **stop the algorithm at some point**, before it over
 .pull-right[
 ```{r, echo = FALSE, fig.width=12, fig.height=8}
 ggplot(regtree, aes(x, y)) + 
-  geom_point(shape = 16, size = 3) +
-  geom_segment(aes(x = 0, y = mean(y[0:1]), xend = 1, yend = mean(y[0:1])), col = 'darkred') + 
-  geom_segment(aes(x = 1, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred') +
-  geom_segment(aes(x = 3, y = mean(y[4:5]), xend = 5, yend = mean(y[4:5])), col = 'darkred') +
-  geom_segment(aes(x = 5, y = mean(y[5:7]), xend = 8, yend = mean(y[5:7])), col = 'darkred') +
-  geom_segment(aes(x = 8, y = mean(y[9:10]), xend = 10, yend = mean(y[9:10])), col = 'darkred') +
-  geom_segment(aes(x = 10, y = mean(y[11:12]), xend = 12, yend = mean(y[11:12])), col = 'darkred') +
+  geom_point(shape = 16, size = 5) +
+  geom_segment(aes(x = 0, y = mean(y[0:1]), xend = 1, yend = mean(y[0:1])), col = 'darkred', linewidth = 1.5) + 
+  geom_segment(aes(x = 1, y = mean(y[1:3]), xend = 3, yend = mean(y[1:3])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 3, y = mean(y[4:5]), xend = 5, yend = mean(y[4:5])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 5, y = mean(y[5:7]), xend = 8, yend = mean(y[5:7])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 8, y = mean(y[9:10]), xend = 10, yend = mean(y[9:10])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 10, y = mean(y[11:12]), xend = 12, yend = mean(y[11:12])), col = 'darkred', linewidth = 1.5) +
   
-  geom_segment(aes(x = 1, y = mean(y[0:1]), xend = 1, yend = mean(y[1:3])), col = 'darkred') +
-  geom_segment(aes(x = 3, y = mean(y[1:3]), xend = 3, yend = mean(y[4:5])), col = 'darkred') +
-  geom_segment(aes(x = 5, y = mean(y[4:5]), xend = 5, yend = mean(y[5:7])), col = 'darkred') +
-  geom_segment(aes(x = 8, y = mean(y[5:7]), xend = 8, yend = mean(y[9:10])), col = 'darkred') +
-  geom_segment(aes(x = 10, y = mean(y[9:10]), xend = 10, yend = mean(y[11:12])), col = 'darkred') +
+  geom_segment(aes(x = 1, y = mean(y[0:1]), xend = 1, yend = mean(y[1:3])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 3, y = mean(y[1:3]), xend = 3, yend = mean(y[4:5])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 5, y = mean(y[4:5]), xend = 5, yend = mean(y[5:7])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 8, y = mean(y[5:7]), xend = 8, yend = mean(y[9:10])), col = 'darkred', linewidth = 1.5) +
+  geom_segment(aes(x = 10, y = mean(y[9:10]), xend = 10, yend = mean(y[11:12])), col = 'darkred', linewidth = 1.5) +
   theme_xaringan(text_font_size = 30, title_font_size = 40) +
   labs(title = "Regression Tree: Overfit", x = "feature", y = 'outcome') +
   theme(panel.grid.minor = element_blank(),
