@@ -187,7 +187,7 @@ include_graphics("../figs/tidyverse.jpg")
 
 # Read data from web link
 
-titanic <- read_csv("https://tinyurl.com/titanic-pm")
+titanic <- read_csv("https://tinyurl.com/mlr-titanic")
 titanic
 glimpse(titanic)
 View(titanic)
@@ -275,7 +275,7 @@ heights3
 
 # We can also convert missing values while reading in data
 
-titanic <- read_csv("https://tinyurl.com/titanic-pm", na = c("NA", "*", -999))
+titanic <- read_csv("https://tinyurl.com/mlr-titanic", na = c("NA", "*", -999))
 titanic
 
 ```
@@ -606,7 +606,7 @@ include_graphics("../figs/charts.jpg")
 # Read in titanic data and mutate survived into a labeled factor
 
 titanic <- 
-  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  read_csv("https://tinyurl.com/mlr-titanic") %>% 
   mutate(
     survived = factor(
       survived, 
@@ -660,7 +660,7 @@ class: inverse, center, middle
 ## Airline Satisfaction (airsat)
 
 ```{r, eval=FALSE}
-airsat <- readr::read_csv("https://tinyurl.com/airsat-pm")
+airsat <- readr::read_csv("https://tinyurl.com/mlr-airsat")
 ```
 
 ```{r, echo=FALSE}
@@ -693,6 +693,28 @@ $N=10000$
 -   **Flight info:** `departure_delay`, `arrival_delay`
 
 -   **Ratings (0–5):** `seat_comfort`, `time_convenience`, `food_drink`, `gate_location`, `inflight_wifi`, `inflight_entertainment`, `online_support`, `ease_booking`, `onboard_service`, `leg_room`, `baggage_handling`, `checkin_service`, `cleanliness`, `online_baording`
+]
+
+---
+
+## Ecological Momentary Assessment (ema)
+
+```{r, eval=FALSE}
+# data from Fried, Papanikolaou, & Epskamp (2021)
+ema <- readr::read_csv("https://tinyurl.com/mlr-ema", col_types = cols(id = "f"))
+```
+
+```{r, echo=FALSE}
+ema <- readr::read_csv("../data/ema.csv", col_types = cols(id = "f"), show_col_types = FALSE)
+ema %>% 
+  head(100) %>% 
+  kable(digits = 2) %>% 
+  kable_styling(font_size = 17) %>% 
+  scroll_box(height = "300px")
+```
+
+.footnote[
+$N=80$, EMA Protocol: 4 prompts per day, for 14 days. Use to demonstrate multilevel data splitting.
 ]
 
 ---
@@ -740,7 +762,7 @@ $N=344$
 ## Titanic Passengers (titanic)
 
 ```{r, eval=FALSE}
-titanic <- readr::read_csv("https://tinyurl.com/titanic-pm")
+titanic <- readr::read_csv("https://tinyurl.com/mlr-titanic")
 ```
 
 ```{r, echo=FALSE}
@@ -778,7 +800,7 @@ $N=1309$
 ## Water Potability (water)
 
 ```{r, eval=FALSE}
-water <- readr::read_csv("https://tinyurl.com/water-pm")
+water <- readr::read_csv("https://tinyurl.com/mlr-water")
 ```
 
 ```{r, echo=FALSE}
@@ -807,28 +829,6 @@ $N=2011$
 -   **Chemistry:** `ph`, `Hardness`, `Solids`, `Sulfate`, `Conductivity`, `Organic_carbon`, `Turbidity`
 
 -   **Treatment:** `Chloramines`, `Trihalomethanes`
-]
-
----
-
-## Ecological Momentary Assessment (ema)
-
-```{r, eval=FALSE}
-# data from Fried, Papanikolaou, & Epskamp (2021)
-ema <- readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"))
-```
-
-```{r, echo=FALSE}
-ema <- readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"), show_col_types = FALSE)
-ema %>% 
-  head(100) %>% 
-  kable(digits = 2) %>% 
-  kable_styling(font_size = 17) %>% 
-  scroll_box(height = "300px")
-```
-
-.footnote[
-$N=80$, EMA Protocol: 4 prompts per day, for 14 days. Use to demonstrate multilevel data splitting.
 ]
 
 ---

@@ -32,7 +32,7 @@ read_csv("./data/airsat.csv", show_col_types = FALSE)
 
 ---
 
-## EMA
+## ema
 
 Real ecological momentary assessment (EMA) data on 80 undergraduate students in the Netherlands during the start of COVID (from Fried, Papanikolaou, & Epskamp, 2021) <a href="https://eiko-fried.com/wp-content/uploads/21677026211017839.pdf" class="badge badge-info">Info</a>
 
