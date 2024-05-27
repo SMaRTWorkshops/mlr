@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Resampling and Cross-Validation</span>'
 subtitle: '.big[🔁  ⚒️️ 📚 ]' 
-author: 'Applied Machine Learning in R<br /><i>Pittsburgh Summer Methodology Series</i>'
+author: 'Applied Machine Learning in R<br /><i>SMaRT Workshops</i>'
 date: 'Day 2C &emsp; &emsp; Shirley Wang'
 output:
   xaringan::moon_reader:

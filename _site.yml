@@ -1,4 +1,4 @@
-name: "Applied Machine Learning in R"
+name: "Machine Learning in R"
 output_dir: 'docs'
 output:
   html_document:

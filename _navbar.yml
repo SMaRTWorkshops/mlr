@@ -1,5 +1,5 @@
-name: "appliedml"
-title: "Applied ML in R"
+name: "IMLR"
+title: "Machine Learning in R"
 type: inverse
 left:
   - text: "Details"

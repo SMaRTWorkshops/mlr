@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Tidyverse Primer and Data</span>'
 subtitle: '🧹 🌌  🗃️'
-author: 'Applied Machine Learning in R <br /><i>Pittsburgh Summer Methodology Series</i>'
+author: 'Applied Machine Learning in R <br /><i>SMaRT Workshops</i>'
 date: 'Day 1B &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:
