@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Feature Engineering Recipes</span>'
 subtitle: '👷  🧑‍🍳  🍳 '
-author: 'Applied Machine Learning in R<br /><i>SMaRT Workshops</i>'
+author: 'Machine Learning in R<br /><i>SMaRT Workshops</i>'
 date: 'Day 2B &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:
@@ -109,7 +109,7 @@ We will be learning the {recipes} package from {tidymodels}
 ```{r, message=FALSE}
 # Load and tidy data
 titanic <- 
-  read_csv("https://tinyurl.com/titanic-pm") %>%
+  read_csv("https://tinyurl.com/mlr-titanic") %>%
   mutate( #<<
     survived = factor(survived),
     pclass = factor(pclass),
@@ -123,7 +123,7 @@ titanic <-
 
 ```{r}
 # Load data without tidying
-titanic <- read_csv("https://tinyurl.com/titanic-pm")
+titanic <- read_csv("https://tinyurl.com/mlr-titanic")
 ```
 
 ---
