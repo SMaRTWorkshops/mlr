@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Model Fitting and Prediction</span>'
 subtitle: '🥼 💥 💻 ️' 
-author: 'Applied Machine Learning in R <br /><i>SMaRT Workshops</i>'
+author: 'Machine Learning in R <br /><i>SMaRT Workshops</i>'
 date: 'Day 1D &emsp; &emsp; Shirley Wang'
 output:
   xaringan::moon_reader:
@@ -522,7 +522,7 @@ class: onecol
 
 ```{r, eval = FALSE}
 titanic <- 
-  read_csv("https://tinyurl.com/titanic-pm") %>% 
+  read_csv("https://tinyurl.com/mlr-titanic") %>% 
   mutate(
     survived = factor(survived),
     pclass = factor(pclass),

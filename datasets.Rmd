@@ -21,11 +21,11 @@ Real data on the satisfaction and experience of 10,000 customers of an airline <
 
 ```{r, eval=FALSE}
 # install.packages("readr")
-airsat <- readr::read_csv("https://tinyurl.com/airsat-pm")
+airsat <- readr::read_csv("https://tinyurl.com/mlr-airsat")
 ```
 
 ```{r, echo=FALSE, message=FALSE}
-# https://github.com/PittMethods/appliedml/raw/main/data/airsat.csv
+# https://github.com/SMaRTWorkshops/mlr/raw/main/data/airsat.csv
 read_csv("./data/airsat.csv", show_col_types = FALSE)
 ```
 
@@ -40,11 +40,12 @@ Real ecological momentary assessment (EMA) data on 80 undergraduate students in 
   
 ```{r, eval=FALSE}
 # install.packages("readr")
-ema <- readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"))
+ema <- readr::read_csv("https://tinyurl.com/mlr-ema", col_types = cols(id = "f"))
 ```
 
 ```{r, echo=FALSE, message=FALSE}
-readr::read_csv("https://tinyurl.com/ema-data-pm", col_types = cols(id = "f"), show_col_types = FALSE)
+# https://raw.githubusercontent.com/SMaRTWorkshops/mlr/main/data/ema.csv
+readr::read_csv("./data/ema.csv", col_types = cols(id = "f"), show_col_types = FALSE)
 ```
 
 ---
@@ -77,11 +78,11 @@ Real data on 1,309 passengers on the Titanic <a href="https://www.openml.org/sea
 
 ```{r, eval=FALSE}
 # install.packages("readr")
-titanic <- readr::read_csv("https://tinyurl.com/titanic-pm")
+titanic <- readr::read_csv("https://tinyurl.com/mlr-titanic")
 ```
 
 ```{r, echo=FALSE, message=FALSE}
-# https://github.com/PittMethods/appliedml/raw/main/data/titanic.csv
+# https://raw.githubusercontent.com/SMaRTWorkshops/mlr/main/data/titanic.csv
 read_csv("./data/titanic.csv", show_col_types = FALSE)
 ```
 
@@ -95,10 +96,10 @@ Real data on the potability and chemical properties of 2,011 water bodies <a hre
   
 ```{r, eval=FALSE}
 # install.packages("readr")
-water <- readr::read_csv("https://tinyurl.com/water-pm")
+water <- readr::read_csv("https://tinyurl.com/mlr-water")
 ```
 
 ```{r, echo=FALSE, message=FALSE}
-# https://github.com/PittMethods/appliedml/raw/main/data/water.csv
+# https://raw.githubusercontent.com/SMaRTWorkshops/mlr/main/data/water.csv
 read_csv("./data/water.csv", show_col_types = FALSE)
 ```
