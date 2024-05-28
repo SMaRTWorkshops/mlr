@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Regularization and Elastic Net</span>'
 subtitle: '.big[ ⛰️ 🤠 🕸️ ]'
-author: 'Applied Machine Learning in R<br /><i>SMaRT Workshops</i>'
+author: 'Machine Learning in R<br /><i>SMaRT Workshops</i>'
 date: 'Day 3A &emsp; &emsp; Shirley Wang'
 output:
   xaringan::moon_reader:

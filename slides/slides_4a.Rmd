@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Support Vector Machines</span>'
 subtitle: '🚧  🛣️  🦿 ' 
-author: 'Applied Machine Learning in R <br /><i>SMaRT Workshops</i>'
+author: 'Machine Learning in R <br /><i>SMaRT Workshops</i>'
 date: 'Day 4A &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:

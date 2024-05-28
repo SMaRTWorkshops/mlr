@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">Practical Issues</span>'
 subtitle: '.big[🎨 🔬 👷️️]'
-author: 'Applied Machine Learning in R <br /><i>SMaRT Workshops</i>'
+author: 'Machine Learning in R <br /><i>SMaRT Workshops</i>'
 date: 'Day 4B &emsp; &emsp; Shirley Wang'
 output:
   xaringan::moon_reader:
