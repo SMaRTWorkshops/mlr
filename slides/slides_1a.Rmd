@@ -183,6 +183,7 @@ A few inspirations for this workshop include:
 ---
 class: inverse, center, middle
 # Conceptual Introduction
+
 ---
 class: onecol
 ## What is machine learning?
@@ -370,6 +371,7 @@ d) All of the above
 ---
 class: inverse, center, middle
 # Modeling Workflow
+
 ---
 ## Typical ML Workflow
 
