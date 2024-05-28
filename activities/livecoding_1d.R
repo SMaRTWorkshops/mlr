@@ -7,7 +7,7 @@ library(vip)
 
 # Data Loading & Preparation
 titanic <-
-  read_csv("https://tinyurl.com/titanic-pm") %>%
+  read_csv("https://tinyurl.com/mlr-titanic") %>%
   mutate(
     survived = factor(survived),
     pclass = factor(pclass),
