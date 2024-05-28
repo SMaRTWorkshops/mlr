@@ -12,7 +12,7 @@ This course was developed by [Jeffrey Girard](https://github.com/jmgirard) and [
 <table width="100%" style="text-align:center;">
 <tr>
 <td><img src="figs/jg_headshot.jpeg" width="150" height="150" /></td>
-<td><img src="figs/sw_headshot.jpeg" width="150" height="150" /></td>
+<td><img src="figs/sw_headshot.png" width="150" height="150" /></td>
 </tr>
 <tr>
 <td><b>[Jeffrey Girard](https://affcom.ku.edu/girard)</b><br />University of Kansas</td>

@@ -696,7 +696,7 @@ re_recipe %>%
 .scroll.h-0l[
 ```{r, eval=FALSE}
 # Load data (without tidying it - we'll do that in the recipe)
-titanic <- read_csv("https://tinyurl.com/titanic-pm")
+titanic <- read_csv("https://tinyurl.com/mlr-titanic")
 
 # Create data splits, stratified by fare
 
