@@ -75,6 +75,7 @@ include_graphics("../figs/jg_headshot.jpeg")
 [@jeffreymgirard](https://twitter.com/jeffreymgirard)
 
 ]
+
 ---
 class: twocol
 
@@ -105,6 +106,7 @@ include_graphics("../figs/sw_headshot.png")
 [@ShirleyBWang](https://twitter.com/ShirleyBWang)
 
 ]
+
 ---
 class: twocol
 
@@ -143,6 +145,7 @@ timeline <- tribble(
 kable(timeline, format = "html") %>% kable_styling(font_size = 20)
 ```
 ]
+
 ---
 class: twocol
 ## Format and Materials
@@ -163,10 +166,10 @@ We will provide optional **practice activities** to complete after each course d
 --
 .pull-right.lh-copy[
 Course materials are on the course website:
-- <https://pittmethods.github.io/appliedml/>
+- <https://smartworkshops.github.io/mlr/>
 
-Chat will take place in our Slack channel:
-- <https://amlr2023.slack.com>
+Video recordings are on the SMaRT website:
+- <https://smart-workshops.com>
 
 A few inspirations for this workshop include:
 - [Applied Predictive Modeling](http://appliedpredictivemodeling.com/)
@@ -332,6 +335,7 @@ ggplot(dat) +
 ```
 
 ]
+
 ---
 ## Comprehension Check \#1
 <span style="font-size:30px;">Ann has developed an ML system that looks at a patient's physiological signals and tries to determine whether they are having a micro-seizure.</span>
@@ -362,6 +366,7 @@ c) Unsupervised learning
 
 d) All of the above
 ]
+
 ---
 class: inverse, center, middle
 # Modeling Workflow
@@ -373,6 +378,7 @@ class: inverse, center, middle
 include_graphics("../figs/workflow.png")
 ```
 ]
+
 ---
 class: onecol
 ## Exploratory Analysis
@@ -410,6 +416,7 @@ include_graphics("../figs/engineer.jpg")
 - *Impute* missing feature values
 - *Select* and drop features
 ]
+
 ---
 class: onecol
 ## Model Development
@@ -428,6 +435,7 @@ include_graphics("../figs/develop.jpg")
 - Learn the nature of the feature-label relationships
 - For instance, estimate the intercept and slopes
 ]
+
 ---
 class: onecol
 ## Model Tuning
@@ -447,6 +455,7 @@ include_graphics("../figs/tune.jpg")
 - Which of three algorithms should be preferred
 - Which optimization method should be used
 ]
+
 ---
 class: onecol
 ## Model Evaluation
@@ -468,6 +477,7 @@ include_graphics("../figs/target.jpg")
 - Compare the performance of one model to another model
 
 ]
+
 ---
 ## Comprehension Check \#2
 <span style="font-size:30px;">Yuki trained an algorithm to predict the number of "likes" a tweet will receive based on measures of the tweet's formatting and content.</span>
@@ -497,9 +507,11 @@ c) Model Development
 
 d) Exploratory Analysis
 ]
+
 ---
 class: inverse, center, middle
 # Signal and Noise
+
 ---
 class: onecol
 
@@ -623,6 +635,7 @@ For detection, we need *at least* two sets of data:
 
 .imp[Testing set]: used to evaluate performance
 ]
+
 ---
 layout: true
 ## An Example of Overfitting
@@ -682,6 +695,7 @@ ggplot(training, aes(x, y)) +
 ```
 
 ]
+
 ---
 count: false
 .pull-left[
@@ -712,6 +726,7 @@ ggplot(training, aes(x, y)) +
 
 Total error on training data = 0.0 (.imp[Low Bias])
 ]
+
 ---
 ```{r overex6, echo=FALSE}
 ggplot(mapping = aes(x, y)) +
@@ -775,6 +790,7 @@ ggplot(mapping = aes(x, y)) +
 ```
 
 ]
+
 ---
 count: false
 .pull-left[
@@ -826,6 +842,7 @@ ggplot(mapping = aes(x, y)) +
 ```
 Total error on testing set = `r round(sum(abs(testing$y - fity[c(39, 56, 110, 180)])), 1)` (.imp[High Variance])
 ]
+
 ---
 layout: false
 class: onecol
@@ -955,7 +972,7 @@ class: onecol
 ## Activity: Icebreakers
 
 .f4[
-In the Slack **\#general** channel, post a brief introduction about yourself and react to at least one other attendee's post (e.g., with an emoji or by "replying in thread" with a message).
+In chat, post a brief introduction about yourself and react to at least one other attendee's post (e.g., with an emoji or by "replying in thread" with a message).
 ]
 
 #### Possible Inclusions:
