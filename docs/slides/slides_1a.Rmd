@@ -81,27 +81,27 @@ class: twocol
 ##Shirley Wang
 
 .pull-left[
-PhD Candidate, Harvard University<br />
-Incoming Assistant Professor, Yale University
+Incoming Assistant Professor<br />
+Yale University
 
 **Research Areas**
 - Clinical Psychology
 - Computational Psychiatry
-- Mathematical Modeling
+- Suicide, Self-Harm, Eating Disorders
 
 **Machine Learning**
-- Prediction of suicide risk
-- Prediction of longitudinal illness course
-- Idiographic prediction
+- Prediction of Suicide Risk
+- Intensive Longitudinal Data
+- Algorithmic Bias & Fairness
 ]
 
 .pull-right.center.lh-copy[
 ```{r sw, echo=FALSE, out.width=240, out.height=240}
-include_graphics("../figs/sw_headshot.jpeg")
+include_graphics("../figs/sw_headshot.png")
 ```
 
-[shirleywang.rbind.io](https://shirleywang.rbind.io/)<br />
-[shirleywang@g.harvard.edu](mailto:shirleywang@g.harvard.edu)<br />
+[ccslab.yale.edu](https://ccslab.yale.edu/)<br />
+[shirley.wang@yale.edu](mailto:shirley.wang@yale.edu)<br />
 [@ShirleyBWang](https://twitter.com/ShirleyBWang)
 
 ]
