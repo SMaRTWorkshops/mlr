@@ -24,7 +24,7 @@ library(tidymodels)
 library(kernlab) # install this if you don't have it
 tidymodels_prefer()
 
-water <- read_csv("https://tinyurl.com/water-pm")
+water <- read_csv("https://tinyurl.com/mlr-water")
 ```
 
 ## Hands-on Activity

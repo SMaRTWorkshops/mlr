@@ -1,7 +1,7 @@
 ---
 title: '<span style="font-size:48pt;">RF Example and Reporting</span>'
 subtitle: '🌲  ✍️   📝 '
-author: 'Applied Machine Learning in R<br /><i>SMaRT Workshops</i>'
+author: 'Machine Learning in R<br /><i>SMaRT Workshops</i>'
 date: 'Day 3D &emsp; &emsp; Jeffrey Girard'
 output:
   xaringan::moon_reader:
@@ -69,7 +69,7 @@ install.packages("ranger")
 
 # Load and view data
 
-water <- read_csv("https://tinyurl.com/water-pm")
+water <- read_csv("https://tinyurl.com/mlr-water")
 water
 ```
 
