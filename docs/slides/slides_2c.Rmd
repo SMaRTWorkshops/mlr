@@ -439,7 +439,7 @@ class: onecol
 
 Let's use `fare_folds` to fit a resampled model in R predicting `fare`. 
 
-First, we'll make a preprocessing {recipe} (without prepping or baking).
+First, we'll make a preprocessing {recipe}.
 
 ```{r}
 fare_recipe <- 
