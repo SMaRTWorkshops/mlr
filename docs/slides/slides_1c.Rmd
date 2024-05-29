@@ -241,7 +241,7 @@ fare | Cost of passenger fare ($)
 
 .pull-right.pv4[
 ```{r, eval=FALSE}
-library(readr)
+library(tidyverse)
 library(tidymodels)
 
 # resolve package conflicts
@@ -254,7 +254,7 @@ titanic <- read_csv(
 ```
 
 ```{r, echo=FALSE}
-library(readr)
+library(tidyverse)
 library(tidymodels)
 
 # resolve package conflicts
