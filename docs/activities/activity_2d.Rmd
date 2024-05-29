@@ -27,7 +27,8 @@ set.seed(2022, "Mersenne-Twister", "Inversion", "Rejection")
 library(tidyverse)
 library(tidymodels)
 library(vip)
-library(palmerpenguins)
+tidymodels_prefer()
+
 penguins <- penguins %>% na.omit()
 ```
 
