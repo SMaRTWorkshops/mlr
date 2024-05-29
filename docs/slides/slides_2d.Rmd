@@ -392,7 +392,7 @@ Now it's time to practice the methods we've learned!
 
 In this hands-on activity, you will build a regression model from start to finish.
 
-<p style="padding-top:30px;">You can find the activity at https://smartworkshops.github.io/mlr under `Day 2D - Activity`.
+<p style="padding-top:30px;">You can find the activity at https://pittmethods.github.io/ under `Day 2D - Activity`.
 
 If you have questions, please post them in the chat or Slack channel. 
 
