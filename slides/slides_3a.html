@@ -1443,7 +1443,7 @@ class: onecol
 
 Regularization adds an additional .imp[penalty term] to the loss function&lt;sup&gt;1&lt;/sup&gt;.
 
-This has the effect of **shrinking parameters** towards zero.
+This has the effect of **shrinking slopes** towards zero.
 
 Compared to OLS models, regularized models have a .imp[higher bias but lower variance]. 
 
@@ -1480,7 +1480,7 @@ A traditional approach is stepwise regression.
 
 However, there are many problems with stepwise methods&lt;sup&gt;1&lt;/sup&gt;.
 
-Regularization shrinks parameter estimates towards zero&lt;sup&gt;2&lt;/sup&gt;.
+Regularization shrinks slope estimates towards zero&lt;sup&gt;2&lt;/sup&gt;.
 
 Thus, it both reduces overfitting and performs feature selection.
 
@@ -1543,7 +1543,7 @@ The loss function for ridge **also contains the same loss function**.
 The only difference is that we now have additional term, known as the `\(L_2\)` penalty: 
 
 `$$SSE_{L2} = \sum\limits_{i = 1}^n(y_i - \hat{y_i})^2 + \lambda \sum\limits_{j = 1}^P \beta_j^2$$`
-Here, `\(P\)` = number of parameters and `\(\beta_j\)` = parameter of the `\(j^{th}\)` parameter.
+Here, `\(P\)` = number of predictors and `\(\beta_j\)` = slope of the `\(j^{th}\)` predictor
 
 ---
 class: twocol
@@ -1556,13 +1556,13 @@ class: twocol
 .right-column[
 OLS regression aims to **minimize the sum of squared errors**.
 
-Ridge also aims to **minimize the squared value of all parameters**.
+Ridge also aims to **minimize the squared value of all slopes**.
 
-This means that parameters can become large only if there is a proportional reduction in `\(SSE_{L2}\)`.
+This means that slopes can become large only if there is a proportional reduction in `\(SSE_{L2}\)`.
 
 `\(\lambda\)` is a .imp[hyperparameter] controlling the degree of regularization.
 
-Higher values of `\(\lambda\)` **shrinks parameters** closer to zero.
+Higher values of `\(\lambda\)` **shrinks slopes** closer to zero.
 
 We can find the &#39;best&#39; value of `\(\lambda\)` through **cross-validation tuning**.
 ]
@@ -1585,7 +1585,7 @@ Similar to ridge, lasso adds an additional penalty term to the OLS loss function
 
 This is also known as the `\(L_1\)` penalty. 
 
-Whereas ridge aims to minimize the square of parameters, lasso aims to minimize the **absolute value** of all parameters. 
+Whereas ridge aims to minimize the square of slopes, lasso aims to minimize the **absolute value** of all slopes. 
 
 ---
 class: twocol
@@ -1600,13 +1600,13 @@ The differences between the ridge and lasso penalty may seem small.
 
 However, they have some important effects. 
 
-If `\(\lambda\)` is set high enough in lasso, all parameters will be **shrunk to zero**. 
+If `\(\lambda\)` is set high enough in lasso, all slopes will be **shrunk to zero**. 
 
-On the other hand, high ridge `\(\lambda\)` only shrinks parameters *towards* zero.
+On the other hand, high ridge `\(\lambda\)` only shrinks slopes *towards* zero.
 
 Ridge and lasso also differ in their handling of **multicollinearity**.
 
-Whereas ridge tends to shrink parameters of correlated predictors towards each other, lasso tends to pick one and ignore the rest.
+Whereas ridge tends to shrink slopes of correlated predictors towards each other, lasso tends to pick one and ignore the rest.
 ]
 
 ---
@@ -1758,7 +1758,7 @@ d) `\(\lambda\)` = feature selection, `\(\alpha\)` = penalty
 ---
 class: inverse, center, middle
 # Time for a Break!
-<div class="countdown" id="timer_df7da92a" data-warn-when="60" data-update-every="1" tabindex="0" style="right:33%;bottom:15%;left:33%;">
+<div class="countdown" id="timer_4131f8cd" data-warn-when="60" data-update-every="1" tabindex="0" style="right:33%;bottom:15%;left:33%;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
