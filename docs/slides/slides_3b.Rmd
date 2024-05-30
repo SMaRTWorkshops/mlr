@@ -422,12 +422,6 @@ predict(fare_deploy, titanic_new)
 
 library(usemodels)
 use_glmnet(formula = fare ~ ., data = titanic)
-
-# Add code to do resampling
-
-# Adjust recipe as needed
-
-# Add code to finalize and fit the model
 ```
 ]
 
