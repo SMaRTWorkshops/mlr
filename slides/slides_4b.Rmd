@@ -197,7 +197,7 @@ However, here are some important principles and general guidelines.
 
 ---
 class: onecol
-## Bias and Representativeness
+## Bias and Fairness in Algorithms
 
 Algorithms are often heralded as 'objective'. 
 
@@ -219,34 +219,43 @@ ML can .imp[detect, learn, and perpetuate societal injustices] if we are not car
 
 ---
 class: onecol
-## Bias and Representativeness 
+## Bias and Fairness in Algorithms
 
 .pull-left[
 ```{r, echo = FALSE, out.width = "96%", fig.align="right"}
-include_graphics("../figs/huggingface_man.png")
+include_graphics("../figs/obermeyer.png")
 ```
 ]
+
+--
+
 .pull-right[
 ```{r, echo = FALSE, fig.align="left"}
-include_graphics("../figs/huggingface_woman.png")
+include_graphics("../figs/chatgpt_bias.png")
 ```
 ]
 
 ---
 class: onecol
-## Bias and Representativeness
+## Bias and Fairness in Algorithms
 
 Training a model with .imp[biased data] will produce .imp[biased predictions].
 
-When designing a study, pay attention to who is included in the sample & who is left out.
+Biased machine learning models can perpetuate existing societal disparities. 
 
 --
 
-<p style="padding-top:30px;">Critically evaluate the features and labels you're collecting. 
+<p style="padding-top:30px;">You should critically evaluate the potential for bias at each step of the ML workflow: 
 
-- Are they equally valid and reliable for all groups of people? 
+- Defining your question: who benefits from this work? 
 
-- Are they accurate and sensitive at assessing the outcome for everyone?
+- Data collection/curation: who is included in your sample, and who is left out? 
+
+- Label definition: any discrepancy in ideal vs. actual outcome? (e.g., healthcare needs) 
+
+- Measurement: are measures (labels, features) accurate and reliable for everyone? 
+
+- Implementation: how do model predictions interact with human decision-making? How might this model be (mis)used to cause harm?
 
 ---
 class: inverse, center, middle
@@ -298,6 +307,22 @@ However, in some situations it is not appropriate to make such predictions:
 - If a model was trained for a different context 
 
 - If the data-generating process changes from model training to deployment
+
+--
+
+.pull-left[
+```{r, echo = FALSE, out.width = "96%", fig.align="right"}
+include_graphics("../figs/dogormuffin.png")
+```
+]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, fig.align="left"}
+include_graphics("../figs/muffin_test.png")
+```
+]
 
 ---
 class: onecol
