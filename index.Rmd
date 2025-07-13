@@ -5,7 +5,7 @@ output:
     toc: FALSE
 ---
 
-This course was developed by [Jeffrey Girard](https://github.com/jmgirard) and [Shirley Wang](https://github.com/ShirleyBWang) for [SMaRT Workshops](https://smart-workshops.com) (May 28--31, 2024).
+This course was developed by [Jeffrey Girard](https://github.com/jmgirard) and [Shirley Wang](https://github.com/ShirleyBWang) for [SMaRT Workshops](https://smart-workshops.com) (July 14--17, 2025).
 
 ---
 

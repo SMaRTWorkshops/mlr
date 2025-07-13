@@ -722,14 +722,13 @@ $N=80$, EMA Protocol: 4 prompts per day, for 14 days. Use to demonstrate multile
 ## Palmer Penguins (penguins)
 
 ```{r, eval=FALSE}
-# install.packages("palmerpenguins")
-library(palmerpenguins)
+library(tidymodels)
 penguins
 ```
 
 ```{r, echo=FALSE}
-library(palmerpenguins)
-palmerpenguins::penguins %>% 
+library(tidymodels)
+penguins %>% 
   head(8) %>% 
   kable(digits = 2) %>% 
   kable_styling(font_size = 17)

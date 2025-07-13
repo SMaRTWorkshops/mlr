@@ -50,7 +50,7 @@ class: twocol
 ## Jeffrey Girard
 
 .pull-left[
-Assistant Professor<br />
+Associate Professor<br />
 University of Kansas
 
 **Research Areas**
@@ -82,7 +82,7 @@ class: twocol
 ##Shirley Wang
 
 .pull-left[
-Incoming Assistant Professor<br />
+Assistant Professor<br />
 Yale University
 
 **Research Areas**

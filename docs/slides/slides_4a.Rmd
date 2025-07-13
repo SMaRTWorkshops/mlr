@@ -587,7 +587,7 @@ set.seed(2022)
 
 # Read in dataset
 
-penguins <- palmerpenguins::penguins %>% na.omit()
+penguins <- penguins %>% na.omit()
 
 # Create initial split for holdout validation
 
@@ -701,7 +701,7 @@ set.seed(2022)
 
 # Read in dataset
 
-peng <- palmerpenguins::penguins
+peng <- penguins
 
 # Create initial split for holdout validation
 
