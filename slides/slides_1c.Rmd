@@ -468,7 +468,7 @@ The `group_initial_split()` function has three main arguments:
 ema <- readr::read_csv("https://tinyurl.com/mlr-ema")
 
 # initial split 
-ema_split <- group_initial_split(covid_ema, group = "id", prop = 0.8)
+ema_split <- group_initial_split(ema, group = "id", prop = 0.8)
 
 # create training and testing datasets
 ema_train <- training(ema_split)
