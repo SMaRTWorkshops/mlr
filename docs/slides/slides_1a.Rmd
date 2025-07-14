@@ -986,7 +986,7 @@ In chat, post a brief introduction about yourself and react to at least one othe
 
 #### Example:
 
-> Hi! I am Jeff, one of the two instructors for this course. I am an Assistant Professor of quantitative and clinical psychology at the University of Kansas (in Lawrence, Kansas, USA). I study affective and interpersonal functioning and how technology can be used to improve research in the social and medical sciences. I am interested in using machine learning to recognize facial expressions from images and to predict emotional states and mental health status from clinical data. For fun, I bring my 100 lb labrador/pyrenhees mix to the dog park or read sci-fi/fantasy novels.
+> Hi! I am Jeff, one of the two instructors for this course. I am an Associate Professor of quantitative and clinical psychology at the University of Kansas (in Lawrence, Kansas, USA). I study affective and interpersonal functioning and how technology can be used to improve research in the social and medical sciences. I am interested in using machine learning to recognize facial expressions from images and to predict emotional states and mental health status from clinical data. For fun, I bring my 100 lb pup to the dog park or play board games.
 
 ---
 class: inverse, center, middle

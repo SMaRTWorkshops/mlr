@@ -51,31 +51,6 @@ class: inverse, center, middle
 # Tidyverse Primer
 
 ---
-class: onecol
-
-## Communicating with R
-
-.left-column.pv3[
-```{r communicating, echo=FALSE}
-include_graphics("../figs/scrapbook.jpg")
-```
-
-]
-.right-column[
--   The .imp[console] is like a .b[chat window] with R
-  -   You send a command to R and get a response
-  -   Neither side of the conversation is saved
-    
--   A .imp[script] is like an .b[email thread] with R
-  -   You send many commands to R all at once
-  -   Only your side of the conversation is saved
-    
--   .imp[R Markdown] is like a .b[scrapbook] with R
-  -   You can combine code and formatted text
-  -   Both sides of the conversation are saved
-]
-
----
 
 ## Live Coding: R Refresher
 
