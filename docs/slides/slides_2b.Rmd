@@ -609,7 +609,7 @@ class: onecol
 (This may not be necessary for algorithms with built-in *feature selection*)
 
 ---
-## Nero-zero variance
+## Near-zero variance
 
 ```{r}
 nzv_recipe <- 
