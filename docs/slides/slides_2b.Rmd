@@ -729,7 +729,7 @@ fare_recipe <-
   step_nzv(all_predictors()) %>%
   step_corr(all_numeric_predictors()) %>%
   step_lincomb(all_numeric_predictors()) %>% 
-  step_normalize(all_predictors())
+  step_normalize(sibsp, parch, age)
 
 # Prepare workflow
 
