@@ -57,8 +57,7 @@ Real data on 344 penguins observed at Palmer Station, Antarctica <a href="https:
   - Regression task: predict `body_mass_g` (1D)
 
 ```{r}
-library(tidymodels)
-penguins
+modeldata::penguins
 ```
 
 ---

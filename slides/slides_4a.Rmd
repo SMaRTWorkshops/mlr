@@ -695,122 +695,79 @@ ggplot(bmg_pred, aes(x = body_mass_g, y = .pred)) +
 
 .scroll.h-0l[
 ```{r, eval=FALSE}
-# Set random number generation seed for reproducibility
+library(tidyverse)
+library(tidymodels)
+tidymodels_prefer()
 
-set.seed(2022)
+set.seed(2025)
 
-# Read in dataset
+penguins <- modeldata::penguins %>% na.omit()
 
-peng <- penguins
-
-# Create initial split for holdout validation
-
-psp_split <- initial_split(peng, prop = 0.8, strata = species)
+psp_split <- initial_split(penguins, prop = 0.80, strata = species)
 psp_train <- training(psp_split)
-psp_test <- testing(psp_split)
 
-# Create 10-fold CV within training set for tuning
+psp_folds <- vfold_cv(psp_train, v = 10, repeats = 3, strata = species)
 
-psp_folds <- vfold_cv(psp_train, v = 10, repeats = 1, strata = species)
+psp_recipe <- 
+  recipe(
+    psp_train, 
+    formula = species ~ body_mass_g + flipper_length_mm
+  ) %>% 
+  step_normalize(body_mass_g, flipper_length_mm)
 
-# Set up recipe based on the data and model
-
-summary(peng)
-
-psp_recipe <-
-  recipe(psp_train) %>%
-  update_role(species, new_role = "outcome") %>% 
-  update_role(island, sex, year, new_role = "predictor") %>% 
-  update_role(bill_length_mm:body_mass_g, new_role = "ignore") %>% 
-  step_mutate(year = factor(year)) %>% 
-  step_impute_knn(sex) %>% 
-  step_dummy(all_nominal_predictors()) %>% 
-  step_nzv(all_predictors()) %>%
-  step_corr(all_predictors()) %>%
-  step_lincomb(all_predictors())
-
-# Set up model with tuning parameters
-
-svm_model <-
-  svm_rbf(cost = tune()) %>%
-  set_mode("classification") %>%
+svm_model <- 
+  svm_linear(cost = tune()) %>% 
+  set_mode("classification") %>% 
   set_engine("kernlab")
 
-# Combine recipe and model specification into a workflow
-
-psp_wflow <-
-  workflow() %>%
-  add_recipe(psp_recipe) %>%
+psp_wflow <- 
+  workflow() %>% 
+  add_recipe(psp_recipe) %>% 
   add_model(svm_model)
 
-# Pick reasonable boundaries for the tuning parameters
-
-psp_param <-
-  svm_model %>%
-  extract_parameter_set_dials() %>%
+psp_param <- 
+  svm_model %>% 
+  extract_parameter_set_dials() %>% 
   finalize(psp_folds)
-
-# If desired, view the reasonable boundary values for the tuning parameters
 
 extract_parameter_dials(psp_param, "cost")
 
-# Create list of values within boundaries and grid search (may take a bit)
-
-psp_tune <-
-  psp_wflow %>%
+psp_tune <- 
+  psp_wflow %>% 
   tune_grid(
     resamples = psp_folds,
     grid = 20,
     param_info = psp_param
   )
 
-# If desired, plot the tuning results
-
 autoplot(psp_tune)
 
-# Select the best parameters values
-
 psp_param_final <- select_best(psp_tune, metric = "roc_auc")
-psp_param_final
 
-# Finalize the workflow with the best parameter values
-
-psp_wflow_final <-
-  psp_wflow %>%
+psp_wflow_final <- 
+  psp_wflow %>% 
   finalize_workflow(psp_param_final)
-psp_wflow_final
 
-# Fit the finalized workflow to the training set and evaluate in testing set
-
-psp_final <-
-  psp_wflow_final %>%
+psp_final <- 
+  psp_wflow_final %>% 
   last_fit(psp_split)
 
-# View the metrics (from the holdout test set)
-
 collect_metrics(psp_final)
-
-# Collect the predictions
 
 psp_pred <- collect_predictions(psp_final)
 psp_pred
 
- # Calculate and plot confusion matrix
+cm <- conf_mat(psp_pred, truth = species, estimate = .pred_class)
+cm
 
-psp_cm <- conf_mat(psp_pred, truth = species, estimate = .pred_class)
-psp_cm
+rc <- roc_curve(psp_pred, truth = species, .pred_Adelie:.pred_Gentoo)
+autoplot(rc)
 
-autoplot(psp_cm, type = "heatmap")
-
-summary(psp_cm)
-
-# Plot the ROC curve
-
-psp_rc <- roc_curve(psp_pred, truth = species, .pred_Adelie:.pred_Gentoo)
-
-autoplot(psp_rc)
-
-# Note that vip doesn't work with SVM currently
+psp_pred %>% 
+  summarize(
+    .by = species,
+    across(.pred_Adelie:.pred_Gentoo, mean)
+  )
 ```
 ]
 

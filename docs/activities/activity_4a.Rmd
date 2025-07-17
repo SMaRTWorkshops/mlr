@@ -1,5 +1,5 @@
 ---
-title: "AMLR Day 4A<br/>Hands-on Activity"
+title: "MLR Day 4A<br/>Hands-on Activity"
 output:
   prettydoc::html_pretty:
     theme: cayman
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 ```{r, message=FALSE}
 # Set all of this to get the EXACT SAME results on all platforms
-set.seed(2022, "Mersenne-Twister", "Inversion", "Rejection")
+set.seed(2025, "Mersenne-Twister", "Inversion", "Rejection")
 
 library(tidyverse)
 library(tidymodels)
@@ -143,7 +143,7 @@ pot_final <- last_fit(pot_wflow_final, pot_split)
 
 collect_metrics(pot_final)
 ```
-An ROC AUC of 0.51 is not very good at all! The accuracy is nearly 60% but then again, around 60% of the water sources were unsafe (so if you just guessed that they were all unsafe, your accuracy would be 60%).
+An ROC AUC of 0.54 is not very good at all! The accuracy is nearly 60% but then again, around 60% of the water sources were unsafe (so if you just guessed that they were all unsafe, your accuracy would be 60%).
 
 ### Part 10
 ```{r rbf, cache=TRUE}
@@ -179,6 +179,6 @@ rbf_final <- last_fit(rbf_wflow_final, pot_split)
 collect_metrics(rbf_final)
 ```
 
-An ROC AUC of 0.73 looks a lot better. The RBF kernel seemed to help a lot.
+An ROC AUC of 0.74 looks better. The RBF kernel seemed to help a lot.
 
 </blockquote></details></p>
